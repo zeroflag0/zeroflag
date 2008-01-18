@@ -5,7 +5,7 @@
 
 
 = Ah, right. And what is this supposed to look like for the user? =
-Well, you could have a look at [ThreadingExamples some examples]...
+Well, you could have a look at [ThreadingExample some examples]...
 
 
 = How does it work? =
