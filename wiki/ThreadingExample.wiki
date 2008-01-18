@@ -1,5 +1,24 @@
 #summary zeroflag.Threading example
 
+= Do Syntax =
+Do is a static helper class. For the default syntax using classes/instances, see below.
+== Do.For ==
+{{{Do.For[0,100,delegate(int i) { this.DoSomeCalculations(i); }].Run().Join();}}}
+  * Does the same as {{{new For(0,100,delegate(int i) { this.DoSomeCalculations(i); }).Run().Join();}}}
+    * (see "Parallel For" below)
+
+
+
+
+== Do.Run ==
+{{{Do.Run[delegate { DoSomething(); },delegate { DoSomethingElse(); }].Then(delegate { DoSomethingAfterwards(); }).Run().Join();}}}
+  * Does the same as {{{new Task(delegate { DoSomething(); }).And(delegate { DoSomethingElse(); }).Then(delegate { DoSomethingAfterwards(); }).Run().Join();}}}
+    * (see "Parallel Task" below)
+
+
+
+
+
 = Parallel Task =
 == Example ==
 {{{new Task(delegate { DoSomething(); }).And(delegate { DoSomethingElse(); }).Then(delegate { DoSomethingAfterwards(); }).Run().Join();}}}
@@ -87,5 +106,3 @@
 {{{.Join()}}}
 
  * Join the task (and all of it's subtasks) and wait for it/them to finish.
-
-
