@@ -11,7 +11,7 @@ Do is a static helper class. For the default syntax using classes/instances, see
 
 
 == Do.Run ==
-{{{Do.Run[delegate { DoSomething(); },delegate { DoSomethingElse(); }].Then(delegate { DoSomethingAfterwards(); }).Run().Join();}}}
+{{{Do.Run[delegate { DoSomething(); },delegate { DoSomethingElse(); }].Then[delegate { DoSomethingAfterwards(); }].Run().Join();}}}
   * Does the same as {{{new Task(delegate { DoSomething(); }).And(delegate { DoSomethingElse(); }).Then(delegate { DoSomethingAfterwards(); }).Run().Join();}}}
     * (see "Parallel Task" below)
 
@@ -21,7 +21,7 @@ Do is a static helper class. For the default syntax using classes/instances, see
 
 = Parallel Task =
 == Example ==
-{{{new Task(delegate { DoSomething(); }).And(delegate { DoSomethingElse(); }).Then(delegate { DoSomethingAfterwards(); }).Run().Join();}}}
+{{{new Task(delegate { DoSomething(); }).And(delegate { DoSomethingElse(); }).Then[delegate { DoSomethingAfterwards(); }].Run().Join();}}}
 
 == Dissection ==
 
@@ -43,13 +43,13 @@ Do is a static helper class. For the default syntax using classes/instances, see
 
 
 
-{{{.Then(}}}
+{{{.Then[]}}}
 
  * Creates a new task and queues it for execution AFTER all previous tasks (and subtasks) have finished.
 
 
 
-{{{.Run()}}}
+{{{.Run())}}}
 
  * Starts execution of the task.
 
