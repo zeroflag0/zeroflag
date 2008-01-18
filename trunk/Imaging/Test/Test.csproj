@@ -80,19 +80,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\zeroflag.Collections\zeroflag.Collections\zeroflag.Collections.csproj">
+    <ProjectReference Include="..\..\Collections\zeroflag.Collections.csproj">
       <Project>{C4B9F045-0005-4B33-B426-4134C161C9EE}</Project>
       <Name>zeroflag.Collections</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\zeroflag.Windows\zeroflag.Windows.csproj">
-      <Project>{10587B43-7514-4463-B621-A97595D3EC0C}</Project>
-      <Name>zeroflag.Windows</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\zeroThread\zeroThread.csproj">
-      <Project>{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}</Project>
-      <Name>zeroThread</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\zeroflag.Imaging\zeroflag.Imaging.csproj">
+    <ProjectReference Include="..\zeroflag.Imaging.csproj">
       <Project>{28EA3955-D22B-4929-A448-6CEB58631125}</Project>
       <Name>zeroflag.Imaging</Name>
     </ProjectReference>
