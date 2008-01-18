@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Tahoma" Size="8.25" />
+  <Class Name="zeroflag.Imaging.Filter">
+    <Position X="0.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Filter.cs</FileName>
+      <HashCode>EAQCCAAgBlAEggQECAIQEEoAAAgsgAAAOBKgAEAQYEA=</HashCode>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="_AllowRendering" Hidden="true" />
+      <Field Name="_ApplyMode" Hidden="true" />
+      <Field Name="_Location" Hidden="true" />
+      <Field Name="_NeedsUpdate" Hidden="true" />
+      <Field Name="_Padding" Hidden="true" />
+      <Field Name="_PixelBuffer" Hidden="true" />
+      <Field Name="_Size" Hidden="true" />
+      <Field Name="_Step" Hidden="true" />
+      <Property Name="Bottom" Hidden="true" />
+      <Property Name="Height" Hidden="true" />
+      <Property Name="Left" Hidden="true" />
+      <Property Name="Right" Hidden="true" />
+      <Property Name="Top" Hidden="true" />
+      <Property Name="Value" Hidden="true" />
+      <Property Name="Volume" Hidden="true" />
+      <Property Name="Width" Hidden="true" />
+      <Property Name="X" Hidden="true" />
+      <Property Name="Y" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Enum Name="zeroflag.Imaging.Filter.ApplyModeType" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Filter.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="zeroflag.Imaging.Image">
+    <Position X="0.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Image.cs</FileName>
+      <HashCode>AAAAAAAAAgAAAAAACAAAAAAAAEAAAAAAEAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="_Source" Hidden="true" />
+    </Members>
+  </Class>
+  <Class Name="zeroflag.Imaging.Brightness">
+    <Position X="2.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Brightness.cs</FileName>
+      <HashCode>AAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Imaging.Change">
+    <Position X="7.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Change.cs</FileName>
+      <HashCode>AAAgAAAAAgAAAgAAAAAAAAAAAEAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="_Previous" Hidden="true" />
+    </Members>
+  </Class>
+  <Class Name="zeroflag.Imaging.EdgeBW">
+    <Position X="6.25" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>EdgeBW.cs</FileName>
+      <HashCode>AAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Imaging.AreaFinder">
+    <Position X="3.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>AreaFinder.cs</FileName>
+      <HashCode>AAQAAAAAghARCAQAAAAAEQAACAAAgAIAAAIAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <NestedTypes>
+      <Class Name="zeroflag.Imaging.AreaFinder.Region" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>AreaFinder.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+    </NestedTypes>
+  </Class>
+  <Class Name="zeroflag.Imaging.LineFinder">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>LineFinder.cs</FileName>
+      <HashCode>AAQBAAAAAgAUAAAAAAAAEACAAEAAgAISAAAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="_MinimumLength" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Class Name="zeroflag.Imaging.LineFinder.Line" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>LineFinder.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+  </Class>
+  <Class Name="zeroflag.Imaging.Edge">
+    <Position X="8.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Edge.cs</FileName>
+      <HashCode>AAAAAAAAAgAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="factor" Hidden="true" />
+    </Members>
+  </Class>
+  <Class Name="zeroflag.Imaging.StrategyFilter">
+    <Position X="10" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>StrategyFilter.cs</FileName>
+      <HashCode>AAAAAAAAAiAAAAAAAAAAEAAACEAAAAAAAAAAABAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+</ClassDiagram>
