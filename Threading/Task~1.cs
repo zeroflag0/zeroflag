@@ -19,6 +19,10 @@ namespace zeroflag.Threading
 		public Task()
 		{
 		}
+
+		public Task(Task parent, bool parallel)
+			: base(parent, parallel)
+		{ }
 	}
 
 }

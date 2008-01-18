@@ -18,17 +18,35 @@ namespace Test
 
 			for (int r = 0; r < 10; r++)
 			{
-				Do.For[0, 10, 1, delegate(int i)
-				{
-					Console.WriteLine("> " + r + " " + i);
-					System.Threading.Thread.Sleep(200);
-					Console.WriteLine("< " + r + " " + i);
-				}
-					].Then(delegate() { Console.WriteLine("All Done"); }).Run().Join();
+				Do.Run[delegate
+					{
+						Console.WriteLine("Start " + r);
+					}
+					].Then.For[0, 10, 1, delegate(int i)
+					{
+						Console.WriteLine("> " + r + " " + i);
+						System.Threading.Thread.Sleep(100);
+						Console.WriteLine("< " + r + " " + i);
+					}
+					].Then[delegate() { Console.WriteLine("All Done " + r); }].Run().Join();
 				//Console.WriteLine("Finished " + r);
 			}
 			Console.WriteLine("Mainthread returned");
 			//System.Threading.Thread.Sleep(2000);
+
+			//Do.Run[delegate
+			//{
+			//    Console.WriteLine("Start");
+			//}].Then.For[0, 10, 1, delegate(int i)
+			//    {
+			//        Console.WriteLine("> " + i);
+			//        System.Threading.Thread.Sleep(200);
+			//        Console.WriteLine("< " + i);
+			//    }].Then[delegate
+			//    {
+			//        Console.WriteLine("Done");
+			//    }
+			//    ].Run().Join();
 		}
 		static int count = 0;
 		static Task Task

@@ -44,6 +44,20 @@ namespace zeroflag.Threading
 			id = idcount++;
 		}
 
+		protected Task(Task parent, bool parallel)
+			: this()
+		{
+			if (parallel && parent != null && parent.Parallel != this)
+				parent.And(this);
+			else
+				parent.ThenDo(this);
+			this.Parent = parent;
+		}
+		protected Task(Task parent, bool parallel, RunHandle handle)
+			: this(parent, parallel)
+		{
+			this.Handle = handle;
+		}
 		/// <summary>
 		/// Create a task.
 		/// </summary>
@@ -122,6 +136,16 @@ namespace zeroflag.Threading
 			set { _Parallel = value; }
 		}
 
+		Task _Parent;
+		/// <summary>
+		/// This task's parent task (if any).
+		/// </summary>
+		protected Task Parent
+		{
+			get { return _Parent != null ? this._Parent.Parent ?? this._Parent : _Parent; }
+			set { _Parent = value; }
+		}
+
 		#endregion Structure Properties
 
 		#region Parallel
@@ -134,7 +158,7 @@ namespace zeroflag.Threading
 		{
 			if (this.Parallel == null)
 				this.Parallel = parallel;
-			else
+			else if (this.Parallel != parallel && this.Parallel != this)
 				this.Parallel.And(parallel);
 			return this;
 		}
@@ -192,9 +216,13 @@ namespace zeroflag.Threading
 		/// </summary>
 		/// <param name="parallel">Task to be executed in parallel to this.</param>
 		/// <returns>This, for convenience.</returns>
+		/// <seealso cref="And(Task)"/>
 		public Task And(RunHandle parallel)
 		{
-			return this.And(new Task(parallel));
+			if (this.Handle != null)
+				return this.And(new Task(this, true, parallel));
+			this.Handle = parallel;
+			return this;
 		}
 		//public Task and(RunHandle parallel)
 		//{
@@ -234,12 +262,28 @@ namespace zeroflag.Threading
 		}
 
 		/// <summary>
+		/// Run a For task parallel to this task.
+		/// </summary>
+		public For For
+		{
+			get { return new For(this); }
+		}
+
+		/// <summary>
+		/// Dummy method to allow [] to be used just for initialization.
+		/// </summary>
+		public void Dummy()
+		{
+		}
+
+
+		/// <summary>
 		/// Same as a.And(b);
 		/// </summary>
 		/// <param name="a"></param>
 		/// <param name="b"></param>
 		/// <returns></returns>
-		/// <see cref="And"/>
+		/// <see cref="And(Task)"/>
 		public static Task operator +(Task a, Task b)
 		{
 			if (a == null) return b;
@@ -254,13 +298,13 @@ namespace zeroflag.Threading
 		/// <param name="a"></param>
 		/// <param name="b"></param>
 		/// <returns></returns>
-		/// <see cref="And"/>
+		/// <see cref="And(RunHandle)"/>
 		public static Task operator +(Task a, RunHandle b)
 		{
 			if (a == null) return b;
 			else if (b == null) return a;
 
-			return a.And(b);
+			return a[b];
 		}
 		/// <summary>
 		/// Same as a.And(b);
@@ -268,13 +312,13 @@ namespace zeroflag.Threading
 		/// <param name="a"></param>
 		/// <param name="b"></param>
 		/// <returns></returns>
-		/// <see cref="And"/>
+		/// <see cref="And(Task)"/>
 		public static Task operator +(RunHandle a, Task b)
 		{
 			if (a == null) return b;
 			else if (b == null) return a;
 
-			return new Task(a).And(b);
+			return new Task(a)[b];
 		}
 		#endregion Parallel
 
@@ -282,14 +326,26 @@ namespace zeroflag.Threading
 		/// <summary>
 		/// Queue a task for execution after the the current (and all parallel and previous tasks) are finishied.
 		/// </summary>
+		public Task Then
+		{
+			get { return this.Next ?? new Task(this, false); }
+		}
+
+		/// <summary>
+		/// Queue a task for execution after the the current (and all parallel and previous tasks) are finishied.
+		/// </summary>
 		/// <param name="next">The task to be run after this one.</param>
 		/// <returns>This, for convenience.</returns>
-		public Task Then(Task next)
+		public Task ThenDo(Task next)
 		{
+			if (next != null)
+				next.Parent = this;
+
 			if (this.Next == null)
 				this.Next = next;
 			else if (next != null)
-				this.Next = next.Then(this.Next);
+				this.Next = next.ThenDo(this.Next);
+
 			return this;
 		}
 
@@ -298,9 +354,9 @@ namespace zeroflag.Threading
 		/// </summary>
 		/// <param name="next">The task to be run after this one.</param>
 		/// <returns>This, for convenience.</returns>
-		public Task Then(RunHandle next)
+		public Task ThenDo(RunHandle next)
 		{
-			return this.Then(new Task(next));
+			return this.ThenDo(new Task(this, false)[next]);
 		}
 
 		//public Task then(RunHandle next)
@@ -317,14 +373,13 @@ namespace zeroflag.Threading
 		/// Queue a delay for execution after the the current (and all parallel and previous tasks) are finishied.
 		/// WARNING: Seems to work sometimes, sometimes not. Use with caution! YOU HAVE BEEN WARNED!
 		/// </summary>
-		/// <param name="next">The task to be run after this one.</param>
 		/// <returns>This, for convenience.</returns>
 		public Task Delay(int milliseconds)
 		{
-			return this.Then(new Task(delegate()
+			return this.ThenDo(new Task(this, false)[delegate()
 			{
 				System.Threading.Thread.Sleep(milliseconds);
-			}));
+			}]);
 		}
 
 		//public Task delay(int milliseconds)
@@ -335,7 +390,6 @@ namespace zeroflag.Threading
 		/// Queue a delay for execution after the the current (and all parallel and previous tasks) are finishied.
 		/// WARNING: Seems to work sometimes, sometimes not. Use with caution! YOU HAVE BEEN WARNED!
 		/// </summary>
-		/// <param name="next">The task to be run after this one.</param>
 		/// <returns>This, for convenience.</returns>
 		/// <see cref="Delay"/>
 		public Task Wait(int milliseconds)
@@ -357,7 +411,7 @@ namespace zeroflag.Threading
 			if (first == null) return next;
 			else if (next == null) return first;
 
-			return first.Then(next);
+			return first.ThenDo(next);
 		}
 		/// <summary>
 		/// Same as first.Then(next)
@@ -369,7 +423,7 @@ namespace zeroflag.Threading
 			if (first == null) return next;
 			else if (next == null) return first;
 
-			return new Task(first).Then(next);
+			return new Task(first).ThenDo(next);
 		}
 		/// <summary>
 		/// Same as first.Then(next)
@@ -381,7 +435,7 @@ namespace zeroflag.Threading
 			if (first == null) return next;
 			else if (next == null) return first;
 
-			return first.Then(next);
+			return first.ThenDo(next);
 		}
 		#endregion Sequential
 
@@ -409,18 +463,18 @@ namespace zeroflag.Threading
 			Console.WriteLine(this + " run()");
 #endif
 
-			return this.Run(null, null);
+			return (this.Parent ?? this).Run(null, null);
 		}
 
-		Semaphore working = new Semaphore(1, 1);
+		Semaphore _working = new Semaphore(1, 1);
 #if VERBOSE
 		int semCount = 0;
 #endif
-		int runCount = 0;
-		int parallelCount = 0;
-		int sequentialCount = 0;
-		Task Parent;
-		Task Previous;
+		int _runCount = 0;
+		int _parallelCount = 0;
+		int _sequentialCount = 0;
+		Task _ParallelParent;
+		Task _Previous;
 		/// <summary>
 		/// Run the task. (Internal)
 		/// </summary>
@@ -429,22 +483,22 @@ namespace zeroflag.Threading
 		/// <returns></returns>
 		protected Task Run(Task parent, Task previous)
 		{
-			if (Interlocked.Increment(ref runCount) < 2)
+			if (Interlocked.Increment(ref _runCount) < 2)
 			{
-				working.WaitOne();
+				_working.WaitOne();
 #if VERBOSE
 				Console.WriteLine(this + " locked " + Interlocked.Increment(ref semCount));
 #endif
 
-				Interlocked.Increment(ref parallelCount);
-				Interlocked.Increment(ref sequentialCount);
-				this.Parent = parent;
-				this.Previous = previous;
+				Interlocked.Increment(ref _parallelCount);
+				Interlocked.Increment(ref _sequentialCount);
+				this._ParallelParent = parent;
+				this._Previous = previous;
 
 				this.ThreadRun(this);
 				if (this.Parallel != null)
 				{
-					Interlocked.Increment(ref parallelCount);
+					Interlocked.Increment(ref _parallelCount);
 					this.Parallel.Run(this, null);
 				}
 			}
@@ -501,9 +555,9 @@ namespace zeroflag.Threading
 		protected void ParallelFinished()
 		{
 #if VERBOSE
-			Console.WriteLine(this + " finished parallel " + this.parallelCount);
+			Console.WriteLine(this + " finished parallel " + this._parallelCount);
 #endif
-			if (Interlocked.Decrement(ref this.parallelCount) <= 0)
+			if (Interlocked.Decrement(ref this._parallelCount) <= 0)
 			{
 				if (this.Next != null)
 				{
@@ -518,7 +572,7 @@ namespace zeroflag.Threading
 			}
 #if VERBOSE
 			else
-				Console.WriteLine(this + " -> " + this.Parallel + " parallel remaining");
+				Console.WriteLine(this + " -> " + this._ParallelParent + " parallel remaining");
 #endif
 		}
 
@@ -530,29 +584,29 @@ namespace zeroflag.Threading
 #if VERBOSE
 			Console.WriteLine(this + " finished next");
 #endif
-			if (Interlocked.Decrement(ref this.sequentialCount) <= 0)
+			if (Interlocked.Decrement(ref this._sequentialCount) <= 0)
 			{
 #if VERBOSE
 				Console.WriteLine(this + " finishing up");
 #endif
 				this.OnFinished();
 
-				if (this.Parent != null)
-					this.Parent.ParallelFinished();
-				else if (this.Previous != null)
-					this.Previous.NextFinished();
+				if (this._ParallelParent != null)
+					this._ParallelParent.ParallelFinished();
+				else if (this._Previous != null)
+					this._Previous.NextFinished();
 
 #if VERBOSE
 				Console.WriteLine(this + " released " + Interlocked.Increment(ref semCount));
 #endif
-				this.sequentialCount = 0;
-				this.parallelCount = 0;
-				this.Parent = null;
-				this.Previous = null;
+				this._sequentialCount = 0;
+				this._parallelCount = 0;
+				this._ParallelParent = null;
+				this._Previous = null;
 
 				try
 				{
-					working.Release();
+					_working.Release();
 				}
 				catch (SemaphoreFullException exc)
 				{
@@ -587,7 +641,7 @@ namespace zeroflag.Threading
 #if VERBOSE
 			Console.WriteLine(this + " locked " + Interlocked.Increment(ref semCount));
 #endif
-			if (working.WaitOne(timeout, false))
+			if (_working.WaitOne(timeout, false))
 			{
 				try
 				{
@@ -601,7 +655,7 @@ namespace zeroflag.Threading
 #if VERBOSE
 					Console.WriteLine(this + " released " + Interlocked.Increment(ref semCount));
 #endif
-					working.Release();
+					_working.Release();
 				}
 			}
 			return this;

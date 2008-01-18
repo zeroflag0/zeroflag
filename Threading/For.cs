@@ -19,9 +19,6 @@ namespace zeroflag.Threading
 			this[start, end, step, task].Dummy();
 		}
 
-		private void Dummy()
-		{
-		}
 		//public For(int start, int end, int step, Task<int>.RunHandle task, Task.RunHandle afterEach)
 		//    : this(start,end,step,task, new	Task(afterEach))
 		//{
@@ -92,8 +89,6 @@ namespace zeroflag.Threading
 		/// <summary>
 		/// Create the actual run task. NOT TESTED! DO NOT USE UNLESS YOU KNOW WHAT YOU'RE DOING!
 		/// </summary>
-		/// <param name="task"></param>
-		/// <param name="value"></param>
 		public For(Task<int, int>.RunHandle task, int value1, int value2)
 		{
 			this.Value = value1;
@@ -110,6 +105,15 @@ namespace zeroflag.Threading
 		public For()
 		{
 		}
+
+		/// <summary>
+		/// Create a run task. NOT TESTED! DO NOT USE UNLESS YOU KNOW WHAT YOU'RE DOING!
+		/// </summary>
+		public For(Task parent)
+			: base(parent, true)
+		{
+		}
+
 
 		//public For this[int start, int end, int step, Task inner]
 		//{
@@ -136,7 +140,7 @@ namespace zeroflag.Threading
 		//    {
 		//        for (int value = start; value < end; value += step)
 		//        {
-					
+
 		//            this.And(new For();
 		//        }
 		//        return this;
@@ -154,7 +158,7 @@ namespace zeroflag.Threading
 		/// <param name="end">End of the iteration. (past last value, i &lt; end)</param>
 		/// <param name="step">Step of each iteration. (i += step)</param>
 		/// <param name="task">The task to be executed for each iteration.</param>
-		public For this[int start, int end, int step, Task<int, int>.RunHandle task]
+		public Task this[int start, int end, int step, Task<int, int>.RunHandle task]
 		{
 			get
 			{
@@ -174,7 +178,7 @@ namespace zeroflag.Threading
 		/// <param name="end">End of the iteration. (past last value, i &lt; end)</param>
 		/// <param name="step">Step of each iteration. (i += step)</param>
 		/// <param name="task">The task to be executed for each iteration.</param>
-		public For this[int start, int end, int step, Task<int>.RunHandle task]
+		public Task this[int start, int end, int step, Task<int>.RunHandle task]
 		{
 			get
 			{
@@ -193,7 +197,7 @@ namespace zeroflag.Threading
 		/// <param name="start">Start of the iteration. (first value, i = start)</param>
 		/// <param name="end">End of the iteration. (past last value, i &lt; end)</param>
 		/// <param name="task">The task to be executed for each iteration.</param>
-		public For this[int start, int end, Task<int>.RunHandle task]
+		public Task this[int start, int end, Task<int>.RunHandle task]
 		{
 			get
 			{
@@ -207,7 +211,7 @@ namespace zeroflag.Threading
 		/// </summary>
 		/// <param name="end">End of the iteration. (past last value, i &lt; end)</param>
 		/// <param name="task">The task to be executed for each iteration.</param>
-		public For this[int end, Task<int>.RunHandle task]
+		public Task this[int end, Task<int>.RunHandle task]
 		{
 			get
 			{
