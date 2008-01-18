@@ -1,0 +1,20 @@
+#zeroflag.Threading Summary
+
+= What is zeroflag.Threading? =
+*zeroflag.Threading* (or just *zeroThread*) is a small library for data-parallelism similar (but much more basic) to [http://en.wikipedia.org/wiki/Parallel_FX_Library ParallelFX].
+
+
+= Ah, right. And what is this supposed to look like for the user? =
+Well, you could have a look at [ThreadingExamples some examples]...
+
+
+= How does it work? =
+zeroThread is currently using the default System.Threading.ThreadPool provided by .NET/mono to queue up tasks. It's using Semaphores and Interlocked counters for synchronziation.
+
+
+= And you're happy with that? =
+I'm never happy! :P
+
+Ultimate goal is to implement a much more powerful and cleaner ThreadPool (though, not as powerful as SAGE's) along with tools to reduce/remove locking for task-synchronization.
+
+Instead, the (lockless) message queues used in [http://zeroflag.de/index.php?title=Concept SAGE] will be used to synchronize running tasks and queue up new tasks.
