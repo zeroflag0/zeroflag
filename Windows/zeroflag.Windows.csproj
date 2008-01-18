@@ -4,11 +4,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{28EA3955-D22B-4929-A448-6CEB58631125}</ProjectGuid>
+    <ProjectGuid>{10587B43-7514-4463-B621-A97595D3EC0C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>zeroflag.Imaging</RootNamespace>
-    <AssemblyName>zeroflag.Imaging</AssemblyName>
+    <RootNamespace>zeroflag.Windows</RootNamespace>
+    <AssemblyName>zeroflag.Windows</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,38 +31,35 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Brightness.cs" />
-    <Compile Include="Change.cs" />
-    <Compile Include="Color.cs" />
-    <Compile Include="EdgeBW.cs" />
-    <Compile Include="Edge.cs" />
-    <Compile Include="Image.cs" />
-    <Compile Include="IPixelSource.cs" />
-    <Compile Include="LineFinder.cs" />
+    <Compile Include="Activate.cs" />
+    <Compile Include="HitTest.cs" />
+    <Compile Include="HotkeyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ModKeys.cs" />
+    <Compile Include="MouseButtons.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Filter.cs" />
-    <Compile Include="AreaFinder.cs" />
-    <Compile Include="Strategies\Brightness.cs" />
-    <Compile Include="Strategies\Change.cs" />
-    <Compile Include="Strategies\Edge2.cs" />
-    <Compile Include="Strategies\Edge1.cs" />
-    <Compile Include="Strategies\IStrategy.cs" />
-    <Compile Include="Strategies\StrategyRight.cs" />
-    <Compile Include="Strategies\Strategy.cs" />
-    <Compile Include="Strategies\StrategyRightDown.cs" />
-    <Compile Include="StrategyFilter.cs" />
+    <Compile Include="PropertyMessageBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PropertyMessageBox.designer.cs">
+      <DependentUpon>PropertyMessageBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ScreenCapture.cs" />
+    <Compile Include="WinAPI.cs" />
+    <Compile Include="WinAPI.ErrorCodes.cs" />
+    <Compile Include="Window.cs" />
+    <Compile Include="WindowsMessages.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="_ClassDiagram.cd" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\zeroflag.Collections\zeroflag.Collections\zeroflag.Collections.csproj">
-      <Project>{C4B9F045-0005-4B33-B426-4134C161C9EE}</Project>
-      <Name>zeroflag.Collections</Name>
-    </ProjectReference>
+    <EmbeddedResource Include="PropertyMessageBox.resx">
+      <DependentUpon>PropertyMessageBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
