@@ -37,9 +37,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\zeroThread.csproj">
+    <ProjectReference Include="..\zeroflag.Threading.csproj">
       <Project>{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}</Project>
-      <Name>zeroThread</Name>
+      <Name>zeroflag.Threading</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

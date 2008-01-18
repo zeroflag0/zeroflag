@@ -34,23 +34,39 @@ namespace zeroflag.Threading
 	{
 		#region Construction
 		static int idcount = 0;
-		int id;
+		int id;		//TODO: do I still need these counters? only around for debugging/verbose. maybe use compiler switches?
+
+		/// <summary>
+		/// Create a new Task.
+		/// </summary>
 		public Task()
 		{
 			id = idcount++;
 		}
 
+		/// <summary>
+		/// Create a task.
+		/// </summary>
+		/// <param name="handle">The handle/method to be run.</param>
 		public Task(RunHandle handle)
 			: this()
 		{
 			this.Handle = handle;
 		}
 
+		/// <summary>
+		/// Create a group of tasks to be executed in parallel.
+		/// </summary>
+		/// <param name="group">The tasks to be run in parallel.</param>
 		public Task(params Task[] group)
 			: this()
 		{
 			this.And(group);
 		}
+		/// <summary>
+		/// Create a group of tasks to be executed in parallel.
+		/// </summary>
+		/// <param name="group">The handles/methods to be run in parallel.</param>
 		public Task(params RunHandle[] group)
 			: this()
 		{
@@ -62,47 +78,58 @@ namespace zeroflag.Threading
 			return new Task(handle);
 		}
 
-		public static Task Do(Task task)
-		{
-			return task;
-		}
-		public static Task Do(RunHandle task)
-		{
-			return new Task(task);
-		}
+		//public static Task Do(Task task)
+		//{
+		//    return task;
+		//}
+		//public static Task Do(RunHandle task)
+		//{
+		//    return new Task(task);
+		//}
 		#endregion Construction
 
 		#region Structure Properties
 		public delegate void RunHandle();
 
-		RunHandle m_Handle;
-
+		RunHandle _Handle;
+		/// <summary>
+		/// The handle that will be executed by this task.
+		/// </summary>
 		public RunHandle Handle
 		{
-			get { return m_Handle; }
-			set { m_Handle = value; }
+			get { return _Handle; }
+			set { _Handle = value; }
 		}
 
-		Task m_Next;
-
+		Task _Next;
+		/// <summary>
+		/// A task that is scheduled AFTER this(and it's parallel tasks) are finished.
+		/// </summary>
 		public Task Next
 		{
-			get { return m_Next; }
-			set { m_Next = value; }
+			get { return _Next; }
+			set { _Next = value; }
 		}
 
 
-		Task m_Parallel;
-
+		Task _Parallel;
+		/// <summary>
+		/// This task's parallel neighbour.
+		/// </summary>
 		public Task Parallel
 		{
-			get { return m_Parallel; }
-			set { m_Parallel = value; }
+			get { return _Parallel; }
+			set { _Parallel = value; }
 		}
 
 		#endregion Structure Properties
 
 		#region Parallel
+		/// <summary>
+		/// Add a task for parallel execution.
+		/// </summary>
+		/// <param name="parallel">Task to be executed in parallel to this.</param>
+		/// <returns>This, for convenience.</returns>
 		public Task And(Task parallel)
 		{
 			if (this.Parallel == null)
@@ -112,7 +139,13 @@ namespace zeroflag.Threading
 			return this;
 		}
 
-		public Task And(int index, params Task[] group)
+		/// <summary>
+		/// Add a group of tasks to be executed in parallel.
+		/// </summary>
+		/// <param name="index">The index of the item in the group that is to be added. (checked against length, counts up while (index &lt; group.Length), returns otherwise)</param>
+		/// <param name="group">The tasks to be run in parallel.</param>
+		/// <returns>This, for convenience.</returns>
+		protected Task And(int index, params Task[] group)
 		{
 			if (index < group.Length)
 				return this.And(group[index]).And(index + 1, group);
@@ -120,12 +153,23 @@ namespace zeroflag.Threading
 				return this;
 		}
 
+		/// <summary>
+		/// Add a group of tasks to be executed in parallel.
+		/// </summary>
+		/// <param name="group">The tasks to be run in parallel.</param>
+		/// <returns>This, for convenience.</returns>
 		public Task And(params Task[] group)
 		{
 			return this.And(0, group);
 		}
 
-		public Task And(int index, params RunHandle[] group)
+		/// <summary>
+		/// Add a group of tasks to be executed in parallel.
+		/// </summary>
+		/// <param name="index">The index of the item in the group that is to be added. (checked against length, counts up while (index &lt; group.Length), returns otherwise)</param>
+		/// <param name="group">The tasks to be run in parallel.</param>
+		/// <returns>This, for convenience.</returns>
+		protected Task And(int index, params RunHandle[] group)
 		{
 			if (index < group.Length)
 				return this.And(group[index]).And(index + 1, group);
@@ -133,22 +177,69 @@ namespace zeroflag.Threading
 				return this;
 		}
 
+		/// <summary>
+		/// Add a group of tasks to be executed in parallel.
+		/// </summary>
+		/// <param name="group">The tasks to be run in parallel.</param>
+		/// <returns>This, for convenience.</returns>
 		public Task And(params RunHandle[] group)
 		{
 			return this.And(0, group);
 		}
 
+		/// <summary>
+		/// Add a task for parallel execution.
+		/// </summary>
+		/// <param name="parallel">Task to be executed in parallel to this.</param>
+		/// <returns>This, for convenience.</returns>
 		public Task And(RunHandle parallel)
 		{
 			return this.And(new Task(parallel));
 		}
-		public Task and(RunHandle parallel)
+		//public Task and(RunHandle parallel)
+		//{
+		//    return this.And(new Task(parallel));
+		//}
+
+		//public Task and(Task parallel) { return this.And(parallel); }
+
+		/// <summary>
+		/// Add a task for parallel execution.
+		/// </summary>
+		/// <param name="parallel">Task to be executed in parallel to this.</param>
+		/// <returns>This, for convenience.</returns>
+		public Task this[RunHandle parallel]
 		{
-			return this.And(new Task(parallel));
+			get { return this.And(parallel); }
 		}
 
-		public Task and(Task parallel) { return this.And(parallel); }
+		/// <summary>
+		/// Add a group of tasks to be executed in parallel.
+		/// </summary>
+		/// <param name="group">The tasks to be run in parallel.</param>
+		/// <returns>This, for convenience.</returns>
+		public Task this[params RunHandle[] group]
+		{
+			get { return this.And(group); }
+		}
 
+		/// <summary>
+		/// Add a group of tasks to be executed in parallel.
+		/// </summary>
+		/// <param name="group">The tasks to be run in parallel.</param>
+		/// <returns>This, for convenience.</returns>
+		public Task this[params Task[] group]
+		{
+			get { return this.And(0, group); }
+		}
+
+		/// <summary>
+		/// Same as a.And(b);
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
+		/// <see cref="And"/>
 		public static Task operator +(Task a, Task b)
 		{
 			if (a == null) return b;
@@ -157,6 +248,13 @@ namespace zeroflag.Threading
 			return a.And(b);
 		}
 
+		/// <summary>
+		/// Same as a.And(b);
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
+		/// <see cref="And"/>
 		public static Task operator +(Task a, RunHandle b)
 		{
 			if (a == null) return b;
@@ -164,6 +262,13 @@ namespace zeroflag.Threading
 
 			return a.And(b);
 		}
+		/// <summary>
+		/// Same as a.And(b);
+		/// </summary>
+		/// <param name="a"></param>
+		/// <param name="b"></param>
+		/// <returns></returns>
+		/// <see cref="And"/>
 		public static Task operator +(RunHandle a, Task b)
 		{
 			if (a == null) return b;
@@ -174,6 +279,11 @@ namespace zeroflag.Threading
 		#endregion Parallel
 
 		#region Sequential
+		/// <summary>
+		/// Queue a task for execution after the the current (and all parallel and previous tasks) are finishied.
+		/// </summary>
+		/// <param name="next">The task to be run after this one.</param>
+		/// <returns>This, for convenience.</returns>
 		public Task Then(Task next)
 		{
 			if (this.Next == null)
@@ -183,21 +293,32 @@ namespace zeroflag.Threading
 			return this;
 		}
 
+		/// <summary>
+		/// Queue a task for execution after the the current (and all parallel and previous tasks) are finishied.
+		/// </summary>
+		/// <param name="next">The task to be run after this one.</param>
+		/// <returns>This, for convenience.</returns>
 		public Task Then(RunHandle next)
 		{
 			return this.Then(new Task(next));
 		}
 
-		public Task then(RunHandle next)
-		{
-			return this.Then(new Task(next));
-		}
+		//public Task then(RunHandle next)
+		//{
+		//    return this.Then(new Task(next));
+		//}
 
-		public Task then(Task next)
-		{
-			return this.Then(next);
-		}
+		//public Task then(Task next)
+		//{
+		//    return this.Then(next);
+		//}
 
+		/// <summary>
+		/// Queue a delay for execution after the the current (and all parallel and previous tasks) are finishied.
+		/// WARNING: Seems to work sometimes, sometimes not. Use with caution! YOU HAVE BEEN WARNED!
+		/// </summary>
+		/// <param name="next">The task to be run after this one.</param>
+		/// <returns>This, for convenience.</returns>
 		public Task Delay(int milliseconds)
 		{
 			return this.Then(new Task(delegate()
@@ -206,19 +327,31 @@ namespace zeroflag.Threading
 			}));
 		}
 
-		public Task delay(int milliseconds)
-		{
-			return this.Delay(milliseconds);
-		}
+		//public Task delay(int milliseconds)
+		//{
+		//    return this.Delay(milliseconds);
+		//}
+		/// <summary>
+		/// Queue a delay for execution after the the current (and all parallel and previous tasks) are finishied.
+		/// WARNING: Seems to work sometimes, sometimes not. Use with caution! YOU HAVE BEEN WARNED!
+		/// </summary>
+		/// <param name="next">The task to be run after this one.</param>
+		/// <returns>This, for convenience.</returns>
+		/// <see cref="Delay"/>
 		public Task Wait(int milliseconds)
 		{
 			return this.Delay(milliseconds);
 		}
-		public Task wait(int milliseconds)
-		{
-			return this.Delay(milliseconds);
-		}
+		//public Task wait(int milliseconds)
+		//{
+		//    return this.Delay(milliseconds);
+		//}
 
+		/// <summary>
+		/// Same as first.Then(next)
+		/// </summary>
+		/// <returns>first</returns>
+		/// <see cref="Then"/>
 		public static Task operator /(Task first, Task next)
 		{
 			if (first == null) return next;
@@ -226,6 +359,11 @@ namespace zeroflag.Threading
 
 			return first.Then(next);
 		}
+		/// <summary>
+		/// Same as first.Then(next)
+		/// </summary>
+		/// <returns>first</returns>
+		/// <see cref="Then"/>
 		public static Task operator /(RunHandle first, Task next)
 		{
 			if (first == null) return next;
@@ -233,6 +371,11 @@ namespace zeroflag.Threading
 
 			return new Task(first).Then(next);
 		}
+		/// <summary>
+		/// Same as first.Then(next)
+		/// </summary>
+		/// <returns>first</returns>
+		/// <see cref="Then"/>
 		public static Task operator /(Task first, RunHandle next)
 		{
 			if (first == null) return next;
@@ -245,14 +388,21 @@ namespace zeroflag.Threading
 
 		#region Execution
 
-		bool m_Done = false;
-
+		bool _Done = false;
+		/// <summary>
+		/// A value that indicates whether this task finished execution or not.
+		/// WARNING: This might work or might not. Barely tested. Absolutely NOT secured. Use with caution.
+		/// </summary>
 		public bool Done
 		{
-			get { return m_Done && this.Parallel != null ? this.Parallel.Done : true; }
-			set { m_Done = value; }
+			get { return _Done && this.Parallel != null ? this.Parallel.Done : true; }
+			set { _Done = value; }
 		}
 
+		/// <summary>
+		/// Run the task (and all parallel and sequential tasks).
+		/// </summary>
+		/// <returns></returns>
 		public Task Run()
 		{
 #if VERBOSE
@@ -271,7 +421,13 @@ namespace zeroflag.Threading
 		int sequentialCount = 0;
 		Task Parent;
 		Task Previous;
-		public Task Run(Task parent, Task previous)
+		/// <summary>
+		/// Run the task. (Internal)
+		/// </summary>
+		/// <param name="parent"></param>
+		/// <param name="previous"></param>
+		/// <returns></returns>
+		protected Task Run(Task parent, Task previous)
 		{
 			if (Interlocked.Increment(ref runCount) < 2)
 			{
@@ -299,12 +455,20 @@ namespace zeroflag.Threading
 			return this;
 		}
 
+		/// <summary>
+		/// Actually call the handle and get the job done...
+		/// </summary>
 		protected void DoExecute()
 		{
 			if (this.Handle != null)
 				this.Handle();
 		}
 
+		/// <summary>
+		/// Use the threadpool to queue and execute the task, then call ParallelFinished.
+		/// </summary>
+		/// <param name="task"></param>
+		/// <seealso cref="ParallelFinished"/>
 		protected void ThreadRun(Task task)
 		{
 #if VERBOSE
@@ -331,7 +495,9 @@ namespace zeroflag.Threading
 			});
 		}
 
-
+		/// <summary>
+		/// //TODO: try to remember what this did and add some pointless documentation here...
+		/// </summary>
 		protected void ParallelFinished()
 		{
 #if VERBOSE
@@ -356,6 +522,9 @@ namespace zeroflag.Threading
 #endif
 		}
 
+		/// <summary>
+		/// //TODO: try to remember what this did and add some pointless documentation here...
+		/// </summary>
 		protected void NextFinished()
 		{
 #if VERBOSE
@@ -395,10 +564,21 @@ namespace zeroflag.Threading
 			}
 		}
 
+		/// <summary>
+		/// Join the (executing) task and wait for it to finish.
+		/// WARNING: DO NOT CALL THIS ON A TASK THAT DOESN'T RUN! Not tested, couldn't be bothered to verify what it does on any not-running task.
+		/// </summary>
+		/// <returns></returns>
 		public Task Join()
 		{
 			return this.Join(Timeout.Infinite);
 		}
+		/// <summary>
+		/// Join the (executing) task and wait for it to finish but for a maximum of `timeout` milliseconds.
+		/// WARNING: DO NOT CALL THIS ON A TASK THAT DOESN'T RUN! Not tested, couldn't be bothered to verify what it does on any not-running task.
+		/// </summary>
+		/// <param name="timeout">Maximum wait time in milliseconds</param>
+		/// <returns></returns>
 		public Task Join(int timeout)
 		{
 #if VERBOSE
@@ -428,14 +608,14 @@ namespace zeroflag.Threading
 		}
 
 		#region event Done
-		private event RunHandle m_Finished;
+		private event RunHandle _Finished;
 		/// <summary>
-		/// When the task is finished...
+		/// When the task, all parallel AND sequential tasks are finished...
 		/// </summary>
 		public event RunHandle Finished
 		{
-			add { this.m_Finished += value; }
-			remove { this.m_Finished -= value; }
+			add { this._Finished += value; }
+			remove { this._Finished -= value; }
 		}
 		/// <summary>
 		/// Call to raise the Done event:
@@ -445,10 +625,10 @@ namespace zeroflag.Threading
 		protected virtual void OnFinished()
 		{
 			// if there are event subscribers...
-			if (this.m_Finished != null)
+			if (this._Finished != null)
 			{
 				// call them...
-				this.m_Finished();
+				this._Finished();
 			}
 		}
 		#endregion event Done
@@ -456,18 +636,23 @@ namespace zeroflag.Threading
 		#endregion
 
 		#region Error
-		Exception m_Error;
-
+		Exception _Error;
+		/// <summary>
+		/// If an exception occured while executing the task, it will be stored here.
+		/// </summary>
 		public Exception Error
 		{
-			get { return m_Error; }
+			get { return _Error; }
 			protected set
 			{
-				m_Error = value;
+				_Error = value;
 				Console.WriteLine(this.ToString() + "\n" + value.ToString());
 			}
 		}
 
+		/// <summary>
+		/// Helper class for storing an exception along with it's owner.
+		/// </summary>
 		public class ExceptionBox
 		{
 			public ExceptionBox(Task owner, Exception error)
@@ -476,20 +661,20 @@ namespace zeroflag.Threading
 				this.Error = error;
 			}
 
-			Exception m_Error;
+			Exception _Error;
 
 			public Exception Error
 			{
-				get { return m_Error; }
-				set { m_Error = value; }
+				get { return _Error; }
+				set { _Error = value; }
 			}
 
-			Task m_Owner;
+			Task _Owner;
 
 			public Task Owner
 			{
-				get { return m_Owner; }
-				set { m_Owner = value; }
+				get { return _Owner; }
+				set { _Owner = value; }
 			}
 
 			public override string ToString()
@@ -503,6 +688,11 @@ namespace zeroflag.Threading
 			}
 		}
 
+		/// <summary>
+		/// Gets all exceptions that occured on this, any parallel or sequential task.
+		/// </summary>
+		/// <param name="list">The list to store the exceptions in.</param>
+		/// <returns>The same as the list passed...</returns>
 		public System.Collections.Generic.List<ExceptionBox> ErrorsRecursive(System.Collections.Generic.List<ExceptionBox> list)
 		{
 			if (list == null)
@@ -516,6 +706,10 @@ namespace zeroflag.Threading
 			return list;
 		}
 
+		/// <summary>
+		/// Gets all exceptions that occured on this, any parallel or sequential task, and queues them up in a string.
+		/// </summary>
+		/// <returns></returns>
 		public string ErrorsRecursive()
 		{
 			System.Collections.Generic.List<ExceptionBox> exceptions = this.ErrorsRecursive(new System.Collections.Generic.List<ExceptionBox>());

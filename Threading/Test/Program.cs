@@ -16,13 +16,17 @@ namespace Test
 			//Run task2 = new Run(delegate() { Console.WriteLine("Task2[Thread={0}]", System.Threading.Thread.CurrentThread.ManagedThreadId); });
 			//task1.and(task1).then(task2).Execute().Join();
 
-			new For(0, 10, 1, delegate(int i)
+			for (int r = 0; r < 10; r++)
 			{
-				Console.WriteLine(i);
-				System.Threading.Thread.Sleep(200);
-				Console.WriteLine(i);
+				Do.For[0, 10, 1, delegate(int i)
+				{
+					Console.WriteLine("> " + r + " " + i);
+					System.Threading.Thread.Sleep(200);
+					Console.WriteLine("< " + r + " " + i);
+				}
+					].Then(delegate() { Console.WriteLine("All Done"); }).Run().Join();
+				//Console.WriteLine("Finished " + r);
 			}
-				).then(delegate() { Console.WriteLine("All Done"); }).Run().Join();
 			Console.WriteLine("Mainthread returned");
 			//System.Threading.Thread.Sleep(2000);
 		}
