@@ -1,4 +1,4 @@
-#summary zeroflag.Threading example
+#summary zeroflag.Threading examples
 
 = Do Syntax =
 Do is a static helper class. For the default syntax using classes/instances, see below.
