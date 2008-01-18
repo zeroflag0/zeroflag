@@ -1,0 +1,91 @@
+#summary zeroflag.Threading example
+
+= Parallel Task =
+== Example ==
+{{{new Task(delegate { DoSomething(); }).And(delegate { DoSomethingElse(); }).Then(delegate { DoSomethingAfterwards(); }).Run().Join();}}}
+
+== Dissection ==
+
+{{{new Task...}}}
+  * Create a new task...
+
+
+
+{{{delegate {}}}
+
+  * Tasks take delegates for execution. Those delegates cannot contain parameters.
+    ** *Hint:* If you want to pass parameters, use an anonymous method. (They can use variables that are available on the parent method)
+   
+
+
+{{{.And(}}}
+
+ * Creates a new task and queues it for execution parallel to the first task.
+
+
+
+{{{.Then(}}}
+
+ * Creates a new task and queues it for execution AFTER all previous tasks (and subtasks) have finished.
+
+
+
+{{{.Run()}}}
+
+ * Starts execution of the task.
+
+
+
+{{{.Join()}}}
+
+ * Join the task (and all of it's subtasks) and wait for it/them to finish.
+
+
+
+
+
+= Parallel For =
+== Example ==
+{{{new For(0,100,delegate(int i) { this.DoSomeCalculations(i); }).Run().Join();}}}
+
+
+== Dissection ==
+
+{{{new For(...}}}
+
+ * Creates a new For task. Each of it's iterations will be turned into a Task that is (at run-time) pushed to the thread pool for execution.
+
+
+
+{{{For(0,100,...}}}
+
+ * For parameters: {{{([int start,] int end, [int step,] delegate(int) handle)}}}
+ * step being optional (1 by default, not used in the example).
+ * start being optional (0 by default)
+
+   * For a real "for" this would read: {{{for(int i = start; i < end; i += step)}}}
+
+
+
+{{{delegate(int i)}}}
+
+ * For uses an int to count iterations - and the delegate to be executed each iteration has to take that int.
+
+
+{{{this.DoSomeCalculations(i); }...}}}
+
+ * Do some calculations for iteration i...
+
+
+
+{{{.Run()}}}
+
+ * Starts execution of the task.
+
+
+
+{{{.Join()}}}
+
+ * Join the task (and all of it's subtasks) and wait for it/them to finish.
+
+
