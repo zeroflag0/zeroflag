@@ -19,6 +19,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Collections", "..\
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Windows", "..\Windows\zeroflag.Windows.csproj", "{10587B43-7514-4463-B621-A97595D3EC0C}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +43,10 @@ Global
 		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10587B43-7514-4463-B621-A97595D3EC0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10587B43-7514-4463-B621-A97595D3EC0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10587B43-7514-4463-B621-A97595D3EC0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10587B43-7514-4463-B621-A97595D3EC0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
