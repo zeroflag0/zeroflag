@@ -1,4 +1,4 @@
-# zeroflag.Threading Summary
+# zeroflag.Threading
 
 = What is zeroflag.Threading? =
 *zeroflag.Threading* (or just *zeroThread*) is a small library for data-parallelism similar (but much more basic) to [http://en.wikipedia.org/wiki/Parallel_FX_Library ParallelFX].
