@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroThread", "zeroThread.csproj", "{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Threading", "zeroflag.Threading.csproj", "{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"

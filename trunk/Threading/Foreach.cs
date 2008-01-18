@@ -10,7 +10,7 @@ namespace zeroflag.Threading
 		{
 			foreach (T value in collection)
 			{
-				this.and(new Foreach<T>(task, value));
+				this.And(new Foreach<T>(task, value));
 			}
 		}
 
