@@ -3,7 +3,7 @@
 //	author:         Thomas "zeroflag" Kraemer
 //	author email:   zeroflag@zeroflag.de
 //	
-//	Copyright (C) 2006-2007  Thomas "zeroflag" Kraemer
+//	Copyright (C) 2006-2008  Thomas "zeroflag" Kraemer
 //	
 //	license:	(LGPL)
 //	
