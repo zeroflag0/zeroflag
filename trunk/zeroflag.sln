@@ -1,0 +1,64 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Collections", "Collections\zeroflag.Collections.csproj", "{C4B9F045-0005-4B33-B426-4134C161C9EE}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Threading", "Threading\zeroflag.Threading.csproj", "{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Windows", "Windows\zeroflag.Windows.csproj", "{10587B43-7514-4463-B621-A97595D3EC0C}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Serialization", "Serialization\zeroflag.Serialization.csproj", "{48823787-7042-494D-B250-A3E60085BB2B}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Imaging", "Imaging\zeroflag.Imaging.csproj", "{28EA3955-D22B-4929-A448-6CEB58631125}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10587B43-7514-4463-B621-A97595D3EC0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10587B43-7514-4463-B621-A97595D3EC0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10587B43-7514-4463-B621-A97595D3EC0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10587B43-7514-4463-B621-A97595D3EC0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48823787-7042-494D-B250-A3E60085BB2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48823787-7042-494D-B250-A3E60085BB2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48823787-7042-494D-B250-A3E60085BB2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48823787-7042-494D-B250-A3E60085BB2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{28EA3955-D22B-4929-A448-6CEB58631125}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{28EA3955-D22B-4929-A448-6CEB58631125}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{28EA3955-D22B-4929-A448-6CEB58631125}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{28EA3955-D22B-4929-A448-6CEB58631125}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
