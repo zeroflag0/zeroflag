@@ -35,45 +35,45 @@ namespace zeroflag.Serialization
 {
 	public class XmlSerializer : Serializer
 	{
-		public override object Deserialize(ObjectDescription type)
-		{
-			throw new NotImplementedException();
-		}
+		//public override object Deserialize(ObjectDescription type)
+		//{
+		//    throw new NotImplementedException();
+		//}
 
-		protected override void Serialize(ObjectDescription value)
-		{
-			XmlDocument doc = new XmlDocument();
+		//protected override void Serialize(ObjectDescription value)
+		//{
+		//    XmlDocument doc = new XmlDocument();
 
-			doc.CreateXmlDeclaration("1.0", null, null);
-			doc.AppendChild(doc.CreateElement("root"));
+		//    doc.CreateXmlDeclaration("1.0", null, null);
+		//    doc.AppendChild(doc.CreateElement("root"));
 
-			this.Serialize(value, doc, doc.DocumentElement);
+		//    this.Serialize(value, doc, doc.DocumentElement);
 
-			doc.Save(this.FileName);
-		}
+		//    doc.Save(this.FileName);
+		//}
 
-		protected virtual void Serialize(ObjectDescription value, XmlDocument doc, XmlElement parent)
-		{
-			XmlElement node = doc.CreateElement(value.Name ?? value.Type.Name.Split('`')[0]);
+		//protected virtual void Serialize(ObjectDescription value, XmlDocument doc, XmlElement parent)
+		//{
+		//    XmlElement node = doc.CreateElement(value.Name ?? value.Type.Name.Split('`')[0]);
 
-			this.WriteAttribute("name", value.Name, doc, node);
-			this.WriteAttribute("type", value.Type.FullName, doc, node);
+		//    this.WriteAttribute("name", value.Name, doc, node);
+		//    this.WriteAttribute("type", value.Type.FullName, doc, node);
 
-			if (value.Properties.Count > 0)
-			{
-				foreach (ObjectDescription desc in value.Properties)
-				{
-					this.Serialize(desc, doc, node);
-				}
-			}
-			else
-			{
-				node.InnerText = StringConverters.Base.Write(value.Value);
-				//this.WriteAttribute("value", StringConverters.Base.Write(value.Value), doc, node);
-			}
+		//    if (value.Properties.Count > 0)
+		//    {
+		//        foreach (ObjectDescription desc in value.Properties)
+		//        {
+		//            this.Serialize(desc, doc, node);
+		//        }
+		//    }
+		//    else
+		//    {
+		//        node.InnerText = StringConverters.Base.Write(value.Value);
+		//        //this.WriteAttribute("value", StringConverters.Base.Write(value.Value), doc, node);
+		//    }
 
-			parent.AppendChild(node);
-		}
+		//    parent.AppendChild(node);
+		//}
 
 		protected XmlElement WriteAttribute(string name, string value, XmlDocument doc, XmlElement parent)
 		{
@@ -83,10 +83,10 @@ namespace zeroflag.Serialization
 			return parent;
 		}
 
-		protected override Serializer CreateChild()
-		{
-			return new XmlSerializer(this);
-		}
+		//protected override Serializer CreateChild()
+		//{
+		//    return new XmlSerializer(this);
+		//}
 
 		public XmlSerializer()
 		{

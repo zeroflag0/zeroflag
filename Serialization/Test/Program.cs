@@ -57,11 +57,11 @@ namespace Test
 	{
 		static void Main(string[] args)
 		{
-			Serializer seri= new XmlSerializer("test.xml");
+			Serializer seri = new XmlSerializer("test.xml");
 
 			A a = new A(new A(), new A(), null);
 
-			seri.Serialize(a);
+			//seri.Serialize(a);
 		}
 	}
 }

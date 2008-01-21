@@ -47,6 +47,24 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\Converter.cs" />
+    <Compile Include="Converters\IConverter.cs" />
+    <Compile Include="Converters\String\Converter.cs" />
+    <Compile Include="Converters\String\String.cs" />
+    <Compile Include="Converters\String\Byte.cs" />
+    <Compile Include="Converters\String\Sbyte.cs" />
+    <Compile Include="Converters\String\Char.cs" />
+    <Compile Include="Converters\String\Decimal.cs" />
+    <Compile Include="Converters\String\Double.cs" />
+    <Compile Include="Converters\String\Single.cs" />
+    <Compile Include="Converters\String\UInt64.cs" />
+    <Compile Include="Converters\String\UInt16.cs" />
+    <Compile Include="Converters\String\UInt32.cs" />
+    <Compile Include="Converters\String\Int16.cs" />
+    <Compile Include="Converters\String\Int32.cs" />
+    <Compile Include="Converters\String\Int64.cs" />
+    <Compile Include="Descriptors\Descriptor.cs" />
+    <Compile Include="Descriptors\Descriptor~1.cs" />
+    <Compile Include="Descriptors\Default.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="TypeHelper.cs" />
@@ -54,11 +72,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Converters\_ClassDiagram.cd" />
+    <None Include="Descriptors\_ClassDiagram.cd" />
     <None Include="_ClassDiagram.cd" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Converters\String\" />
-    <Folder Include="Descriptors\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
