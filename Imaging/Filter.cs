@@ -72,6 +72,15 @@ namespace zeroflag.Imaging
 			this.Location = region.Location;
 			this.Size = region.Size;
 		}
+
+		protected override void OnParentChanged(TreeNode<Filter> oldvalue, TreeNode<Filter> newvalue)
+		{
+			base.OnParentChanged(oldvalue, newvalue);
+			if (newvalue != null)
+			{
+				this.Size = newvalue.Value.Size;
+			}
+		}
 		#endregion Constructors
 
 		#region Pixels
@@ -326,10 +335,32 @@ namespace zeroflag.Imaging
 				if (_NeedsUpdate != value)
 				{
 					_NeedsUpdate = value;
+					if (value)
+					{
+						foreach (Filter child in this.Children)
+							child.NeedsUpdate = true;
+					}
 				}
 			}
 		}
 		#endregion NeedsUpdate
+
+		#region RecursiveUpdate
+
+		private bool _RecursiveUpdate = true;
+
+		public bool RecursiveUpdate
+		{
+			get { return _RecursiveUpdate; }
+			set
+			{
+				if (_RecursiveUpdate != value)
+				{
+					_RecursiveUpdate = value;
+				}
+			}
+		}
+		#endregion RecursiveUpdate
 
 		public void Update()
 		{
@@ -341,10 +372,11 @@ namespace zeroflag.Imaging
 				Console.WriteLine(this + " updated.");
 			}
 
-			foreach (Filter child in this.Children)
-			{
-				child.Update();
-			}
+			if (this.RecursiveUpdate)
+				foreach (Filter child in this.Children)
+				{
+					child.Update();
+				}
 
 			this.NeedsUpdate = false;
 		}

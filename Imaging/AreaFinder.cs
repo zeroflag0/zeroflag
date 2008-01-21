@@ -36,11 +36,11 @@ namespace zeroflag.Imaging
 	{
 		protected override void ApplyPixel(int x, int y)
 		{
-			if (this._Count++ > this.Limit)
-			{
-				_Limit = new point(x, y);
-				return;
-			}
+			//if (this._Count++ > this.Limit)
+			//{
+			//    _Limit = new point(x, y);
+			//    return;
+			//}
 
 			if (this.Scanned[x, y])
 				return;
@@ -60,11 +60,11 @@ namespace zeroflag.Imaging
 
 		bool ProcessPixel(int x, int y, Region region)
 		{
-			if (this._Count++ > this.Limit)
-			{
-				_Limit = new point(x, y);
-				return false;
-			}
+			//if (this._Count++ > this.Limit)
+			//{
+			//    _Limit = new point(x, y);
+			//    return false;
+			//}
 			if (x < this.Padding.X || x >= this.Width - this.Padding.Width || y < this.Padding.Y || y >= this.Height - this.Padding.Height)
 				return false;
 			point p = new point(x, y);
@@ -149,7 +149,7 @@ namespace zeroflag.Imaging
 			}
 			if (_Limit.X >= 0 && _Limit.Y >= 0)
 			{
-				g.FillRectangle(System.Drawing.Brushes.Red, _Limit.X, _Limit.Y, 50, 50);
+				g.FillRectangle(System.Drawing.Brushes.Red, _Limit.X - 5, _Limit.Y - 5, 10, 10);
 			}
 
 		}
@@ -176,7 +176,7 @@ namespace zeroflag.Imaging
 		point _Limit = new point(-1, -1);
 		public int Limit
 		{
-			get { return this.Width * this.Height * 1; }
+			get { return this.Width * this.Height * 20; }
 			//get { return _Limit; }
 			//set { _Limit = value; }
 		}
@@ -252,7 +252,7 @@ namespace zeroflag.Imaging
 
 		#region Constructors
 		public AreaFinder(Filter parent, float stepx, float stepy)
-			: base(parent, stepx, stepy)
+			: base( parent, stepx, stepy)
 		{
 		}
 
