@@ -46,18 +46,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ObjectDescription.cs" />
+    <Compile Include="Converters\Converter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializer.cs" />
-    <Compile Include="StringConverters\Base~1.cs" />
-    <Compile Include="StringConverters\Fallback.cs" />
-    <Compile Include="StringConverters\Int32.cs" />
-    <Compile Include="TypeDescriptors\Default.cs" />
     <Compile Include="TypeHelper.cs" />
     <Compile Include="XmlSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Converters\_ClassDiagram.cd" />
     <None Include="_ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Converters\String\" />
+    <Folder Include="Descriptors\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
