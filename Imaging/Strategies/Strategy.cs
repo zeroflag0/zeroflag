@@ -34,7 +34,13 @@ namespace zeroflag.Imaging.Strategies
 {
 	public abstract class Strategy : zeroflag.Imaging.Strategies.IStrategy
 	{
-		public virtual void PreApply() { }
+		public virtual void PreApply()
+		{
+			foreach (Strategy child in this.Next)
+			{
+				child.PreApply();
+			}
+		}
 
 		public virtual Color Apply(int x, int y)
 		{
@@ -43,7 +49,13 @@ namespace zeroflag.Imaging.Strategies
 
 		public abstract Color Apply(int x, int y, Color value);
 
-		public virtual void PostApply() { }
+		public virtual void PostApply()
+		{
+			foreach (Strategy child in this.Next)
+			{
+				child.PostApply();
+			}
+		}
 
 		IPixelSource _PixelSource;
 
@@ -64,7 +76,7 @@ namespace zeroflag.Imaging.Strategies
 				{
 					ApplyHandler next = this.Next[0].Delegate;
 					for (int i = 0; i < this.Next.Count; i++)
-						next += this.Next[1].Delegate;
+						next += this.Next[i].Delegate;
 
 					return
 						delegate(int x, int y, Color value)

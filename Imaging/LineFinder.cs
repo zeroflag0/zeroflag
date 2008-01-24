@@ -160,7 +160,7 @@ namespace zeroflag.Imaging
 
 			base.DoUpdate();
 
-			Console.WriteLine("Found " + this.Lines.Count + " lines followed " + followed + " pixels.");
+			//Console.WriteLine("Found " + this.Lines.Count + " lines followed " + followed + " pixels.");
 		}
 
 		protected override void DoRender(System.Drawing.Graphics g)

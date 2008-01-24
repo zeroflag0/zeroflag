@@ -362,23 +362,43 @@ namespace zeroflag.Imaging
 		}
 		#endregion RecursiveUpdate
 
+		#region Enabled
+
+		private bool _Enabled = true;
+
+		public bool Enabled
+		{
+			get { return _Enabled; }
+			set
+			{
+				if (_Enabled != value)
+				{
+					_Enabled = value;
+				}
+			}
+		}
+		#endregion Enabled
+
 		public void Update()
 		{
-			if (this.NeedsUpdate)
+			if (this.Enabled)
 			{
-				Console.WriteLine(this + " updating...");
-				this.PixelBuffer = this.CreatePixelBuffer();
-				this.DoUpdate();
-				Console.WriteLine(this + " updated.");
-			}
-
-			if (this.RecursiveUpdate)
-				foreach (Filter child in this.Children)
+				if (this.NeedsUpdate)
 				{
-					child.Update();
+					//Console.WriteLine(this + " updating...");
+					this.PixelBuffer = this.CreatePixelBuffer();
+					this.DoUpdate();
+					//Console.WriteLine(this + " updated.");
 				}
 
-			this.NeedsUpdate = false;
+				if (this.RecursiveUpdate)
+					foreach (Filter child in this.Children)
+					{
+						child.Update();
+					}
+
+				this.NeedsUpdate = false;
+			}
 		}
 
 		protected virtual void DoUpdate()
@@ -438,6 +458,14 @@ namespace zeroflag.Imaging
 			set { _AllowRendering = value; }
 		}
 
+		bool _RecursiveRendering = true;
+
+		public bool RecursiveRendering
+		{
+			get { return _RecursiveRendering; }
+			set { _RecursiveRendering = value; }
+		}
+
 		public void Render(System.Drawing.Image img)
 		{
 			System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(img);
@@ -457,21 +485,30 @@ namespace zeroflag.Imaging
 			if (AllowRendering)
 				this.DoRender(g);
 
-
-			foreach (Filter child in this.Children)
+			if (RecursiveRendering)
 			{
-				child.Render(g);
+				foreach (Filter child in this.Children)
+				{
+					System.Drawing.Drawing2D.GraphicsState push = g.Save();
+					child.Render(g);
+					g.Restore(push);
+				}
 			}
 		}
 
 		protected virtual void DoRender(System.Drawing.Graphics g)
 		{
+			Color[,] buffer = this.PixelBuffer;
+			Color color;
 			for (int y = this.Padding.Y; y < this.Height - this.Padding.Height; y++)
 			{
 				for (int x = this.Padding.X; x < this.Width - this.Padding.Width; x++)
 				{
-					Color color = this[x, y];
-					g.FillRectangle(new System.Drawing.SolidBrush(color), x, y, 1, 1);
+					color = buffer[x, y];
+					if (this.Parent != null)
+						g.FillRectangle(new System.Drawing.SolidBrush(System.Drawing.Color.FromArgb(128, (byte)(color.R * 128), (byte)(color.G * 128), (byte)(color.B * 128))), x, y, 1, 1);
+					else
+						g.FillRectangle(new System.Drawing.SolidBrush(color), x, y, 1, 1);
 				}
 			}
 		}

@@ -196,6 +196,17 @@ namespace zeroflag.Windows
 			WinAPI.SetForegroundWindow(this.Handle);
 		}
 
+		public void KeyPress(System.Windows.Forms.Keys key)
+		{
+			this.KeyPress(key, 1);
+		}
+		public void KeyPress(System.Windows.Forms.Keys key, int duration)
+		{
+			this.KeyDown(key);
+			System.Threading.Thread.Sleep(duration);
+			this.KeyUp(key);
+		}
+
 		public void KeyDown(key key)
 		{
 			WinAPI.SendMessage(this.Handle, WindowsMessages.WM_KEYFIRST, (IntPtr)((long)key), new IntPtr());

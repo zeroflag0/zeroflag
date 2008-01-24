@@ -50,8 +50,8 @@ namespace zeroflag.Imaging
 			Color c = this[x, y];
 			if (c > this.Threashold * 1.2f)
 			{
-				//Console.WriteLine("Initializing area scan at " + x + "," + y);
-				//Console.WriteLine();
+				////Console.WriteLine("Initializing area scan at " + x + "," + y);
+				////Console.WriteLine();
 				Region reg = new Region(x, y);
 				this.ProcessPixel(x, y, reg);
 				this.Results.Add(reg);
@@ -76,7 +76,7 @@ namespace zeroflag.Imaging
 			if (c > this.Threashold)
 			{
 				region.Add(x, y);
-				//Console.Write("Scan " + p + " Region = " + region.ToString().PadLeft(50) + "\n");
+				////Console.Write("Scan " + p + " Region = " + region.ToString().PadLeft(50) + "\n");
 
 
 				//for (int i = this.Range; i > 0; i -= 1)
@@ -157,7 +157,6 @@ namespace zeroflag.Imaging
 
 		protected override void DoUpdate()
 		{
-			this._Count = 0;
 			this.Scanned = new bool[this.Width, this.Height];
 			this.Results.Clear();
 
@@ -180,8 +179,6 @@ namespace zeroflag.Imaging
 			//get { return _Limit; }
 			//set { _Limit = value; }
 		}
-
-		int _Count = 0;
 
 		bool[,] _Scanned = null;
 

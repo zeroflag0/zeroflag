@@ -54,23 +54,37 @@ namespace zeroflag.Imaging
 				this.Padding = new System.Drawing.Rectangle(Math.Max(this.Padding.X, this.Strategy.MinimumPadding.X), Math.Max(this.Padding.Y, this.Strategy.MinimumPadding.Y), Math.Max(this.Padding.Width, this.Strategy.MinimumPadding.Width), Math.Max(this.Padding.Height, this.Strategy.MinimumPadding.Height));
 				this.Strategy.PixelSource = this;
 				this.Strategy.Prepare();
+				this.Strategy.PreApply();
 				base.DoUpdate();
+				this.Strategy.PostApply();
 			}
 		}
 
 
 		Strategies.IStrategy _Strategy;
 
-		public Strategies. IStrategy Strategy
+		public Strategies.IStrategy Strategy
 		{
-			get { return _Strategy; }
+			get { return _Strategy ?? (_Strategy = CreateStrategy()); }
 			set { _Strategy = value; }
+		}
+
+		public virtual Strategies.IStrategy CreateStrategy()
+		{
+			return null;
 		}
 
 		public StrategyFilter Do(Strategies.IStrategy strategy)
 		{
 			this.Strategy = strategy;
 			return this;
+		}
+		public StrategyFilter Do(params Strategies.IStrategy[] strategies)
+		{
+			this.Strategy = strategies[0];
+			for (int i = 1; i < strategies.Length; i++)
+				strategies[i - 1].Then((Strategies.Strategy)strategies[i]);
+			return this ;
 		}
 
 		#region Constructors
@@ -104,5 +118,10 @@ namespace zeroflag.Imaging
 		{
 		}
 		#endregion Constructors
+
+		public override string ToString()
+		{
+			return base.ToString() + (this.Strategy != null ? " [ " + this.Strategy.ToString() + " ] " : "");
+		}
 	}
 }
