@@ -201,7 +201,7 @@ namespace zeroflag.Imaging
 					//            }
 					//            catch (Exception exc)
 					//            {
-					//                Console.WriteLine(exc);
+					//                //Console.WriteLine(exc);
 					//            }
 					//            try
 					//            {
@@ -211,7 +211,7 @@ namespace zeroflag.Imaging
 					//            }
 					//            catch (Exception exc)
 					//            {
-					//                Console.WriteLine(exc);
+					//                //Console.WriteLine(exc);
 					//            }
 					//        }
 					//    }
@@ -228,7 +228,7 @@ namespace zeroflag.Imaging
 				//    }
 				//}
 				sw.Stop();
-				Console.WriteLine(this + " created pixelbuffer in " + sw.Elapsed);
+				//Console.WriteLine(this + " created pixelbuffer in " + sw.Elapsed);
 				return buffer;
 			}
 		}
