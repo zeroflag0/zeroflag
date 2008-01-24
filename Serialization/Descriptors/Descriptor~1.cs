@@ -22,16 +22,29 @@ namespace zeroflag.Serialization.Descriptors
 			set { _Set = value; }
 		}
 
+		T _Value = default(T);
 		public T Value
 		{
 			get
 			{
-				return this.Get != null ? this.Get() : default(T);
+				return this.Get != null ? this.Get() : _Value;
 			}
 			set
 			{
 				if (this.Set != null)
 					this.Set(value);
+				_Value = value;
+			}
+		}
+
+		public override int Id
+		{
+			get
+			{
+				if (this.Value != null)
+					return this.Value.GetHashCode();
+				else
+					return base.Id;
 			}
 		}
 
@@ -39,7 +52,7 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			get
 			{
-				return this.Value != null ? this.Value.GetType() : base.Type;
+				return this.Value != null ? this.Value.GetType() : base.Type ?? typeof(T);
 			}
 			set
 			{
@@ -55,6 +68,26 @@ namespace zeroflag.Serialization.Descriptors
 		public override void SetValue(object value)
 		{
 			this.Value = (T)value;
+		}
+
+		public override Descriptor Parse(System.Reflection.PropertyInfo info)
+		{
+			this.Get = delegate() { return (T)info.GetGetMethod().Invoke(this.Owner.GetValue(), null); };
+			this.Set = delegate(T value) { info.GetSetMethod().Invoke(this.Owner.GetValue(), new object[] { value }); };
+
+			return this.Parse();
+		}
+
+		public override Descriptor Parse(string name, Type type, object value)
+		{
+			this.Value = (T)value;
+			return this.Parse(name, type);
+		}
+
+		public override Descriptor Parse(string name, Type type, Descriptor owner, object value)
+		{
+			this.Value = (T)value;
+			return this.Parse(name, type, owner);
 		}
 	}
 }

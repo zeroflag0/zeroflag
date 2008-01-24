@@ -6,9 +6,18 @@ namespace zeroflag.Serialization.Descriptors
 {
 	public class Default : Descriptor<object>
 	{
-		public override void Parse(System.Reflection.PropertyInfo info)
+		public override Descriptor Parse()
 		{
-			this.Get = delegate() { return info.GetGetMethod().Invoke(this.Owner, null); };
+			Type type = this.Type;
+
+			System.Reflection.PropertyInfo[] properties = type.GetProperties();
+
+			foreach (System.Reflection.PropertyInfo property in properties)
+			{
+				Descriptor.DoParse(property, this);
+			}
+
+			return this;
 		}
 	}
 }

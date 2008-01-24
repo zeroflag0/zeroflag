@@ -61,6 +61,9 @@ namespace Test
 
 			A a = new A(new A(), new A(), null);
 
+			zeroflag.Serialization.Descriptors.Descriptor desc = zeroflag.Serialization.Descriptors.Descriptor.DoParse(a);
+
+			Console.WriteLine(desc);
 			//seri.Serialize(a);
 		}
 	}
