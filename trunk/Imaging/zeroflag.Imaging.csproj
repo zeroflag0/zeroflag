@@ -62,7 +62,7 @@
     <None Include="_ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\zeroflag.Collections\zeroflag.Collections\zeroflag.Collections.csproj">
+    <ProjectReference Include="..\Collections\zeroflag.Collections.csproj">
       <Project>{C4B9F045-0005-4B33-B426-4134C161C9EE}</Project>
       <Name>zeroflag.Collections</Name>
     </ProjectReference>

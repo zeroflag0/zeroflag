@@ -77,6 +77,14 @@ namespace zeroflag.Serialization
 			this.Parent = parent;
 		}
 
+		public void Serialize(object value)
+		{
+			Descriptors.Descriptor desc = Descriptors.Descriptor.DoParse(value);
+			//desc.Parse(value);
+			this.Serialize(desc);
+		}
+		protected abstract void Serialize(Descriptors.Descriptor value);
+
 		//public object Deserialize(Type type)
 		//{
 		//    return Deserialize(new ObjectDescription(type));
@@ -84,13 +92,6 @@ namespace zeroflag.Serialization
 
 		//public abstract object Deserialize(ObjectDescription type);
 
-		//public void Serialize(object value)
-		//{
-		//    ObjectDescription desc = new ObjectDescription(value);
-		//    //desc.Parse(value);
-		//    this.Serialize(desc);
-		//}
-		//protected abstract void Serialize(ObjectDescription value);
 
 		///// <summary>
 		///// Creates a child-serializer.

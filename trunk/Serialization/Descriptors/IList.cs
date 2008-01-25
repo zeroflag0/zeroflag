@@ -20,7 +20,7 @@ namespace zeroflag.Serialization.Descriptors
 
 		public override Descriptor Parse(System.Reflection.PropertyInfo info)
 		{
-			this.Get = delegate() { return (System.Collections.Generic.IList<T>)info.GetGetMethod().Invoke(this.Owner.GetValue(), null); };
+			//this.Get = delegate() { return (System.Collections.Generic.IList<T>)info.GetGetMethod().Invoke(this.Owner.GetValue(), null); };
 			//this.Set = delegate(T value) { info.GetSetMethod().Invoke(this.Owner.GetValue(), new object[] { value }); };
 
 			return this.Parse();
@@ -33,6 +33,8 @@ namespace zeroflag.Serialization.Descriptors
 				foreach (object value in this.Value)
 				{
 					Descriptor item =  DoParse(value, this);
+					item.Name = "Items";
+					this.Inner.Add(item);
 					//item.Set = delegate(object value) { this.Value
 				}
 			}

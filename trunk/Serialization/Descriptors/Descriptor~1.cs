@@ -36,6 +36,14 @@ namespace zeroflag.Serialization.Descriptors
 				_Value = value;
 			}
 		}
+		public override object GetValue()
+		{
+			return this.Value;
+		}
+		public override void SetValue(object value)
+		{
+			this.Value = (T)value;
+		}
 
 		public override int Id
 		{
@@ -60,22 +68,18 @@ namespace zeroflag.Serialization.Descriptors
 			}
 		}
 
-		public override object GetValue()
-		{
-			return this.Value;
-		}
-
-		public override void SetValue(object value)
-		{
-			this.Value = (T)value;
-		}
-
 		public override Descriptor Parse(System.Reflection.PropertyInfo info)
 		{
-			this.Get = delegate() { return (T)info.GetGetMethod().Invoke(this.Owner.GetValue(), null); };
-			this.Set = delegate(T value) { info.GetSetMethod().Invoke(this.Owner.GetValue(), new object[] { value }); };
-
-			return this.Parse();
+			//this.Get = delegate() { return (T)info.GetGetMethod().Invoke(this.Owner.GetValue(), null); };
+			//this.Set = delegate(T value) { info.GetSetMethod().Invoke(this.Owner.GetValue(), new object[] { value }); };
+			if (info.CanRead && info.CanWrite
+//				&& this.Owner != null 
+				)
+			{
+				object value = info.GetValue(this.Owner.GetValue(), new object[] { });
+				return this.Parse(info.Name, info.PropertyType, value);
+			}
+			else return this;
 		}
 
 		public override Descriptor Parse(string name, Type type, object value)

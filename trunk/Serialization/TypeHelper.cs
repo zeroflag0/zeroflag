@@ -39,6 +39,20 @@ namespace zeroflag
 			return System.Activator.CreateInstance(type);
 		}
 
+		public static object CreateInstance(System.Type type, params System.Type[] generics)
+		{
+			//System.Activator.CreateInstance(type, null, 
+			return CreateInstance(SpecializeType(type, generics));
+		}
+
+		public static Type SpecializeType(System.Type type, params System.Type[] generics)
+		{
+			if (type.IsGenericType)
+				type = type.GetGenericTypeDefinition();
+			type = type.MakeGenericType(generics);
+			return type;
+		}
+
 		static List<Type> Types = new List<Type>();
 		static Dictionary<Type, List<Type>> Derived = new Dictionary<Type, List<Type>>();
 		static List<System.Reflection.Assembly> Assemblies = new List<System.Reflection.Assembly>();

@@ -40,40 +40,40 @@ namespace zeroflag.Serialization
 		//    throw new NotImplementedException();
 		//}
 
-		//protected override void Serialize(ObjectDescription value)
-		//{
-		//    XmlDocument doc = new XmlDocument();
+		protected override void Serialize(zeroflag.Serialization.Descriptors.Descriptor value)
+		{
+			XmlDocument doc = new XmlDocument();
 
-		//    doc.CreateXmlDeclaration("1.0", null, null);
-		//    doc.AppendChild(doc.CreateElement("root"));
+			doc.CreateXmlDeclaration("1.0", null, null);
+			doc.AppendChild(doc.CreateElement("root"));
 
-		//    this.Serialize(value, doc, doc.DocumentElement);
+			this.Serialize(value, doc, doc.DocumentElement);
 
-		//    doc.Save(this.FileName);
-		//}
+			doc.Save(this.FileName);
+		}
 
-		//protected virtual void Serialize(ObjectDescription value, XmlDocument doc, XmlElement parent)
-		//{
-		//    XmlElement node = doc.CreateElement(value.Name ?? value.Type.Name.Split('`')[0]);
+		protected virtual void Serialize(zeroflag.Serialization.Descriptors.Descriptor value, XmlDocument doc, XmlElement parent)
+		{
+			XmlElement node = doc.CreateElement(value.Name ?? value.Type.Name.Split('`')[0]);
 
-		//    this.WriteAttribute("name", value.Name, doc, node);
-		//    this.WriteAttribute("type", value.Type.FullName, doc, node);
+			this.WriteAttribute("name", value.Name, doc, node);
+			this.WriteAttribute("type", value.Type.FullName, doc, node);
 
-		//    if (value.Properties.Count > 0)
-		//    {
-		//        foreach (ObjectDescription desc in value.Properties)
-		//        {
-		//            this.Serialize(desc, doc, node);
-		//        }
-		//    }
-		//    else
-		//    {
-		//        node.InnerText = StringConverters.Base.Write(value.Value);
-		//        //this.WriteAttribute("value", StringConverters.Base.Write(value.Value), doc, node);
-		//    }
+			if (value.Inner.Count > 0)
+			{
+				foreach (zeroflag.Serialization.Descriptors.Descriptor desc in value.Inner)
+				{
+					this.Serialize(desc, doc, node);
+				}
+			}
+			else
+			{
+				node.InnerText = Converters.Converter<string, object>.GetConverter(typeof(string), value.GetValue().GetType())..Write(value.GetValue());
+				//this.WriteAttribute("value", StringConverters.Base.Write(value.Value), doc, node);
+			}
 
-		//    parent.AppendChild(node);
-		//}
+			parent.AppendChild(node);
+		}
 
 		protected XmlElement WriteAttribute(string name, string value, XmlDocument doc, XmlElement parent)
 		{
