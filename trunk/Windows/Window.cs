@@ -209,7 +209,7 @@ namespace zeroflag.Windows
 
 		public void KeyDown(key key)
 		{
-			WinAPI.SendMessage(this.Handle, WindowsMessages.WM_KEYFIRST, (IntPtr)((long)key), new IntPtr());
+			WinAPI.SendMessage(this.Handle, WindowsMessages.WM_KEYDOWN, (IntPtr)((long)key), new IntPtr());
 		}
 
 		public void KeyUp(key key)
