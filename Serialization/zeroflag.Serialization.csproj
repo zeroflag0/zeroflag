@@ -47,8 +47,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Converters\Converter.cs" />
+    <Compile Include="Converters\Converter~2.cs" />
     <Compile Include="Converters\IConverter.cs" />
     <Compile Include="Converters\String\Converter.cs" />
+    <Compile Include="Converters\String\Converter~1.cs" />
     <Compile Include="Converters\String\String.cs" />
     <Compile Include="Converters\String\Byte.cs" />
     <Compile Include="Converters\String\Sbyte.cs" />
@@ -64,8 +66,8 @@
     <Compile Include="Converters\String\Int64.cs" />
     <Compile Include="Descriptors\Descriptor.cs" />
     <Compile Include="Descriptors\Descriptor~1.cs" />
-    <Compile Include="Descriptors\Default.cs" />
-    <Compile Include="Descriptors\IList.cs" />
+    <Compile Include="Descriptors\ObjectDescriptor.cs" />
+    <Compile Include="Descriptors\ListDescriptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="TypeHelper.cs" />

@@ -4,17 +4,8 @@ using System.Text;
 
 namespace zeroflag.Serialization.Converters
 {
-	public abstract class Converter<T1, T2> : zeroflag.Serialization.Converters.IConverter
+	public abstract class Converter : zeroflag.Serialization.Converters.IConverter
 	{
-		public static T1 Get(T2 value)
-		{
-			return (T1)GetConverter().__Get(value);
-		}
-
-		public static T2 Set(T1 value)
-		{
-			return (T2)GetConverter().__Set(value);
-		}
 
 		static Converter()
 		{
@@ -39,10 +30,6 @@ namespace zeroflag.Serialization.Converters
 		}
 
 		static Dictionary<Type, Dictionary<Type, IConverter>> _Converters;
-		public static IConverter GetConverter()
-		{
-			return GetConverter(typeof(T1), typeof(T2));
-		}
 
 		public static IConverter GetConverter(Type t1, Type t2)
 		{
@@ -51,6 +38,8 @@ namespace zeroflag.Serialization.Converters
 			//    return GetConverter(t1.BaseType, t2);
 			//}
 			//else 
+			if (t2 == null)
+				t2 = typeof(object);
 			if (!_Converters[t1].ContainsKey(t2))
 			{
 				_Converters[t1].Add(t2, GetConverter(t1, t2.BaseType));
@@ -59,21 +48,16 @@ namespace zeroflag.Serialization.Converters
 		}
 
 
-		public Type Type1 { get { return typeof(T1); } }
-		public Type Type2 { get { return typeof(T2); } }
+		#region IConverter Members
 
-		public abstract T1 _Get(T2 value);
+		public abstract object __Get(object value);
 
-		public abstract T2 _Set(T1 value);
+		public abstract object __Set(object value);
 
-		public object __Get(object value)
-		{
-			return (T1)_Get((T2)value);
-		}
+		public abstract Type Type1 { get;}
 
-		public object __Set(object value)
-		{
-			return (T2)_Set((T1)value);
-		}
+		public abstract Type Type2 { get;}
+
+		#endregion
 	}
 }
