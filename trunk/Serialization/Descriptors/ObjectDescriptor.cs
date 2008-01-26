@@ -4,10 +4,13 @@ using System.Text;
 
 namespace zeroflag.Serialization.Descriptors
 {
-	public class Default : Descriptor<object>
+	public class ObjectDescriptor : Descriptor<object>
 	{
 		public override Descriptor Parse()
 		{
+			if (this.Value == null)
+				return this;
+
 			Type type = this.Type;
 
 			System.Reflection.PropertyInfo[] properties = type.GetProperties();

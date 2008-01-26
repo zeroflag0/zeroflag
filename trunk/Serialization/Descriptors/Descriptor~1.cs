@@ -6,41 +6,41 @@ namespace zeroflag.Serialization.Descriptors
 {
 	public abstract class Descriptor<T> : Descriptor
 	{
-		GetHandler<T> _Get;
+		//GetHandler<T> _Get;
 
-		public GetHandler<T> Get
-		{
-			get { return _Get; }
-			set { _Get = value; }
-		}
+		//public GetHandler<T> Get
+		//{
+		//    get { return _Get; }
+		//    set { _Get = value; }
+		//}
 
-		SetHandler<T> _Set;
+		//SetHandler<T> _Set;
 
-		public SetHandler<T> Set
-		{
-			get { return _Set; }
-			set { _Set = value; }
-		}
+		//public SetHandler<T> Set
+		//{
+		//    get { return _Set; }
+		//    set { _Set = value; }
+		//}
 
-		T _Value = default(T);
-		public T Value
+		//T _Value = default(T);
+		//public T Value
+		//{
+		//    get
+		//    {
+		//        return this.Get != null ? this.Get() : _Value;
+		//    }
+		//    set
+		//    {
+		//        if (this.Set != null)
+		//            this.Set(value);
+		//        _Value = value;
+		//    }
+		//}
+		public virtual T GetValue()
 		{
-			get
-			{
-				return this.Get != null ? this.Get() : _Value;
-			}
-			set
-			{
-				if (this.Set != null)
-					this.Set(value);
-				_Value = value;
-			}
+			return (T)this.Value;
 		}
-		public override object GetValue()
-		{
-			return this.Value;
-		}
-		public override void SetValue(object value)
+		public virtual void SetValue(T value)
 		{
 			this.Value = (T)value;
 		}
@@ -73,10 +73,12 @@ namespace zeroflag.Serialization.Descriptors
 			//this.Get = delegate() { return (T)info.GetGetMethod().Invoke(this.Owner.GetValue(), null); };
 			//this.Set = delegate(T value) { info.GetSetMethod().Invoke(this.Owner.GetValue(), new object[] { value }); };
 			if (info.CanRead && info.CanWrite
-//				&& this.Owner != null 
+				//				&& this.Owner != null 
 				)
 			{
-				object value = info.GetValue(this.Owner.GetValue(), new object[] { });
+				object value = null;
+				if (this.Owner != null && this.Owner.Value != null)
+					value = info.GetValue(this.Owner.Value, new object[] { });
 				return this.Parse(info.Name, info.PropertyType, value);
 			}
 			else return this;

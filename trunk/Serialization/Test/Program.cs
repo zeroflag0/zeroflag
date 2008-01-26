@@ -43,13 +43,27 @@ namespace Test
 			set { _Children = value; }
 		}
 
-		public A()
+		string _Name = null;
+
+		public string Name
 		{
+			get { return _Name; }
+			set { _Name = value; }
+		}
+
+		public A(string name)
+		{
+			this.Name = name;
 		}
 
 		public A(params A[] children)
 		{
 			this.Children.AddRange(children);
+		}
+
+		public override string ToString()
+		{
+			return this.Name ?? "<null>";
 		}
 	}
 
@@ -57,14 +71,23 @@ namespace Test
 	{
 		static void Main(string[] args)
 		{
-			Serializer seri = new XmlSerializer("test.xml");
+			try
+			{
+				Serializer seri = new XmlSerializer("test.xml");
 
-			A a = new A(new A(), new A(), null);
+				A a = new A(new A("foo"), new A("bar"), null);
 
-			zeroflag.Serialization.Descriptors.Descriptor desc = zeroflag.Serialization.Descriptors.Descriptor.DoParse(a);
+				zeroflag.Serialization.Descriptors.Descriptor desc = zeroflag.Serialization.Descriptors.Descriptor.DoParse(a);
 
-			Console.WriteLine(desc);
-			//seri.Serialize(a);
+				Console.WriteLine(desc);
+				//seri.Serialize(a);
+				seri.Serialize(desc);
+			}
+			catch (Exception exc)
+			{
+				Console.WriteLine(exc);
+			}
+			finally { }
 		}
 	}
 }

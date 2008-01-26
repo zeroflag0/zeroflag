@@ -40,11 +40,11 @@ namespace zeroflag.Serialization
 		//    throw new NotImplementedException();
 		//}
 
-		protected override void Serialize(zeroflag.Serialization.Descriptors.Descriptor value)
+		public override void Serialize(zeroflag.Serialization.Descriptors.Descriptor value)
 		{
 			XmlDocument doc = new XmlDocument();
 
-			doc.CreateXmlDeclaration("1.0", null, null);
+			doc.AppendChild(doc.CreateXmlDeclaration("1.0", null, null));
 			doc.AppendChild(doc.CreateElement("root"));
 
 			this.Serialize(value, doc, doc.DocumentElement);
@@ -54,10 +54,12 @@ namespace zeroflag.Serialization
 
 		protected virtual void Serialize(zeroflag.Serialization.Descriptors.Descriptor value, XmlDocument doc, XmlElement parent)
 		{
+			Console.WriteLine("Serialize(" + value + ")");
 			XmlElement node = doc.CreateElement(value.Name ?? value.Type.Name.Split('`')[0]);
 
 			this.WriteAttribute("name", value.Name, doc, node);
 			this.WriteAttribute("type", value.Type.FullName, doc, node);
+			this.WriteAttribute("descriptor", value.ToString(), doc, node);
 
 			if (value.Inner.Count > 0)
 			{
@@ -68,7 +70,9 @@ namespace zeroflag.Serialization
 			}
 			else
 			{
-				node.InnerText = Converters.Converter<string, object>.GetConverter(typeof(string), value.GetValue().GetType())..Write(value.GetValue());
+				Console.WriteLine("Serialize(" + value + ") Convert(" + value + ")");
+				//node.InnerText = Converters.Converter<string, object>.GetConverter(typeof(string), value.GetValue().GetType())..Write(value.GetValue());
+				node.InnerText = Converters.String.Converter.Get(value.Value);
 				//this.WriteAttribute("value", StringConverters.Base.Write(value.Value), doc, node);
 			}
 

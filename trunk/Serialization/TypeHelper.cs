@@ -41,15 +41,22 @@ namespace zeroflag
 
 		public static object CreateInstance(System.Type type, params System.Type[] generics)
 		{
+			if (type == null)
+				return null;
 			//System.Activator.CreateInstance(type, null, 
 			return CreateInstance(SpecializeType(type, generics));
 		}
 
 		public static Type SpecializeType(System.Type type, params System.Type[] generics)
 		{
-			if (type.IsGenericType)
-				type = type.GetGenericTypeDefinition();
-			type = type.MakeGenericType(generics);
+			if (type == null)
+				return type;
+			if (type.IsGenericTypeDefinition)
+			{
+				if (!type.IsGenericTypeDefinition)
+					type = type.GetGenericTypeDefinition();
+				type = type.MakeGenericType(generics);
+			}
 			return type;
 		}
 

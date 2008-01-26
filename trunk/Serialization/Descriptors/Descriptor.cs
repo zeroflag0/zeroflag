@@ -25,8 +25,17 @@ namespace zeroflag.Serialization.Descriptors
 			return GetDescriptor(value.GetType()).Parse(value.GetType().Name.Replace("~", "_"), value.GetType(), value);
 		}
 
+		public static Descriptor DoParse(object value, Type type, Descriptor owner)
+		{
+			Console.WriteLine("DoParse(" + value + ", " + type + ", " + owner + ")");
+			return GetDescriptor(type).Parse(type.Name.Replace("~", "_"), type, owner, value);
+		}
+
+
 		public static Descriptor DoParse(object value, Descriptor owner)
 		{
+			if (value == null)
+				return null;
 			Console.WriteLine("DoParse(" + value + ", " + owner + ")");
 			return GetDescriptor(value.GetType()).Parse(value.GetType().Name.Replace("~", "_"), value.GetType(), owner, value);
 		}
@@ -45,8 +54,96 @@ namespace zeroflag.Serialization.Descriptors
 		#endregion static Parse
 
 		#region Descriptors
-		static Dictionary<Type, Descriptor> _Descriptors = new Dictionary<Type, Descriptor>();
-		static Dictionary<Type, Type> _DescriptorGenericTypes = new Dictionary<Type, Type>();
+		static Dictionary<Type, Type> _DescriptorTypes = new Dictionary<Type, Type>();
+
+		static Descriptor()
+		{
+			List<Type> types = TypeHelper.GetDerived(typeof(Descriptor<>));
+			Type valueType, descriptor;
+			foreach (Type descriptorType in types)
+			{
+				if (descriptorType.IsAbstract || descriptorType.IsInterface)
+					continue;
+
+				descriptor = descriptorType;
+
+				Type genericDescriptor = descriptor;
+				while (!genericDescriptor.IsGenericType || typeof(Descriptor<>) != genericDescriptor.GetGenericTypeDefinition())
+					genericDescriptor = genericDescriptor.BaseType;
+
+				valueType = genericDescriptor.GetGenericArguments()[0];
+				if (valueType.IsGenericType)
+					valueType = valueType.GetGenericTypeDefinition();
+
+				_DescriptorTypes.Add(valueType, descriptor);
+			}
+		}
+
+		public static Descriptor GetDescriptor(Type value, params Type[] generics)
+		{
+			return (Descriptor)TypeHelper.CreateInstance(GetDescriptorType(value, generics), generics);
+		}
+		public static Type GetDescriptorType(Type value, params Type[] generics)
+		{
+			if (!_DescriptorTypes.ContainsKey(value))
+			{
+				Console.WriteLine("GetDescriptorType(" + value + ", " + generics + ")");
+
+				Type descriptor = null;
+				if (value.IsGenericType)
+				// value type is generic...
+				{
+					if (!value.IsGenericTypeDefinition)
+					// if the value type is specialized (e.g. not <T> but <int> or <string>)...
+					{
+						if (generics.Length <= 0)
+							// get the generic arguments...
+							generics = value.GetGenericArguments();
+
+						// get the fully generic type definition... (get <T> instead of <int>)
+						Type genericValue = value.GetGenericTypeDefinition();
+
+						// search for any descriptor that fits the generic definition...
+						Type genericDescriptor = GetDescriptorType(genericValue, generics);
+
+						if (genericDescriptor != null && genericValue != null)
+						{
+							// we got ourselves a base descriptor... now we need to specialize it for our generic type...
+							descriptor = TypeHelper.SpecializeType(genericDescriptor, generics);
+						}
+					}
+				}
+
+				if (descriptor == null || descriptor == typeof(ObjectDescriptor))
+				// no suitable descriptor yet...
+				{
+					// scan base types...
+					if (value.BaseType != null)
+						descriptor = GetDescriptorType(value.BaseType, generics);
+				}
+
+				if (descriptor == null || descriptor == typeof(ObjectDescriptor))
+				// no suitable descriptor yet...
+				{
+					// scan interfaces...
+					foreach (Type interf in value.GetInterfaces())
+					{
+						descriptor = GetDescriptorType(interf, generics);
+						if (descriptor != null)
+							break;
+					}
+				}
+
+				if (descriptor != null)
+					_DescriptorTypes.Add(value, descriptor);
+				else
+					return typeof(ObjectDescriptor);
+			}
+			return _DescriptorTypes[value];
+		}
+#if OBSOLETE
+		//static Dictionary<Type, Descriptor> _Descriptors = new Dictionary<Type, Descriptor>();
+		static Dictionary<Type, Type> _DescriptorTypes = new Dictionary<Type, Type>();
 		static Descriptor()
 		{
 			List<Type> types = TypeHelper.GetDerived(typeof(Descriptor<>));
@@ -59,50 +156,55 @@ namespace zeroflag.Serialization.Descriptors
 
 				descriptor = descriptorType;
 
-				if (!descriptor.IsGenericType)
-				{
-					Descriptor instance = (Descriptor)TypeHelper.CreateInstance(descriptor);
+				//if (!descriptor.IsGenericType)
+				//{
+				//    Descriptor instance = (Descriptor)TypeHelper.CreateInstance(descriptor);
 
-					if (!_Descriptors.ContainsKey(instance.Type))
-						_Descriptors.Add(instance.Type, instance);
-				}
-				else
+				//    if (!_Descriptors.ContainsKey(instance.Type))
+				//        _Descriptors.Add(instance.Type, instance);
+				//}
+				//else
 				{
 					Type genericDescriptor = descriptor;
 					while (typeof(Descriptor<>) != genericDescriptor.GetGenericTypeDefinition())
 						genericDescriptor = genericDescriptor.BaseType;
 					//descriptor = descriptor.GetGenericTypeDefinition();
 					valueType = genericDescriptor.GetGenericArguments()[0].GetGenericTypeDefinition();
-					_DescriptorGenericTypes.Add(valueType, descriptor);
+					_DescriptorTypes.Add(valueType, descriptor);
 				}
 			}
 		}
 
-		protected static Descriptor GetDescriptor(Type t, params Type[] generics)
+		protected static Descriptor GetDescriptor(Type type, params Type[] generics)
 		{
-			if (!_Descriptors.ContainsKey(t))
+			if (type == null)
+				return null;
+			if (!_DescriptorTypes.ContainsKey(type))
 			{
 				Descriptor inner = null;
 
-				if (t.IsGenericType)
+				if (type.IsGenericType)
 				{
-					if (!t.IsGenericTypeDefinition)
+					if (!type.IsGenericTypeDefinition)
 					{
-						Type generic = t.GetGenericTypeDefinition();
+						Type generic = type.GetGenericTypeDefinition();
 						if (generics.Length <= 0)
-							generics = t.GetGenericArguments();
+							generics = type.GetGenericArguments();
 						else
 						{
 							List<Type> genericTypes = new List<Type>(generics);
-							genericTypes.AddRange(t.GetGenericArguments());
+							genericTypes.AddRange(type.GetGenericArguments());
 							//generics = new Type[generics.Length + t.GetGenericArguments().Length];
 						}
-						if (_DescriptorGenericTypes.ContainsKey(generic))
+						if (_DescriptorTypes.ContainsKey(generic))
 						{
-							inner = (Descriptor)TypeHelper.CreateInstance(_DescriptorGenericTypes[generic], TypeHelper.SpecializeType(generic, generics));
+							type = generic;
+							generic = TypeHelper.SpecializeType(generic, generics);
+							//inner = (Descriptor)TypeHelper.CreateInstance(_DescriptorTypes[type], generics);
+							inner = GetDescriptor(_DescriptorTypes[type], generics);
 						}
 
-						if ((inner == null || inner.GetType() == typeof(Default)) && generic != t)
+						if ((inner == null || inner.GetType() == typeof(Default)) && generic != type && generic != null)
 						{
 							inner = GetDescriptor(generic, generics);
 						}
@@ -111,7 +213,7 @@ namespace zeroflag.Serialization.Descriptors
 
 				if (inner == null || inner.GetType() == typeof(Default))
 				{
-					Type[] interfaces = t.GetInterfaces();
+					Type[] interfaces = type.GetInterfaces();
 					foreach (Type inter in interfaces)
 					{
 						inner = GetDescriptor(inter, generics);
@@ -119,14 +221,15 @@ namespace zeroflag.Serialization.Descriptors
 							break;
 					}
 
-					if (inner == null || inner.GetType() == typeof(Default))
-						inner = GetDescriptor(t.BaseType, generics);
+					if ((inner == null || inner.GetType() == typeof(Default)) && type.BaseType != null)
+						inner = GetDescriptor(type.BaseType, generics);
 				}
-				_Descriptors.Add(t, inner);
+				_DescriptorTypes.Add(type, inner.GetType());
 			}
 			//Console.WriteLine("Selected " + _Descriptors[t] + " for " + t);
-			return _Descriptors[t];
+			return (Descriptor)TypeHelper.CreateInstance(_DescriptorTypes[type], generics);
 		}
+#endif//OBSOLETE
 		#endregion Descriptors
 
 
@@ -163,6 +266,21 @@ namespace zeroflag.Serialization.Descriptors
 		}
 		#endregion Owner
 
+		object _Value = null;
+		public object Value
+		{
+			get
+			{
+				return _Value;
+			}
+			set
+			{
+				_Value = value;
+			}
+		}
+		//public abstract object GetValue();
+		//public abstract void SetValue(object value);
+
 		List<Descriptor> _Inner = new List<Descriptor>();
 
 		public List<Descriptor> Inner
@@ -170,8 +288,6 @@ namespace zeroflag.Serialization.Descriptors
 			get { return _Inner; }
 		}
 
-		public abstract object GetValue();
-		public abstract void SetValue(object value);
 
 		public Descriptor Parse(System.Reflection.PropertyInfo info, Descriptor owner)
 		{
@@ -228,9 +344,11 @@ namespace zeroflag.Serialization.Descriptors
 
 		public StringBuilder ToString(StringBuilder builder)
 		{
+			//Console.WriteLine(this.GetType().Name + ".ToString(" + builder.ToString() + ")");
 			builder.Append(this.GetType().Name).Append("[").Append(this.Name).Append(", ").Append(this.Type).Append(", ").Append(this.Id).Append("] -> { ");
-			foreach (Descriptor inner in this.Inner)
-				inner.ToString(builder);
+			//builder.Append(this.GetType().Name).Append("[").Append(this.Id).Append("] -> { ");
+			//foreach (Descriptor inner in this.Inner)
+			//    inner.ToString(builder);
 			return builder.Append(" } ");
 		}
 	}

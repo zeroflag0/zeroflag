@@ -1,26 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Base = zeroflag.Serialization.Converters.Converter;
+using IBase = zeroflag.Serialization.Converters.IConverter;
 
 namespace zeroflag.Serialization.Converters.String
 {
-	public abstract class Converter<T> : Converter<string,T>
+	public class Converter
 	{
 		public const string NullToken = "~!~null~!~";
 
-		public override string _Get(T value)
+		public static string Get(object value)
 		{
-			return object.ReferenceEquals(null, value) ? NullToken : value.ToString();
+			if (value == null)
+				return NullToken;
+			IBase b = Base.GetConverter(typeof(string), value.GetType());
+			return (string)b.__Get(value);
 		}
-
-		public override T _Set(string value)
-		{
-			if (value == NullToken)
-				return default(T);
-			else
-				return ___Set(value);
-		}
-
-		public abstract T ___Set(string value);
 	}
 }

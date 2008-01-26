@@ -83,7 +83,7 @@ namespace zeroflag.Serialization
 			//desc.Parse(value);
 			this.Serialize(desc);
 		}
-		protected abstract void Serialize(Descriptors.Descriptor value);
+		public abstract void Serialize(Descriptors.Descriptor value);
 
 		//public object Deserialize(Type type)
 		//{
