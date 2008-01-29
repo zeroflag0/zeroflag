@@ -30,13 +30,61 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace zeroflag.Serialization.Converters.String
+namespace zeroflag.Imaging.Strategies
 {
-	public class UInt64 : Converter<System.UInt64>
+	public class HueFinder : Strategy
 	{
-		public override System.UInt64 ___Set(string value)
+		public override Color Apply(int x, int y, Color value)
 		{
-			return System.UInt64.Parse(value);
+			//if (value.Saturation > this.MinBrightness && value.Saturation < this.MaxBrightness)
+			if (value.Saturation > this.MinSaturation && value.Brightness < 0.5f)
+				foreach (Hue hue in this.Hues)
+					if (value.Hue == hue)
+						return //(Color)(hue + 180f);
+							new Color(1f, 1f, 1f);
+
+			return new Color(0f, 0f, 0f, 0f);
+			//return value.Hue == Hue ? value : null;
+		}
+
+		List<Hue> _Hues = new List<Hue>();
+
+		public List<Hue> Hues
+		{
+			get { return _Hues; }
+			set { _Hues = value; }
+		}
+
+		float _MinSaturation = 0.8f;
+
+		public float MinSaturation
+		{
+			get { return _MinSaturation; }
+			set { _MinSaturation = value; }
+		}
+
+		//float _MaxBrightness = 0.7f;
+
+		//public float MaxBrightness
+		//{
+		//    get { return _MaxBrightness; }
+		//    set { _MaxBrightness = value; }
+		//}
+
+		public HueFinder()
+		{
+		}
+
+		public HueFinder(params Hue[] hues)
+		{
+			this.Hues.AddRange(hues);
+		}
+
+		public HueFinder(float minSaturation/*, float maxBrightness*/, params Hue[] hues)
+			: this(hues)
+		{
+			this.MinSaturation = minSaturation;
+			//this.MaxBrightness = maxBrightness;
 		}
 	}
 }

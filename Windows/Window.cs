@@ -219,8 +219,12 @@ namespace zeroflag.Windows
 
 		public void MouseClick(Point location, button button)
 		{
+			MouseClick(location, button, 10);
+		}
+		public void MouseClick(Point location, button button, int duration)
+		{
 			this.MouseDown(location, button);
-			Thread.Sleep(100);
+			System.Threading.Thread.Sleep(duration);
 			this.MouseUp(location, button);
 		}
 

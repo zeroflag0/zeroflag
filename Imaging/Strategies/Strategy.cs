@@ -36,10 +36,7 @@ namespace zeroflag.Imaging.Strategies
 	{
 		public virtual void PreApply()
 		{
-			foreach (Strategy child in this.Next)
-			{
-				child.PreApply();
-			}
+			if (this.Next != null) this.Next.PreApply();
 		}
 
 		public virtual Color Apply(int x, int y)
@@ -51,10 +48,7 @@ namespace zeroflag.Imaging.Strategies
 
 		public virtual void PostApply()
 		{
-			foreach (Strategy child in this.Next)
-			{
-				child.PostApply();
-			}
+			if (this.Next != null) this.Next.PostApply();
 		}
 
 		IPixelSource _PixelSource;
@@ -72,18 +66,24 @@ namespace zeroflag.Imaging.Strategies
 		{
 			get
 			{
-				if (this.Next.Count > 0)
-				{
-					ApplyHandler next = this.Next[0].Delegate;
-					for (int i = 0; i < this.Next.Count; i++)
-						next += this.Next[i].Delegate;
+				//if (this.Next.Count > 0)
+				//{
+				//    ApplyHandler next = this.Next[0].Delegate;
+				//    for (int i = 0; i < this.Next.Count; i++)
+				//        next += this.Next[i].Delegate;
 
+				//    return
+				//        delegate(int x, int y, Color value)
+				//        {
+				//            return next(x, y, this.Apply(x, y, value));
+				//        };
+				//}
+				if (this.Next != null)
 					return
 						delegate(int x, int y, Color value)
 						{
-							return next(x, y, this.Apply(x, y, value));
+							return this.Next.Delegate(x, y, this.Apply(x, y, value));
 						};
-				}
 				else
 					return this.Apply;
 			}
@@ -94,16 +94,24 @@ namespace zeroflag.Imaging.Strategies
 			this._Delegate = this.Delegate;
 		}
 
-		List<Strategy> _Next = new List<Strategy>();
+		//List<Strategy> _Next = new List<Strategy>();
 
-		public List<Strategy> Next
+		//public List<Strategy> Next
+		//{
+		//    get { return _Next; }
+		//}
+		Strategy _Next = null;
+
+		public Strategy Next
 		{
 			get { return _Next; }
+			set { _Next = value; }
 		}
 
 		public Strategies.Strategy Then(Strategies.Strategy next)
 		{
-			this.Next.Add(next);
+			//this.Next.Add(next);
+			this.Next = next;
 			return next;
 		}
 

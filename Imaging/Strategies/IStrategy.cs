@@ -31,7 +31,8 @@ namespace zeroflag.Imaging.Strategies
 {
 	public interface IStrategy
 	{
-		System.Collections.Generic.List<Strategy> Next { get; }
+		//System.Collections.Generic.List<Strategy> Next { get; }
+		Strategy Next { get; }
 		void PostApply();
 		void PreApply();
 		Strategy Then(Strategy next);

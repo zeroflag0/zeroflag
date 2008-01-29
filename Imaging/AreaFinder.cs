@@ -161,6 +161,8 @@ namespace zeroflag.Imaging
 			this.Results.Clear();
 
 			base.DoUpdate();
+
+			this.Results.Sort();
 		}
 
 		int _Range = 5;
@@ -226,7 +228,7 @@ namespace zeroflag.Imaging
 			}
 			public override string ToString()
 			{
-				return "{" + this.X + "," + this.Y + "}{" + this.Width + "," + this.Height + "}";
+				return "{" + this.X + "," + this.Y + "," + this.Width + "," + this.Height + "}";
 			}
 			public int Volume
 			{
@@ -241,7 +243,7 @@ namespace zeroflag.Imaging
 
 			public int CompareTo(Region other)
 			{
-				return other != null ? this.Volume.CompareTo(other.Volume) : this.Volume.CompareTo(0);
+				return other != null ? other.Volume.CompareTo(this.Volume) : this.Volume.CompareTo(0);
 			}
 
 			#endregion

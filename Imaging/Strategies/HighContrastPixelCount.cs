@@ -32,40 +32,69 @@ using System.Text;
 
 namespace zeroflag.Imaging.Strategies
 {
-	public class Average : Strategy
+	public class HighContrastPixelCount : Strategy
 	{
 		public override Color Apply(int x, int y, Color value)
 		{
-			r += value.R;
-			g += value.G;
-			b += value.B;
+			//if (value.R > this.Contrast.R && value.G > this.Contrast.G && value.B > this.Contrast.B)
+			double a = value.Hue;
+			a = Math.Abs(a - h);
+			if (a > 180f)
+				a = 360f - a;
+			a /= 180f;
+			if (a < this.Threashold && Math.Abs(value.Brightness - b) < this.Threashold)
+				v++;
 			c++;
 
 			return value;
 		}
 
-		double r, g, b, c;
+		double h, b;
+		long v, c;
 
-		Color _Result;
+		float _Result;
 
-		public Color Result
+		public float Result
 		{
 			get { return _Result; }
 			set { _Result = value; }
 		}
 
+		Color _Contrast = new Color(0.5f, 0.5f, 0.5f);
+
+		public Color Contrast
+		{
+			get { return _Contrast; }
+			set { _Contrast = value; }
+		}
+		float _Threashold = 0.5f;
+
+		public float Threashold
+		{
+			get { return _Threashold; }
+			set { _Threashold = value; }
+		}
+
+		public HighContrastPixelCount(Color contrast, float threashold)
+		{
+			this.Contrast = contrast;
+			this.Threashold = threashold;
+		}
+
 		public override void PreApply()
 		{
-			r = 0;
-			g = 0;
-			b = 0;
-			c = 0;
+			v = c = 0;
+			b = this.Contrast.Brightness;
+			h = this.Contrast.Hue;
 			base.PreApply();
 		}
 
 		public override void PostApply()
 		{
-			this.Result = new Color((float)(r / c), (float)(g / c), (float)(b / c));
+			if (c > 0)
+				this.Result = (float)v / (float)c;
+			else
+				this.Result = 0;
 
 			//foreach (Strategy strat in this.Next)
 			//{
@@ -77,16 +106,7 @@ namespace zeroflag.Imaging.Strategies
 
 		public override string ToString()
 		{
-			return base.GetType().Name + this.Result;
-		}
-	}
-
-	public class AveragePaint : Average
-	{
-		public override Color Apply(int x, int y, Color value)
-		{
-			value = base.Apply(x, y, value);
-			return this.Result ?? value;
+			return base.GetType().Name + " " + this.Result + " v=" + v + " c=" + c;
 		}
 	}
 }
