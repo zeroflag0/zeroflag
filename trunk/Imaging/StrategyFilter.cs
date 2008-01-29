@@ -60,6 +60,18 @@ namespace zeroflag.Imaging
 			}
 		}
 
+		public T Get<T>()
+			where T : class, Strategies.IStrategy
+		{
+			Strategies.IStrategy current = this.Strategy;
+			T value = null;
+			while (value == null && current != null)
+			{
+				value = current as T;
+				current = current.Next;
+			}
+			return value;
+		}
 
 		Strategies.IStrategy _Strategy;
 
@@ -84,7 +96,7 @@ namespace zeroflag.Imaging
 			this.Strategy = strategies[0];
 			for (int i = 1; i < strategies.Length; i++)
 				strategies[i - 1].Then((Strategies.Strategy)strategies[i]);
-			return this ;
+			return this;
 		}
 
 		#region Constructors

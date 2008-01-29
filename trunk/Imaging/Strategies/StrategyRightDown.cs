@@ -34,11 +34,17 @@ namespace zeroflag.Imaging.Strategies
 {
 	public abstract class StrategyRightDown : IStrategy
 	{
-		public virtual void PreApply() { }
+		public virtual void PreApply()
+		{
+			if (this.Next != null) this.Next.PreApply();
+		}
 
 		public abstract Color Apply(int x, int y, Color value, Color right, Color down);
 
-		public virtual void PostApply() { }
+		public virtual void PostApply()
+		{
+			if (this.Next != null) this.Next.PostApply();
+		}
 
 
 		public delegate Color ApplyHandler(int x, int y, Color value, Color right, Color down);
@@ -47,16 +53,16 @@ namespace zeroflag.Imaging.Strategies
 		{
 			get
 			{
-				if (this.Next.Count > 0)
+				//if (this.Next.Count > 0)
+				//{
+				//    Strategy.ApplyHandler next = this.Next[0].Delegate;
+				//    for (int i = 0; i < this.Next.Count; i++)
+				//        next += this.Next[1].Delegate;
+				if (this.Next != null)
 				{
-					Strategy.ApplyHandler next = this.Next[0].Delegate;
-					for (int i = 0; i < this.Next.Count; i++)
-						next += this.Next[1].Delegate;
-
-					return
-						delegate(int x, int y, Color value, Color right, Color down)
+					return delegate(int x, int y, Color value, Color right, Color down)
 						{
-							return next(x, y, this.Apply(x, y, value, right, down));
+							return this.Next.Delegate(x, y, this.Apply(x, y, value, right, down));
 						};
 				}
 				else
@@ -64,19 +70,20 @@ namespace zeroflag.Imaging.Strategies
 			}
 		}
 
-		List<Strategy> _Next = new List<Strategy>();
+		Strategy _Next = null;
 
-		public List<Strategy> Next
+		public Strategy Next
 		{
 			get { return _Next; }
+			set { _Next = value; }
 		}
 
 		public Strategies.Strategy Then(Strategies.Strategy next)
 		{
-			this.Next.Add(next);
+			//this.Next.Add(next);
+			this.Next = next;
 			return next;
 		}
-
 		#region IStrategy Members
 
 		ApplyHandler _Delegate;

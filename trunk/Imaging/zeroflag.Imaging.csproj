@@ -41,6 +41,7 @@
     <Compile Include="Dummy.cs" />
     <Compile Include="EdgeBW.cs" />
     <Compile Include="Edge.cs" />
+    <Compile Include="Hue.cs" />
     <Compile Include="Image.cs" />
     <Compile Include="IPixelSource.cs" />
     <Compile Include="LineFinder.cs" />
@@ -52,6 +53,8 @@
     <Compile Include="Strategies\Change.cs" />
     <Compile Include="Strategies\Edge2.cs" />
     <Compile Include="Strategies\Edge1.cs" />
+    <Compile Include="Strategies\HighContrastPixelCount.cs" />
+    <Compile Include="Strategies\HueFinder.cs" />
     <Compile Include="Strategies\IStrategy.cs" />
     <Compile Include="Strategies\StrategyRight.cs" />
     <Compile Include="Strategies\Strategy.cs" />

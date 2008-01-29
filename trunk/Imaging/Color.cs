@@ -157,6 +157,19 @@ namespace zeroflag.Imaging
 					: value;
 		}
 
+		public Color Set(float r, float g, float b)
+		{
+			return this.Set(1.0f, r, g, b);
+		}
+		public Color Set(float a, float r, float g, float b)
+		{
+			this.A = a;
+			this.R = r;
+			this.G = g;
+			this.B = b;
+			return this;
+		}
+
 		#region A
 
 		private float _A = default(float);
@@ -267,9 +280,10 @@ namespace zeroflag.Imaging
 		/// <summary>
 		/// The hue, in degrees, of this Color. The hue is measured in degrees, ranging from 0.0 through 360.0, in HSB color space. 
 		/// </summary>
-		public float Hue
+		public Hue Hue
 		{
 			get { return this.Base.GetHue(); }
+			set { value.ApplyTo(this); }
 		}
 		#endregion Hue
 
@@ -290,7 +304,7 @@ namespace zeroflag.Imaging
 		{
 		}
 
-		public Color(Base color)
+		public Color( Base color)
 			: this(color.A, color.R, color.G , color.B)
 		{
 			this.Base = color;
@@ -301,17 +315,17 @@ namespace zeroflag.Imaging
 		{
 		}
 
-		public Color(int r, int g, int b)
+		public Color(int r , int g, int b)
 			: this(0xff, r, g , b)
 		{
 		}
 
 		public Color(int a, int r, int g, int b)
-			: this((float)a / 255f, (float)r / 255f, (float)g / 255f, (float)b / 255f)
+			: this( (float)a / 255f, (float)r / 255f, (float)g / 255f, (float)b / 255f)
 		{
 		}
 
-		public Color(float r, float g , float b)
+		public Color(float r , float g , float b)
 			: this(1, r, g, b)
 		{
 		}
