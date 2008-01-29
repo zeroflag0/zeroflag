@@ -68,6 +68,7 @@
     <Compile Include="Descriptors\Descriptor~1.cs" />
     <Compile Include="Descriptors\ObjectDescriptor.cs" />
     <Compile Include="Descriptors\ListDescriptor.cs" />
+    <Compile Include="Descriptors\StringDescriptor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Serializer.cs" />
     <Compile Include="TypeHelper.cs" />
