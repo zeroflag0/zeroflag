@@ -345,11 +345,11 @@ namespace zeroflag.Serialization.Descriptors
 		public StringBuilder ToString(StringBuilder builder)
 		{
 			//Console.WriteLine(this.GetType().Name + ".ToString(" + builder.ToString() + ")");
-			builder.Append(this.GetType().Name).Append("[").Append(this.Name).Append(", ").Append(this.Type).Append(", ").Append(this.Id).Append("] -> { ");
+			return builder.Append(this.GetType().Name).Append("[").Append(this.Name).Append(", ").Append(this.Type).Append(", ").Append(this.Id).Append("]");// -> { ");
 			//builder.Append(this.GetType().Name).Append("[").Append(this.Id).Append("] -> { ");
 			//foreach (Descriptor inner in this.Inner)
 			//    inner.ToString(builder);
-			return builder.Append(" } ");
+			//return builder.Append(" } ");
 		}
 	}
 }
