@@ -36,6 +36,7 @@
   <ItemGroup>
     <Compile Include="Average.cs" />
     <Compile Include="Brightness.cs" />
+    <Compile Include="Buffer.cs" />
     <Compile Include="Change.cs" />
     <Compile Include="Color.cs" />
     <Compile Include="Dummy.cs" />

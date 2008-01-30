@@ -26,41 +26,13 @@
 //*********************************************************************
 #endregion LGPL License
 
-#region LGPL License
-//********************************************************************
-//	author:         Thomas "zeroflag" Kraemer
-//	author email:   zeroflag@zeroflag.de
-//	
-//	Copyright (C) 2006-2007  Thomas "zeroflag" Kraemer
-//	
-//	license:	(LGPL)
-//	
-//		This library is free software; you can redistribute it and/or
-//		modify it under the terms of the GNU Lesser General Public
-//		License as published by the Free Software Foundation; either
-//		version 2.1 of the License, or (at your option) any later version.
-//
-//		This library is distributed in the hope that it will be useful,
-//		but WITHOUT ANY WARRANTY; without even the implied warranty of
-//		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//		Lesser General Public License for more details.
-//
-//		You should have received a copy of the GNU Lesser General Public
-//		License along with this library; if not, write to the Free Software
-//		Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
-//
-//		http://www.gnu.org/licenses/lgpl.html#TOC1
-//
-//*********************************************************************
-#endregion LGPL License
-
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace zeroflag.Collections
 {
-	public class TreeNode<T> : IEnumerable<T>
+	public class TreeNode<T> : zeroflag.Collections.ITreeNode<T>
 		where T : TreeNode<T>
 	{
 		#region Constructors
@@ -69,7 +41,7 @@ namespace zeroflag.Collections
 			this.InitializeChildren();
 		}
 
-		public TreeNode(TreeNode<T> parent)
+		public TreeNode(T parent)
 			: this()
 		{
 			this.Parent = parent;
@@ -78,7 +50,7 @@ namespace zeroflag.Collections
 
 
 		#region Value
-
+#if TREENODE_USEVALUE
 		public static implicit operator T(TreeNode<T> node)
 		{
 			return node != null ? node.Value : default(T);
@@ -132,6 +104,7 @@ namespace zeroflag.Collections
 			}
 		}
 		#endregion ValueChanged event
+#endif
 		#endregion Value
 
 		#region Parent
@@ -154,7 +127,7 @@ namespace zeroflag.Collections
 		}
 
 		#region ParentChanged event
-		public delegate void ParentChangedHandler(object sender, TreeNode<T> oldvalue, TreeNode<T> newvalue);
+		public delegate void ParentChangedHandler(object sender, T oldvalue, T newvalue);
 
 		private event ParentChangedHandler m_ParentChanged;
 		/// <summary>
@@ -169,12 +142,12 @@ namespace zeroflag.Collections
 		/// <summary>
 		/// Raises the ParentChanged event.
 		/// </summary>
-		protected virtual void OnParentChanged(TreeNode<T> oldvalue, TreeNode<T> newvalue)
+		protected virtual void OnParentChanged(T oldvalue, T newvalue)
 		{
 			if (oldvalue != null)
-				oldvalue.Remove(this);
+				oldvalue.Remove((T)this);
 			if (newvalue != null)
-				newvalue.Add(this);
+				newvalue.Add((T)this);
 
 			// if there are event subscribers...
 			if (this.m_ParentChanged != null)
@@ -188,7 +161,7 @@ namespace zeroflag.Collections
 
 		#region System.Collections.Generic.ICollection`1
 
-		public virtual void Add(TreeNode<T> child)
+		public virtual void Add(T child)
 		{
 			this.Children.Add(child);
 		}
@@ -198,12 +171,12 @@ namespace zeroflag.Collections
 			this.Children.Clear();
 		}
 
-		public virtual bool Contains(TreeNode<T> child)
+		public virtual bool Contains(T child)
 		{
 			return this.Children.Contains(child);
 		}
 
-		public virtual bool Remove(TreeNode<T> child)
+		public virtual bool Remove(T child)
 		{
 			return this.Children.Remove(child);
 		}
@@ -216,16 +189,16 @@ namespace zeroflag.Collections
 		#endregion System.Collections.Generic.ICollection`1
 
 		#region Children
-		private List<TreeNode<T>> _Children = new List<TreeNode<T>>();
+		private List<T> _Children = new List<T>();
 
-		public List<TreeNode<T>> Children
+		public List<T> Children
 		{
 			get { return _Children; }
 		}
 
 		private void InitializeChildren()
 		{
-			this.Children.ItemChanged += new List<TreeNode<T>>.ItemChangedHandler(Children_ItemChanged);
+			this.Children.ItemChanged += this.Children_ItemChanged;
 		}
 
 		void Children_ItemChanged(object sender, TreeNode<T> oldvalue, TreeNode<T> newvalue)
@@ -236,7 +209,7 @@ namespace zeroflag.Collections
 			}
 			if (newvalue != null)
 			{
-				newvalue.Parent = this;
+				newvalue.Parent = (T)this;
 			}
 		}
 
@@ -246,13 +219,11 @@ namespace zeroflag.Collections
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
-			//TODO: replace with tree enumerator
 			return Enumerate().GetEnumerator();
 		}
 
 		public virtual System.Collections.Generic.IEnumerator<T> GetEnumerator()
 		{
-			//TODO: replace with tree enumerator
 			return Enumerate().GetEnumerator();
 		}
 
@@ -260,7 +231,7 @@ namespace zeroflag.Collections
 		{
 			foreach (TreeNode<T> child in Enumerate(this))
 			{
-				yield return child.Value;
+				yield return (T)child;
 			}
 		}
 		System.Collections.Generic.IEnumerable<TreeNode<T>> Enumerate(TreeNode<T> node)
