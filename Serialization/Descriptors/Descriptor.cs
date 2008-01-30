@@ -32,55 +32,11 @@ using System.Text;
 
 namespace zeroflag.Serialization.Descriptors
 {
+	/// <summary>
+	/// Descriptor class used to describe an object or a type so it can be used for serialization.
+	/// </summary>
 	public abstract class Descriptor
 	{
-		#region static Parse
-		public static Descriptor DoParse(Type t)
-		{
-			Console.WriteLine("DoParse(" + t + ")");
-			return GetDescriptor(t).Parse(t.Name.Replace("~", "_"), t, null);
-		}
-
-		public static Descriptor DoParse(Type t, Descriptor owner)
-		{
-			Console.WriteLine("DoParse(" + t + ", " + owner + ")");
-			return GetDescriptor(t).Parse(t.Name.Replace("~", "_"), t, owner);
-		}
-
-		public static Descriptor DoParse(object value)
-		{
-			Console.WriteLine("DoParse(" + value + ")");
-			return GetDescriptor(value.GetType()).Parse(value.GetType().Name.Replace("~", "_"), value.GetType(), value);
-		}
-
-		public static Descriptor DoParse(object value, Type type, Descriptor owner)
-		{
-			Console.WriteLine("DoParse(" + value + ", " + type + ", " + owner + ")");
-			return GetDescriptor(type).Parse(type.Name.Replace("~", "_"), type, owner, value);
-		}
-
-
-		public static Descriptor DoParse(object value, Descriptor owner)
-		{
-			if (value == null)
-				return null;
-			Console.WriteLine("DoParse(" + value + ", " + owner + ")");
-			return GetDescriptor(value.GetType()).Parse(value.GetType().Name.Replace("~", "_"), value.GetType(), owner, value);
-		}
-
-		public static Descriptor DoParse(System.Reflection.PropertyInfo info)
-		{
-			Console.WriteLine("DoParse(" + info + ")");
-			return GetDescriptor(info.PropertyType).Parse(info);
-		}
-
-		public static Descriptor DoParse(System.Reflection.PropertyInfo info, Descriptor owner)
-		{
-			Console.WriteLine("DoParse(" + info + ", " + owner + ")");
-			return GetDescriptor(info.PropertyType).Parse(info, owner);
-		}
-		#endregion static Parse
-
 		#region Descriptors
 		static Dictionary<Type, Type> _DescriptorTypes = new Dictionary<Type, Type>();
 
@@ -260,7 +216,6 @@ namespace zeroflag.Serialization.Descriptors
 #endif//OBSOLETE
 		#endregion Descriptors
 
-
 		public delegate T GetHandler<T>();
 		public delegate void SetHandler<T>(T value);
 
@@ -306,8 +261,31 @@ namespace zeroflag.Serialization.Descriptors
 				_Value = value;
 			}
 		}
+
+		private string _Name;
+
+		public string Name
+		{
+			get { return _Name; }
+			set { _Name = value; }
+		}
+
+		int _Id = -1;
+		public virtual int Id
+		{
+			get { return _Id; }
+			set { _Id = value; }
+		}
+		
 		//public abstract object GetValue();
 		//public abstract void SetValue(object value);
+		Dictionary<object, Descriptor> _Parsed = null;
+
+		protected Dictionary<object, Descriptor> Parsed
+		{
+			get { return this.Owner != null ? this.Owner.Parsed : _Parsed ?? (_Parsed = new Dictionary<object, Descriptor>()); }
+		}
+
 
 		List<Descriptor> _Inner = new List<Descriptor>();
 
@@ -316,6 +294,60 @@ namespace zeroflag.Serialization.Descriptors
 			get { return _Inner; }
 		}
 
+
+		#region Parse
+		#region static Parse
+		public static Descriptor DoParse(Type t)
+		{
+			Console.WriteLine("DoParse(" + t + ")");
+			return GetDescriptor(t).Parse(t.Name.Replace("~", "_"), t, null);
+		}
+
+		public static Descriptor DoParse(Type t, Descriptor owner)
+		{
+			Console.WriteLine("DoParse(" + t + ", " + owner + ")");
+			return GetDescriptor(t).Parse(t.Name.Replace("~", "_"), t, owner);
+		}
+
+		public static Descriptor DoParse(string name, object value, Descriptor owner)
+		{
+			Console.WriteLine("DoParse(" + name + ", " + value + ", " + owner + ")");
+			return GetDescriptor(value.GetType()).Parse(name, value.GetType(), value);
+
+		}
+		public static Descriptor DoParse(object value)
+		{
+			Console.WriteLine("DoParse(" + value + ")");
+			return GetDescriptor(value.GetType()).Parse(value.GetType().Name.Replace("~", "_"), value.GetType(), value);
+		}
+
+		public static Descriptor DoParse(object value, Type type, Descriptor owner)
+		{
+			Console.WriteLine("DoParse(" + value + ", " + type + ", " + owner + ")");
+			return GetDescriptor(type).Parse(type.Name.Replace("~", "_"), type, owner, value);
+		}
+
+
+		public static Descriptor DoParse(object value, Descriptor owner)
+		{
+			if (value == null)
+				return null;
+			Console.WriteLine("DoParse(" + value + ", " + owner + ")");
+			return GetDescriptor(value.GetType()).Parse(value.GetType().Name.Replace("~", "_"), value.GetType(), owner, value);
+		}
+
+		public static Descriptor DoParse(System.Reflection.PropertyInfo info)
+		{
+			Console.WriteLine("DoParse(" + info + ")");
+			return GetDescriptor(info.PropertyType).Parse(info);
+		}
+
+		public static Descriptor DoParse(System.Reflection.PropertyInfo info, Descriptor owner)
+		{
+			Console.WriteLine("DoParse(" + info + ", " + owner + ")");
+			return GetDescriptor(info.PropertyType).Parse(info, owner);
+		}
+			#endregion static Parse
 
 		public Descriptor Parse(System.Reflection.PropertyInfo info, Descriptor owner)
 		{
@@ -327,10 +359,6 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			return this.Parse(info.Name, info.PropertyType);
 		}
-
-		public abstract Descriptor Parse(string name, Type type, Descriptor owner, object value);
-		public abstract Descriptor Parse(string name, Type type, object value);
-
 		public virtual Descriptor Parse(string name, Type type, Descriptor owner)
 		{
 			this.Owner = owner;
@@ -349,20 +377,36 @@ namespace zeroflag.Serialization.Descriptors
 			return this.Parse();
 		}
 
-		public abstract Descriptor Parse();
-
-		private string _Name;
-
-		public string Name
+		protected Descriptor Parse()
 		{
-			get { return _Name; }
-			set { _Name = value; }
-		}
+			if (this.Value != null)
+			{
+				if (this.Type.IsValueType || !this.Parsed.ContainsKey(this.Value))
+				{
+					if (this.Value != null && !this.Type.IsValueType)
+					{
+						this.Parsed.Add(this.Value, this);
+					}
+					this.DoParse();
+				}
+				else
+				{
+					Descriptor old = this.Parsed[this.Value];
+					Console.WriteLine("Skipping " + this + " for reference to " + old);
+					//this.Name = old.Name;
+					//this.Key = old.Key;
+					this.Id = old.Id;
+					this.Inner.Clear();
+					//return this.Parsed[this.Value];
+				}
+			}
 
-		public virtual int Id
-		{
-			get { return -1; }
+			return this;
 		}
+		public abstract Descriptor Parse(string name, Type type, Descriptor owner, object value);
+		public abstract Descriptor Parse(string name, Type type, object value);
+		protected abstract void DoParse();
+		#endregion Parse
 
 		public override string ToString()
 		{

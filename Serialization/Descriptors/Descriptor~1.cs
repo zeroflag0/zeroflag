@@ -34,36 +34,6 @@ namespace zeroflag.Serialization.Descriptors
 {
 	public abstract class Descriptor<T> : Descriptor
 	{
-		//GetHandler<T> _Get;
-
-		//public GetHandler<T> Get
-		//{
-		//    get { return _Get; }
-		//    set { _Get = value; }
-		//}
-
-		//SetHandler<T> _Set;
-
-		//public SetHandler<T> Set
-		//{
-		//    get { return _Set; }
-		//    set { _Set = value; }
-		//}
-
-		//T _Value = default(T);
-		//public T Value
-		//{
-		//    get
-		//    {
-		//        return this.Get != null ? this.Get() : _Value;
-		//    }
-		//    set
-		//    {
-		//        if (this.Set != null)
-		//            this.Set(value);
-		//        _Value = value;
-		//    }
-		//}
 		public virtual T GetValue()
 		{
 			return (T)this.Value;
@@ -77,7 +47,7 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			get
 			{
-				if (this.Value != null)
+				if (this.Value != null && !this.Type.IsValueType)
 					return this.Value.GetHashCode();
 				else
 					return base.Id;
@@ -98,11 +68,7 @@ namespace zeroflag.Serialization.Descriptors
 
 		public override Descriptor Parse(System.Reflection.PropertyInfo info)
 		{
-			//this.Get = delegate() { return (T)info.GetGetMethod().Invoke(this.Owner.GetValue(), null); };
-			//this.Set = delegate(T value) { info.GetSetMethod().Invoke(this.Owner.GetValue(), new object[] { value }); };
-			if (info.CanRead && info.CanWrite
-				//				&& this.Owner != null 
-				)
+			if (info.CanRead && info.CanWrite)
 			{
 				object value = null;
 				if (this.Owner != null && this.Owner.Value != null)

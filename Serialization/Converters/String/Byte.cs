@@ -34,7 +34,7 @@ namespace zeroflag.Serialization.Converters.String
 {
 	public class Byte : Converter<System.Byte>
 	{
-		public override System.Byte ___Set(string value)
+		public override System.Byte ___Parse(string value)
 		{
 			return System.Byte.Parse(value);
 		}

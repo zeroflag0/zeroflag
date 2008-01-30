@@ -34,7 +34,7 @@ namespace zeroflag.Serialization.Converters.String
 {
 	public class Int32 : Converter<System.Int32>
 	{
-		public override System.Int32 ___Set(string value)
+		public override System.Int32 ___Parse(string value)
 		{
 			return System.Int32.Parse(value);
 		}

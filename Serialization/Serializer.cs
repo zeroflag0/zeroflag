@@ -62,6 +62,14 @@ namespace zeroflag.Serialization
 				return this.Parent != null ? this.Parent.Root : this;
 			}
 		}
+
+		Descriptors.Descriptor _Descriptor;
+
+		public Descriptors.Descriptor Descriptor
+		{
+			get { return _Descriptor; }
+			set { _Descriptor = value; }
+		}
 	
 		public Serializer()
 		{
@@ -79,9 +87,9 @@ namespace zeroflag.Serialization
 
 		public void Serialize(object value)
 		{
-			Descriptors.Descriptor desc = Descriptors.Descriptor.DoParse(value);
+			this.Descriptor = Descriptors.Descriptor.DoParse(value);
 			//desc.Parse(value);
-			this.Serialize(desc);
+			this.Serialize(this.Descriptor);
 		}
 		public abstract void Serialize(Descriptors.Descriptor value);
 

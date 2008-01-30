@@ -54,25 +54,23 @@ namespace zeroflag.Serialization.Descriptors
 		//    return this.Parse();
 		//}
 
-		public override Descriptor Parse()
+		protected override void DoParse()
 		{
-			if (this.Value == null)
-				return this;
-
 			if (this.Value != null)
 			{
 				DoParse(this.GetValue().Count, this).Name = "Count";
 
-				foreach (object value in this.GetValue())
+				System.Collections.Generic.IList<T> value = this.GetValue();
+				int max = value.Count;
+				//foreach (object value in this.GetValue())
+				for (int i = 0; i < max; i++)
 				{
-					Descriptor item =  DoParse(value, typeof(T), this);
-					item.Name = "Items";
+					Descriptor item =  DoParse(value[i], typeof(T), this);
+					item.Name = "Item";
 					//this.Inner.Add(item);
 					//item.Set = delegate(object value) { this.Value
 				}
 			}
-
-			return this;
 		}
 
 	}
