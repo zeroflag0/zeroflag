@@ -43,14 +43,14 @@ namespace zeroflag.Serialization.Descriptors
 			this.Value = (T)value;
 		}
 
-		static int count = 0;
-		public override int Id
+		//static int count = 0;
+		public override int? Id
 		{
 			get
 			{
 				if (this.Value != null && !this.Type.IsValueType)
-					return base.Id = count++;
-				//return this.Value.GetHashCode();
+					//	return base.Id = count++;
+					return this.Value.GetHashCode();
 				else
 					return base.Id;
 			}

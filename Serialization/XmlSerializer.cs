@@ -143,6 +143,7 @@ namespace zeroflag.Serialization
 			}
 
 			desc.Value = value;
+			desc.DoCreateInstance();
 
 			foreach (XmlNode sub in node.ChildNodes)
 			{

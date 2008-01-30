@@ -37,7 +37,7 @@ namespace zeroflag.Serialization.Descriptors
 				{
 					if (sub.Name == NameItem)
 					{
-						Helper helper = (Helper)sub.Generate();
+						Helper helper = (Helper)(/*sub.Value ?? */sub.Generate());
 						//KeyValuePair<T1, T2> pair = (KeyValuePair<T1, T2>)sub.Generate();
 						value.Add(helper.Key, helper.Value);
 					}

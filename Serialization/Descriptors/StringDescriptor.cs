@@ -38,10 +38,23 @@ namespace zeroflag.Serialization.Descriptors
 		{
 		}
 
+		public override object DoCreateInstance()
+		{
+			return this.Value;//base.DoCreateInstance();
+		}
+
 		protected override object DoGenerate()
 		{
 			return this.Value;
 			//return base.DoGenerate();
+		}
+
+		public override int? Id
+		{
+			get
+			{
+				return null;
+			}
 		}
 	}
 }
