@@ -71,7 +71,9 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			if (!_DescriptorTypes.ContainsKey(value))
 			{
+#if VERBOSE
 				Console.WriteLine("GetDescriptorType(" + value + ", " + generics + ")");
+#endif
 
 				Type descriptor = null;
 				if (value.IsGenericType)
@@ -93,6 +95,8 @@ namespace zeroflag.Serialization.Descriptors
 						if (genericDescriptor != null && genericValue != null)
 						{
 							// we got ourselves a base descriptor... now we need to specialize it for our generic type...
+							if (genericDescriptor.IsGenericType && !genericDescriptor.IsGenericTypeDefinition)
+								genericDescriptor = genericDescriptor.GetGenericTypeDefinition();
 							descriptor = TypeHelper.SpecializeType(genericDescriptor, generics);
 						}
 					}
@@ -311,34 +315,48 @@ namespace zeroflag.Serialization.Descriptors
 
 		#region Parse
 		#region static Parse
+		static string GetCleanName(string value)
+		{
+			return value.Replace("~", "_").Replace("`", "_");
+		}
 		public static Descriptor DoParse(Type t)
 		{
+#if VERBOSE
 			Console.WriteLine("DoParse(" + t + ")");
-			return GetDescriptor(t).Parse(t.Name.Replace("~", "_"), t, null);
+#endif
+			return GetDescriptor(t).Parse(GetCleanName(t.Name), t, null);
 		}
 
 		public static Descriptor DoParse(Type t, Descriptor owner)
 		{
+#if VERBOSE
 			Console.WriteLine("DoParse(" + t + ", " + owner + ")");
-			return GetDescriptor(t).Parse(t.Name.Replace("~", "_"), t, owner);
+#endif
+			return GetDescriptor(t).Parse(GetCleanName(t.Name), t, owner);
 		}
 
 		public static Descriptor DoParse(string name, object value, Descriptor owner)
 		{
+#if VERBOSE
 			Console.WriteLine("DoParse(" + name + ", " + value + ", " + owner + ")");
+#endif
 			return GetDescriptor(value.GetType()).Parse(name, value.GetType(), value);
-
 		}
+
 		public static Descriptor DoParse(object value)
 		{
+#if VERBOSE
 			Console.WriteLine("DoParse(" + value + ")");
-			return GetDescriptor(value.GetType()).Parse(value.GetType().Name.Replace("~", "_"), value.GetType(), value);
+#endif
+			return GetDescriptor(value.GetType()).Parse(GetCleanName(value.GetType().Name), value.GetType(), value);
 		}
 
 		public static Descriptor DoParse(object value, Type type, Descriptor owner)
 		{
+#if VERBOSE
 			Console.WriteLine("DoParse(" + value + ", " + type + ", " + owner + ")");
-			return GetDescriptor(type).Parse(type.Name.Replace("~", "_"), type, owner, value);
+#endif
+			return GetDescriptor(type).Parse(GetCleanName(type.Name), type, owner, value);
 		}
 
 
@@ -346,19 +364,25 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			if (value == null)
 				return null;
+#if VERBOSE
 			Console.WriteLine("DoParse(" + value + ", " + owner + ")");
-			return GetDescriptor(value.GetType()).Parse(value.GetType().Name.Replace("~", "_"), value.GetType(), owner, value);
+#endif
+			return GetDescriptor(value.GetType()).Parse(GetCleanName(value.GetType().Name), value.GetType(), owner, value);
 		}
 
 		public static Descriptor DoParse(System.Reflection.PropertyInfo info)
 		{
+#if VERBOSE
 			Console.WriteLine("DoParse(" + info + ")");
+#endif
 			return GetDescriptor(info.PropertyType).Parse(info);
 		}
 
 		public static Descriptor DoParse(System.Reflection.PropertyInfo info, Descriptor owner)
 		{
+#if VERBOSE
 			Console.WriteLine("DoParse(" + info + ", " + owner + ")");
+#endif
 			return GetDescriptor(info.PropertyType).Parse(info, owner);
 		}
 		#endregion static Parse
@@ -406,7 +430,9 @@ namespace zeroflag.Serialization.Descriptors
 				else
 				{
 					Descriptor old = this.Parsed[this.Value];
+#if VERBOSE
 					Console.WriteLine("Skipping " + this + " for reference to " + old);
+#endif
 					//this.Name = old.Name;
 					//this.Key = old.Key;
 					this.Id = old.Id;
@@ -436,12 +462,22 @@ namespace zeroflag.Serialization.Descriptors
 		protected virtual object DoGenerate()
 		{
 			if (this.Value == null)
-				this.Value = (this.IsNull ? null : this.DoCreateInstance());
+			{
+				try
+				{
+					this.Value = (this.IsNull ? null : this.DoCreateInstance());
+				}
+				catch (Exception exc)
+				{
+					Console.WriteLine(this + ".DoGenerate() failed:\n" + exc);
+				}
+			}
 			if (this.Value != null)
 				foreach (Descriptor sub in this.Inner)
 				{
 					System.Reflection.PropertyInfo prop = this.Type.GetProperty(sub.Name);
-					prop.SetValue(this.Value, sub.Generate(), new object[] { });
+					if (prop != null)
+						prop.SetValue(this.Value, sub.Generate(), new object[] { });
 				}
 			return this.Value;
 		}

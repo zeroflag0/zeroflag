@@ -53,24 +53,19 @@ namespace zeroflag.Serialization.Descriptors
 
 		//    return this.Parse();
 		//}
-		public const string NameCount = "Count";
 		public const string NameItem = "Item";
 
 		protected override void DoParse()
 		{
 			if (this.Value != null)
 			{
-				//DoParse(this.GetValue().Count, this).Name = NameCount;
 
 				System.Collections.Generic.IList<T> value = this.GetValue();
 				int max = value.Count;
-				//foreach (object value in this.GetValue())
 				for (int i = 0; i < max; i++)
 				{
 					Descriptor item = DoParse(value[i], typeof(T), this);
 					item.Name = NameItem;
-					//this.Inner.Add(item);
-					//item.Set = delegate(object value) { this.Value
 				}
 			}
 		}
@@ -90,11 +85,8 @@ namespace zeroflag.Serialization.Descriptors
 					{
 						value.Add((T)sub.Generate());
 					}
-					//System.Reflection.PropertyInfo prop = this.Type.GetProperty("Count");
 				}
 			}
-			else
-				Console.WriteLine(this + " is null.");
 			return this.Value;
 		}
 	}

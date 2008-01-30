@@ -26,6 +26,10 @@
 //*********************************************************************
 #endregion LGPL License
 
+#define TEST1 // class A
+#define TEST2 // dictionary
+//#define TEST3 // winforms <-- doesn't work and it's not because my serializer is too stupid...
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -33,6 +37,7 @@ using zeroflag.Serialization;
 
 namespace Test
 {
+#if TEST1
 	public class A
 	{
 		A _Parent;
@@ -94,15 +99,15 @@ namespace Test
 				return this.Name ?? "<null>";
 		}
 	}
-
+#endif
 	class Program
 	{
 		static void Main(string[] args)
 		{
 			try
 			{
+#if TEST1
 				Serializer seri = new XmlSerializer("test.xml");
-				Serializer seri2 = new XmlSerializer("test2.xml");
 
 				A a = new A("root", new A("foo"), new A("bar"), new A(null), null);
 
@@ -122,6 +127,18 @@ namespace Test
 				//Console.WriteLine("Modified b...");
 				//Console.Write("a = " + a);
 				//Console.WriteLine(" b = " + b);
+#endif
+#if TEST2
+				TestDict<string, int>("foo", 1, "bar", 2, "bla", -1);
+
+				TestDict<string, double>("foo", 1, "bar", 2, "bla", -1);
+#endif
+#if TEST3
+				System.Windows.Forms.Application.Run(new TestForm());
+
+				TestForm restore = new zeroflag.Serialization.XmlSerializer("test_form.xml").Deserialize<TestForm>();
+				System.Windows.Forms.Application.Run(restore);
+#endif
 			}
 			catch (Exception exc)
 			{
@@ -129,5 +146,25 @@ namespace Test
 			}
 			finally { }
 		}
+
+#if TEST2
+		static void TestDict<T1, T2>(T1 p11, T2 p12, T1 p21, T2 p22, T1 p31, T2 p32)
+		{
+			Serializer seri2 = new XmlSerializer("test_dict_" + typeof(T1).Name + "_" + typeof(T2).Name + ".xml");
+			Dictionary<T1, T2> dict = new Dictionary<T1, T2>();
+			dict.Add((T1)p11, (T2)p12);
+			dict.Add((T1)p21, (T2)p22);
+			dict.Add((T1)p31, (T2)p32);
+			seri2.Serialize(dict);
+
+			Dictionary<T1, T2> result = seri2.Deserialize<Dictionary<T1, T2>>();
+
+			foreach (KeyValuePair<T1, T2> pair in result)
+			{
+				Console.WriteLine("\t" + pair.Key + " => " + pair.Value);
+			}
+		}
+#endif
+
 	}
 }
