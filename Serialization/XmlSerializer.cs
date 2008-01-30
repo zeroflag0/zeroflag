@@ -73,9 +73,20 @@ namespace zeroflag.Serialization
 
 			if (!Converters.String.Converter.CanConvert(value.Value))
 			{
+				int nonsense = 0;
 				foreach (zeroflag.Serialization.Descriptors.Descriptor desc in value.Inner)
 				{
-					this.Serialize(desc, doc, node);
+					if (desc.Name != null && desc.Name != "")
+						this.Serialize(desc, doc, node);
+					else
+						nonsense++;
+				}
+				if (nonsense > 0)
+				{
+#if VERBOSE
+					Console.WriteLine("found " + nonsense + " items without a proper name");
+#endif
+					node.AppendChild(doc.CreateComment("found " + nonsense + " items without a proper name"));
 				}
 			}
 			else
