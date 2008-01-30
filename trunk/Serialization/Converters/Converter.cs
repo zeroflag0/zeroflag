@@ -67,10 +67,14 @@ namespace zeroflag.Serialization.Converters
 			//}
 			//else 
 			if (t2 == null)
-				t2 = typeof(object);
+				return null;
 			if (!_Converters[t1].ContainsKey(t2))
 			{
-				_Converters[t1].Add(t2, GetConverter(t1, t2.BaseType));
+				IConverter conv = GetConverter(t1, t2.BaseType);
+				if (conv != null)
+					_Converters[t1].Add(t2, conv);
+				else
+					return null;
 			}
 			return (IConverter)_Converters[t1][t2];
 		}
@@ -78,9 +82,9 @@ namespace zeroflag.Serialization.Converters
 
 		#region IConverter Members
 
-		public abstract object __Get(object value);
+		public abstract object __Generate(object value);
 
-		public abstract object __Set(object value);
+		public abstract object __Parse(object value);
 
 		public abstract Type Type1 { get;}
 

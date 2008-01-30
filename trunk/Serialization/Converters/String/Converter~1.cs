@@ -34,19 +34,19 @@ namespace zeroflag.Serialization.Converters.String
 {
 	public abstract class Converter<T> : Converter<string, T>
 	{
-		public override string _Get(T value)
+		public override string _Generate(T value)
 		{
-			return object.ReferenceEquals(null, value) ? Converter.NullToken : value.ToString();
+			return object.ReferenceEquals(null, value) ? null : value.ToString();
 		}
 
-		public override T _Set(string value)
+		public override T _Parse(string value)
 		{
-			if (value == Converter.NullToken)
+			if (value == null)
 				return default(T);
 			else
-				return ___Set(value);
+				return ___Parse(value);
 		}
 
-		public abstract T ___Set(string value);
+		public abstract T ___Parse(string value);
 	}
 }

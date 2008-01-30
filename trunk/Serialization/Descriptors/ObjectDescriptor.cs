@@ -34,10 +34,10 @@ namespace zeroflag.Serialization.Descriptors
 {
 	public class ObjectDescriptor : Descriptor<object>
 	{
-		public override Descriptor Parse()
+		protected override void DoParse()
 		{
 			if (this.Value == null)
-				return this;
+				return;
 
 			Type type = this.Type;
 
@@ -47,8 +47,6 @@ namespace zeroflag.Serialization.Descriptors
 			{
 				Descriptor.DoParse(property, this);
 			}
-
-			return this;
 		}
 	}
 }

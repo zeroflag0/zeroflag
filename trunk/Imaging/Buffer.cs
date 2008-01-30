@@ -29,80 +29,70 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using zeroflag.Serialization;
 
-namespace Test
+namespace zeroflag.Imaging
 {
-	public class A
+	class Buffer : Filter
 	{
-		A _Parent;
-
-		public A Parent
+		protected override void Apply()
 		{
-			get { return _Parent; }
-			set { _Parent = value; }
+			//base.Apply();
 		}
 
-		List<A> _Children = new List<A>();
-
-		public List<A> Children
+		public void Swap()
 		{
-			get { return _Children; }
-			set { _Children = value; }
+			if (this.Parent != null)
+				this.PixelBuffer = this.Parent.PixelBuffer;
 		}
 
-		string _Name = null;
-
-		public string Name
+		public Buffer(Filter parent, float stepx, float stepy )
+			: base(parent, stepx, stepy)
 		{
-			get { return _Name; }
-			set { _Name = value; }
 		}
 
-		public A(string name)
+		public Buffer()
+			: base()
 		{
-			this.Name = name;
 		}
 
-		public A(string name, params A[] children)
-			: this(name)
+		public Buffer(Filter parent)
+			: base(parent)
 		{
-			foreach (A child in children)
+		}
+
+		public Buffer(Filter parent, float step)
+			: base(parent, step)
+		{
+		}
+
+		public Buffer(Filter parent, System.Drawing.SizeF step)
+			: base(parent, step)
+		{
+		}
+
+		public Buffer(Filter parent, System.Drawing.Rectangle region)
+			: base(parent, region)
+		{
+		}
+
+		protected override void DoRender(System.Drawing.Graphics g)
+		{
+			//base.DoRender(g);
+			if (this.Parent != null)
 			{
-				this.Children.Add(child);
-				if (child != null)
-					child.Parent = this;
+				Color[,] buffer = this.PixelBuffer;
+				//g.DrawRectangle(System.Drawing.Pens.Orange, 0, 0, this.Width * 2, this.Height * 2);
+
+				for (int y = this.Padding.Y; y < this.Height - this.Padding.Height; y++)
+				{
+					for (int x = this.Padding.X; x < this.Width - this.Padding.Width; x++)
+					{
+						Color color = buffer[x + this.X, y + this.Y];
+						g.FillRectangle(new System.Drawing.SolidBrush(color), x, y, 1, 1);
+					}
+				}
+				//g.DrawRectangle(System.Drawing.Pens.Orange, -1, -1, this.Width * 2 + 1, this.Height * 2 + 1);
 			}
-			//this.Children.AddRange(children);
-		}
-
-		public override string ToString()
-		{
-			return this.Name ?? "<null>";
-		}
-	}
-
-	class Program
-	{
-		static void Main(string[] args)
-		{
-			try
-			{
-				Serializer seri = new XmlSerializer("test.xml");
-
-				A a = new A("root", new A("foo"), new A("bar"), null);
-
-				zeroflag.Serialization.Descriptors.Descriptor desc = zeroflag.Serialization.Descriptors.Descriptor.DoParse(a);
-
-				Console.WriteLine(desc);
-				//seri.Serialize(a);
-				seri.Serialize(desc);
-			}
-			catch (Exception exc)
-			{
-				Console.WriteLine(exc);
-			}
-			finally { }
 		}
 	}
 }

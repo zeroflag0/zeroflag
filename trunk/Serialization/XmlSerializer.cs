@@ -45,7 +45,7 @@ namespace zeroflag.Serialization
 			XmlDocument doc = new XmlDocument();
 
 			doc.AppendChild(doc.CreateXmlDeclaration("1.0", null, null));
-			doc.AppendChild(doc.CreateElement("root"));
+			//doc.AppendChild(doc.CreateElement("root"));
 
 			this.Serialize(value, doc, doc.DocumentElement);
 
@@ -59,9 +59,11 @@ namespace zeroflag.Serialization
 
 			this.WriteAttribute("name", value.Name, doc, node);
 			this.WriteAttribute("type", value.Type.FullName, doc, node);
-			this.WriteAttribute("descriptor", value.ToString(), doc, node);
+			if (value.Id > -1)
+				this.WriteAttribute("id", value.Id.ToString(), doc, node);
+			//this.WriteAttribute("descriptor", value.ToString(), doc, node);
 
-			if (value.Inner.Count > 0)
+			if (!Converters.String.Converter.CanConvert(value.Value))
 			{
 				foreach (zeroflag.Serialization.Descriptors.Descriptor desc in value.Inner)
 				{
@@ -70,13 +72,16 @@ namespace zeroflag.Serialization
 			}
 			else
 			{
-				Console.WriteLine("Serialize(" + value + ") Convert(" + value + ")");
-				//node.InnerText = Converters.Converter<string, object>.GetConverter(typeof(string), value.GetValue().GetType())..Write(value.GetValue());
-				node.InnerText = Converters.String.Converter.Get(value.Value);
+				Console.WriteLine("Convert(" + value + ")");
+					node.InnerText = Converters.String.Converter.Generate(value.Value);
+
 				//this.WriteAttribute("value", StringConverters.Base.Write(value.Value), doc, node);
 			}
 
-			parent.AppendChild(node);
+			if (parent != null)
+				parent.AppendChild(node);
+			else
+				doc.AppendChild(node);
 		}
 
 		protected XmlElement WriteAttribute(string name, string value, XmlDocument doc, XmlElement parent)

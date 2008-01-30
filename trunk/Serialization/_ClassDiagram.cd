@@ -1,22 +1,380 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram MajorVersion="1" MinorVersion="1">
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
   <Font Name="Tahoma" Size="8.25" />
   <Class Name="zeroflag.Serialization.Serializer">
-    <Position X="1" Y="0.75" Width="1.5" />
+    <Position X="7.75" Y="0.5" Width="2.25" />
     <TypeIdentifier>
       <FileName>Serializer.cs</FileName>
-      <HashCode>AAAAAAAAAAAAICAAAAAAQAAAACBAIAAAAAAAAABAACA=</HashCode>
+      <HashCode>AAAAAAAAAEAAgCAAAAAAQAAAACAAIAAAAAAAAABAACA=</HashCode>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Descriptor" />
+    </ShowAsAssociation>
     <Members>
+      <Field Name="_Descriptor" Hidden="true" />
       <Field Name="m_FileName" Hidden="true" />
       <Field Name="m_Parent" Hidden="true" />
     </Members>
+    <AssociationLine Name="Descriptor" Type="zeroflag.Serialization.Descriptors.Descriptor" FixedFromPoint="true">
+      <Path>
+        <Point X="7.75" Y="2" />
+        <Point X="4.25" Y="2" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.382" Y="0.112" />
+      </MemberNameLabel>
+    </AssociationLine>
   </Class>
   <Class Name="zeroflag.Serialization.XmlSerializer">
-    <Position X="3.25" Y="0.75" Width="1.5" />
+    <Position X="7.25" Y="3.5" Width="4.5" />
     <TypeIdentifier>
       <FileName>XmlSerializer.cs</FileName>
-      <HashCode>AAAAAAAQAAAAIAAAAAAAAAAAACBAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAQAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
+    <Members>
+      <Method Name="WriteAttribute" Hidden="true" />
+    </Members>
+    <InheritanceLine Type="zeroflag.Serialization.Serializer" FixedToPoint="true">
+      <Path>
+        <Point X="8.875" Y="2.849" />
+        <Point X="8.875" Y="3.5" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Descriptors.StringDescriptor" Collapsed="true">
+    <Position X="0.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Descriptors\StringDescriptor.cs</FileName>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.Serialization.Descriptors.Descriptor&lt;T&gt;" FixedFromPoint="true">
+      <Path>
+        <Point X="3.5" Y="6.305" />
+        <Point X="3.5" Y="6.625" />
+        <Point X="1.25" Y="6.625" />
+        <Point X="1.25" Y="7" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Descriptors.Descriptor">
+    <Position X="2" Y="1" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>Descriptors\Descriptor.cs</FileName>
+      <HashCode>AAAigECIAAAAABAEAAAAoASAAAAIBAAAAQAgAAAABAA=</HashCode>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="_DescriptorTypes" Hidden="true" />
+      <Field Name="_Inner" Hidden="true" />
+      <Field Name="_Name" Hidden="true" />
+      <Field Name="_Owner" Hidden="true" />
+      <Field Name="_Type" Hidden="true" />
+      <Field Name="_Value" Hidden="true" />
+      <Method Name="Descriptor" Hidden="true" />
+      <Method Name="DoParse" Hidden="true" />
+      <Method Name="GetDescriptor" Hidden="true" />
+      <Method Name="GetDescriptorType" Hidden="true" />
+      <Method Name="Parse" Hidden="true" />
+      <Method Name="ToString" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Delegate Name="zeroflag.Serialization.Descriptors.Descriptor.GetHandler&lt;T&gt;" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Descriptors\Descriptor.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="zeroflag.Serialization.Descriptors.Descriptor.SetHandler&lt;T&gt;" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Descriptors\Descriptor.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+  </Class>
+  <Class Name="zeroflag.Serialization.Descriptors.Descriptor&lt;T&gt;">
+    <Position X="2" Y="4" Width="4.5" />
+    <TypeIdentifier>
+      <FileName>Descriptors\Descriptor~1.cs</FileName>
+      <HashCode>AAAiAAAAIAAAAgAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.Serialization.Descriptors.Descriptor" FixedToPoint="true">
+      <Path>
+        <Point X="3.125" Y="3.02" />
+        <Point X="3.125" Y="4" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Descriptors.ListDescriptor&lt;T&gt;" Collapsed="true">
+    <Position X="2.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Descriptors\ListDescriptor.cs</FileName>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.Serialization.Descriptors.Descriptor&lt;T&gt;" FixedFromPoint="true">
+      <Path>
+        <Point X="3.5" Y="6.305" />
+        <Point X="3.5" Y="7" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Descriptors.ObjectDescriptor" Collapsed="true">
+    <Position X="5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Descriptors\ObjectDescriptor.cs</FileName>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.Serialization.Descriptors.Descriptor&lt;T&gt;" FixedFromPoint="true">
+      <Path>
+        <Point X="3.5" Y="6.305" />
+        <Point X="3.5" Y="6.625" />
+        <Point X="5.75" Y="6.625" />
+        <Point X="5.75" Y="7" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.Converter" Collapsed="true">
+    <Position X="12.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Converters\Converter.cs</FileName>
+      <HashCode>AIAAAEAAAABAAAAAAAAgAAAAAAIAAAAAAEAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="_Converters" Hidden="true" />
+    </Members>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.Converter&lt;T1, T2&gt;">
+    <Position X="12.75" Y="1.5" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Converters\Converter~2.cs</FileName>
+      <HashCode>QIAgAEAAAABAAAAAAAAgAAAQAAAAAAAAAEAAAEAAAAA=</HashCode>
+    </TypeIdentifier>
+    <Members>
+      <Method Name="__Generate" Hidden="true" />
+      <Method Name="__Parse" Hidden="true" />
+      <Method Name="_Generate" Hidden="true" />
+      <Method Name="_Parse" Hidden="true" />
+      <Method Name="GetConverter" Hidden="true" />
+      <Property Name="Type1" Hidden="true" />
+      <Property Name="Type2" Hidden="true" />
+    </Members>
+    <InheritanceLine Type="zeroflag.Serialization.Converters.Converter" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="13.562" Y="1.009" />
+        <Point X="13.562" Y="1.5" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Converter&lt;T&gt;">
+    <Position X="12.75" Y="3.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>Converters\String\Converter~1.cs</FileName>
+      <HashCode>QAAAAAAAAAAAAAAAAIAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.Serialization.Converters.Converter&lt;T1, T2&gt;" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="13.625" Y="2.766" />
+        <Point X="13.625" Y="3.25" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Byte" Collapsed="true">
+    <Position X="16.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Converters\String\Byte.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.Serialization.Converters.String.Converter&lt;T&gt;" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="14.75" Y="3.812" />
+        <Point X="17.062" Y="3.812" />
+        <Point X="17.062" Y="3.63" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.UInt64" Collapsed="true">
+    <Position X="19.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Converters\String\UInt64.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.Serialization.Converters.String.Converter&lt;T&gt;" FixedFromPoint="true">
+      <Path>
+        <Point X="14.75" Y="4.312" />
+        <Point X="14.942" Y="4.312" />
+        <Point X="14.942" Y="4.808" />
+        <Point X="20.5" Y="4.808" />
+        <Point X="20.5" Y="5" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Char" Collapsed="true">
+    <Position X="16.25" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Converters\String\Char.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.Serialization.Converters.String.Converter&lt;T&gt;" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="14.75" Y="4.312" />
+        <Point X="14.942" Y="4.312" />
+        <Point X="14.942" Y="6.808" />
+        <Point X="17" Y="6.808" />
+        <Point X="17" Y="7" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Decimal" Collapsed="true">
+    <Position X="19.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Converters\String\Decimal.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.Serialization.Converters.String.Converter&lt;T&gt;" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="14.75" Y="3.812" />
+        <Point X="20.5" Y="3.812" />
+        <Point X="20.5" Y="4" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Double" Collapsed="true">
+    <Position X="18" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Converters\String\Double.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.Serialization.Converters.String.Converter&lt;T&gt;" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="14.75" Y="3.812" />
+        <Point X="18.688" Y="3.812" />
+        <Point X="18.688" Y="4" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Int16" Collapsed="true">
+    <Position X="16.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Converters\String\Int16.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.Serialization.Converters.String.Converter&lt;T&gt;" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="14.75" Y="4.312" />
+        <Point X="14.942" Y="4.312" />
+        <Point X="14.942" Y="5.808" />
+        <Point X="17" Y="5.808" />
+        <Point X="17" Y="6" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Int32" Collapsed="true">
+    <Position X="18" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Converters\String\Int32.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.Serialization.Converters.String.Converter&lt;T&gt;" FixedFromPoint="true">
+      <Path>
+        <Point X="14.75" Y="4.312" />
+        <Point X="14.942" Y="4.312" />
+        <Point X="14.942" Y="5.808" />
+        <Point X="18.75" Y="5.808" />
+        <Point X="18.75" Y="6" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Int64" Collapsed="true">
+    <Position X="19.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Converters\String\Int64.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.Serialization.Converters.String.Converter&lt;T&gt;" FixedFromPoint="true">
+      <Path>
+        <Point X="14.75" Y="4.312" />
+        <Point X="14.942" Y="4.312" />
+        <Point X="14.942" Y="5.808" />
+        <Point X="20.5" Y="5.808" />
+        <Point X="20.5" Y="6" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.SByte" Collapsed="true">
+    <Position X="18" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Converters\String\Sbyte.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.Serialization.Converters.String.Converter&lt;T&gt;" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="14.75" Y="3.812" />
+        <Point X="18.688" Y="3.812" />
+        <Point X="18.688" Y="3.63" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Single" Collapsed="true">
+    <Position X="16.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Converters\String\Single.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.Serialization.Converters.String.Converter&lt;T&gt;" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="14.75" Y="3.812" />
+        <Point X="17.062" Y="3.812" />
+        <Point X="17.062" Y="4" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.String" Collapsed="true">
+    <Position X="18" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Converters\String\String.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.Serialization.Converters.String.Converter&lt;T&gt;" FixedFromPoint="true">
+      <Path>
+        <Point X="14.75" Y="4.312" />
+        <Point X="14.942" Y="4.312" />
+        <Point X="14.942" Y="6.808" />
+        <Point X="18.75" Y="6.808" />
+        <Point X="18.75" Y="7" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.UInt16" Collapsed="true">
+    <Position X="16.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Converters\String\UInt16.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.Serialization.Converters.String.Converter&lt;T&gt;" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="14.75" Y="4.312" />
+        <Point X="14.942" Y="4.312" />
+        <Point X="14.942" Y="4.808" />
+        <Point X="17" Y="4.808" />
+        <Point X="17" Y="5" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.UInt32" Collapsed="true">
+    <Position X="18" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Converters\String\UInt32.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.Serialization.Converters.String.Converter&lt;T&gt;" FixedFromPoint="true">
+      <Path>
+        <Point X="14.75" Y="4.312" />
+        <Point X="14.942" Y="4.312" />
+        <Point X="14.942" Y="4.808" />
+        <Point X="18.75" Y="4.808" />
+        <Point X="18.75" Y="5" />
+      </Path>
+    </InheritanceLine>
   </Class>
 </ClassDiagram>

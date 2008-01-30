@@ -36,14 +36,19 @@ namespace zeroflag.Serialization.Converters.String
 {
 	public class Converter
 	{
-		public const string NullToken = "~!~null~!~";
+		//public const string NullToken = "~!~null~!~";
 
-		public static string Get(object value)
+		public static string Generate(object value)
 		{
 			if (value == null)
-				return NullToken;
+				return null;
 			IBase b = Base.GetConverter(typeof(string), value.GetType());
-			return (string)b.__Get(value);
+			return b != null ? (string)b.__Generate(value) : null;
+		}
+
+		public static bool CanConvert(object value)
+		{
+			return value != null && Base.GetConverter(typeof(string), value.GetType()) != null;
 		}
 	}
 }
