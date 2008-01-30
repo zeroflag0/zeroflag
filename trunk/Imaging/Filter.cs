@@ -73,12 +73,12 @@ namespace zeroflag.Imaging
 			this.Size = region.Size;
 		}
 
-		protected override void OnParentChanged(TreeNode<Filter> oldvalue, TreeNode<Filter> newvalue)
+		protected override void OnParentChanged(Filter oldvalue, Filter newvalue)
 		{
 			base.OnParentChanged(oldvalue, newvalue);
 			if (newvalue != null)
 			{
-				this.Size = newvalue.Value.Size;
+				this.Size = newvalue.Size;
 			}
 		}
 		#endregion Constructors
@@ -88,7 +88,7 @@ namespace zeroflag.Imaging
 
 		private Color[,] _PixelBuffer = null;
 
-		protected Color[,] PixelBuffer
+		protected internal Color[,] PixelBuffer
 		{
 			get { return _PixelBuffer ?? (_PixelBuffer = this.CreatePixelBuffer()); }
 			set
@@ -137,16 +137,16 @@ namespace zeroflag.Imaging
 		#endregion Pixels
 
 		#region TreeNode
-		public override Filter Value
-		{
-			get
-			{
-				return this;
-			}
-			set
-			{
-			}
-		}
+		//public override Filter Value
+		//{
+		//    get
+		//    {
+		//        return this;
+		//    }
+		//    set
+		//    {
+		//    }
+		//}
 		#endregion TreeNode
 
 		#region Location
