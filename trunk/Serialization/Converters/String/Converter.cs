@@ -50,5 +50,11 @@ namespace zeroflag.Serialization.Converters.String
 		{
 			return value != null && Base.GetConverter(typeof(string), value.GetType()) != null;
 		}
+
+		public static object Parse(Type type, string text)
+		{
+			IBase b = Base.GetConverter(typeof(string), type);
+			return b != null ? b.__Parse(text) : null;
+		}
 	}
 }

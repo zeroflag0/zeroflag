@@ -43,12 +43,14 @@ namespace zeroflag.Serialization.Descriptors
 			this.Value = (T)value;
 		}
 
+		static int count = 0;
 		public override int Id
 		{
 			get
 			{
 				if (this.Value != null && !this.Type.IsValueType)
-					return this.Value.GetHashCode();
+					return base.Id = count++;
+				//return this.Value.GetHashCode();
 				else
 					return base.Id;
 			}
@@ -88,6 +90,11 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			this.Value = (T)value;
 			return this.Parse(name, type, owner);
+		}
+
+		protected T Default
+		{
+			get { return default(T); }
 		}
 	}
 }

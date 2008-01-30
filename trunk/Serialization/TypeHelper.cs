@@ -61,6 +61,7 @@ namespace zeroflag
 		}
 
 		static List<Type> Types = new List<Type>();
+		static Dictionary<string, Type> TypeNames = new Dictionary<string, Type>();
 		static Dictionary<Type, List<Type>> Derived = new Dictionary<Type, List<Type>>();
 		static List<System.Reflection.Assembly> Assemblies = new List<System.Reflection.Assembly>();
 		public static List<Type> GetDerived(System.Type baseType)
@@ -93,7 +94,11 @@ namespace zeroflag
 						{
 							// avoid duplicates...
 							if (!Types.Contains(type))
+							{
 								Types.Add(type);
+								if (type.FullName != null && !TypeNames.ContainsKey(type.FullName))
+									TypeNames.Add(type.FullName, type);
+							}
 						}
 					}
 				}
@@ -127,6 +132,28 @@ namespace zeroflag
 				return true;
 			else
 				return IsDerived(baseType, type.BaseType);
+		}
+
+		public static Type GetType(string name)
+		{
+			Type type = null;
+			if (TypeNames.ContainsKey(name))
+				type = TypeNames[name];
+			else
+			{
+				foreach (System.Reflection.Assembly ass in AppDomain.CurrentDomain.GetAssemblies())
+				{
+					if ((type = ass.GetType(name)) != null)
+						break;
+				}
+				//foreach (Type t in Types)
+				//{
+				//    if (name.Contains(t.Name))
+				//        type = t;
+				//}
+			}
+
+			return type;
 		}
 	}
 }
