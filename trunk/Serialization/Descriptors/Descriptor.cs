@@ -288,8 +288,8 @@ namespace zeroflag.Serialization.Descriptors
 			set { _Name = value; }
 		}
 
-		int _Id = -1;
-		public virtual int Id
+		int? _Id = null;
+		public virtual int? Id
 		{
 			get { return _Id; }
 			set { _Id = value; }
@@ -297,13 +297,6 @@ namespace zeroflag.Serialization.Descriptors
 
 		//public abstract object GetValue();
 		//public abstract void SetValue(object value);
-		Dictionary<object, Descriptor> _Parsed = null;
-
-		protected Dictionary<object, Descriptor> Parsed
-		{
-			get { return this.Owner != null ? this.Owner.Parsed : _Parsed ?? (_Parsed = new Dictionary<object, Descriptor>()); }
-		}
-
 
 		List<Descriptor> _Inner = new List<Descriptor>();
 
@@ -387,6 +380,13 @@ namespace zeroflag.Serialization.Descriptors
 		}
 		#endregion static Parse
 
+		Dictionary<object, Descriptor> _Parsed = null;
+
+		protected Dictionary<object, Descriptor> Parsed
+		{
+			get { return this.Owner != null ? this.Owner.Parsed : _Parsed ?? (_Parsed = new Dictionary<object, Descriptor>()); }
+		}
+
 		public Descriptor Parse(System.Reflection.PropertyInfo info, Descriptor owner)
 		{
 			this.Owner = owner;
@@ -449,35 +449,58 @@ namespace zeroflag.Serialization.Descriptors
 		#endregion Parse
 
 		#region Generate
+		Dictionary<int, Descriptor> _Generated = null;
+
+		protected Dictionary<int, Descriptor> Generated
+		{
+			get { return this.Owner != null ? this.Owner.Generated : _Generated ?? (_Generated = new Dictionary<int, Descriptor>()); }
+		}
 
 		public object Generate()
 		{
-			return this.Value = this.DoGenerate();
+			if (this.Id != null && this.Generated.ContainsKey(this.Id.Value))
+			{
+				Descriptor other = this.Generated[this.Id.Value];
+				//this.Type = other.Type;
+				this.Value = other.Value;
+				//this.Name = other.Name;
+			}
+			else
+			{
+				this.Value = this.DoGenerate();
+				if (this.Id != null && this.Value != null)
+					this.Generated.Add(this.Id.Value, this);
+			}
+			return this.Value;
 		}
 
-		protected virtual object DoCreateInstance()
+		public virtual object DoCreateInstance()
 		{
-			return this.Value ?? (this.Value = (this.IsNull ? null : TypeHelper.CreateInstance(this.Type)));
+			try
+			{
+				return this.Value = (this.IsNull ? null : (this.Value ?? (this.Value = (this.IsNull ? null : TypeHelper.CreateInstance(this.Type)))));
+			}
+			catch (Exception exc)
+			{
+				Console.WriteLine(this + ".DoCreateInstance() failed:\n" + exc);
+				return this.Value;
+			}
 		}
 		protected virtual object DoGenerate()
 		{
 			if (this.Value == null)
 			{
-				try
-				{
-					this.Value = (this.IsNull ? null : this.DoCreateInstance());
-				}
-				catch (Exception exc)
-				{
-					Console.WriteLine(this + ".DoGenerate() failed:\n" + exc);
-				}
+				this.Value = (this.IsNull ? null : this.DoCreateInstance());
 			}
 			if (this.Value != null)
 				foreach (Descriptor sub in this.Inner)
 				{
 					System.Reflection.PropertyInfo prop = this.Type.GetProperty(sub.Name);
 					if (prop != null)
-						prop.SetValue(this.Value, sub.Generate(), new object[] { });
+					{
+						if (prop.GetValue(this.Value, new object[0]) == null)
+							prop.SetValue(this.Value, sub.Generate(), new object[] { });
+					}
 				}
 			return this.Value;
 		}

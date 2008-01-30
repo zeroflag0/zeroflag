@@ -26,7 +26,7 @@
 //*********************************************************************
 #endregion LGPL License
 
-#define TEST1 // class A
+//#define TEST1 // class A
 #define TEST2 // dictionary
 //#define TEST3 // winforms <-- doesn't work and it's not because my serializer is too stupid...
 
@@ -37,7 +37,7 @@ using zeroflag.Serialization;
 
 namespace Test
 {
-#if TEST1
+#if TEST1 || TEST2
 	public class A
 	{
 		A _Parent;
@@ -87,17 +87,19 @@ namespace Test
 
 		public override string ToString()
 		{
+			string value = this.Name ?? "<null>";
 			if (this.Children.Count > 0)
 			{
-				string value = this.Name ?? "<null>";
 				value += "{";
 				foreach (A a in this.Children)
 					value += a + ", ";
-				return value + "}";
+				value = value.TrimEnd(',', ' ') + "}";
 			}
-			else
-				return this.Name ?? "<null>";
+			if (this.Parent != null)
+				value += "[" + this.Parent.Name + "]";
+			return value;
 		}
+
 	}
 #endif
 	class Program
@@ -129,9 +131,15 @@ namespace Test
 				//Console.WriteLine(" b = " + b);
 #endif
 #if TEST2
-				TestDict<string, int>("foo", 1, "bar", 2, "bla", -1);
+				//TestDict<string, int>("foo", 1, "bar", 2, "bla", -1);
 
-				TestDict<string, double>("foo", 1, "bar", 2, "bla", -1);
+				//TestDict<string, double>("foo", 1, "bar", 2, "bla", -1);
+
+				A foo = new A("foo"), bar = new A("bar", foo), bla = new A("bla", foo, bar);
+				Console.WriteLine("foo = " + foo);
+				Console.WriteLine("bar = " + bar);
+				Console.WriteLine("bla = " + bla);
+				TestDict<string, A>("foo", foo, "bar", bar, "bla", bla);
 #endif
 #if TEST3
 				System.Windows.Forms.Application.Run(new TestForm());
