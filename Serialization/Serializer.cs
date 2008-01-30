@@ -106,7 +106,18 @@ namespace zeroflag.Serialization
 		///// </summary>
 		//protected abstract Serializer CreateChild();
 
+		public T Deserialize<T>()
+		{
+			return (T)this.Deserialize(typeof(T));
+		}
 
+		public object Deserialize(Type type)
+		{
+			Descriptors.Descriptor desc = Descriptors.Descriptor.DoParse(type);
 
+			return this.Deserialize(desc);
+		}
+
+		public abstract object Deserialize(Descriptors.Descriptor desc);
 	}
 }

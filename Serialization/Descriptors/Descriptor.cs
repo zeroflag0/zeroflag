@@ -249,17 +249,31 @@ namespace zeroflag.Serialization.Descriptors
 		}
 		#endregion Owner
 
-		object _Value = null;
+		#region Value
+
+		private object _Value = null;
+
 		public object Value
 		{
-			get
-			{
-				return _Value;
-			}
+			get { return _Value; }
 			set
 			{
-				_Value = value;
+				if (_Value != value)
+				{
+					_Value = value;
+					if (value != null)
+						this.IsNull = false;
+				}
 			}
+		}
+		#endregion Value
+
+		bool? _IsNull = true;
+
+		public bool IsNull
+		{
+			get { return (bool)(_IsNull ?? (this.Value == null)); }
+			set { _IsNull = value; }
 		}
 
 		private string _Name;
@@ -276,7 +290,7 @@ namespace zeroflag.Serialization.Descriptors
 			get { return _Id; }
 			set { _Id = value; }
 		}
-		
+
 		//public abstract object GetValue();
 		//public abstract void SetValue(object value);
 		Dictionary<object, Descriptor> _Parsed = null;
@@ -347,7 +361,7 @@ namespace zeroflag.Serialization.Descriptors
 			Console.WriteLine("DoParse(" + info + ", " + owner + ")");
 			return GetDescriptor(info.PropertyType).Parse(info, owner);
 		}
-			#endregion static Parse
+		#endregion static Parse
 
 		public Descriptor Parse(System.Reflection.PropertyInfo info, Descriptor owner)
 		{
@@ -407,6 +421,31 @@ namespace zeroflag.Serialization.Descriptors
 		public abstract Descriptor Parse(string name, Type type, object value);
 		protected abstract void DoParse();
 		#endregion Parse
+
+		#region Generate
+
+		public object Generate()
+		{
+			return this.Value = this.DoGenerate();
+		}
+
+		protected virtual object DoCreateInstance()
+		{
+			return this.Value ?? (this.Value = (this.IsNull ? null : TypeHelper.CreateInstance(this.Type)));
+		}
+		protected virtual object DoGenerate()
+		{
+			if (this.Value == null)
+				this.Value = (this.IsNull ? null : this.DoCreateInstance());
+			if (this.Value != null)
+				foreach (Descriptor sub in this.Inner)
+				{
+					System.Reflection.PropertyInfo prop = this.Type.GetProperty(sub.Name);
+					prop.SetValue(this.Value, sub.Generate(), new object[] { });
+				}
+			return this.Value;
+		}
+		#endregion Generate
 
 		public override string ToString()
 		{

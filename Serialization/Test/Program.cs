@@ -59,6 +59,10 @@ namespace Test
 			set { _Name = value; }
 		}
 
+		public A()
+		{
+		}
+
 		public A(string name)
 		{
 			this.Name = name;
@@ -78,7 +82,16 @@ namespace Test
 
 		public override string ToString()
 		{
-			return this.Name ?? "<null>";
+			if (this.Children.Count > 0)
+			{
+				string value = this.Name ?? "<null>";
+				value += "{";
+				foreach (A a in this.Children)
+					value += a + ", ";
+				return value + "}";
+			}
+			else
+				return this.Name ?? "<null>";
 		}
 	}
 
@@ -89,14 +102,26 @@ namespace Test
 			try
 			{
 				Serializer seri = new XmlSerializer("test.xml");
+				Serializer seri2 = new XmlSerializer("test2.xml");
 
-				A a = new A("root", new A("foo"), new A("bar"), null);
+				A a = new A("root", new A("foo"), new A("bar"), new A(null), null);
 
-				zeroflag.Serialization.Descriptors.Descriptor desc = zeroflag.Serialization.Descriptors.Descriptor.DoParse(a);
+				//zeroflag.Serialization.Descriptors.Descriptor desc = zeroflag.Serialization.Descriptors.Descriptor.DoParse(a);
 
-				Console.WriteLine(desc);
+				//Console.WriteLine(desc);
 				//seri.Serialize(a);
-				seri.Serialize(desc);
+				//seri.Serialize(desc);
+
+				A b = null;
+				//b = (A)desc.Generate();
+				b = seri.Deserialize<A>();
+
+				Console.Write("a = " + a);
+				Console.WriteLine(" b = " + b);
+				//b.Children[2] = new A("new");
+				//Console.WriteLine("Modified b...");
+				//Console.Write("a = " + a);
+				//Console.WriteLine(" b = " + b);
 			}
 			catch (Exception exc)
 			{

@@ -53,25 +53,49 @@ namespace zeroflag.Serialization.Descriptors
 
 		//    return this.Parse();
 		//}
+		public const string NameCount = "Count";
+		public const string NameItem = "Item";
 
 		protected override void DoParse()
 		{
 			if (this.Value != null)
 			{
-				DoParse(this.GetValue().Count, this).Name = "Count";
+				//DoParse(this.GetValue().Count, this).Name = NameCount;
 
 				System.Collections.Generic.IList<T> value = this.GetValue();
 				int max = value.Count;
 				//foreach (object value in this.GetValue())
 				for (int i = 0; i < max; i++)
 				{
-					Descriptor item =  DoParse(value[i], typeof(T), this);
-					item.Name = "Item";
+					Descriptor item = DoParse(value[i], typeof(T), this);
+					item.Name = NameItem;
 					//this.Inner.Add(item);
 					//item.Set = delegate(object value) { this.Value
 				}
 			}
 		}
 
+		protected override object DoGenerate()
+		{
+			if (this.Value == null)
+				this.Value = this.DoCreateInstance();
+			IList<T> value = this.GetValue();
+
+			if (value != null && this.Inner.Count > 0)
+			{
+				value.Clear();
+				foreach (Descriptor sub in this.Inner)
+				{
+					if (sub.Name == NameItem)
+					{
+						value.Add((T)sub.Generate());
+					}
+					//System.Reflection.PropertyInfo prop = this.Type.GetProperty("Count");
+				}
+			}
+			else
+				Console.WriteLine(this + " is null.");
+			return this.Value;
+		}
 	}
 }

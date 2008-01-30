@@ -37,5 +37,11 @@ namespace zeroflag.Serialization.Descriptors
 		protected override void DoParse()
 		{
 		}
+
+		protected override object DoGenerate()
+		{
+			return this.Value;
+			//return base.DoGenerate();
+		}
 	}
 }
