@@ -88,15 +88,17 @@ namespace Test
 		public override string ToString()
 		{
 			string value = this.Name ?? "<null>";
+			value += "[";
+			if (this.Parent != null)
+				value += this.Parent.Name;
+			value += "]";
+			value += "{";
 			if (this.Children.Count > 0)
 			{
-				value += "{";
 				foreach (A a in this.Children)
 					value += a + ", ";
-				value = value.TrimEnd(',', ' ') + "}";
 			}
-			if (this.Parent != null)
-				value += "[" + this.Parent.Name + "]";
+			value = value.TrimEnd(',', ' ') + "}";
 			return value;
 		}
 
@@ -166,11 +168,12 @@ namespace Test
 			seri2.Serialize(dict);
 
 			Dictionary<T1, T2> result = seri2.Deserialize<Dictionary<T1, T2>>();
-
+			Console.WriteLine("<TestDictResult>");
 			foreach (KeyValuePair<T1, T2> pair in result)
 			{
 				Console.WriteLine("\t" + pair.Key + " => " + pair.Value);
 			}
+			Console.WriteLine("</TestDictResult>");
 		}
 #endif
 

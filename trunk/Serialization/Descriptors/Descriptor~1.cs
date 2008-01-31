@@ -50,7 +50,7 @@ namespace zeroflag.Serialization.Descriptors
 			{
 				if (this.Value != null && !this.Type.IsValueType)
 					//	return base.Id = count++;
-					return this.Value.GetHashCode();
+					return base.Id ?? this.Value.GetHashCode();
 				else
 					return base.Id;
 			}

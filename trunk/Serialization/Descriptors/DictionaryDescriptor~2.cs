@@ -24,10 +24,32 @@ namespace zeroflag.Serialization.Descriptors
 			}
 		}
 
-		protected override object DoGenerate()
+		//protected override object DoGenerate()
+		//{
+		//    if (this.Value == null)
+		//        this.Value = this.DoCreateInstance();
+		//    IDictionary<T1, T2> value = this.GetValue();
+
+		//    if (value != null && this.Inner.Count > 0)
+		//    {
+		//        value.Clear();
+		//        foreach (Descriptor sub in this.Inner)
+		//        {
+		//            if (sub.Name == NameItem)
+		//            {
+		//                Helper helper = (Helper)(/*sub.Value ?? */sub.Generate());
+		//                //KeyValuePair<T1, T2> pair = (KeyValuePair<T1, T2>)sub.Generate();
+		//                value.Add(helper.Key, helper.Value);
+		//            }
+		//        }
+		//    }
+		//    return this.Value;
+		//}
+
+		public override object GenerateLink()
 		{
-			if (this.Value == null)
-				this.Value = this.DoCreateInstance();
+			//if (this.Value == null)
+			//    this.Value = this.DoCreateInstance();
 			IDictionary<T1, T2> value = this.GetValue();
 
 			if (value != null && this.Inner.Count > 0)
@@ -37,7 +59,7 @@ namespace zeroflag.Serialization.Descriptors
 				{
 					if (sub.Name == NameItem)
 					{
-						Helper helper = (Helper)(/*sub.Value ?? */sub.Generate());
+						Helper helper = (Helper)(/*sub.Value ?? */sub.GenerateLink());
 						//KeyValuePair<T1, T2> pair = (KeyValuePair<T1, T2>)sub.Generate();
 						value.Add(helper.Key, helper.Value);
 					}

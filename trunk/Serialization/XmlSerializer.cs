@@ -121,9 +121,10 @@ namespace zeroflag.Serialization
 
 			return this.Deserialize(null, desc, doc.DocumentElement);
 		}
+		int depth = 0;
 		protected virtual object Deserialize(object value, Descriptor desc, XmlElement node)
 		{
-
+			depth++;
 			desc.Name = this.GetAttribute(AttributeName, node);
 
 			if (node.Attributes[AttributeNull] != null)
@@ -142,8 +143,13 @@ namespace zeroflag.Serialization
 				desc.Id = id;
 			}
 
+
 			desc.Value = value;
-			desc.DoCreateInstance();
+			//desc.PreGenerate();
+			//desc.DoCreateInstance();
+
+			Console.WriteLine(new StringBuilder().Append(' ', depth).Append("Deserialize(name='" + desc.Name + "', type='" + desc.Type + "', isnull='" + desc.IsNull + "', id='" + desc.Id + "', value='" + desc.Value + "', children='" + node.ChildNodes.Count + "')").ToString());
+			//foreach (Descriptor cr in desc.Generated.Values) Console.WriteLine("\tid=" + cr.Id + ", name=" + cr.Name + ", type=" + cr.Type + ", value=" + cr.Value);
 
 			foreach (XmlNode sub in node.ChildNodes)
 			{
@@ -159,8 +165,12 @@ namespace zeroflag.Serialization
 					desc.Value = Converters.String.Converter.Parse(desc.Type, text);
 				}
 			}
+			depth--;
+			desc.GenerateParse();
+			desc.GenerateCreate();
 
-			return desc.Generate();
+			return desc.GenerateLink();
+			//return desc.Generate();
 		}
 
 		string GetAttribute(string name, XmlElement node)
