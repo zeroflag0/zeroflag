@@ -43,10 +43,14 @@ namespace zeroflag.Serialization.Descriptors
 			return this.Value;//base.DoCreateInstance();
 		}
 
-		protected override object DoGenerate()
+		//protected override object DoGenerate()
+		//{
+		//    return this.Value;
+		//    //return base.DoGenerate();
+		//}
+		public override object GenerateLink()
 		{
 			return this.Value;
-			//return base.DoGenerate();
 		}
 
 		public override int? Id

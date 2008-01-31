@@ -451,28 +451,139 @@ namespace zeroflag.Serialization.Descriptors
 		#region Generate
 		Dictionary<int, Descriptor> _Generated = null;
 
-		protected Dictionary<int, Descriptor> Generated
+		public Dictionary<int, Descriptor> Generated
 		{
 			get { return this.Owner != null ? this.Owner.Generated : _Generated ?? (_Generated = new Dictionary<int, Descriptor>()); }
 		}
 
-		public object Generate()
+		//public void PreGenerate()
+		//{
+		//    if (this.Id != null && this.Generated.ContainsKey(this.Id.Value))// && this != this.Generated[this.Id.Value])
+		//    {
+		//        if (this == this.Generated[this.Id.Value])
+		//            Console.WriteLine("Link self!");
+		//        Console.WriteLine("Link(name='" + this.Name + "', type='" + this.Type + "', isnull='" + this.IsNull + "', id='" + this.Id + "', value='" + this.Value + "', children='" + this.Inner.Count + "')");
+
+		//        Descriptor other = this.Generated[this.Id.Value];
+		//        Console.WriteLine("  To(name='" + other.Name + "', type='" + other.Type + "', isnull='" + other.IsNull + "', id='" + other.Id + "', value='" + other.Value + "', children='" + other.Inner.Count + "')");
+		//        this.Type = other.Type;
+		//        this.Value = other.Value;
+		//        this.IsNull = other.IsNull;
+		//        this.Inner.AddRange(other.Inner);
+		//        Console.WriteLine("Result(name='" + this.Name + "', type='" + this.Type + "', isnull='" + this.IsNull + "', id='" + this.Id + "', value='" + this.Value + "', children='" + this.Inner.Count + "')");
+
+		//        //this.Name = other.Name;
+		//    }
+		//    else
+		//    {
+		//        if (this.Value == null && !this.IsNull)
+		//        {
+		//            this.DoCreateInstance();
+		//        }
+		//        if (this.Id != null)
+		//        {
+		//            if (!this.Generated.ContainsKey(this.Id.Value))
+		//            {
+		//                Console.WriteLine("Reference(name='" + this.Name + "', type='" + this.Type + "', isnull='" + this.IsNull + "', id='" + this.Id + "', value='" + this.Value + "', children='" + this.Inner.Count + "')");
+		//                this.Generated.Add(this.Id.Value, this);
+		//            }
+		//            else
+		//                Console.WriteLine("Reference already exists for " + this.Id);
+		//        }
+		//    }
+		//}
+
+		bool _IsParsed = false;
+		public void GenerateParse()
 		{
-			if (this.Id != null && this.Generated.ContainsKey(this.Id.Value))
+			if (_IsParsed) 
+				return;
+			_IsParsed = true;
+
+			if (this.Id != null && this.Generated.ContainsKey(this.Id.Value))// && this != this.Generated[this.Id.Value])
 			{
+				if (this == this.Generated[this.Id.Value])
+					Console.WriteLine("Link self!");
+				Console.WriteLine("Link(name='" + this.Name + "', type='" + this.Type + "', isnull='" + this.IsNull + "', id='" + this.Id + "', value='" + this.Value + "', children='" + this.Inner.Count + "')");
+
 				Descriptor other = this.Generated[this.Id.Value];
-				//this.Type = other.Type;
+				Console.WriteLine("  To(name='" + other.Name + "', type='" + other.Type + "', isnull='" + other.IsNull + "', id='" + other.Id + "', value='" + other.Value + "', children='" + other.Inner.Count + "')");
+				this.Type = other.Type;
 				this.Value = other.Value;
+				this.IsNull = other.IsNull;
+				this.Inner.AddRange(other.Inner);
+				Console.WriteLine("Result(name='" + this.Name + "', type='" + this.Type + "', isnull='" + this.IsNull + "', id='" + this.Id + "', value='" + this.Value + "', children='" + this.Inner.Count + "')");
+
 				//this.Name = other.Name;
 			}
 			else
 			{
-				this.Value = this.DoGenerate();
-				if (this.Id != null && this.Value != null)
-					this.Generated.Add(this.Id.Value, this);
+				if (this.Value == null && !this.IsNull)
+				{
+					this.DoCreateInstance();
+				}
+				if (this.Id != null)
+				{
+					if (!this.Generated.ContainsKey(this.Id.Value))
+					{
+						Console.WriteLine("Reference(name='" + this.Name + "', type='" + this.Type + "', isnull='" + this.IsNull + "', id='" + this.Id + "', value='" + this.Value + "', children='" + this.Inner.Count + "')");
+						this.Generated.Add(this.Id.Value, this);
+					}
+					else
+						Console.WriteLine("Reference already exists for " + this.Id);
+				}
+			}
+		}
+
+		bool _IsGenerated = false;
+		public void GenerateCreate()
+		{
+			if (_IsGenerated) 
+				return;
+			_IsGenerated = true;
+			if (this.Value == null)
+			{
+				if (!this.IsNull)
+					this.Value = this.DoCreateInstance();
+				else
+					this.Value = null;
+			}
+		}
+
+		bool _IsLinked = false;
+		public virtual object GenerateLink()
+		{
+			if (_IsLinked)
+				return this.Value;
+			_IsLinked = true;
+
+			if (this.Value != null)
+			{
+				foreach (Descriptor sub in this.Inner)
+				{
+					System.Reflection.PropertyInfo prop = this.Type.GetProperty(sub.Name);
+					if (prop != null)
+					{
+						//sub.SetValue(this.Value, prop);
+						prop.SetValue(this.Value, sub.GenerateLink(), new object[] { });
+					}
+				}
 			}
 			return this.Value;
 		}
+
+		//bool _IsGenerated = false;
+		//public object Generate()
+		//{
+		//    //this.PreGenerate();
+
+		//    if (!this.IsNull && !this._IsGenerated)
+		//    {
+		//        this._IsGenerated = true;
+		//        this.DoGenerate();
+		//    }
+		//    return this.Value;
+		//}
 
 		public virtual object DoCreateInstance()
 		{
@@ -486,24 +597,29 @@ namespace zeroflag.Serialization.Descriptors
 				return this.Value;
 			}
 		}
-		protected virtual object DoGenerate()
-		{
-			if (this.Value == null)
-			{
-				this.Value = (this.IsNull ? null : this.DoCreateInstance());
-			}
-			if (this.Value != null)
-				foreach (Descriptor sub in this.Inner)
-				{
-					System.Reflection.PropertyInfo prop = this.Type.GetProperty(sub.Name);
-					if (prop != null)
-					{
-						if (prop.GetValue(this.Value, new object[0]) == null)
-							prop.SetValue(this.Value, sub.Generate(), new object[] { });
-					}
-				}
-			return this.Value;
-		}
+		//protected virtual object DoGenerate()
+		//{
+		//    if (this.Value == null)
+		//    {
+		//        this.Value = (this.IsNull ? null : this.DoCreateInstance());
+		//    }
+		//    if (this.Value != null)
+		//        foreach (Descriptor sub in this.Inner)
+		//        {
+		//            System.Reflection.PropertyInfo prop = this.Type.GetProperty(sub.Name);
+		//            if (prop != null)
+		//            {
+		//                sub.SetValue(this.Value, prop);
+		//            }
+		//        }
+		//    return this.Value;
+		//}
+
+		//protected virtual void SetValue(object on, System.Reflection.PropertyInfo prop)
+		//{
+		//    //if (prop.GetValue(on, new object[0]) == null)
+		//    prop.SetValue(on, this.GenerateLink(), new object[] { });
+		//}
 		#endregion Generate
 
 		public override string ToString()

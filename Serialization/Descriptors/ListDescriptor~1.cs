@@ -70,10 +70,29 @@ namespace zeroflag.Serialization.Descriptors
 			}
 		}
 
-		protected override object DoGenerate()
+		//protected override object DoGenerate()
+		//{
+		//    if (this.Value == null)
+		//        this.Value = this.DoCreateInstance();
+		//    IList<T> value = this.GetValue();
+
+		//    if (value != null && this.Inner.Count > 0)
+		//    {
+		//        value.Clear();
+		//        foreach (Descriptor sub in this.Inner)
+		//        {
+		//            if (sub.Name == NameItem)
+		//            {
+		//                value.Add((T)sub.Generate());
+		//            }
+		//        }
+		//    }
+		//    return this.Value;
+		//}
+
+		public override object GenerateLink()
 		{
-			if (this.Value == null)
-				this.Value = this.DoCreateInstance();
+			//return base.GenerateLink();
 			IList<T> value = this.GetValue();
 
 			if (value != null && this.Inner.Count > 0)
@@ -83,11 +102,34 @@ namespace zeroflag.Serialization.Descriptors
 				{
 					if (sub.Name == NameItem)
 					{
-						value.Add((T)sub.Generate());
+						value.Add((T)sub.GenerateLink());
 					}
 				}
 			}
 			return this.Value;
 		}
+
+		//protected override void SetValue(object on, System.Reflection.PropertyInfo prop)
+		//{
+		//    this.Value = this.GenerateLink();
+		//    IList<T> value = this.GetValue();
+
+		//    if (value != null)
+		//    {
+		//        if (prop != null)
+		//        {
+		//            IList<T> onValue = null;
+		//            if ((onValue = prop.GetValue(on, new object[0]) as IList<T>) == null)
+		//                prop.SetValue(on, this.GenerateLink(), new object[] { });
+		//            else
+		//            {
+		//                foreach (T item in value)
+		//                {
+		//                    onValue.Add(item);
+		//                }
+		//            }
+		//        }
+		//    }
+		//}
 	}
 }
