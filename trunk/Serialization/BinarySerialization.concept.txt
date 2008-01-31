@@ -1,0 +1,150 @@
+=Basic Concepts=
+* For each new type used for serialization there has to be a profile stored.
+* Each type has a Type-ID which should be a 2 bytes large by default and can be extended througout the file by simply using the last type ID (0xFFFF) which results in every ID from there on being padded with a leading 0x00 (e.g. 0x0301 becomes 0x000301)
+** Type-IDs start at 0x0010 (0x0000 being reserved for the "End"-tag, 0x0001..0x000F reserved for other tags)
+* Strings are stored as UTF8 and have a 0x00 at the end. needs special parser to detect '\0' safely without detecting it inside a (multi-byte) char.
+* Collections need special serializers and use a custom structure.
+
+
+
+=Special Tags=
+==Bytes==
+* 0x00: End of string/array
+
+==Words==
+* all of these have the size of a TypeID (growing if TypeIDs exceed 0xFFFF)
+**0xFFFF: introduces a new TypeID-range. CAN NOT SERVE AS A TYPE-ID ITSELF! (e.g. 0xFFFF010000 would increase ID size from 2 to 3 byte and start a new Type definition with ID=0x010000, the old TypeID 0x0010 would become 0x000010)
+**0x0000: "End" tag for the current scope (Type Declarations, etc)
+**0x0001: "Needs End" tag for type definitions => the specified type works like a string and thus has to be limited by 0x00
+**0x0002: "Length" tag => put this on a property/field that contains an array's/list's length so the parser can predict the end => must be Int32
+**0x0003: "Length Custom" tag => like "Is Length" but is followed by a type (doesn't have to be Int32)
+**0x0004: "Collection" tag => put this in a type declaration if the type is a collection (like an array, list, dictionary, etc. - anything accessible via [])
+**0x0005: "Generic Type" tag => put after a type-name => followed by a typeID to specify the generic type
+
+
+
+=Type Declaration Format=
+# the type Declaration is initiated by using a new/unused Type-ID
+# the type name
+# the content:
+## the content's type-id (can also be a new TypeId which would initialize a new Type)
+## the property/field's name
+# the end-tag => 0x0000 (or more 00 if TypeID is larger)
+
+
+special types:
+* lists/collections/arrays require special parsers that can tell where they end (simple for arrays/lists, not so simple for dictionaries and others)
+* these special parsers can be created for any interface/baseclass and are loaded via reflection at runtime/startup/first use.
+
+
+
+Data Format
+# typeID
+# values
+## typeID (or null, if the value is null, default-type assumed. this typeID is required to handle derived classes)
+## value
+### if value is a string or similar -> trailing 0x00
+(NO 0x0000 required)
+
+=Examples=
+
+==defining a string==
+<pre>
+Value		Explanation
+00		-
+10		-new TypeID = 0x0010
+73		s
+74		t
+72		r
+69		i
+6E		n
+67		g
+00		-EOV (end of value) => "string"
+00		-
+01		-Needs End
+00		-
+00		-End of Type Declaration
+</pre>
+
+==definition for a class==
+<pre>
+class Foo { string One; string Two; Foo Sub; }
+</pre>
+
+<pre>
+00		-
+15		-new TypeID = 0x0015
+46		F
+6f		o
+6f		o
+00		-EOV
+00		-
+10		-existing TypeID: 0x0010 => string
+4f		O
+6E		n
+65		e
+00		-EOV
+00		-
+10		-existing TypeID: 0x0010 => string
+54		T
+77		w
+6F		o
+00		-EOV
+00		-
+15		- existing TypeID = 0x0015 => Foo
+53		S
+75		u
+62		b
+00		-EOV
+00		-
+00		-End of Type Declaration
+</pre>
+
+
+==definition for a List<string>==
+<pre>
+00		-
+16		-new TypeID = 0x0016
+4c		L
+69		i
+73		s
+74		t
+00		-EOV
+00		-
+04		-Generic Type
+00		-
+10		-0x0010=>string
+00		-
+02		-Length (as Int32)
+00		-
+03		-Collection Values
+00
+00
+</pre>
+
+==data (for class Foo containing one subclass of type Foo, see above)==
+<pre>
+00		-
+15		-TypeID = 0x0015 => Foo
+00		-
+10		-string
+6f		o
+6e		n
+65		e
+00		-EOV
+00		-
+00		-null reference (instead of string type => no type == no value => skip)
+00		-
+15		-Foo (Sub)
+00		-
+00		-null reference (instead of string type => no type == no value => skip)
+00		-
+10		-string
+74		t
+77		w
+6f		o
+00		-EOV
+00		-
+00		-null reference (instead of Foo type => no type == no value => skip)
+</pre>
+
