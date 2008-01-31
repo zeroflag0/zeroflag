@@ -60,7 +60,7 @@ namespace zeroflag.Serialization
 
 		protected virtual void Serialize(zeroflag.Serialization.Descriptors.Descriptor value, XmlDocument doc, XmlElement parent)
 		{
-			//Console.WriteLine("Serialize(" + value + ")");
+			Descriptor.CWL("Serialize(" + value + ")");
 			XmlElement node = doc.CreateElement(value.Name ?? value.Type.Name.Split('`')[0]);
 
 			this.WriteAttribute(AttributeName, value.Name, doc, node);
@@ -83,9 +83,7 @@ namespace zeroflag.Serialization
 				}
 				if (nonsense > 0)
 				{
-#if VERBOSE
-					Console.WriteLine("found " + nonsense + " items without a proper name");
-#endif
+					Descriptor.CWL("found " + nonsense + " items without a proper name");
 					node.AppendChild(doc.CreateComment("found " + nonsense + " items without a proper name"));
 				}
 			}
@@ -148,7 +146,7 @@ namespace zeroflag.Serialization
 			//desc.PreGenerate();
 			//desc.DoCreateInstance();
 
-			Console.WriteLine(new StringBuilder().Append(' ', depth).Append("Deserialize(name='" + desc.Name + "', type='" + desc.Type + "', isnull='" + desc.IsNull + "', id='" + desc.Id + "', value='" + desc.Value + "', children='" + node.ChildNodes.Count + "')").ToString());
+			Descriptor.CWL(new StringBuilder().Append(' ', depth).Append("Deserialize(name='" + desc.Name + "', type='" + desc.Type + "', isnull='" + desc.IsNull + "', id='" + desc.Id + "', value='" + desc.Value + "', children='" + node.ChildNodes.Count + "')").ToString());
 			//foreach (Descriptor cr in desc.Generated.Values) Console.WriteLine("\tid=" + cr.Id + ", name=" + cr.Name + ", type=" + cr.Type + ", value=" + cr.Value);
 
 			foreach (XmlNode sub in node.ChildNodes)

@@ -26,7 +26,7 @@
 //*********************************************************************
 #endregion LGPL License
 
-//#define TEST1 // class A
+#define TEST1 // class A
 #define TEST2 // dictionary
 //#define TEST3 // winforms <-- doesn't work and it's not because my serializer is too stupid...
 
