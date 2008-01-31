@@ -84,5 +84,8 @@
     <None Include="Descriptors\_ClassDiagram.cd" />
     <None Include="_ClassDiagram.cd" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="BinarySerialization.concept.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>
