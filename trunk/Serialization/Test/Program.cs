@@ -118,7 +118,7 @@ namespace Test
 				//zeroflag.Serialization.Descriptors.Descriptor desc = zeroflag.Serialization.Descriptors.Descriptor.DoParse(a);
 
 				//Console.WriteLine(desc);
-				//seri.Serialize(a);
+				seri.Serialize(a);
 				//seri.Serialize(desc);
 
 				A b = null;

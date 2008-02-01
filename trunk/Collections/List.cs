@@ -222,6 +222,37 @@ namespace zeroflag.Collections
 				}
 			}
 		}
+		public virtual T[] this[int start, int end]
+		{
+			get
+			{
+				return this[start, end, 1];
+			}
+		}
+
+		public virtual T[] this[int start, int end, int step]
+		{
+			get
+			{
+				if (end < 0)
+					end = this.Count + end;
+				if (start < 0)
+					start = this.Count + start;
+				if (start > end && step > 0)
+					step = -step;
+				T[] value = new T[(end - start) / step];
+				if (step == 1)
+				{
+					this.CopyTo(value, 0);
+				}
+				else
+				{
+					for (int i = start, j = 0; j < value.Length; i += step, j++)
+						value[j] = this[i];
+				}
+				return value;
+			}
+		}
 
 		#endregion System.Collections.Generic.IList`1
 
