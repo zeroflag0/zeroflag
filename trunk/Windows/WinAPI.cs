@@ -76,7 +76,7 @@ namespace zeroflag.Windows
 			return new IntPtr(location.X | location.Y << 0x10);
 		}
 
-		enum VK
+		public enum VK
 		{
 			LBUTTON = 0x01,  // Left mouse button
 			RBUTTON = 0x02,  // Right mouse button
@@ -356,7 +356,61 @@ namespace zeroflag.Windows
 			structInput.ki.wVk = (ushort)VK.F2;
 			SendInput(1, ref structInput, Marshal.SizeOf(structInput));
 		}
+		[System.Runtime.InteropServices.StructLayout(LayoutKind.Sequential)]
+		private struct KEYBOARD_INPUT
+		{
+			public uint type;
+			public ushort vk;
+			public ushort scanCode;
+			public uint flags;
+			public uint time;
+			public uint extrainfo;
+			public uint padding1;
+			public uint padding2;
+		}
 
+		[System.Runtime.InteropServices.DllImport("User32.dll")]
+		private static extern uint SendInput(uint numberOfInputs, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPArray, SizeConst = 1)] KEYBOARD_INPUT[] input, int structSize);
+
+		static void press(int scanCode)
+		{
+			sendKey(scanCode, true);
+		}
+
+		static void release(int scanCode)
+		{
+			sendKey(scanCode, false);
+		}
+
+		public static void sendKey(int scanCode, bool press)
+		{
+			KEYBOARD_INPUT[] input = new KEYBOARD_INPUT[1];
+			input[0] = new KEYBOARD_INPUT();
+			input[0].type = INPUT_KEYBOARD;
+			input[0].flags = KEY_SCANCODE;
+
+			if ((scanCode & 0xFF00) == 0xE000)
+			{ // extended key?
+				input[0].flags |= KEY_EXTENDED;
+			}
+
+			if (press)
+			{ // press?
+				input[0].scanCode = (ushort)(scanCode & 0xFF);
+			}
+			else
+			{ // release?
+				input[0].scanCode = scanCode;
+				input[0].flags |= KEY_UP;
+			}
+
+			uint result = SendInput(1, input, Marshal.SizeOf(input[0]));
+
+			if (result != 1)
+			{
+				throw new Exception("Could not send key: " + scanCode);
+			}
+		}
 
 		//[DllImport("user32.dll")]
 		//public static extern IntPtr GetActiveWindow();
