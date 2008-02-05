@@ -404,10 +404,10 @@ namespace zeroflag.Threading
 		/// <returns>This, for convenience.</returns>
 		public Task Delay(int milliseconds)
 		{
-			return this.ThenDo(new Task(this, false)[delegate()
+			return this.ThenDo(new Task(this, false, delegate
 			{
 				System.Threading.Thread.Sleep(milliseconds);
-			}]);
+			}));
 		}
 
 		//public Task delay(int milliseconds)
