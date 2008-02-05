@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Tahoma" Size="8.25" />
+  <Class Name="zeroflag.IRC.Messages.Commands.Command">
+    <Position X="0.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Messages\Commands\Command.cs</FileName>
+      <HashCode>AAAkQAAAACAAAADAAAAAAAYAABAAAAAAAAAAIEAgAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.IRC.Messages.Commands.Nick">
+    <Position X="3.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Messages\Commands\Nick.cs</FileName>
+      <HashCode>AIAAQAAQAAAAAAAEAAAAACAAAAAAAAAAAAAAAAAhAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.IRC.Messages.Commands.Join">
+    <Position X="3.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Messages\Commands\Join.cs</FileName>
+      <HashCode>AAAAQAAgAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.IRC.Messages.Commands.Unknown" Collapsed="true">
+    <Position X="0.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Messages\Commands\Unknown.cs</FileName>
+      <HashCode>AAAAQAAAAAAAAAAEAAAAIAQAAAAAAAAAAIAAAAAgAAA=</HashCode>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.IRC.Messages.Commands.Mode">
+    <Position X="6.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Messages\Commands\Mode.cs</FileName>
+      <HashCode>AAAAQBAAQAAAAAAAAAAAACAIAAAAAAAAAAAAAAAgAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="zeroflag.IRC.Messages.Commands.Command" FixedToPoint="true">
+      <Path>
+        <Point X="1.25" Y="0.75" />
+        <Point X="1.25" Y="0.375" />
+        <Point X="6.688" Y="0.375" />
+        <Point X="6.688" Y="0.75" />
+      </Path>
+    </InheritanceLine>
+  </Class>
+</ClassDiagram>
