@@ -3,7 +3,7 @@
 = Do Syntax =
 Do is a static helper class. For the default syntax using classes/instances, see below.
 == Do.For ==
-{{{Do.For[0,100,delegate(int i) { this.DoSomeCalculations(i); }].Run().Join();}}}
+{{{Do.For(0,100,delegate(int i) { this.DoSomeCalculations(i); }).Run().Join();}}}
   * Does the same as {{{new For(0,100,delegate(int i) { this.DoSomeCalculations(i); }).Run().Join();}}}
     * (see "Parallel For" below)
 
