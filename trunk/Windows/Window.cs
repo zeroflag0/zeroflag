@@ -191,6 +191,12 @@ namespace zeroflag.Windows
 			WinAPI.SendMessage(this.Handle, WindowsMessages.WM_ACTIVATE, wParam, WinAPI.NULL);
 		}
 
+		public bool Active
+		{
+			get { return WinAPI.GetForegroundWindow() == this.Handle; }
+			set { if (this.Active != value) this.Activate(value); }
+		}
+
 		public void Foreground()
 		{
 			WinAPI.SetForegroundWindow(this.Handle);
@@ -198,7 +204,7 @@ namespace zeroflag.Windows
 
 		public void KeyPress(System.Windows.Forms.Keys key)
 		{
-			this.KeyPress(key, 1);
+			this.KeyPress(key, 100);
 		}
 		public void KeyPress(System.Windows.Forms.Keys key, int duration)
 		{
@@ -209,12 +215,20 @@ namespace zeroflag.Windows
 
 		public void KeyDown(key key)
 		{
-			WinAPI.SendMessage(this.Handle, WindowsMessages.WM_KEYDOWN, (IntPtr)((long)key), new IntPtr());
+			bool active = this.Active;
+			this.Active = true;
+			WinAPI.KeyDown(key);
+			//WinAPI.SendMessage(this.Handle, WindowsMessages.WM_KEYDOWN, (IntPtr)((long)key), new IntPtr());
+			this.Active = active;
 		}
 
 		public void KeyUp(key key)
 		{
-			WinAPI.SendMessage(this.Handle, WindowsMessages.WM_KEYUP, (IntPtr)((long)key), new IntPtr());
+			bool active = this.Active;
+			this.Active = true;
+			WinAPI.KeyUp(key);
+			//WinAPI.SendMessage(this.Handle, WindowsMessages.WM_KEYUP, (IntPtr)((long)key), new IntPtr());
+			this.Active = active;
 		}
 
 		public void MouseClick(Point location, button button)

@@ -76,199 +76,747 @@ namespace zeroflag.Windows
 			return new IntPtr(location.X | location.Y << 0x10);
 		}
 
-		public enum VK
+		#region VK
+		public enum VK : ushort
 		{
-			LBUTTON = 0x01,  // Left mouse button
-			RBUTTON = 0x02,  // Right mouse button
-			CANCEL = 0x03,  // Control-break processing
-			MBUTTON = 0x04,  // Middle mouse button (three-button mouse)
-			XBUTTON1 = 0x05,  // Windows 2000/XP: X1 mouse button
-			XBUTTON2 = 0x06,  // Windows 2000/XP: X2 mouse button
-			//            0x07   // Undefined
-			BACK = 0x08,  // BACKSPACE key
-			TAB = 0x09,  // TAB key
-			//           0x0A-0x0B,  // Reserved
-			CLEAR = 0x0C,  // CLEAR key
-			RETURN = 0x0D,  // ENTER key
-			//        0x0E-0x0F, // Undefined
-			SHIFT = 0x10,  // SHIFT key
-			CONTROL = 0x11,  // CTRL key
-			MENU = 0x12,  // ALT key
-			PAUSE = 0x13,  // PAUSE key
-			CAPITAL = 0x14,  // CAPS LOCK key
-			KANA = 0x15,  // Input Method Editor (IME) Kana mode
-			HANGUL = 0x15,  // IME Hangul mode
-			//            0x16,  // Undefined
-			JUNJA = 0x17,  // IME Junja mode
-			FINAL = 0x18,  // IME final mode
-			HANJA = 0x19,  // IME Hanja mode
-			KANJI = 0x19,  // IME Kanji mode
-			//            0x1A,  // Undefined
-			ESCAPE = 0x1B,  // ESC key
-			CONVERT = 0x1C,  // IME convert
-			NONCONVERT = 0x1D,  // IME nonconvert
-			ACCEPT = 0x1E,  // IME accept
-			MODECHANGE = 0x1F,  // IME mode change request
-			SPACE = 0x20,  // SPACEBAR
-			PRIOR = 0x21,  // PAGE UP key
-			NEXT = 0x22,  // PAGE DOWN key
-			END = 0x23,  // END key
-			HOME = 0x24,  // HOME key
-			LEFT = 0x25,  // LEFT ARROW key
-			UP = 0x26,  // UP ARROW key
-			RIGHT = 0x27,  // RIGHT ARROW key
-			DOWN = 0x28,  // DOWN ARROW key
-			SELECT = 0x29,  // SELECT key
-			PRINT = 0x2A,  // PRINT key
-			EXECUTE = 0x2B,  // EXECUTE key
-			SNAPSHOT = 0x2C,  // PRINT SCREEN key
-			INSERT = 0x2D,  // INS key
-			DELETE = 0x2E,  // DEL key
-			HELP = 0x2F,  // HELP key
-			KEY_0 = 0x30, // 0 key
-			KEY_1 = 0x31,  // 1 key
-			KEY_2 = 0x32,  // 2 key
-			KEY_3 = 0x33,  // 3 key
-			KEY_4 = 0x34,  // 4 key
-			KEY_5 = 0x35,  // 5 key
-			KEY_6 = 0x36,  // 6 key
-			KEY_7 = 0x37,  // 7 key
-			KEY_8 = 0x38,  // 8 key
-			KEY_9 = 0x39,  // 9 key
-			//        0x3A-0x40, // Undefined
-			KEY_A = 0x41,  // A key
-			KEY_B = 0x42,  // B key
-			KEY_C = 0x43,  // C key
-			KEY_D = 0x44,  // D key
-			KEY_E = 0x45,  // E key
-			KEY_F = 0x46,  // F key
-			KEY_G = 0x47,  // G key
-			KEY_H = 0x48,  // H key
-			KEY_I = 0x49,  // I key
-			KEY_J = 0x4A,  // J key
-			KEY_K = 0x4B,  // K key
-			KEY_L = 0x4C,  // L key
-			KEY_M = 0x4D,  // M key
-			KEY_N = 0x4E,  // N key
-			KEY_O = 0x4F,  // O key
-			KEY_P = 0x50,  // P key
-			KEY_Q = 0x51,  // Q key
-			KEY_R = 0x52,  // R key
-			KEY_S = 0x53,  // S key
-			KEY_T = 0x54,  // T key
-			KEY_U = 0x55,  // U key
-			KEY_V = 0x56,  // V key
-			KEY_W = 0x57,  // W key
-			KEY_X = 0x58,  // X key
-			KEY_Y = 0x59,  // Y key
-			KEY_Z = 0x5A,  // Z key
-			LWIN = 0x5B,  // Left Windows key (Microsoft Natural keyboard)
-			RWIN = 0x5C,  // Right Windows key (Natural keyboard)
-			APPS = 0x5D,  // Applications key (Natural keyboard)
-			//             0x5E, // Reserved
-			SLEEP = 0x5F,  // Computer Sleep key
-			NUMPAD0 = 0x60,  // Numeric keypad 0 key
-			NUMPAD1 = 0x61,  // Numeric keypad 1 key
-			NUMPAD2 = 0x62,  // Numeric keypad 2 key
-			NUMPAD3 = 0x63,  // Numeric keypad 3 key
-			NUMPAD4 = 0x64,  // Numeric keypad 4 key
-			NUMPAD5 = 0x65,  // Numeric keypad 5 key
-			NUMPAD6 = 0x66,  // Numeric keypad 6 key
-			NUMPAD7 = 0x67,  // Numeric keypad 7 key
-			NUMPAD8 = 0x68,  // Numeric keypad 8 key
-			NUMPAD9 = 0x69,  // Numeric keypad 9 key
-			MULTIPLY = 0x6A,  // Multiply key
-			ADD = 0x6B,  // Add key
-			SEPARATOR = 0x6C,  // Separator key
-			SUBTRACT = 0x6D,  // Subtract key
-			DECIMAL = 0x6E,  // Decimal key
-			DIVIDE = 0x6F,  // Divide key
-			F1 = 0x70,  // F1 key
-			F2 = 0x71,  // F2 key
-			F3 = 0x72,  // F3 key
-			F4 = 0x73,  // F4 key
-			F5 = 0x74,  // F5 key
-			F6 = 0x75,  // F6 key
-			F7 = 0x76,  // F7 key
-			F8 = 0x77,  // F8 key
-			F9 = 0x78,  // F9 key
-			F10 = 0x79,  // F10 key
-			F11 = 0x7A,  // F11 key
-			F12 = 0x7B,  // F12 key
-			F13 = 0x7C,  // F13 key
-			F14 = 0x7D,  // F14 key
-			F15 = 0x7E,  // F15 key
-			F16 = 0x7F,  // F16 key
-			//           0x88-0X8F,  // Unassigned
-			NUMLOCK = 0x90,  // NUM LOCK key
-			SCROLL = 0x91,  // SCROLL LOCK key
-			//           0x92-0x96,  // OEM specific
-			//           0x97-0x9F,  // Unassigned
-			LSHIFT = 0xA0,  // Left SHIFT key
-			RSHIFT = 0xA1,  // Right SHIFT key
-			LCONTROL = 0xA2,  // Left CONTROL key
-			RCONTROL = 0xA3,  // Right CONTROL key
-			LMENU = 0xA4,  // Left MENU key
-			RMENU = 0xA5,  // Right MENU key
-			BROWSER_BACK = 0xA6,  // Windows 2000/XP: Browser Back key
-			BROWSER_FORWARD = 0xA7,  // Windows 2000/XP: Browser Forward key
-			BROWSER_REFRESH = 0xA8,  // Windows 2000/XP: Browser Refresh key
-			BROWSER_STOP = 0xA9,  // Windows 2000/XP: Browser Stop key
-			BROWSER_SEARCH = 0xAA,  // Windows 2000/XP: Browser Search key
-			BROWSER_FAVORITES = 0xAB,  // Windows 2000/XP: Browser Favorites key
-			BROWSER_HOME = 0xAC,  // Windows 2000/XP: Browser Start and Home key
-			VOLUME_MUTE = 0xAD,  // Windows 2000/XP: Volume Mute key
-			VOLUME_DOWN = 0xAE,  // Windows 2000/XP: Volume Down key
-			VOLUME_UP = 0xAF,  // Windows 2000/XP: Volume Up key
-			MEDIA_NEXT_TRACK = 0xB0,  // Windows 2000/XP: Next Track key
-			MEDIA_PREV_TRACK = 0xB1,  // Windows 2000/XP: Previous Track key
-			MEDIA_STOP = 0xB2,  // Windows 2000/XP: Stop Media key
-			MEDIA_PLAY_PAUSE = 0xB3,  // Windows 2000/XP: Play/Pause Media key
-			LAUNCH_MAIL = 0xB4,  // Windows 2000/XP: Start Mail key
-			LAUNCH_MEDIA_SELECT = 0xB5,  // Windows 2000/XP: Select Media key
-			LAUNCH_APP1 = 0xB6,  // Windows 2000/XP: Start Application 1 key
-			LAUNCH_APP2 = 0xB7,  // Windows 2000/XP: Start Application 2 key
-			//           0xB8-0xB9,  // Reserved
-			OEM_1 = 0xBA,  // Used for miscellaneous characters; it can vary by keyboard.
-			// Windows 2000/XP: For the US standard keyboard, the ';:' key
-			OEM_PLUS = 0xBB,  // Windows 2000/XP: For any country/region, the '+' key
-			OEM_COMMA = 0xBC,  // Windows 2000/XP: For any country/region, the ',' key
-			OEM_MINUS = 0xBD,  // Windows 2000/XP: For any country/region, the '-' key
-			OEM_PERIOD = 0xBE,  // Windows 2000/XP: For any country/region, the '.' key
-			OEM_2 = 0xBF,  // Used for miscellaneous characters; it can vary by keyboard.
-			// Windows 2000/XP: For the US standard keyboard, the '/?' key
-			OEM_3 = 0xC0,  // Used for miscellaneous characters; it can vary by keyboard.
-			// Windows 2000/XP: For the US standard keyboard, the '`~' key
-			//           0xC1-0xD7,  // Reserved
-			//           0xD8-0xDA,  // Unassigned
-			OEM_4 = 0xDB,  // Used for miscellaneous characters; it can vary by keyboard.
-			// Windows 2000/XP: For the US standard keyboard, the '[{' key
-			OEM_5 = 0xDC,  // Used for miscellaneous characters; it can vary by keyboard.
-			// Windows 2000/XP: For the US standard keyboard, the '\|' key
-			OEM_6 = 0xDD,  // Used for miscellaneous characters; it can vary by keyboard.
-			// Windows 2000/XP: For the US standard keyboard, the ']}' key
-			OEM_7 = 0xDE,  // Used for miscellaneous characters; it can vary by keyboard.
-			// Windows 2000/XP: For the US standard keyboard, the 'single-quote/double-quote' key
-			OEM_8 = 0xDF,  // Used for miscellaneous characters; it can vary by keyboard.
-			//            0xE0,  // Reserved
-			//            0xE1,  // OEM specific
-			OEM_102 = 0xE2,  // Windows 2000/XP: Either the angle bracket key or the backslash key on the RT 102-key keyboard
-			//         0xE3-E4,  // OEM specific
-			PROCESSKEY = 0xE5,  // Windows 95/98/Me, Windows NT 4.0, Windows 2000/XP: IME PROCESS key
-			//            0xE6,  // OEM specific
-			PACKET = 0xE7,  // Windows 2000/XP: Used to pass Unicode characters as if they were keystrokes. The VK_PACKET key is the low word of a 32-bit Virtual Key value used for non-keyboard input methods. For more information, see Remark in KEYBDINPUT, SendInput, WM_KEYDOWN, and WM_KEYUP
-			//            0xE8,  // Unassigned
-			//         0xE9-F5,  // OEM specific
-			ATTN = 0xF6,  // Attn key
-			CRSEL = 0xF7,  // CrSel key
-			EXSEL = 0xF8,  // ExSel key
-			EREOF = 0xF9,  // Erase EOF key
-			PLAY = 0xFA,  // Play key
-			ZOOM = 0xFB,  // Zoom key
-			NONAME = 0xFC,  // Reserved
-			PA1 = 0xFD,  // PA1 key
-			OEM_CLEAR = 0xFE  // Clear key
+			NONE = 0x00,
+			/*
+			 * Virtual Keys, Standard Set
+			 */
+			LBUTTON = 0x01,
+			RBUTTON = 0x02,
+			CANCEL = 0x03,
+			MBUTTON = 0x04,    /* NOT contiguous with L & RBUTTON */
+
+			XBUTTON1 = 0x05,    /* NOT contiguous with L & RBUTTON */
+			XBUTTON2 = 0x06,    /* NOT contiguous with L & RBUTTON */
+
+			/*
+			 * 0x07 : unassigned
+			 */
+
+			BACK = 0x08,
+			TAB = 0x09,
+
+			/*
+			 * 0x0A - 0x0B : reserved
+			 */
+
+			CLEAR = 0x0C,
+			RETURN = 0x0D,
+
+			SHIFT = 0x10,
+			CONTROL = 0x11,
+			MENU = 0x12,
+			PAUSE = 0x13,
+			CAPITAL = 0x14,
+
+			KANA = 0x15,
+			HANGEUL = 0x15,  /* old name - should be here for compatibility */
+			HANGUL = 0x15,
+			JUNJA = 0x17,
+			FINAL = 0x18,
+			HANJA = 0x19,
+			KANJI = 0x19,
+
+			ESCAPE = 0x1B,
+
+			CONVERT = 0x1C,
+			NONCONVERT = 0x1D,
+			ACCEPT = 0x1E,
+			MODECHANGE = 0x1F,
+
+			SPACE = 0x20,
+			PRIOR = 0x21,
+			NEXT = 0x22,
+			END = 0x23,
+			HOME = 0x24,
+			LEFT = 0x25,
+			UP = 0x26,
+			RIGHT = 0x27,
+			DOWN = 0x28,
+			SELECT = 0x29,
+			PRINT = 0x2A,
+			EXECUTE = 0x2B,
+			SNAPSHOT = 0x2C,
+			INSERT = 0x2D,
+			DELETE = 0x2E,
+			HELP = 0x2F,
+
+			/*
+			 * VK_0 - VK_9 are the same as ASCII '0' - '9' (0x30 - 0x39)
+			 * 0x40 : unassigned
+			 * VK_A - VK_Z are the same as ASCII 'A' - 'Z' (0x41 - 0x5A)
+			 */
+			D0 = 0x30,
+			D1 = 0x31,
+			D2 = 0x32,
+			D3 = 0x33,
+			D4 = 0x34,
+			D5 = 0x35,
+			D6 = 0x36,
+			D7 = 0x37,
+			D8 = 0x38,
+			D9 = 0x39,
+
+			A = 0x41,
+			B = 0x42,
+			C = 0x43,
+			D = 0x44,
+			E = 0x45,
+			F = 0x46,
+			G = 0x47,
+			H = 0x48,
+			I = 0x49,
+			J = 0x4A,
+			K = 0x4B,
+			L = 0x4C,
+			M = 0x4D,
+			N = 0x4E,
+			O = 0x4F,
+			P = 0x50,
+			Q = 0x51,
+			R = 0x52,
+			S = 0x53,
+			T = 0x54,
+			U = 0x55,
+			V = 0x56,
+			W = 0x57,
+			X = 0x58,
+			Y = 0x59,
+			Z = 0x5A,
+
+			LWIN = 0x5B,
+			RWIN = 0x5C,
+			APPS = 0x5D,
+
+			/*
+			 * 0x5E : reserved
+			 */
+
+			SLEEP = 0x5F,
+
+			NUMPAD0 = 0x60,
+			NUMPAD1 = 0x61,
+			NUMPAD2 = 0x62,
+			NUMPAD3 = 0x63,
+			NUMPAD4 = 0x64,
+			NUMPAD5 = 0x65,
+			NUMPAD6 = 0x66,
+			NUMPAD7 = 0x67,
+			NUMPAD8 = 0x68,
+			NUMPAD9 = 0x69,
+			MULTIPLY = 0x6A,
+			ADD = 0x6B,
+			SEPARATOR = 0x6C,
+			SUBTRACT = 0x6D,
+			DECIMAL = 0x6E,
+			DIVIDE = 0x6F,
+			F1 = 0x70,
+			F2 = 0x71,
+			F3 = 0x72,
+			F4 = 0x73,
+			F5 = 0x74,
+			F6 = 0x75,
+			F7 = 0x76,
+			F8 = 0x77,
+			F9 = 0x78,
+			F10 = 0x79,
+			F11 = 0x7A,
+			F12 = 0x7B,
+			F13 = 0x7C,
+			F14 = 0x7D,
+			F15 = 0x7E,
+			F16 = 0x7F,
+			F17 = 0x80,
+			F18 = 0x81,
+			F19 = 0x82,
+			F20 = 0x83,
+			F21 = 0x84,
+			F22 = 0x85,
+			F23 = 0x86,
+			F24 = 0x87,
+
+			/*
+			 * 0x88 - 0x8F : unassigned
+			 */
+
+			NUMLOCK = 0x90,
+			SCROLL = 0x91,
+
+			/*
+			 * NEC PC-9800 kbd definitions
+			 */
+			OEM_NEC_EQUAL = 0x92,   // '=' key on numpad
+
+			/*
+			 * Fujitsu/OASYS kbd definitions
+			 */
+			OEM_FJ_JISHO = 0x92,   // 'Dictionary' key
+			OEM_FJ_MASSHOU = 0x93,   // 'Unregister word' key
+			OEM_FJ_TOUROKU = 0x94,   // 'Register word' key
+			OEM_FJ_LOYA = 0x95,   // 'Left OYAYUBI' key
+			OEM_FJ_ROYA = 0x96,   // 'Right OYAYUBI' key
+
+			/*
+			 * 0x97 - 0x9F : unassigned
+			 */
+
+			/*
+			 * VK_L* & VK_R* - left and right Alt, Ctrl and Shift virtual keys.
+			 * Used only as parameters to GetAsyncKeyState() and GetKeyState().
+			 * No other API or message will distinguish left and right keys in this way.
+			 */
+			LSHIFT = 0xA0,
+			RSHIFT = 0xA1,
+			LCONTROL = 0xA2,
+			RCONTROL = 0xA3,
+			LMENU = 0xA4,
+			RMENU = 0xA5,
+
+			BROWSER_BACK = 0xA6,
+			BROWSER_FORWARD = 0xA7,
+			BROWSER_REFRESH = 0xA8,
+			BROWSER_STOP = 0xA9,
+			BROWSER_SEARCH = 0xAA,
+			BROWSER_FAVORITES = 0xAB,
+			BROWSER_HOME = 0xAC,
+
+			VOLUME_MUTE = 0xAD,
+			VOLUME_DOWN = 0xAE,
+			VOLUME_UP = 0xAF,
+			MEDIA_NEXT_TRACK = 0xB0,
+			MEDIA_PREV_TRACK = 0xB1,
+			MEDIA_STOP = 0xB2,
+			MEDIA_PLAY_PAUSE = 0xB3,
+			LAUNCH_MAIL = 0xB4,
+			LAUNCH_MEDIA_SELECT = 0xB5,
+			LAUNCH_APP1 = 0xB6,
+			LAUNCH_APP2 = 0xB7,
+
+
+			/*
+			 * 0xB8 - 0xB9 : reserved
+			 */
+
+			OEM_1 = 0xBA,   // ';:' for US
+			OEM_PLUS = 0xBB,   // '+' any country
+			OEM_COMMA = 0xBC,   // ',' any country
+			OEM_MINUS = 0xBD,   // '-' any country
+			OEM_PERIOD = 0xBE,   // '.' any country
+			OEM_2 = 0xBF,   // '/?' for US
+			OEM_3 = 0xC0,   // '`~' for US
+
+			/*
+			 * 0xC1 - 0xD7 : reserved
+			 */
+
+			/*
+			 * 0xD8 - 0xDA : unassigned
+			 */
+
+			OEM_4 = 0xDB,  //  '[{' for US
+			OEM_5 = 0xDC,  //  '\|' for US
+			OEM_6 = 0xDD,  //  ']}' for US
+			OEM_7 = 0xDE,  //  ''"' for US
+			OEM_8 = 0xDF,
+
+			/*
+			 * 0xE0 : reserved
+			 */
+
+			/*
+			 * Various extended or enhanced keyboards
+			 */
+			OEM_AX = 0xE1,  //  'AX' key on Japanese AX kbd
+			OEM_102 = 0xE2,  //  "<>" or "\|" on RT 102-key kbd.
+			ICO_HELP = 0xE3,  //  Help key on ICO
+			ICO_00 = 0xE4,  //  00 key on ICO
+
+			PROCESSKEY = 0xE5,
+
+			ICO_CLEAR = 0xE6,
+
+
+			PACKET = 0xE7,
+
+			/*
+			 * 0xE8 : unassigned
+			 */
+
+			/*
+			 * Nokia/Ericsson definitions
+			 */
+			OEM_RESET = 0xE9,
+			OEM_JUMP = 0xEA,
+			OEM_PA1 = 0xEB,
+			OEM_PA2 = 0xEC,
+			OEM_PA3 = 0xED,
+			OEM_WSCTRL = 0xEE,
+			OEM_CUSEL = 0xEF,
+			OEM_ATTN = 0xF0,
+			OEM_FINISH = 0xF1,
+			OEM_COPY = 0xF2,
+			OEM_AUTO = 0xF3,
+			OEM_ENLW = 0xF4,
+			OEM_BACKTAB = 0xF5,
+
+			ATTN = 0xF6,
+			CRSEL = 0xF7,
+			EXSEL = 0xF8,
+			EREOF = 0xF9,
+			PLAY = 0xFA,
+			ZOOM = 0xFB,
+			NONAME = 0xFC,
+			PA1 = 0xFD,
+			OEM_CLEAR = 0xFE
 		}
+		#endregion VK
+
+		#region ScanCode
+		public enum ScanCode : ushort
+		{
+			NONE = 0x00,
+			ESCAPE = 0x01,
+			D1 = 0x02,
+			D2 = 0x03,
+			D3 = 0x04,
+			D4 = 0x05,
+			D5 = 0x06,
+			D6 = 0x07,
+			D7 = 0x08,
+			D8 = 0x09,
+			D9 = 0x0A,
+			D0 = 0x0B,
+			MINUS = 0x0C,    /* - on main keyboard */
+			EQUALS = 0x0D,
+			BACK = 0x0E,    /* backspace */
+			TAB = 0x0F,
+			Q = 0x10,
+			W = 0x11,
+			E = 0x12,
+			R = 0x13,
+			T = 0x14,
+			Y = 0x15,
+			U = 0x16,
+			I = 0x17,
+			O = 0x18,
+			P = 0x19,
+			LBRACKET = 0x1A,
+			RBRACKET = 0x1B,
+			RETURN = 0x1C,    /* Enter on main keyboard */
+			LCONTROL = 0x1D,
+			A = 0x1E,
+			S = 0x1F,
+			D = 0x20,
+			F = 0x21,
+			G = 0x22,
+			H = 0x23,
+			J = 0x24,
+			K = 0x25,
+			L = 0x26,
+			SEMICOLON = 0x27,
+			APOSTROPHE = 0x28,
+			GRAVE = 0x29,    /* accent grave */
+			LSHIFT = 0x2A,
+			BACKSLASH = 0x2B,
+			Z = 0x2C,
+			X = 0x2D,
+			C = 0x2E,
+			V = 0x2F,
+			B = 0x30,
+			N = 0x31,
+			M = 0x32,
+			COMMA = 0x33,
+			PERIOD = 0x34,    /* . on main keyboard */
+			SLASH = 0x35,    /* / on main keyboard */
+			RSHIFT = 0x36,
+			MULTIPLY = 0x37,    /* * on numeric keypad */
+			LMENU = 0x38,    /* left Alt */
+			SPACE = 0x39,
+			CAPITAL = 0x3A,
+			F1 = 0x3B,
+			F2 = 0x3C,
+			F3 = 0x3D,
+			F4 = 0x3E,
+			F5 = 0x3F,
+			F6 = 0x40,
+			F7 = 0x41,
+			F8 = 0x42,
+			F9 = 0x43,
+			F10 = 0x44,
+			NUMLOCK = 0x45,
+			SCROLL = 0x46,    /* Scroll Lock */
+			NUMPAD7 = 0x47,
+			NUMPAD8 = 0x48,
+			NUMPAD9 = 0x49,
+			SUBTRACT = 0x4A,    /* - on numeric keypad */
+			NUMPAD4 = 0x4B,
+			NUMPAD5 = 0x4C,
+			NUMPAD6 = 0x4D,
+			ADD = 0x4E,    /* + on numeric keypad */
+			NUMPAD1 = 0x4F,
+			NUMPAD2 = 0x50,
+			NUMPAD3 = 0x51,
+			NUMPAD0 = 0x52,
+			DECIMAL = 0x53,    /* . on numeric keypad */
+			OEM_102 = 0x56,    /* <> or \| on RT 102-key keyboard (Non-U.S.) */
+			F11 = 0x57,
+			F12 = 0x58,
+			F13 = 0x64,    /*                     (NEC PC98) */
+			F14 = 0x65,    /*                     (NEC PC98) */
+			F15 = 0x66,    /*                     (NEC PC98) */
+			KANA = 0x70,    /* (Japanese keyboard)            */
+			ABNT_C1 = 0x73,    /* /? on Brazilian keyboard */
+			CONVERT = 0x79,    /* (Japanese keyboard)            */
+			NOCONVERT = 0x7B,    /* (Japanese keyboard)            */
+			YEN = 0x7D,    /* (Japanese keyboard)            */
+			ABNT_C2 = 0x7E,    /* Numpad . on Brazilian keyboard */
+			NUMPADEQUALS = 0x8D,    /* = on numeric keypad (NEC PC98) */
+			PREVTRACK = 0x90,    /* Previous Track (DIK_CIRCUMFLEX on Japanese keyboard) */
+			AT = 0x91,    /*                     (NEC PC98) */
+			COLON = 0x92,    /*                     (NEC PC98) */
+			UNDERLINE = 0x93,    /*                     (NEC PC98) */
+			KANJI = 0x94,    /* (Japanese keyboard)            */
+			STOP = 0x95,    /*                     (NEC PC98) */
+			AX = 0x96,    /*                     (Japan AX) */
+			UNLABELED = 0x97,    /*                        (J3100) */
+			NEXTTRACK = 0x99,    /* Next Track */
+			NUMPADENTER = 0x9C,    /* Enter on numeric keypad */
+			RCONTROL = 0x9D,
+			MUTE = 0xA0,    /* Mute */
+			CALCULATOR = 0xA1,    /* Calculator */
+			PLAYPAUSE = 0xA2,    /* Play / Pause */
+			MEDIASTOP = 0xA4,    /* Media Stop */
+			VOLUMEDOWN = 0xAE,    /* Volume - */
+			VOLUMEUP = 0xB0,    /* Volume + */
+			WEBHOME = 0xB2,    /* Web home */
+			NUMPADCOMMA = 0xB3,    /* , on numeric keypad (NEC PC98) */
+			DIVIDE = 0xB5,    /* / on numeric keypad */
+			SYSRQ = 0xB7,
+			RMENU = 0xB8,    /* right Alt */
+			PAUSE = 0xC5,    /* Pause */
+			HOME = 0xC7,    /* Home on arrow keypad */
+			UP = 0xC8,    /* UpArrow on arrow keypad */
+			PRIOR = 0xC9,    /* PgUp on arrow keypad */
+			LEFT = 0xCB,    /* LeftArrow on arrow keypad */
+			RIGHT = 0xCD,    /* RightArrow on arrow keypad */
+			END = 0xCF,    /* End on arrow keypad */
+			DOWN = 0xD0,    /* DownArrow on arrow keypad */
+			NEXT = 0xD1,    /* PgDn on arrow keypad */
+			INSERT = 0xD2,    /* Insert on arrow keypad */
+			DELETE = 0xD3,    /* Delete on arrow keypad */
+			LWIN = 0xDB,    /* Left Windows key */
+			RWIN = 0xDC,    /* Right Windows key */
+			APPS = 0xDD,    /* AppMenu key */
+			POWER = 0xDE,    /* System Power */
+			SLEEP = 0xDF,    /* System Sleep */
+			WAKE = 0xE3,    /* System Wake */
+			WEBSEARCH = 0xE5,    /* Web Search */
+			WEBFAVORITES = 0xE6,    /* Web Favorites */
+			WEBREFRESH = 0xE7,    /* Web Refresh */
+			WEBSTOP = 0xE8,    /* Web Stop */
+			WEBFORWARD = 0xE9,    /* Web Forward */
+			WEBBACK = 0xEA,    /* Web Back */
+			MYCOMPUTER = 0xEB,    /* My Computer */
+			MAIL = 0xEC,    /* Mail */
+			MEDIASELECT = 0xED,    /* Media Select */
+
+		}
+		#endregion ScanCode
+
+		#region KeyScanCodes
+
+		#region ScanCode -> Key
+#if NOT_WORKING
+		static System.Collections.Generic.Dictionary<ScanCode, key> CreateScanCodeKeys()
+		{
+			System.Collections.Generic.Dictionary<ScanCode, key> codes = new System.Collections.Generic.Dictionary<ScanCode, key>();
+			codes.Add(ScanCode.NONE, key.NoName);
+			codes.Add(ScanCode.ESCAPE, key.Escape);
+			codes.Add(ScanCode.D1, key.D1);
+			codes.Add(ScanCode.D2, key.D2);
+			codes.Add(ScanCode.D3, key.D3);
+			codes.Add(ScanCode.D4, key.D4);
+			codes.Add(ScanCode.D5, key.D5);
+			codes.Add(ScanCode.D6, key.D6);
+			codes.Add(ScanCode.D7, key.D7);
+			codes.Add(ScanCode.D8, key.D8);
+			codes.Add(ScanCode.D9, key.D9);
+			codes.Add(ScanCode.D0, key.D0);
+			codes.Add(ScanCode.MINUS, key.OemMinus);    /* - on main keyboard */
+			codes.Add(ScanCode.EQUALS, key.Oemplus);
+			codes.Add(ScanCode.BACK, key.Back);    /* backspace */
+			codes.Add(ScanCode.TAB, key.Tab);
+			codes.Add(ScanCode.Q, key.Q);
+			codes.Add(ScanCode.W, key.W);
+			codes.Add(ScanCode.E, key.E);
+			codes.Add(ScanCode.R, key.R);
+			codes.Add(ScanCode.T, key.T);
+			codes.Add(ScanCode.Y, key.Y);
+			codes.Add(ScanCode.U, key.U);
+			codes.Add(ScanCode.I, key.I);
+			codes.Add(ScanCode.O, key.O);
+			codes.Add(ScanCode.P, key.P);
+			codes.Add(ScanCode.LBRACKET, key.OemOpenBrackets);
+			codes.Add(ScanCode.RBRACKET, key.OemCloseBrackets);
+			codes.Add(ScanCode.RETURN, key.Enter);    /* Enter on main keyboard */
+			codes.Add(ScanCode.LCONTROL, key.LControlKey);
+			codes.Add(ScanCode.A, key.A);
+			codes.Add(ScanCode.S, key.S);
+			codes.Add(ScanCode.D, key.D);
+			codes.Add(ScanCode.F, key.F);
+			codes.Add(ScanCode.G, key.G);
+			codes.Add(ScanCode.H, key.H);
+			codes.Add(ScanCode.J, key.J);
+			codes.Add(ScanCode.K, key.K);
+			codes.Add(ScanCode.L, key.L);
+			codes.Add(ScanCode.SEMICOLON, key.OemSemicolon);
+			codes.Add(ScanCode.APOSTROPHE, key.OemQuotes);
+			codes.Add(ScanCode.GRAVE, key.Oemtilde);    /* accent grave */
+			codes.Add(ScanCode.LSHIFT, key.LShiftKey);
+			codes.Add(ScanCode.BACKSLASH, key.OemBackslash);
+			codes.Add(ScanCode.Z, key.Z);
+			codes.Add(ScanCode.X, key.X);
+			codes.Add(ScanCode.C, key.C);
+			codes.Add(ScanCode.V, key.V);
+			codes.Add(ScanCode.B, key.B);
+			codes.Add(ScanCode.N, key.N);
+			codes.Add(ScanCode.M, key.M);
+			codes.Add(ScanCode.COMMA, key.Oemcomma);
+			codes.Add(ScanCode.PERIOD, key.OemPeriod);    /* . on main keyboard */
+			codes.Add(ScanCode.SLASH, key.OemQuestion);    /* / on main keyboard */
+			codes.Add(ScanCode.RSHIFT, key.RShiftKey);
+			codes.Add(ScanCode.MULTIPLY, key.Multiply);    /* * on numeric keypad */
+			codes.Add(ScanCode.LMENU, key.Alt);    /* left Alt */
+			codes.Add(ScanCode.SPACE, key.Space);
+			codes.Add(ScanCode.CAPITAL, key.Capital);
+			codes.Add(ScanCode.F1, key.F1);
+			codes.Add(ScanCode.F2, key.F2);
+			codes.Add(ScanCode.F3, key.F3);
+			codes.Add(ScanCode.F4, key.F4);
+			codes.Add(ScanCode.F5, key.F5);
+			codes.Add(ScanCode.F6, key.F6);
+			codes.Add(ScanCode.F7, key.F7);
+			codes.Add(ScanCode.F8, key.F8);
+			codes.Add(ScanCode.F9, key.F9);
+			codes.Add(ScanCode.F10, key.F10);
+			codes.Add(ScanCode.NUMLOCK, key.NumLock);
+			codes.Add(ScanCode.SCROLL, key.Scroll);    /* Scroll Lock */
+			codes.Add(ScanCode.NUMPAD7, key.NumPad7);
+			codes.Add(ScanCode.NUMPAD8, key.NumPad8);
+			codes.Add(ScanCode.NUMPAD9, key.NumPad9);
+			codes.Add(ScanCode.SUBTRACT, key.Subtract);    /* - on numeric keypad */
+			codes.Add(ScanCode.NUMPAD4, key.NumPad4);
+			codes.Add(ScanCode.NUMPAD5, key.NumPad5);
+			codes.Add(ScanCode.NUMPAD6, key.NumPad6);
+			codes.Add(ScanCode.ADD, key.Add);    /* + on numeric keypad */
+			codes.Add(ScanCode.NUMPAD1, key.NumPad1);
+			codes.Add(ScanCode.NUMPAD2, key.NumPad2);
+			codes.Add(ScanCode.NUMPAD3, key.NumPad3);
+			codes.Add(ScanCode.NUMPAD0, key.NumPad0);
+			codes.Add(ScanCode.DECIMAL, key.Decimal);    /* . on numeric keypad */
+			codes.Add(ScanCode.OEM_102, key.Oem102);    /* <> or \| on RT 102-key keyboard (Non-U.S.) */
+			codes.Add(ScanCode.F11, key.F11);
+			codes.Add(ScanCode.F12, key.F12);
+			codes.Add(ScanCode.F13, key.F13);    /*                     (NEC PC98) */
+			codes.Add(ScanCode.F14, key.F14);    /*                     (NEC PC98) */
+			codes.Add(ScanCode.F15, key.F15);    /*                     (NEC PC98) */
+			codes.Add(ScanCode.KANA, key.KanaMode);    /* (Japanese keyboard)            */
+			codes.Add(ScanCode.ABNT_C1, key.FinalMode);    /* /? on Brazilian keyboard */
+			codes.Add(ScanCode.CONVERT, key.FinalMode);    /* (Japanese keyboard)            */
+			codes.Add(ScanCode.NOCONVERT, key.FinalMode);    /* (Japanese keyboard)            */
+			//YEN = 0x7D,    /* (Japanese keyboard)            */
+			//ABNT_C2 = 0x7E,    /* Numpad . on Brazilian keyboard */
+			//NUMPADEQUALS = 0x8D,    /* = on numeric keypad (NEC PC98) */
+			//PREVTRACK = 0x90,    /* Previous Track (DIK_CIRCUMFLEX on Japanese keyboard) */
+			//AT = 0x91,    /*                     (NEC PC98) */
+			//COLON = 0x92,    /*                     (NEC PC98) */
+			//UNDERLINE = 0x93,    /*                     (NEC PC98) */
+			//KANJI = 0x94,    /* (Japanese keyboard)            */
+			//STOP = 0x95,    /*                     (NEC PC98) */
+			//AX = 0x96,    /*                     (Japan AX) */
+			//UNLABELED = 0x97,    /*                        (J3100) */
+			//NEXTTRACK = 0x99,    /* Next Track */
+			codes.Add(ScanCode.NUMPADENTER, key.Enter);    /* Enter on numeric keypad */
+			codes.Add(ScanCode.RCONTROL, key.RControlKey);
+			//MUTE = 0xA0,    /* Mute */
+			//CALCULATOR = 0xA1,    /* Calculator */
+			//PLAYPAUSE = 0xA2,    /* Play / Pause */
+			//MEDIASTOP = 0xA4,    /* Media Stop */
+			//VOLUMEDOWN = 0xAE,    /* Volume - */
+			//VOLUMEUP = 0xB0,    /* Volume + */
+			//WEBHOME = 0xB2,    /* Web home */
+			codes.Add(ScanCode.NUMPADCOMMA, key.Decimal);    /* , on numeric keypad (NEC PC98) */
+			codes.Add(ScanCode.DIVIDE, key.Divide);    /* / on numeric keypad */
+			//SYSRQ = 0xB7,
+			codes.Add(ScanCode.RMENU, key.Alt);    /* right Alt */
+			codes.Add(ScanCode.PAUSE, key.Pause);    /* Pause */
+			codes.Add(ScanCode.HOME, key.Home);    /* Home on arrow keypad */
+			codes.Add(ScanCode.UP, key.Up);    /* UpArrow on arrow keypad */
+			codes.Add(ScanCode.PRIOR, key.PageUp);    /* PgUp on arrow keypad */
+			codes.Add(ScanCode.LEFT, key.Left);    /* LeftArrow on arrow keypad */
+			codes.Add(ScanCode.RIGHT, key.Right);    /* RightArrow on arrow keypad */
+			codes.Add(ScanCode.END, key.End);    /* End on arrow keypad */
+			codes.Add(ScanCode.DOWN, key.Down);    /* DownArrow on arrow keypad */
+			codes.Add(ScanCode.NEXT, key.PageDown);    /* PgDn on arrow keypad */
+			codes.Add(ScanCode.INSERT, key.Insert);    /* Insert on arrow keypad */
+			codes.Add(ScanCode.DELETE, key.Delete);    /* Delete on arrow keypad */
+			codes.Add(ScanCode.LWIN, key.LWin);    /* Left Windows key */
+			codes.Add(ScanCode.RWIN, key.RWin);    /* Right Windows key */
+			//APPS = 0xDD,    /* AppMenu key */
+			//POWER = 0xDE,    /* System Power */
+			//SLEEP = 0xDF,    /* System Sleep */
+			//WAKE = 0xE3,    /* System Wake */
+			//WEBSEARCH = 0xE5,    /* Web Search */
+			//WEBFAVORITES = 0xE6,    /* Web Favorites */
+			//WEBREFRESH = 0xE7,    /* Web Refresh */
+			//WEBSTOP = 0xE8,    /* Web Stop */
+			//WEBFORWARD = 0xE9,    /* Web Forward */
+			//WEBBACK = 0xEA,    /* Web Back */
+			//MYCOMPUTER = 0xEB,    /* My Computer */
+			//MAIL = 0xEC,    /* Mail */
+			//MEDIASELECT = 0xED,    /* Media Select */
+
+			return codes;
+		}
+
+		static System.Collections.Generic.Dictionary<ScanCode, key> _ScanCodeKeys;
+
+		public static System.Collections.Generic.Dictionary<ScanCode, key> ScanCodeKeys
+		{
+			get { return WinAPI._ScanCodeKeys ?? (WinAPI._ScanCodeKeys = WinAPI.CreateScanCodeKeys()); }
+		}
+#endif//NOT_WORKING
+		#endregion
+
+		static System.Collections.Generic.Dictionary<key, ScanCode> CreateKeyScanCodes()
+		{
+			System.Collections.Generic.Dictionary<key, ScanCode> codes = new System.Collections.Generic.Dictionary<key, ScanCode>();
+			codes.Add(key.NoName, ScanCode.NONE);
+			codes.Add(key.Escape, ScanCode.ESCAPE);
+			codes.Add(key.D1, ScanCode.D1);
+			codes.Add(key.D2, ScanCode.D2);
+			codes.Add(key.D3, ScanCode.D3);
+			codes.Add(key.D4, ScanCode.D4);
+			codes.Add(key.D5, ScanCode.D5);
+			codes.Add(key.D6, ScanCode.D6);
+			codes.Add(key.D7, ScanCode.D7);
+			codes.Add(key.D8, ScanCode.D8);
+			codes.Add(key.D9, ScanCode.D9);
+			codes.Add(key.D0, ScanCode.D0);
+			codes.Add(key.OemMinus, ScanCode.MINUS);    /* - on main keyboard */
+			codes.Add(key.Oemplus, ScanCode.EQUALS);
+			codes.Add(key.Back, ScanCode.BACK);    /* backspace */
+			codes.Add(key.Tab, ScanCode.TAB);
+			codes.Add(key.Q, ScanCode.Q);
+			codes.Add(key.W, ScanCode.W);
+			codes.Add(key.E, ScanCode.E);
+			codes.Add(key.R, ScanCode.R);
+			codes.Add(key.T, ScanCode.T);
+			codes.Add(key.Y, ScanCode.Y);
+			codes.Add(key.U, ScanCode.U);
+			codes.Add(key.I, ScanCode.I);
+			codes.Add(key.O, ScanCode.O);
+			codes.Add(key.P, ScanCode.P);
+			codes.Add(key.OemOpenBrackets, ScanCode.LBRACKET);
+			codes.Add(key.OemCloseBrackets, ScanCode.RBRACKET);
+			codes.Add(key.Enter, ScanCode.RETURN);    /* Enter on main keyboard */
+			codes.Add(key.LControlKey, ScanCode.LCONTROL);
+			codes.Add(key.A, ScanCode.A);
+			codes.Add(key.S, ScanCode.S);
+			codes.Add(key.D, ScanCode.D);
+			codes.Add(key.F, ScanCode.F);
+			codes.Add(key.G, ScanCode.G);
+			codes.Add(key.H, ScanCode.H);
+			codes.Add(key.J, ScanCode.J);
+			codes.Add(key.K, ScanCode.K);
+			codes.Add(key.L, ScanCode.L);
+			codes.Add(key.OemSemicolon, ScanCode.SEMICOLON);
+			codes.Add(key.OemQuotes, ScanCode.APOSTROPHE);
+			codes.Add(key.Oemtilde, ScanCode.GRAVE);    /* accent grave */
+			codes.Add(key.LShiftKey, ScanCode.LSHIFT);
+			codes.Add(key.OemBackslash, ScanCode.BACKSLASH);
+			codes.Add(key.Z, ScanCode.Z);
+			codes.Add(key.X, ScanCode.X);
+			codes.Add(key.C, ScanCode.C);
+			codes.Add(key.V, ScanCode.V);
+			codes.Add(key.B, ScanCode.B);
+			codes.Add(key.N, ScanCode.N);
+			codes.Add(key.M, ScanCode.M);
+			codes.Add(key.Oemcomma, ScanCode.COMMA);
+			codes.Add(key.OemPeriod, ScanCode.PERIOD);    /* . on main keyboard */
+			codes.Add(key.OemQuestion, ScanCode.SLASH);    /* / on main keyboard */
+			codes.Add(key.RShiftKey, ScanCode.RSHIFT);
+			codes.Add(key.Multiply, ScanCode.MULTIPLY);    /* * on numeric keypad */
+			codes.Add(key.Alt, ScanCode.LMENU);    /* left Alt */
+			codes.Add(key.Space, ScanCode.SPACE);
+			codes.Add(key.Capital, ScanCode.CAPITAL);
+			codes.Add(key.F1, ScanCode.F1);
+			codes.Add(key.F2, ScanCode.F2);
+			codes.Add(key.F3, ScanCode.F3);
+			codes.Add(key.F4, ScanCode.F4);
+			codes.Add(key.F5, ScanCode.F5);
+			codes.Add(key.F6, ScanCode.F6);
+			codes.Add(key.F7, ScanCode.F7);
+			codes.Add(key.F8, ScanCode.F8);
+			codes.Add(key.F9, ScanCode.F9);
+			codes.Add(key.F10, ScanCode.F10);
+			codes.Add(key.NumLock, ScanCode.NUMLOCK);
+			codes.Add(key.Scroll, ScanCode.SCROLL);    /* Scroll Lock */
+			codes.Add(key.NumPad7, ScanCode.NUMPAD7);
+			codes.Add(key.NumPad8, ScanCode.NUMPAD8);
+			codes.Add(key.NumPad9, ScanCode.NUMPAD9);
+			codes.Add(key.Subtract, ScanCode.SUBTRACT);    /* - on numeric keypad */
+			codes.Add(key.NumPad4, ScanCode.NUMPAD4);
+			codes.Add(key.NumPad5, ScanCode.NUMPAD5);
+			codes.Add(key.NumPad6, ScanCode.NUMPAD6);
+			codes.Add(key.Add, ScanCode.ADD);    /* + on numeric keypad */
+			codes.Add(key.NumPad1, ScanCode.NUMPAD1);
+			codes.Add(key.NumPad2, ScanCode.NUMPAD2);
+			codes.Add(key.NumPad3, ScanCode.NUMPAD3);
+			codes.Add(key.NumPad0, ScanCode.NUMPAD0);
+			codes.Add(key.Decimal, ScanCode.DECIMAL);    /* . on numeric keypad */
+			//same as backslash: codes.Add(key.Oem102, ScanCode.OEM_102);    /* <> or \| on RT 102-key keyboard (Non-U.S.) */
+			codes.Add(key.F11, ScanCode.F11);
+			codes.Add(key.F12, ScanCode.F12);
+			codes.Add(key.F13, ScanCode.F13);    /*                     (NEC PC98) */
+			codes.Add(key.F14, ScanCode.F14);    /*                     (NEC PC98) */
+			codes.Add(key.F15, ScanCode.F15);    /*                     (NEC PC98) */
+			//codes.Add(key.KanaMode, ScanCode.KANA);    /* (Japanese keyboard)            */
+			//codes.Add(key.FinalMode, ScanCode.ABNT_C1);    /* /? on Brazilian keyboard */
+			//codes.Add(key.FinalMode, ScanCode.CONVERT);    /* (Japanese keyboard)            */
+			//codes.Add(key.FinalMode, ScanCode.NOCONVERT);    /* (Japanese keyboard)            */
+			//same as Return: codes.Add(key.Enter, ScanCode.NUMPADENTER);    /* Enter on numeric keypad */
+			codes.Add(key.RControlKey, ScanCode.RCONTROL);
+			//codes.Add(key.Decimal, ScanCode.NUMPADCOMMA);    /* , on numeric keypad (NEC PC98) */
+			codes.Add(key.Divide, ScanCode.DIVIDE);    /* / on numeric keypad */
+			codes.Add(key.RMenu, ScanCode.RMENU);    /* right Alt */
+			codes.Add(key.Pause, ScanCode.PAUSE);    /* Pause */
+			codes.Add(key.Home, ScanCode.HOME);    /* Home on arrow keypad */
+			codes.Add(key.Up, ScanCode.UP);    /* UpArrow on arrow keypad */
+			codes.Add(key.PageUp, ScanCode.PRIOR);    /* PgUp on arrow keypad */
+			codes.Add(key.Left, ScanCode.LEFT);    /* LeftArrow on arrow keypad */
+			codes.Add(key.Right, ScanCode.RIGHT);    /* RightArrow on arrow keypad */
+			codes.Add(key.End, ScanCode.END);    /* End on arrow keypad */
+			codes.Add(key.Down, ScanCode.DOWN);    /* DownArrow on arrow keypad */
+			codes.Add(key.PageDown, ScanCode.NEXT);    /* PgDn on arrow keypad */
+			codes.Add(key.Insert, ScanCode.INSERT);    /* Insert on arrow keypad */
+			codes.Add(key.Delete, ScanCode.DELETE);    /* Delete on arrow keypad */
+			codes.Add(key.LWin, ScanCode.LWIN);    /* Left Windows key */
+			codes.Add(key.RWin, ScanCode.RWIN);    /* Right Windows key */
+
+			return codes;
+		}
+
+		static System.Collections.Generic.Dictionary<key, ScanCode> _KeyScanCodes;
+
+		public static System.Collections.Generic.Dictionary<key, ScanCode> KeyScanCodes
+		{
+			get { return WinAPI._KeyScanCodes ?? (WinAPI._KeyScanCodes = WinAPI.CreateKeyScanCodes()); }
+		}
+
+		#endregion KeyScanCodes
 
 		[StructLayout(LayoutKind.Sequential)]
 		struct MOUSEINPUT
@@ -276,7 +824,7 @@ namespace zeroflag.Windows
 			public int dx;
 			public int dy;
 			public uint mouseData;
-			public uint dwFlags;
+			public InputMouseFlags Flags;
 			public uint time;
 			public IntPtr dwExtraInfo;
 		}
@@ -284,9 +832,9 @@ namespace zeroflag.Windows
 		[StructLayout(LayoutKind.Sequential)]
 		struct KEYBDINPUT
 		{
-			public ushort wVk;
-			public ushort wScan;
-			public uint dwFlags;
+			public VK Vk;
+			public ScanCode ScanCode;
+			public InputKeyFlags Flags;
 			public uint time;
 			public IntPtr dwExtraInfo;
 		}
@@ -303,7 +851,7 @@ namespace zeroflag.Windows
 		struct INPUT
 		{
 			[FieldOffset(0)]
-			public int type;
+			public InputSource type;
 			[FieldOffset(4)]
 			public MOUSEINPUT mi;
 			[FieldOffset(4)]
@@ -312,96 +860,132 @@ namespace zeroflag.Windows
 			public HARDWAREINPUT hi;
 		}
 
-
-		const int INPUT_MOUSE = 0;
-		const int INPUT_KEYBOARD = 1;
-		const int INPUT_HARDWARE = 2;
-		const uint KEYEVENTF_EXTENDEDKEY = 0x0001;
-		const uint KEYEVENTF_KEYUP = 0x0002;
-		const uint KEYEVENTF_UNICODE = 0x0004;
-		const uint KEYEVENTF_SCANCODE = 0x0008;
+		enum InputSource : int
+		{
+			MOUSE = 0,
+			KEYBOARD = 1,
+			HARDWARE = 2,
+		}
+		enum InputKeyFlags : uint
+		{
+			KEYDOWN = 0x0000,
+			EXTENDEDKEY = 0x0001,
+			KEYUP = 0x0002,
+			UNICODE = 0x0004,
+			SCANCODE = 0x0008,
+		}
 		const uint XBUTTON1 = 0x0001;
 		const uint XBUTTON2 = 0x0002;
-		const uint MOUSEEVENTF_MOVE = 0x0001;
-		const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
-		const uint MOUSEEVENTF_LEFTUP = 0x0004;
-		const uint MOUSEEVENTF_RIGHTDOWN = 0x0008;
-		const uint MOUSEEVENTF_RIGHTUP = 0x0010;
-		const uint MOUSEEVENTF_MIDDLEDOWN = 0x0020;
-		const uint MOUSEEVENTF_MIDDLEUP = 0x0040;
-		const uint MOUSEEVENTF_XDOWN = 0x0080;
-		const uint MOUSEEVENTF_XUP = 0x0100;
-		const uint MOUSEEVENTF_WHEEL = 0x0800;
-		const uint MOUSEEVENTF_VIRTUALDESK = 0x4000;
-		const uint MOUSEEVENTF_ABSOLUTE = 0x8000;
-
-		[DllImport("user32.dll", SetLastError = true)]
-		static extern uint SendInput(uint nInputs, ref INPUT pInputs, int cbSize);
-
-		[DllImport("user32.dll")]
-		static extern IntPtr GetMessageExtraInfo();
-
-		public static void TestSendKey(System.Windows.Forms.Keys key)
+		enum InputMouseFlags : uint
 		{
-			INPUT structInput;
-			structInput = new INPUT();
-			structInput.type = INPUT_KEYBOARD;
-
-			// Key down shift, ctrl, and/or alt
-			structInput.ki.wScan = 0;
-			structInput.ki.time = 0;
-			structInput.ki.dwFlags = 0;
-			structInput.ki.dwExtraInfo = GetMessageExtraInfo();
-
-			structInput.ki.wVk = (ushort)VK.F2;
-			SendInput(1, ref structInput, Marshal.SizeOf(structInput));
+			MOVE = 0x0001,
+			LEFTDOWN = 0x0002,
+			LEFTUP = 0x0004,
+			RIGHTDOWN = 0x0008,
+			RIGHTUP = 0x0010,
+			MIDDLEDOWN = 0x0020,
+			MIDDLEUP = 0x0040,
+			XDOWN = 0x0080,
+			XUP = 0x0100,
+			WHEEL = 0x0800,
+			VIRTUALDESK = 0x4000,
+			ABSOLUTE = 0x8000,
 		}
-		[System.Runtime.InteropServices.StructLayout(LayoutKind.Sequential)]
-		private struct KEYBOARD_INPUT
-		{
-			public uint type;
-			public ushort vk;
-			public ushort scanCode;
-			public uint flags;
-			public uint time;
-			public uint extrainfo;
-			public uint padding1;
-			public uint padding2;
-		}
+		//[System.Runtime.InteropServices.StructLayout(LayoutKind.Sequential)]
+		//private struct KEYBOARD_INPUT
+		//{
+		//    //public uint type;
+		//    public InputSource type;
+		//    public ushort vk;
+		//    public ushort scanCode;
+		//    public uint flags;
+		//    public uint time;
+		//    public uint extrainfo;
+		//    public uint padding1;
+		//    public uint padding2;
+		//}
+
+		//[System.Runtime.InteropServices.DllImport("User32.dll")]
+		//private static extern uint SendInput(uint numberOfInputs, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPArray, SizeConst = 1)] KEYBOARD_INPUT[] input, int structSize);
 
 		[System.Runtime.InteropServices.DllImport("User32.dll")]
-		private static extern uint SendInput(uint numberOfInputs, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPArray, SizeConst = 1)] KEYBOARD_INPUT[] input, int structSize);
+		private static extern uint SendInput(uint numberOfInputs, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPArray, SizeConst = 1)] INPUT[] input, int structSize);
 
-		static void press(int scanCode)
+		public static void KeyDown(VK vk)
 		{
-			sendKey(scanCode, true);
+			SendKey(vk, true);
 		}
 
-		static void release(int scanCode)
+		public static void KeyUp(VK vk)
 		{
-			sendKey(scanCode, false);
+			SendKey(vk, false);
 		}
 
-		public static void sendKey(int scanCode, bool press)
+		public static void SendKey(VK vk, bool press)
 		{
-			KEYBOARD_INPUT[] input = new KEYBOARD_INPUT[1];
-			input[0] = new KEYBOARD_INPUT();
-			input[0].type = INPUT_KEYBOARD;
-			input[0].flags = KEY_SCANCODE;
+			SendKey(vk, ScanCode.NONE, press);
+		}
 
-			if ((scanCode & 0xFF00) == 0xE000)
+		public static void KeyDown(ScanCode scanCode)
+		{
+			SendKey(scanCode, true);
+		}
+
+		public static void KeyUp(ScanCode scanCode)
+		{
+			SendKey(scanCode, false);
+		}
+
+		public static void SendKey(ScanCode scanCode, bool press)
+		{
+			SendKey(VK.NONE, scanCode, press);
+		}
+
+		public static void KeyDown(key key)
+		{
+			SendKey(key, true);
+		}
+
+		public static void KeyUp(key key)
+		{
+			SendKey(key, false);
+		}
+
+		public static void SendKey(key key, bool press)
+		{
+			ScanCode code;
+			if (KeyScanCodes.ContainsKey(key))
+				code = KeyScanCodes[key];
+			else
+				code = (ScanCode)(int)key;
+			SendKey(VK.NONE, code, press);
+		}
+
+		public static void SendKey(VK vk, ScanCode scanCode, bool press)
+		{
+			INPUT[] input = new INPUT[1];
+			input[0].ki = new KEYBDINPUT();
+			input[0].type = InputSource.KEYBOARD;
+			if (scanCode > 0)
+				input[0].ki.Flags = InputKeyFlags.SCANCODE;
+
+			if (((int)scanCode & 0xFF00) == 0xE000)
 			{ // extended key?
-				input[0].flags |= KEY_EXTENDED;
+				input[0].ki.Flags |= InputKeyFlags.EXTENDEDKEY;
 			}
+
+			input[0].ki.Vk = vk;
 
 			if (press)
 			{ // press?
-				input[0].scanCode = (ushort)(scanCode & 0xFF);
+				input[0].ki.ScanCode = scanCode;
+				Console.Write("[" + scanCode + "]v ");
 			}
 			else
 			{ // release?
-				input[0].scanCode = scanCode;
-				input[0].flags |= KEY_UP;
+				input[0].ki.ScanCode = scanCode;
+				input[0].ki.Flags |= InputKeyFlags.KEYUP;
+				Console.Write("[" + scanCode + "]^ ");
 			}
 
 			uint result = SendInput(1, input, Marshal.SizeOf(input[0]));

@@ -345,7 +345,12 @@ namespace zeroflag.Imaging
 				.Append(",R=").Append(this.R.ToString("0.000"))
 				.Append(",G=").Append(this.G.ToString("0.000"))
 				.Append(",B=").Append(this.B.ToString("0.000"))
-				.Append("}").ToString();
+				.Append("}")
+				.Append("{hue=").Append(this.Hue.Value.ToString("0.000"))
+				.Append(",sat=").Append(this.Saturation.ToString("0.000"))
+				.Append(",val=").Append(this.Brightness.ToString("0.000"))
+				.Append("}")
+				.ToString();
 		}
 	}
 }
