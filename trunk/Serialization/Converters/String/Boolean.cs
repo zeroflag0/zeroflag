@@ -1,4 +1,4 @@
-#region LGPL License
+﻿#region LGPL License
 //********************************************************************
 //	author:         Thomas "zeroflag" Kraemer
 //	author email:   zeroflag@zeroflag.de
@@ -32,46 +32,11 @@ using System.Text;
 
 namespace zeroflag.Serialization.Converters.String
 {
-	public class String : Converter<System.String>
+	public class Boolean : Converter<System.Boolean>
 	{
-#if REPLACE_MAP
-		Dictionary<string, string> _ReplaceMap;
-		protected Dictionary<string, string> ReplaceMap
+		public override System.Boolean ___Parse(string value)
 		{
-			get { return _ReplaceMap ?? (_ReplaceMap = CreateReplaceMap); }
+			return System.Boolean.Parse(value);
 		}
-		protected virtual Dictionary<string, string> CreateReplaceMap
-		{
-			get
-			{
-				Dictionary<string, string> map =new Dictionary<string, string>();
-				map.Add("\\", "\\\\");
-				map.Add("\n", "\\n");
-				map.Add("\r", "\\r");
-				map.Add("\t", "\\t");
-				map.Add("\b", "\\b");
-				map.Add("\0", "\\0");
-				return map;
-			}
-		}
-#endif
-
-		public override System.String ___Parse(string value)
-		{
-#if REPLACE_MAP
-		foreach (string key in this.ReplaceMap.Keys)
-				value = value.Replace(this.ReplaceMap[key], key);
-#endif
-			return value;
-		}
-#if REPLACE_MAP
-		public override string _Generate(string value)
-		{
-			value = base._Generate(value);
-			foreach (string key in this.ReplaceMap.Keys)
-				value = value.Replace(key, this.ReplaceMap[key]);
-			return value;
-		}
-#endif
 	}
 }
