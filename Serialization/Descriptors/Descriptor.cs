@@ -511,7 +511,8 @@ namespace zeroflag.Serialization.Descriptors
 					if (prop != null)
 					{
 						//sub.SetValue(this.Value, prop);
-						prop.SetValue(this.Value, sub.GenerateLink(), new object[] { });
+						if (prop.CanWrite)
+							prop.SetValue(this.Value, sub.GenerateLink(), new object[] { });
 					}
 				}
 			}
