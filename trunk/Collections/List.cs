@@ -143,12 +143,16 @@ namespace zeroflag.Collections
 			this.OnItemChanged(default(T), item);
 		}
 
+		public virtual void Add(params T[] items)
+		{
+			foreach (T item in items)
+				this.Add(item);
+		}
+
 		public virtual void Clear()
 		{
-			foreach (T item in this)
-			{
-				this.Remove(item);
-			}
+			while (this.Count > 0)
+				this.Remove(this[0]);
 			this.Values.Clear();
 		}
 
