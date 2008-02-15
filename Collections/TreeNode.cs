@@ -145,8 +145,9 @@ namespace zeroflag.Collections
 		protected virtual void OnParentChanged(T oldvalue, T newvalue)
 		{
 			if (oldvalue != null)
-				oldvalue.Remove((T)this);
-			if (newvalue != null)
+				while (oldvalue.Contains((T)this))
+					oldvalue.Remove((T)this);
+			if (newvalue != null && !newvalue.Contains((T)this))
 				newvalue.Add((T)this);
 
 			// if there are event subscribers...
@@ -190,10 +191,22 @@ namespace zeroflag.Collections
 
 		#region Children
 		private List<T> _Children = new List<T>();
-
+		[System.ComponentModel.Browsable(false)]
 		public List<T> Children
 		{
 			get { return _Children; }
+			set
+			{
+				if (_Children != value && value != null)
+				{
+					this._Children.Clear();
+					foreach (T item in value)
+					{
+						this._Children.Add(item);
+					}
+					//_Children = value;
+				}
+			}
 		}
 
 		private void InitializeChildren()

@@ -70,7 +70,7 @@ namespace zeroflag.Serialization.Descriptors
 
 		public override Descriptor Parse(System.Reflection.PropertyInfo info)
 		{
-			if (info.CanRead && info.CanWrite)
+			if (info.CanRead && info.CanWrite && info.GetIndexParameters().Length == 0)
 			{
 				object value = null;
 				if (this.Owner != null && this.Owner.Value != null)
