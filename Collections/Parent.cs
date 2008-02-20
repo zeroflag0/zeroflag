@@ -4,7 +4,7 @@ using System.Text;
 
 namespace zeroflag.Collections
 {
-	public class Parent<ChildType, Self> : IEnumerable<ChildType>
+	public abstract class Parent<ChildType, Self> : IEnumerable<ChildType>
 		where ChildType : Child<Self, ChildType>
 		where Self : Parent<ChildType, Self>
 	{
@@ -52,11 +52,6 @@ namespace zeroflag.Collections
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
 			return this.Children.GetEnumerator();
-		}
-
-		private void InitializeChildren1()
-		{
-			this.Children.ItemChanged += this.Children_ItemChanged;
 		}
 
 		public Parent()

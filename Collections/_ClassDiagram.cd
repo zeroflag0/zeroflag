@@ -31,13 +31,17 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="zeroflag.Collections.TreeNode&lt;T&gt;">
+  <Class Name="zeroflag.Collections.TreeNode&lt;Self&gt;">
     <Position X="3.5" Y="0.75" Width="1.5" />
+    <Members>
+      <Field Name="_Children" Hidden="true" />
+      <Field Name="_Parent" Hidden="true" />
+    </Members>
     <Compartments>
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
     <NestedTypes>
-      <Delegate Name="zeroflag.Collections.TreeNode&lt;T&gt;.ParentChangedHandler" Collapsed="true">
+      <Delegate Name="zeroflag.Collections.TreeNode&lt;Self&gt;.ParentChangedHandler" Collapsed="true">
         <TypeIdentifier>
           <NewMemberFileName>TreeNode.cs</NewMemberFileName>
         </TypeIdentifier>
@@ -51,14 +55,20 @@
   </Class>
   <Class Name="zeroflag.Collections.Parent&lt;ChildType, Self&gt;">
     <Position X="5.75" Y="0.75" Width="1.5" />
+    <Members>
+      <Field Name="_Children" Hidden="true" />
+    </Members>
     <TypeIdentifier>
-      <HashCode>ACAAAAAAAAABgBAAAAAUAACAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>ACAAAAAAAAAAgBAAAAAUAACAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Parent.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="zeroflag.Collections.Child&lt;ParentType, Self&gt;">
     <Position X="5.75" Y="4" Width="1.5" />
+    <Members>
+      <Field Name="_Parent" Hidden="true" />
+    </Members>
     <NestedTypes>
       <Delegate Name="zeroflag.Collections.Child&lt;ParentType, Self&gt;.ParentChangedHandler" Collapsed="true">
         <TypeIdentifier>

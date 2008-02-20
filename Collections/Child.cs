@@ -4,12 +4,13 @@ using System.Text;
 
 namespace zeroflag.Collections
 {
-	public class Child<ParentType, Self>
+	public abstract class Child<ParentType, Self>
 		where ParentType : Parent<Self, ParentType>
 		where Self : Child<ParentType, Self>
 	{
-
 		private ParentType _Parent;
+
+		public delegate void ParentChangedHandler(object sender, ParentType oldvalue, ParentType newvalue);
 
 		private event ParentChangedHandler _ParentChanged;
 
@@ -55,7 +56,6 @@ namespace zeroflag.Collections
 			}
 		}
 
-		public delegate void ParentChangedHandler(object sender, ParentType oldvalue, ParentType newvalue);
 
 		public Child()
 		{
