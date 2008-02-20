@@ -34,22 +34,22 @@ namespace zeroflag.Serialization
 {
 	public abstract class Serializer
 	{
-		private string m_FileName;
-		private Serializer m_Parent;
+		private string _FileName;
+		private Serializer _Parent;
 
 		/// <summary>
 		/// This serializer's parent serializer.
 		/// </summary>
 		protected Serializer Parent
 		{
-			get { return m_Parent; }
-			set { m_Parent = value; }
+			get { return _Parent; }
+			set { _Parent = value; }
 		}
 
 		public string FileName
 		{
-			get { return m_FileName ?? this.Parent.FileName; }
-			set { m_FileName = value; }
+			get { return _FileName ?? this.Parent.FileName; }
+			set { _FileName = value; }
 		}
 
 		/// <summary>

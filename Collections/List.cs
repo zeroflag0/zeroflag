@@ -56,14 +56,14 @@ namespace zeroflag.Collections
 		#region event ItemAdded
 		public delegate void ItemAddedHandler(T item);
 
-		private event ItemAddedHandler m_ItemAdded;
+		private event ItemAddedHandler _ItemAdded;
 		/// <summary>
 		/// Item added
 		/// </summary>
 		public virtual event ItemAddedHandler ItemAdded
 		{
-			add { this.m_ItemAdded += value; }
-			remove { this.m_ItemAdded -= value; }
+			add { this._ItemAdded += value; }
+			remove { this._ItemAdded -= value; }
 		}
 		/// <summary>
 		/// Call to raise the ItemAdded event:
@@ -72,10 +72,10 @@ namespace zeroflag.Collections
 		protected virtual void OnItemAdded(T item)
 		{
 			// if there are event subscribers...
-			if (this.m_ItemAdded != null)
+			if (this._ItemAdded != null)
 			{
 				// call them...
-				this.m_ItemAdded(item);
+				this._ItemAdded(item);
 			}
 		}
 		#endregion event ItemAdded
@@ -83,14 +83,14 @@ namespace zeroflag.Collections
 		#region event ItemRemoved
 		public delegate void ItemRemovedHandler(T item);
 
-		private event ItemRemovedHandler m_ItemRemoved;
+		private event ItemRemovedHandler _ItemRemoved;
 		/// <summary>
 		/// Item removed.
 		/// </summary>
 		public virtual event ItemRemovedHandler ItemRemoved
 		{
-			add { this.m_ItemRemoved += value; }
-			remove { this.m_ItemRemoved -= value; }
+			add { this._ItemRemoved += value; }
+			remove { this._ItemRemoved -= value; }
 		}
 		/// <summary>
 		/// Call to raise the ItemRemoved event:
@@ -99,10 +99,10 @@ namespace zeroflag.Collections
 		protected virtual void OnItemRemoved(T item)
 		{
 			// if there are event subscribers...
-			if (this.m_ItemRemoved != null)
+			if (this._ItemRemoved != null)
 			{
 				// call them...
-				this.m_ItemRemoved(item);
+				this._ItemRemoved(item);
 			}
 		}
 		#endregion event ItemRemoved
@@ -110,14 +110,14 @@ namespace zeroflag.Collections
 		#region ItemChanged event
 		public delegate void ItemChangedHandler(object sender, T oldvalue, T newvalue);
 
-		private event ItemChangedHandler m_ItemChanged;
+		private event ItemChangedHandler _ItemChanged;
 		/// <summary>
 		/// Occurs when any item changes. Also called when a item is added or removed.
 		/// </summary>
 		public virtual event ItemChangedHandler ItemChanged
 		{
-			add { this.m_ItemChanged += value; }
-			remove { this.m_ItemChanged -= value; }
+			add { this._ItemChanged += value; }
+			remove { this._ItemChanged -= value; }
 		}
 
 		/// <summary>
@@ -126,10 +126,10 @@ namespace zeroflag.Collections
 		protected virtual void OnItemChanged(T oldvalue, T newvalue)
 		{
 			// if there are event subscribers...
-			if (this.m_ItemChanged != null)
+			if (this._ItemChanged != null)
 			{
 				// call them...
-				this.m_ItemChanged(this, oldvalue, newvalue);
+				this._ItemChanged(this, oldvalue, newvalue);
 			}
 		}
 		#endregion ItemChanged event

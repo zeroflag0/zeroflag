@@ -61,19 +61,19 @@ namespace zeroflag.Collections
 			return this.Value != null ? this.Value.ToString() : base.ToString();
 		}
 
-		private T m_Value;
+		private T _Value;
 
 		/// <summary>
 		/// The node's value.
 		/// </summary>
 		public virtual T Value
 		{
-			get { return m_Value; }
+			get { return _Value; }
 			set
 			{
-				if (object.ReferenceEquals(null, m_Value) || m_Value.Equals(value))
+				if (object.ReferenceEquals(null, _Value) || _Value.Equals(value))
 				{
-					this.OnValueChanged(m_Value, m_Value = value);
+					this.OnValueChanged(_Value, _Value = value);
 				}
 			}
 		}
@@ -81,14 +81,14 @@ namespace zeroflag.Collections
 		#region ValueChanged event
 		public delegate void ValueChangedHandler(object sender, T oldvalue, T newvalue);
 
-		private event ValueChangedHandler m_ValueChanged;
+		private event ValueChangedHandler _ValueChanged;
 		/// <summary>
 		/// Occurs when Value changes.
 		/// </summary>
 		public event ValueChangedHandler ValueChanged
 		{
-			add { this.m_ValueChanged += value; }
-			remove { this.m_ValueChanged -= value; }
+			add { this._ValueChanged += value; }
+			remove { this._ValueChanged -= value; }
 		}
 
 		/// <summary>
@@ -97,10 +97,10 @@ namespace zeroflag.Collections
 		protected virtual void OnValueChanged(T oldvalue, T newvalue)
 		{
 			// if there are event subscribers...
-			if (this.m_ValueChanged != null)
+			if (this._ValueChanged != null)
 			{
 				// call them...
-				this.m_ValueChanged(this, oldvalue, newvalue);
+				this._ValueChanged(this, oldvalue, newvalue);
 			}
 		}
 		#endregion ValueChanged event
@@ -109,19 +109,19 @@ namespace zeroflag.Collections
 
 		#region Parent
 
-		private T m_Parent;
+		private T _Parent;
 
 		/// <summary>
 		/// This node's parent node.
 		/// </summary>
 		public T Parent
 		{
-			get { return m_Parent; }
+			get { return _Parent; }
 			set
 			{
-				if (m_Parent != value)
+				if (_Parent != value)
 				{
-					this.OnParentChanged(m_Parent, m_Parent = value);
+					this.OnParentChanged(_Parent, _Parent = value);
 				}
 			}
 		}
@@ -129,14 +129,14 @@ namespace zeroflag.Collections
 		#region ParentChanged event
 		public delegate void ParentChangedHandler(object sender, T oldvalue, T newvalue);
 
-		private event ParentChangedHandler m_ParentChanged;
+		private event ParentChangedHandler _ParentChanged;
 		/// <summary>
 		/// Occurs when Parent changes.
 		/// </summary>
 		public event ParentChangedHandler ParentChanged
 		{
-			add { this.m_ParentChanged += value; }
-			remove { this.m_ParentChanged -= value; }
+			add { this._ParentChanged += value; }
+			remove { this._ParentChanged -= value; }
 		}
 
 		/// <summary>
@@ -151,10 +151,10 @@ namespace zeroflag.Collections
 				newvalue.Add((T)this);
 
 			// if there are event subscribers...
-			if (this.m_ParentChanged != null)
+			if (this._ParentChanged != null)
 			{
 				// call them...
-				this.m_ParentChanged(this, oldvalue, newvalue);
+				this._ParentChanged(this, oldvalue, newvalue);
 			}
 		}
 		#endregion ParentChanged event
