@@ -12,8 +12,8 @@
     </ShowAsAssociation>
     <Members>
       <Field Name="_Descriptor" Hidden="true" />
-      <Field Name="m_FileName" Hidden="true" />
-      <Field Name="m_Parent" Hidden="true" />
+      <Field Name="_FileName" Hidden="true" />
+      <Field Name="_Parent" Hidden="true" />
     </Members>
     <AssociationLine Name="Descriptor" Type="zeroflag.Serialization.Descriptors.Descriptor" FixedFromPoint="true">
       <Path>
