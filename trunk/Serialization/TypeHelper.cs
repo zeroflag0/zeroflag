@@ -60,6 +60,38 @@ namespace zeroflag
 			return type;
 		}
 
+		public static void ScanAssemblies()
+		{
+			// check if all assemblies are already parsed...
+			foreach (System.Reflection.Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+			{
+				if (!Assemblies.Contains(assembly))
+				{
+					// assembly hasn't been parsed yet...
+					Type[] types = null;
+					try
+					{
+						types = assembly.GetTypes();
+					}
+					catch (System.Reflection.ReflectionTypeLoadException exc)
+					{
+						types = exc.Types;
+					}
+					// add all types...
+					foreach (System.Type type in types)
+					{
+						// avoid duplicates...
+						if (!Types.Contains(type))
+						{
+							Types.Add(type);
+							if (type.FullName != null && !TypeNames.ContainsKey(type.FullName))
+								TypeNames.Add(type.FullName, type);
+						}
+					}
+				}
+			}
+		}
+
 		static List<Type> Types = new List<Type>();
 		static Dictionary<string, Type> TypeNames = new Dictionary<string, Type>();
 		static Dictionary<Type, List<Type>> Derived = new Dictionary<Type, List<Type>>();
@@ -74,34 +106,8 @@ namespace zeroflag
 			{
 				Derived[baseType] = new List<Type>();
 
-				// check if all assemblies are already parsed...
-				foreach (System.Reflection.Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
-				{
-					if (!Assemblies.Contains(assembly))
-					{
-						// assembly hasn't been parsed yet...
-						Type[] types = null;
-						try
-						{
-							types = assembly.GetTypes();
-						}
-						catch (System.Reflection.ReflectionTypeLoadException exc)
-						{
-							types = exc.Types;
-						}
-						// add all types...
-						foreach (System.Type type in types)
-						{
-							// avoid duplicates...
-							if (!Types.Contains(type))
-							{
-								Types.Add(type);
-								if (type.FullName != null && !TypeNames.ContainsKey(type.FullName))
-									TypeNames.Add(type.FullName, type);
-							}
-						}
-					}
-				}
+				ScanAssemblies();
+
 				// find all types directly derived from the type...
 				foreach (System.Type type in Types)
 				{
@@ -154,6 +160,27 @@ namespace zeroflag
 			}
 
 			return type;
+		}
+
+		public static List<Type> GetAllBaseTypesAndInterfaces(Type type)
+		{
+			return GetAllBaseTypesAndInterfaces(type, new List<Type>());
+		}
+
+		public static List<Type> GetAllBaseTypesAndInterfaces(Type type, List<Type> results)
+		{
+			if (type != null && type != typeof(object))
+			{
+				if (!results.Contains(type))
+					results.Add(type);
+
+				GetAllBaseTypesAndInterfaces(type.BaseType);
+
+				foreach (Type interf in type.GetInterfaces())
+					GetAllBaseTypesAndInterfaces(interf, results);
+			}
+
+			return results;
 		}
 	}
 }

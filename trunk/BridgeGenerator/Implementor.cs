@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 
-namespace BridgeInterface
+namespace zeroflag.BridgeGenerator
 {
 	public class Implementor
 	{
@@ -13,6 +13,7 @@ namespace BridgeInterface
 		private string _ClassName;
 		private string _SourceCode;
 		private List<Type> _GenericTypes = new List<Type>();
+		private List<Type> _IgnoreInterfaces = new List<Type>();
 
 		public List<Type> GenericTypes
 		{
@@ -60,14 +61,81 @@ namespace BridgeInterface
 			get { return _Interfaces; }
 		}
 
+		/// <summary>
+		/// When implementing base-interfaces/classes, these will be ignored...
+		/// </summary>
+		public List<Type> IgnoreInterfaces
+		{
+			get { return _IgnoreInterfaces; }
+			set { _IgnoreInterfaces = value; }
+		}
+
+		bool _IgnoreInterfaceMembers = false;
+		/// <summary>
+		/// Whether an ignored interfaces members should be ignored if implemented by an un-ignored interface.
+		/// </summary>
+		public bool IgnoreInterfaceMembers
+		{
+			get { return _IgnoreInterfaceMembers; }
+			set { _IgnoreInterfaceMembers = value; }
+		}
+
+		bool _ImplementOverrides = true;
+		/// <summary>
+		/// Whether override stubs should be created for virtual members of the basetype...
+		/// </summary>
+		public bool ImplementOverrides
+		{
+			get { return _ImplementOverrides; }
+			set { _ImplementOverrides = value; }
+		}
+
+
+		Type _BaseType = null;
+
+		public Type BaseType
+		{
+			get { return _BaseType; }
+			set { _BaseType = value; }
+		}
+
+		Dictionary<string, MemberInfo> _BaseTypeMembers = null;
+
+		protected Dictionary<string, MemberInfo> BaseTypeMembers
+		{
+			get { return _BaseTypeMembers ?? (_BaseTypeMembers = this.CreateBaseTypeMembers()); }
+		}
+
+		private Dictionary<string, MemberInfo> CreateBaseTypeMembers()
+		{
+			if (this.BaseType == null)
+				return null;
+			Dictionary<string, MemberInfo> infos = new Dictionary<string, MemberInfo>();
+			foreach (MemberInfo info in this.BaseType.GetMembers())
+			{
+				infos.Add(info.ToString(), info);
+			}
+			return infos;
+		}
 
 		bool _BridgeConstructors = false;
-
+		/// <summary>
+		/// Whether constructors (of bridged types) should be bridged as well.
+		/// </summary>
 		public bool BridgeConstructors
 		{
 			get { return _BridgeConstructors; }
 			set { _BridgeConstructors = value; }
 		}
+
+		bool _AllVirtual = false;
+
+		public bool AllVirtual
+		{
+			get { return _AllVirtual; }
+			set { _AllVirtual = value; }
+		}
+
 
 		List<string> _Generics = new List<string>();
 
@@ -76,13 +144,32 @@ namespace BridgeInterface
 			get { return _Generics; }
 		}
 
+		List<Member> _Members = new List<Member>();
+
+		public List<Member> Members
+		{
+			get { return _Members; }
+		}
+
+		StringBuilder _Content;
+
+		public StringBuilder Content
+		{
+			get { return _Content; }
+			set { _Content = value; }
+		}
+
 		public string Generate()
 		{
-			StringBuilder content = new StringBuilder();
+			this.Content = new StringBuilder();
+			this.Members.Clear();
 
 			Type implementation = this.Implementation;
 			if (implementation == null)
 				throw new ArgumentNullException();
+
+			// preprocess ignored interfaces and add all basetypes and interfaces...
+			this.IgnoreInterfaces = this.PreprocessIgnoreInterfaces(this.IgnoreInterfaces);
 
 			if (implementation.GetGenericArguments().Length > 1)
 			{
@@ -97,76 +184,135 @@ namespace BridgeInterface
 			else if (implementation.GetGenericArguments().Length == 1)
 				this.Generics.Add("T");
 
-			string prop = this.Property;
-			string accessor = null;
-			if (prop == null)
+			string accessor = this.Property;
+			if (accessor == null)
 				accessor = "base";
 			else
-				accessor = "this." + prop;
+				accessor = "this." + accessor;
 
 			// create class head...
-			content.Append("class ").Append(this.GenerateTypeTemplate(this.ClassName, this.Generics.Count)).AppendLine().Append("\t").Append(": ");
-			//if (prop == null)
+			Content.Append("class ").Append(this.GenerateTypeTemplate(this.ClassName, this.Generics.Count)).AppendLine().Append("\t").Append(": ");
+			if (this.BaseType == null)
+			{
+				if (this.Implementation != null)
+					this.BaseType = this.Implementation;
+				else
+				{
+					foreach (Type type in this.Interfaces)
+					{
+						if (type.IsClass)
+						{
+							this.BaseType = type;
+							break;
+						}
+					}
+				}
+				if (this.BaseType == null && this.Property == null)
+				{
+					this.Property = "Value";
+					accessor = "this.Value";
+				}
+			}
+			if (this.BaseType != null)
+			{
+				if (!this.Interfaces.Contains(this.BaseType))
+					this.Interfaces.Add(this.BaseType);
+				if (!this.IgnoreInterfaces.Contains(this.BaseType))
+					this.IgnoreInterfaces.Add(this.BaseType);
+			}
+			//else if (this.Property == null && !this.Interfaces.Contains(this.Implementation))
 			//{
 			//    // derive from bridge type...
-			//    content.Append(GenerateTypeTemplate(this.Implementation)).Append(",").AppendLine().Append("\t");
+			//    if (this.Implementation != null && !this.Implementation.IsInterface && !this.Interfaces.Contains(this.Implementation))
+			//        this.Interfaces.Add(this.Implementation);
+			//    else
+			//    {
+			//        this.Property = "Value";
+			//        accessor = "this.Value";
+			//    }
+			//    //content.Append(GenerateTypeTemplate(this.Implementation)).Append(",").AppendLine().Append("\t");
 			//}
-			// inherit interfaces...
-			for (int i = 0; i < this.Interfaces.Count; i++)
-			{
-				this.AppendInterface(this.Interfaces[i], content);
 
-				if (i < this.Interfaces.Count - 1)
-					content.Append(",");
+			// inherit interfaces...
+			for (int i = 0, c = 0; i < this.Interfaces.Count; i++)
+			{
+				if (this.IgnoreInterfaces.Contains(this.Interfaces[i]))
+					continue;
+
+				if (c++ > 0)
+					Content.AppendLine().Append("\t").Append(",");
+
+				this.AppendInterface(this.Interfaces[i], Content);
+
 				if (this.Interfaces[i].GetGenericArguments().Length != _Generics.Count)
 				{
-					content.Append("//TODO: Check if generic types are passed properly.");
+					Content.Append("//TODO: Check if generic types are passed properly.");
 				}
-
-				content.AppendLine();
-				if (i < this.Interfaces.Count - 1)
-					content.Append("\t");
 			}
 
-			content.Append("{").AppendLine().Append("\t");
+			Content.AppendLine().Append("{").AppendLine();
 
-			if (prop != null)
+			if (accessor != null)
 			{
 
 				string impl = GenerateTypeTemplate(this.Implementation);
-				// create property...
-				content.Append("protected ").Append(impl).Append(" ").Append(this.Property).Append(" = new ").Append(impl).Append("();").AppendLine().Append("\t");
+				if (this.Property != null)
+				{
+					// create property...
+					Content.Append("\tprotected ").Append(impl).Append(" ").Append(this.Property).Append(" = new ").Append(impl).Append("();").AppendLine();
+					Content.AppendLine().AppendLine();
+				}
 
-				content.AppendLine().AppendLine();
 				List<Type> interfacesDone = new List<Type>();
-				List<MethodBase> methodsDone = new List<MethodBase>();
-				List<ConstructorInfo> constructorsDone = new List<ConstructorInfo>();
-				List<PropertyInfo> propertiesDone = new List<PropertyInfo>();
+				List<MemberInfo> done = new List<MemberInfo>();
+				interfacesDone.AddRange(this.IgnoreInterfaces);
+				if (this.BaseType != null && !interfacesDone.Contains(this.BaseType))
+					interfacesDone.Add(this.BaseType);
+
 				foreach (Type interf in this.Interfaces)
 				{
-					this.BridgeInterface(accessor, interf, content, interfacesDone, methodsDone, propertiesDone, constructorsDone);
+					this.BridgeInterface(accessor, interf, Content, interfacesDone, done);
 				}
 			}
 			else
-				content.Append("//ERROR: Property name was null!");
+				Content.Append("//ERROR: Property name was null!");
+
+			foreach (Member member in this.Members)
+			{
+				this.Content.Append(member.Content);
+			}
 
 			// finish class
-			content.AppendLine().Append("}").AppendLine();
+			Content.AppendLine().Append("}").AppendLine();
 
-			return content.ToString();
+			return Content.ToString();
 		}
 
-		protected StringBuilder BridgeInterface(string accessor, Type itype, StringBuilder content, List<Type> interfacesDone, List<MethodBase> methodsDone, List<PropertyInfo> propertiesDone, List<ConstructorInfo> constructorsDone)
+		protected List<Type> PreprocessIgnoreInterfaces(List<Type> old)
+		{
+			List<Type> result = new List<Type>();
+
+			foreach (Type type in old)
+			{
+				result.AddRange(zeroflag.TypeHelper.GetAllBaseTypesAndInterfaces(type));
+			}
+
+			result.AddRange(old);
+
+			return result;
+		}
+
+		protected StringBuilder BridgeInterface(string accessor, Type itype, StringBuilder content, List<Type> interfacesDone, List<MemberInfo> done)
 		{
 			foreach (Type baseinterface in itype.GetInterfaces())
 			{
-				this.BridgeInterface(accessor, baseinterface, content, interfacesDone, methodsDone, propertiesDone, constructorsDone);
+				this.BridgeInterface(accessor, baseinterface, content, interfacesDone, done);
 			}
 
 			if (interfacesDone.Contains(itype))
 				return content;
 
-			content.Append("#region " + (itype.FullName ?? (itype.Namespace + "." + itype.Name) ?? itype.ToString())).AppendLine().AppendLine();
+			content.Append("\t#region " + (itype.FullName ?? (itype.Namespace + "." + itype.Name) ?? itype.ToString())).AppendLine().AppendLine();
 
 			Type[] generics = itype.GetGenericArguments();
 
@@ -174,45 +320,71 @@ namespace BridgeInterface
 				if (!this.TypeReplace.ContainsKey(generics[i]))
 					this.TypeReplace.Add(generics[i], this.Generics[i]);
 
-			foreach (MethodInfo method in itype.GetMethods())
+			foreach (MemberInfo info in itype.GetMembers())
 			{
-				this.BridgeMethod(accessor, method, content, methodsDone);
-			}
-
-			if (this.BridgeConstructors)
-			{
-				foreach (ConstructorInfo method in itype.GetConstructors())
+				if (this.IgnoreInterfaceMembers && this.IgnoreInterfaces.Contains(info.DeclaringType))
 				{
-					this.BridgeConstructor(accessor, method, content, constructorsDone);
+					done.Add(info);
 				}
+				else if (this.IsImplemented(info) && (!this.ImplementOverrides || !this.IsOverrideable(info)))
+				{
+					done.Add(info);
+				}
+				else if (info is PropertyInfo)
+				{
+					this.BridgeProperty(accessor, info as PropertyInfo, done);
+				}
+				else if (info is EventInfo)
+				{
+					this.BridgeEvent(accessor, info as EventInfo, done);
+				}
+				else if (info is ConstructorInfo)
+				{
+					if (this.BridgeConstructors)
+					{
+						this.BridgeConstructor(accessor, info as ConstructorInfo, done);
+					}
+					else
+						done.Add(info);
+				}
+				else if (info is MethodInfo)
+				{
+					this.BridgeMethod(accessor, info as MethodInfo, done);
+				}
+
 			}
 
-			foreach (PropertyInfo property in itype.GetProperties())
-			{
-				this.BridgeProperty(accessor, property, content, propertiesDone);
-			}
-
-			content.Append("#endregion " + (itype.FullName ?? (itype.Namespace + "." + itype.Name) ?? itype.ToString())).AppendLine().AppendLine().AppendLine();
+			content.Append("\t#endregion " + (itype.FullName ?? (itype.Namespace + "." + itype.Name) ?? itype.ToString())).AppendLine().AppendLine().AppendLine();
 
 			interfacesDone.Add(itype);
 
 			return content;
 		}
 
-		protected StringBuilder BridgeMethod(string accessor, MethodInfo method, StringBuilder content, List<MethodBase> methodsDone)
+		protected void BridgeMethod(string accessor, MethodInfo info, List<MemberInfo> done)
 		{
-			if (methodsDone.Contains(method) || method.Name.StartsWith("get_") || method.Name.StartsWith("set_"))
-				return content;
+			if (done.Contains(info)
+				|| info.Name.StartsWith("get_") || info.Name.StartsWith("set_")
+				|| info.Name.StartsWith("add_") || info.Name.StartsWith("remove_"))
+				return;
 
-			content.Append("\tpublic ");
-			this.AppendTypeTemplate(method.ReturnType, content).Append(" ");
-			content.Append(method.Name);
+			Member member = new Member();
+			this.Members.Add(member);
+			member.ReturnType = info.ReturnType;
+			member.Name = info.Name;
+			member.OwnerType = info.DeclaringType;
+			StringBuilder content = member.Content;
 
-			this.AppendGenerics(method.GetGenericArguments().Length, content);
+			this.AppendVisibility(info, content.Append("\t"));
+
+			this.AppendTypeTemplate(info.ReturnType, content).Append(" ");
+			content.Append(info.Name);
+
+			this.AppendGenerics(info.GetGenericArguments().Length, content);
 
 			content.Append("(");
 
-			ParameterInfo[] parameters = method.GetParameters();
+			ParameterInfo[] parameters = info.GetParameters();
 			for (int i = 0; i < parameters.Length; i++)
 			{
 				this.AppendParameter(parameters[i], content);
@@ -222,39 +394,49 @@ namespace BridgeInterface
 
 			content.Append(")").AppendLine().Append("\t").Append("{").AppendLine().Append("\t").Append("\t");
 
-			if (method.ReturnType != typeof(void))
+			if (info.ReturnType != typeof(void))
 				content.Append("return ");
 
-			content.Append(accessor).Append(".").Append(method.Name).Append("(");
+			content.Append(accessor).Append(".").Append(info.Name).Append("(");
 			for (int i = 0; i < parameters.Length; i++)
 			{
+				member.Parameters.Add(parameters[i].ParameterType);
+				if (parameters[i].ParameterType.IsByRef)
+					content.Append("ref ");
 				content.Append(parameters[i].Name);
 				if (i < parameters.Length - 1)
 					content.Append(", ");
 			}
 			content.Append(");").AppendLine().Append("\t").Append("}").AppendLine().AppendLine();
-			methodsDone.Add(method);
+			done.Add(info);
 
-			return content;
+			return;
 		}
 
-		protected StringBuilder BridgeConstructor(string accessor, ConstructorInfo method, StringBuilder content, List<ConstructorInfo> constructorsDone)
+		protected void BridgeConstructor(string accessor, ConstructorInfo info, List<MemberInfo> done)
 		{
-			if (constructorsDone.Contains(method))// || method.Name.StartsWith("get_") || method.Name.StartsWith("set_"))
-				return content;
+			if (done.Contains(info))// || method.Name.StartsWith("get_") || method.Name.StartsWith("set_"))
+				return;
+
+			Member member = new Member();
+			this.Members.Add(member);
+			member.ReturnType = null;
+			member.Name = info.Name;
+			member.OwnerType = info.DeclaringType;
+			StringBuilder content = member.Content;
 
 
 			// public 
-			content.Append("\tpublic ");
+			this.AppendVisibility(info, content.Append("\t"));
 			// public Name
 			content.Append(this.ClassName);
 
 			// public Name(
 			content.Append("(");
 
-			ParameterInfo[] parameters = method.GetParameters();
+			ParameterInfo[] parameters = info.GetParameters();
 			for (int i = 0; i < parameters.Length; i++)
-				// public Name(type param,
+			// public Name(type param,
 			{
 				this.AppendParameter(parameters[i], content);
 				if (i < parameters.Length - 1)
@@ -271,39 +453,111 @@ namespace BridgeInterface
 			content.Append(accessor);
 			// public Name(type param) { this.Name = new
 			content.Append(" = new ");
-			
+
 			// public Name(type param) { this.Name = new Target
-			this.AppendTypeTemplate(method.DeclaringType, content);
+			this.AppendTypeTemplate(info.DeclaringType, content);
 
 			// public Name(type param) { this.Name = new Target(
 			content.Append("(");
 			// public Name(type param) { this.Name = new Target(param
 			for (int i = 0; i < parameters.Length; i++)
 			{
+				member.Parameters.Add(parameters[i].ParameterType);
+				if (parameters[i].ParameterType.IsByRef)
+					content.Append("ref ");
 				content.Append(parameters[i].Name);
 				if (i < parameters.Length - 1)
 					content.Append(", ");
 			}
 			// public Name(type param) { this.Name = new Target(param); }
 			content.Append(");").AppendLine().Append("\t").Append("}").AppendLine().AppendLine();
-			constructorsDone.Add(method);
-
-			return content;
+			done.Add(info);
 		}
 
-		protected StringBuilder BridgeProperty(string accessor, PropertyInfo property, StringBuilder content, List<PropertyInfo> propertiesDone)
+		protected void BridgeEvent(string accessor, EventInfo info, List<MemberInfo> done)
 		{
-			if (propertiesDone.Contains(property))
-				return content;
+			if (done.Contains(info))
+				return;
 
-			content.Append("\tpublic ");
-			this.AppendTypeTemplate(property.PropertyType, content).Append(" ");
+			Member member = new Member();
+			this.Members.Add(member);
+			member.ReturnType = info.EventHandlerType;
+			member.Name = info.Name;
+			member.OwnerType = info.DeclaringType;
+			StringBuilder content = member.Content;
+
+			content.Append("\tpublic event ");
+			this.AppendTypeTemplate(info.EventHandlerType, content).Append(" ");
+
+			content.Append(info.Name);
+
+			content.AppendLine().Append("\t").Append("{").AppendLine().Append("\t");
+			foreach (MethodInfo access in new MethodInfo[] { info.GetAddMethod(false), info.GetRemoveMethod(false) })
+			{
+				if (access == null)
+					continue;
+
+				Append pre, post;
+
+				content.Append("\t");
+
+				if (access.Name.StartsWith("add_"))
+				{
+					content.Append("add");
+					pre = delegate { };
+					post = delegate { content.Append(" += value"); };
+				}
+				else if (access.Name.StartsWith("remove_"))
+				{
+					content.Append("remove");
+					pre = delegate { };
+					post = delegate { content.Append(" -= value"); };
+				}
+				else
+				{
+					content.Append("//ERROR: accessor ").Append(access.Name).Append(" not supported! ");
+					pre = delegate { };
+					post = delegate { };
+				}
+
+				content.Append(" { ");
+
+				pre();
+
+
+				content.Append(accessor);
+
+				content.Append(".").Append(info.Name);
+
+				post();
+
+				content.Append("; }").AppendLine().Append("\t");
+			}
+			content.Append("}").AppendLine().AppendLine();
+
+			done.Add(info);
+		}
+
+		protected void BridgeProperty(string accessor, PropertyInfo info, List<MemberInfo> done)
+		{
+			if (done.Contains(info))
+				return;
+
+			Member member = new Member();
+			this.Members.Add(member);
+			member.ReturnType = info.PropertyType;
+			member.Name = info.Name;
+			member.OwnerType = info.DeclaringType;
+			StringBuilder content = member.Content;
+
+			this.AppendVisibility(info, content.Append("\t"));
+			this.AppendTypeTemplate(info.PropertyType, content).Append(" ");
 
 			ParameterInfo[] parameters = null;
-			if (property.Name == "Item")
+			if (info.Name == "Item")
 			{
 				content.Append("this[");
-				parameters = property.GetIndexParameters();
+				parameters = info.GetIndexParameters();
 
 				for (int i = 0; i < parameters.Length; i++)
 				{
@@ -315,12 +569,12 @@ namespace BridgeInterface
 			}
 			else
 			{
-				content.Append(property.Name);
+				content.Append(info.Name);
 			}
 
 
 			content.AppendLine().Append("\t").Append("{").AppendLine().Append("\t");
-			foreach (MethodInfo access in property.GetAccessors())
+			foreach (MethodInfo access in info.GetAccessors())
 			{
 				Append pre, post;
 
@@ -357,7 +611,7 @@ namespace BridgeInterface
 
 
 				content.Append(accessor);
-				if (property.Name == "Item")
+				if (info.Name == "Item")
 				{
 					content.Append("[");
 					for (int i = 0; i < parameters.Length; i++)
@@ -370,7 +624,7 @@ namespace BridgeInterface
 				}
 				else
 				{
-					content.Append(".").Append(property.Name);
+					content.Append(".").Append(info.Name);
 				}
 
 				post();
@@ -379,19 +633,94 @@ namespace BridgeInterface
 			}
 			content.Append("}").AppendLine().AppendLine();
 
-			propertiesDone.Add(property);
+			done.Add(info);
+		}
+
+		protected StringBuilder AppendVisibility(MethodBase info, StringBuilder content)
+		{
+			if (info.IsPublic)
+				content.Append("public ");
+			else if (info.IsPrivate)
+				content.Append("private ");
+			else
+				content.Append("protected ");
+
+			if (info.IsStatic)
+				content.Append("static ");
+
+			if (info.IsAbstract)
+				content.Append("abstract ");
+			else if (this.AllVirtual)
+				content.Append("virtual ");
+			else if (info.IsVirtual)
+			{
+				if (this.IsOverrideable(info))
+					content.Append("override ");
+				else
+					content.Append("virtual ");
+			}
 
 			return content;
 		}
 
-		protected void AppendParameter(ParameterInfo param, StringBuilder content)
+		protected StringBuilder AppendVisibility(PropertyInfo info, StringBuilder content)
 		{
-			if (param.ParameterType.IsArray)
-				content.Append(this[param.ParameterType.GetElementType()]).Append("[]");
+			if (info.CanRead && info.GetGetMethod(true).IsPublic || info.CanWrite && info.GetSetMethod(true).IsPublic)
+				content.Append("public ");
+			else if (info.CanRead && info.GetGetMethod(true).IsPrivate && (!info.CanWrite || info.GetSetMethod(true).IsPrivate))
+				content.Append("private ");
 			else
-				content.Append(this[param.ParameterType]);
+				content.Append("protected ");
+
+			if (info.CanRead && info.GetGetMethod(true).IsStatic || info.CanWrite && info.GetSetMethod(true).IsStatic)
+				content.Append("static ");
+
+			if (info.CanRead && info.GetGetMethod(true).IsAbstract || info.CanWrite && info.GetSetMethod(true).IsAbstract)
+				content.Append("abstract ");
+			else if (this.AllVirtual)
+				content.Append("virtual ");
+			else if ((info.CanRead && info.GetGetMethod(true).IsVirtual || info.CanWrite && info.GetSetMethod(true).IsVirtual))
+			{
+				if (this.IsOverrideable(info))
+					content.Append("override ");
+				else
+					content.Append("virtual ");
+			}
+
+			return content;
+		}
+
+		protected bool IsOverrideable(MemberInfo info)
+		{
+			return this.IsImplemented(info)
+				&&
+				(// virtual?
+				info is MethodInfo && ((MethodInfo)info).IsVirtual ||
+				info is PropertyInfo &&
+				(
+					((PropertyInfo)info).CanRead && ((PropertyInfo)info).GetGetMethod().IsVirtual ||
+					((PropertyInfo)info).CanWrite && ((PropertyInfo)info).GetSetMethod().IsVirtual
+				) ||
+				info is EventInfo &&
+				(
+					((EventInfo)info).GetAddMethod() != null && ((EventInfo)info).GetAddMethod().IsVirtual ||
+					((EventInfo)info).GetRemoveMethod() != null && ((EventInfo)info).GetRemoveMethod().IsVirtual
+				)
+				)
+				;
+		}
+
+		protected bool IsImplemented(MemberInfo info)
+		{
+			return this.BaseType != null && this.BaseTypeMembers.ContainsKey(info.ToString());
+		}
+
+		protected StringBuilder AppendParameter(ParameterInfo param, StringBuilder content)
+		{
+			content.Append(this[param.ParameterType]);
 			this.AppendGenerics(param.ParameterType.GetGenericArguments().Length, content);
 			content.Append(" ").Append(param.Name);
+			return content;
 		}
 
 		delegate void Append();
@@ -487,7 +816,28 @@ namespace BridgeInterface
 		{
 			get
 			{
-				return (this.TypeReplace.ContainsKey(type) ? this.TypeReplace[type] : (type.FullName ?? ((!type.IsGenericParameter && type.Namespace != null ? (type.Namespace + ".") : "") + type.Name))).Split('`')[0];
+				//return (this.TypeReplace.ContainsKey(type) ? this.TypeReplace[type] : (type.FullName ?? ((!type.IsGenericParameter && type.Namespace != null ? (type.Namespace + ".") : "") + type.Name))).Split('`')[0];
+				if (this.TypeReplace.ContainsKey(type))
+				{
+					return this.TypeReplace[type];
+				}
+				else
+				{
+					string name = type.FullName;
+					if (name == null)
+					{
+						name = ((!type.IsGenericParameter && type.Namespace != null ? (type.Namespace + ".") : "") + type.Name);
+					}
+					if (type.IsByRef)
+					{
+						name = "ref " + name.TrimEnd('&');
+					}
+					if (type.IsArray)
+					{
+						name = this[type.GetElementType()] + "[]";
+					}
+					return name.Split('`')[0];
+				}
 			}
 		}
 	}
