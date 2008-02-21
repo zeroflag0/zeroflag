@@ -60,6 +60,8 @@
   <ItemGroup>
     <None Include="bin\result.cs" />
     <Compile Include="Implementor.cs" />
+    <Compile Include="Member.cs" />
+    <Compile Include="Metadata.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -84,25 +86,29 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Siemens.Device\Forms\Siemens.Forms.csproj">
+      <Project>{E88597DB-A4D4-4283-9E99-2B982D60632B}</Project>
+      <Name>Siemens.Forms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Siemens.Device\Sandbox\Devices\Sandbox.Devices.csproj">
+      <Project>{8604AF07-C73B-49D7-A58C-EDB42907EB29}</Project>
+      <Name>Sandbox.Devices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Siemens.Device\Sandbox\Sandbox.csproj">
+      <Project>{1A632212-98FD-45EC-920E-B1481F708474}</Project>
+      <Name>Sandbox</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Collections\zeroflag.Collections.csproj">
       <Project>{C4B9F045-0005-4B33-B426-4134C161C9EE}</Project>
       <Name>zeroflag.Collections</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Imaging\zeroflag.Imaging.csproj">
-      <Project>{28EA3955-D22B-4929-A448-6CEB58631125}</Project>
-      <Name>zeroflag.Imaging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Serialization\zeroflag.Serialization.csproj">
+    <ProjectReference Include="..\Serialization\zeroflag.Serialization.vs9.csproj">
       <Project>{48823787-7042-494D-B250-A3E60085BB2B}</Project>
-      <Name>zeroflag.Serialization</Name>
+      <Name>zeroflag.Serialization.vs9</Name>
     </ProjectReference>
     <ProjectReference Include="..\Threading\zeroflag.Threading.csproj">
       <Project>{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}</Project>
       <Name>zeroflag.Threading</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Windows\zeroflag.Windows.csproj">
-      <Project>{10587B43-7514-4463-B621-A97595D3EC0C}</Project>
-      <Name>zeroflag.Windows</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
