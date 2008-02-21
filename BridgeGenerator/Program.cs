@@ -22,7 +22,7 @@ namespace BridgeInterface
 
 
 				// the name of the generated class is...
-				imp.ClassName = "IOBank";
+				imp.ClassName = "List";
 
 				// should we bridge constructors?
 				imp.BridgeConstructors = false;
