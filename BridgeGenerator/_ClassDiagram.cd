@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Tahoma" Size="8.25" />
+  <Class Name="BridgeInterface.Implementor">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Implementor.cs</FileName>
+      <HashCode>gAAAACEyAAGBAAAACAAAAQgAAhAAlAIBIAAAAUgAQAA=</HashCode>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="_ClassName" Hidden="true" />
+      <Field Name="_Generics" Hidden="true" />
+      <Field Name="_GenericTypes" Hidden="true" />
+      <Field Name="_Implementation" Hidden="true" />
+      <Field Name="_Interfaces" Hidden="true" />
+      <Field Name="_Property" Hidden="true" />
+      <Field Name="_SourceCode" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Delegate Name="BridgeInterface.Implementor.Append" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Implementor.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+  </Class>
+</ClassDiagram>
