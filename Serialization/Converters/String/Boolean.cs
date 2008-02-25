@@ -34,7 +34,7 @@ namespace zeroflag.Serialization.Converters.String
 {
 	public class Boolean : Converter<System.Boolean>
 	{
-		public override System.Boolean ___Parse(string value)
+		public override System.Boolean ___Parse(Type type, string value)
 		{
 			return System.Boolean.Parse(value);
 		}

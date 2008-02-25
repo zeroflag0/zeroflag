@@ -90,7 +90,7 @@ namespace zeroflag.Serialization
 			else
 			{
 				//Console.WriteLine("Convert(" + value + ")");
-				node.InnerText = Converters.String.Converter.Generate(value.Value);
+				node.InnerText = Converters.String.Converter.Generate(value.Type, value.Value);
 
 				//this.WriteAttribute("value", StringConverters.Base.Write(value.Value), doc, node);
 			}

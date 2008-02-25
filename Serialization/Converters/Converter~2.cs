@@ -34,14 +34,14 @@ namespace zeroflag.Serialization.Converters
 {
 	public abstract class Converter<T1, T2> : zeroflag.Serialization.Converters.Converter
 	{
-		public static T1 Generate(T2 value)
+		public static T1 Generate(Type type, T2 value)
 		{
-			return (T1)GetConverter().__Generate(value);
+			return (T1)GetConverter().__Generate(type, value);
 		}
 
-		public static T2 Parse(T1 value)
+		public static T2 Parse(Type type, T1 value)
 		{
-			return (T2)GetConverter().__Parse(value);
+			return (T2)GetConverter().__Parse(type, value);
 		}
 
 		public static IConverter GetConverter()
@@ -52,19 +52,19 @@ namespace zeroflag.Serialization.Converters
 		public override Type Type1 { get { return typeof(T1); } }
 		public override Type Type2 { get { return typeof(T2); } }
 
-		public override object __Generate(object value)
+		public override object __Generate(Type type, object value)
 		{
-			return (T1)_Generate((T2)value);
+			return (T1)_Generate(type, (T2)value);
 		}
 
-		public override object __Parse(object value)
+		public override object __Parse(Type type, object value)
 		{
-			return (T2)_Parse((T1)value);
+			return (T2)_Parse(type, (T1)value);
 		}
 
-		public abstract T1 _Generate(T2 value);
+		public abstract T1 _Generate(Type type, T2 value);
 
-		public abstract T2 _Parse(T1 value);
+		public abstract T2 _Parse(Type type, T1 value);
 
 
 	}

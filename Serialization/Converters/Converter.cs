@@ -82,13 +82,13 @@ namespace zeroflag.Serialization.Converters
 
 		#region IConverter Members
 
-		public abstract object __Generate(object value);
+		public abstract object __Generate(Type type, object value);
 
-		public abstract object __Parse(object value);
+		public abstract object __Parse(Type type, object value);
 
-		public abstract Type Type1 { get;}
+		public abstract Type Type1 { get; }
 
-		public abstract Type Type2 { get;}
+		public abstract Type Type2 { get; }
 
 		#endregion
 	}

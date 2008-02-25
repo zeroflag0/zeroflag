@@ -13,24 +13,24 @@ namespace zeroflag.BridgeGenerator
 				Implementor imp = new Implementor();
 
 				// the bridge should implement these interfaces'/classes' public properties and methods...
-				imp.Interfaces.Add(typeof(System.Windows.Forms.ButtonBase));
+				imp.Interfaces.Add(typeof(System.Drawing.Image));
 
-				imp.IgnoreInterfaces.Add(typeof(System.Windows.Forms.Control));
-				imp.IgnoreInterfaceMembers = true;
+				//imp.IgnoreInterfaces.Add(typeof(System.Windows.Forms.Control));
+				//imp.IgnoreInterfaceMembers = true;
 
 				// the actual implementation/bridge-target should be stored in...
-				//imp.Property = "Items";
+				imp.Property = "Native";
 				// and should be of type...
-				imp.Implementation = typeof(System.Windows.Forms.ButtonBase);
-				imp.BaseType = typeof(System.Windows.Forms.Control);
-				imp.ImplementOverrides = false;
+				imp.Implementation = typeof(System.Drawing.Image);
+				//imp.BaseType = typeof(System.Windows.Forms.Control);
+				imp.ImplementOverrides = true;
 
 
 				// the name of the generated class is...
-				imp.ClassName = "ButtonBase";
+				imp.ClassName = "Image";
 
 				// should we bridge constructors?
-				imp.BridgeConstructors = false;
+				imp.BridgeConstructors = true;
 
 				string result = imp.Generate();
 				Console.WriteLine(result);

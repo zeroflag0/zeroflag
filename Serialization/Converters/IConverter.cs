@@ -31,8 +31,8 @@ namespace zeroflag.Serialization.Converters
 {
 	public interface IConverter
 	{
-		object __Generate(object value);
-		object __Parse(object value);
+		object __Generate(Type type, object value);
+		object __Parse(Type type, object value);
 		Type Type1 { get; }
 		Type Type2 { get; }
 	}

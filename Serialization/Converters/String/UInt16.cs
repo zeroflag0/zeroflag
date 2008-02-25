@@ -34,7 +34,7 @@ namespace zeroflag.Serialization.Converters.String
 {
 	public class UInt16 : Converter<System.UInt16>
 	{
-		public override System.UInt16 ___Parse(string value)
+		public override System.UInt16 ___Parse(Type type, string value)
 		{
 			return System.UInt16.Parse(value);
 		}

@@ -37,13 +37,16 @@ namespace zeroflag.Serialization.Converters.String
 	public class Converter
 	{
 		//public const string NullToken = "~!~null~!~";
-
 		public static string Generate(object value)
+		{
+			return value == null ? null : Generate(value.GetType(), value);
+		}
+		public static string Generate(Type type, object value)
 		{
 			if (value == null)
 				return null;
 			IBase b = Base.GetConverter(typeof(string), value.GetType());
-			return b != null ? (string)b.__Generate(value) : null;
+			return b != null ? (string)b.__Generate(type, value) : null;
 		}
 
 		public static bool CanConvert(object value)
@@ -54,7 +57,28 @@ namespace zeroflag.Serialization.Converters.String
 		public static object Parse(Type type, string text)
 		{
 			IBase b = Base.GetConverter(typeof(string), type);
-			return b != null ? b.__Parse(text) : null;
+			if (b != null)
+			{
+				return b.__Parse(type, text);
+			}
+			else
+			{
+				try
+				{
+					System.Reflection.MethodInfo info = type.GetMethod("Parse");
+					if (info == null)
+						info = type.GetMethod("parse");
+					object result = info.Invoke(null, new object[] { text });
+					if (!type.IsAssignableFrom(result.GetType()))
+						throw new InvalidCastException();
+					return result;
+				}
+				catch (Exception exc)
+				{
+					Console.WriteLine(exc);
+				}
+				return null;
+			}
 		}
 	}
 }
