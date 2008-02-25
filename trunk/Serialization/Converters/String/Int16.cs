@@ -34,7 +34,7 @@ namespace zeroflag.Serialization.Converters.String
 {
 	public class Int16 : Converter<System.Int16>
 	{
-		public override short ___Parse(string value)
+		public override short ___Parse(Type type, string value)
 		{
 			return System.Int16.Parse(value);
 		}

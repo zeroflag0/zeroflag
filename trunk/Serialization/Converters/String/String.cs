@@ -56,7 +56,7 @@ namespace zeroflag.Serialization.Converters.String
 		}
 #endif
 
-		public override System.String ___Parse(string value)
+		public override System.String ___Parse(Type type, string value)
 		{
 #if REPLACE_MAP
 		foreach (string key in this.ReplaceMap.Keys)

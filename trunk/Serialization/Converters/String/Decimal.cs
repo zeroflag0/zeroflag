@@ -34,7 +34,7 @@ namespace zeroflag.Serialization.Converters.String
 {
 	public class Decimal : Converter<System.Decimal>
 	{
-		public override System.Decimal ___Parse(string value)
+		public override System.Decimal ___Parse(Type type, string value)
 		{
 			return System.Decimal.Parse(value);
 		}
