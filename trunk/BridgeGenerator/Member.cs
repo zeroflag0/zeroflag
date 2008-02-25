@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Reflection;
 
 namespace zeroflag.BridgeGenerator
 {
@@ -51,6 +52,47 @@ namespace zeroflag.BridgeGenerator
 			return this;
 		}
 
+		public Member SetFrom(MethodInfo info)
+		{
+			this.ReturnType = info.ReturnType;
+			this.Name = info.Name;
+			return this;
+		}
+
+		public Member SetFrom(ConstructorInfo info)
+		{
+			this.ReturnType = null;
+			this.Name = info.Name;
+			return this;
+		}
+
+		public Member SetFrom(EventInfo info)
+		{
+			this.ReturnType = info.EventHandlerType;
+			this.Name = info.Name;
+			return this;
+		}
+
+		public Member SetFrom(PropertyInfo info)
+		{
+			this.ReturnType = info.PropertyType;
+			this.Name = info.Name;
+			return this;
+		}
+
+		public static implicit operator Member(MemberInfo info)
+		{
+			if (info is PropertyInfo)
+				return new Member().SetFrom(info as PropertyInfo);
+			if (info is EventInfo)
+				return new Member().SetFrom(info as EventInfo);
+			if (info is ConstructorInfo)
+				return new Member().SetFrom(info as ConstructorInfo);
+			if (info is MethodInfo)
+				return new Member().SetFrom(info as MethodInfo);
+			return null;
+		}
+
 		public override bool Equals(object obj)
 		{
 			if (obj is Member)
@@ -73,7 +115,7 @@ namespace zeroflag.BridgeGenerator
 		public override int GetHashCode()
 		{
 			int value = this.Name.GetHashCode();
-				//^ (this.ReturnType ?? typeof(object)).GetHashCode();
+			//^ (this.ReturnType ?? typeof(object)).GetHashCode();
 			foreach (Type param in this.Parameters)
 				value ^= param.GetHashCode();
 			return value;

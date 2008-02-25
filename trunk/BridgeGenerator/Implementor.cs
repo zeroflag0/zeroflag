@@ -265,8 +265,14 @@ namespace zeroflag.BridgeGenerator
 				}
 
 				List<Type> interfacesDone = new List<Type>();
-				List<MemberInfo> done = new List<MemberInfo>();
+				List<Member> done = new List<Member>();
 				interfacesDone.AddRange(this.IgnoreInterfaces);
+				if (this.IgnoreInterfaceMembers)
+					foreach (Type ignore in this.IgnoreInterfaces)
+						foreach (MemberInfo ignoreinfo in ignore.GetMembers())
+							done.Add(ignoreinfo);
+
+
 				if (this.BaseType != null && !interfacesDone.Contains(this.BaseType))
 					interfacesDone.Add(this.BaseType);
 
@@ -314,7 +320,7 @@ namespace zeroflag.BridgeGenerator
 			return result;
 		}
 
-		protected StringBuilder BridgeInterface(string accessor, Type itype, StringBuilder content, List<Type> interfacesDone, List<MemberInfo> done)
+		protected StringBuilder BridgeInterface(string accessor, Type itype, StringBuilder content, List<Type> interfacesDone, List<Member> done)
 		{
 			foreach (Type baseinterface in itype.GetInterfaces())
 			{
@@ -332,7 +338,19 @@ namespace zeroflag.BridgeGenerator
 				if (!this.TypeReplace.ContainsKey(generics[i]))
 					this.TypeReplace.Add(generics[i], this.Generics[i]);
 
-			foreach (MemberInfo info in itype.GetMembers())
+			List<MemberInfo> members = new List<MemberInfo>();
+			if (this.BridgeConstructors)
+				members.AddRange(itype.GetConstructors());
+			members.AddRange(itype.GetProperties());
+			members.AddRange(itype.GetEvents());
+			members.AddRange(itype.GetMethods());
+
+			//foreach (Member info in done)
+			//{
+			//    members.Remove(info);
+			//}
+
+			foreach (MemberInfo info in members)
 			{
 				if (this.IgnoreInterfaceMembers && this.IgnoreInterfaces.Contains(itype))
 				{
@@ -373,22 +391,22 @@ namespace zeroflag.BridgeGenerator
 			return content;
 		}
 
-		protected void BridgeMethod(string accessor, Type itype, MethodInfo info, List<MemberInfo> done)
+		protected void BridgeMethod(string accessor, Type itype, MethodInfo info, List<Member> done)
 		{
-			if (this.Contains(done, info)
-				|| info.Name.StartsWith("get_") || info.Name.StartsWith("set_")
-				|| info.Name.StartsWith("add_") || info.Name.StartsWith("remove_"))
+			if (info.Name.StartsWith("get_") || info.Name.StartsWith("set_")
+			|| info.Name.StartsWith("add_") || info.Name.StartsWith("remove_"))
 				return;
 
-			Member member = new Member();
 			string type = (itype.FullName ?? (itype.Namespace + "." + itype.Name) ?? itype.ToString());
+			Member member = new Member();
+			member.SetFrom(info);
+			member.OwnerType = itype;
+			StringBuilder content = member.Content;
+			if (done.Contains(member))
+				return;
 			if (!this.Members.ContainsKey(type))
 				this.Members.Add(type, new List<Member>());
 			this.Members[type].Add(member);
-			member.ReturnType = info.ReturnType;
-			member.Name = info.Name;
-			member.OwnerType = itype;
-			StringBuilder content = member.Content;
 
 			this.AppendVisibility(info, content.Append("\t"));
 
@@ -483,12 +501,12 @@ namespace zeroflag.BridgeGenerator
 
 		//}
 
-		protected void BridgeConstructor(string accessor, Type itype, ConstructorInfo info, List<MemberInfo> done)
+		protected void BridgeConstructor(string accessor, Type itype, ConstructorInfo info, List<Member> done)
 		{
 			try
 			{
-				if (this.Contains(done, info))// || method.Name.StartsWith("get_") || method.Name.StartsWith("set_"))
-					return;
+				//if (this.Contains(done, info))// || method.Name.StartsWith("get_") || method.Name.StartsWith("set_"))
+				//    return;
 			}
 			catch (Exception exc)
 			{
@@ -558,20 +576,21 @@ namespace zeroflag.BridgeGenerator
 #endif
 				#endregion BUGTRACKING
 
-				if (this.Contains(done, info))
-					return;
+				//if (this.Contains(done, info))
+				//    return;
 
 			}
 
-			Member member = new Member();
 			string type = (itype.FullName ?? (itype.Namespace + "." + itype.Name) ?? itype.ToString());
+			Member member = new Member();
+			member.SetFrom(info);
+			member.OwnerType = itype;
+			StringBuilder content = member.Content;
+			if (done.Contains(member))
+				return;
 			if (!this.Members.ContainsKey(type))
 				this.Members.Add(type, new List<Member>());
 			this.Members[type].Add(member);
-			member.ReturnType = null;
-			member.Name = info.Name;
-			member.OwnerType = itype;
-			StringBuilder content = member.Content;
 
 
 			// public 
@@ -622,41 +641,42 @@ namespace zeroflag.BridgeGenerator
 			done.Add(info);
 		}
 
-		private bool Contains(List<MemberInfo> done, MemberInfo info)
+		//private bool Contains(List<Member> done, MemberInfo info)
+		//{
+		//    MemberInfo y = info;
+		//    return done.Find(delegate(MemberInfo x)
+		//    {
+		//        try
+		//        {
+		//            if (object.ReferenceEquals(x, y))
+		//                return true;
+		//            if (object.ReferenceEquals(x, null) || object.ReferenceEquals(null, y))
+		//                return false;
+		//            return x.Equals(y);
+		//        }
+		//        catch
+		//        {
+		//            return y.Equals(x);
+		//        }
+		//    }) != null;
+		//}
+
+
+		protected void BridgeEvent(string accessor, Type itype, EventInfo info, List<Member> done)
 		{
-			MemberInfo y = info;
-			return done.Find(delegate(MemberInfo x)
-			{
-				try
-				{
-					if (object.ReferenceEquals(x, y))
-						return true;
-					if (object.ReferenceEquals(x, null) || object.ReferenceEquals(null, y))
-						return false;
-					return x.Equals(y);
-				}
-				catch
-				{
-					return y.Equals(x);
-				}
-			}) != null;
-		}
+			//if (done.Contains(info))
+			//    return;
 
-
-		protected void BridgeEvent(string accessor, Type itype, EventInfo info, List<MemberInfo> done)
-		{
-			if (done.Contains(info))
-				return;
-
-			Member member = new Member();
 			string type = (itype.FullName ?? (itype.Namespace + "." + itype.Name) ?? itype.ToString());
+			Member member = new Member();
+			member.SetFrom(info);
+			member.OwnerType = itype;
+			StringBuilder content = member.Content;
+			if (done.Contains(member))
+				return;
 			if (!this.Members.ContainsKey(type))
 				this.Members.Add(type, new List<Member>());
 			this.Members[type].Add(member);
-			member.ReturnType = info.EventHandlerType;
-			member.Name = info.Name;
-			member.OwnerType = itype;
-			StringBuilder content = member.Content;
 
 			content.Append("\tpublic event ");
 			this.AppendTypeTemplate(info.EventHandlerType, content).Append(" ");
@@ -710,29 +730,30 @@ namespace zeroflag.BridgeGenerator
 			done.Add(info);
 		}
 
-		protected void BridgeProperty(string accessor, Type itype, PropertyInfo info, List<MemberInfo> done)
+		protected void BridgeProperty(string accessor, Type itype, PropertyInfo info, List<Member> done)
 		{
 			try
 			{
-				if (done.Contains(info))
-					return;
+				//if (done.Contains(info))
+				//    return;
 			}
 			catch
 			{
-				if (this.Contains(done, info))
-					return;
+				//if (this.Contains(done, info))
+				//    return;
 			}
 
 
-			Member member = new Member();
 			string type = (itype.FullName ?? (itype.Namespace + "." + itype.Name) ?? itype.ToString());
+			Member member = new Member();
+			member.SetFrom(info);
+			member.OwnerType = itype;
+			StringBuilder content = member.Content;
+			if (done.Contains(member))
+				return;
 			if (!this.Members.ContainsKey(type))
 				this.Members.Add(type, new List<Member>());
 			this.Members[type].Add(member);
-			member.ReturnType = info.PropertyType;
-			member.Name = info.Name;
-			member.OwnerType = itype;
-			StringBuilder content = member.Content;
 
 			this.AppendVisibility(info, content.Append("\t"));
 			this.AppendTypeTemplate(info.PropertyType, content).Append(" ");
