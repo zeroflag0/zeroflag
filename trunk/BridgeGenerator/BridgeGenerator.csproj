@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{D5ECC535-B71A-4EB8-BFF5-A0CACF091215}</ProjectGuid>
     <OutputType>Exe</OutputType>
@@ -60,6 +60,8 @@
   <ItemGroup>
     <None Include="bin\result.cs" />
     <Compile Include="Implementor.cs" />
+    <Compile Include="Member.cs" />
+    <None Include="Metadata.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -92,9 +94,9 @@
       <Project>{28EA3955-D22B-4929-A448-6CEB58631125}</Project>
       <Name>zeroflag.Imaging</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Serialization\zeroflag.Serialization.csproj">
+    <ProjectReference Include="..\Serialization\zeroflag.Serialization.vs8.csproj">
       <Project>{48823787-7042-494D-B250-A3E60085BB2B}</Project>
-      <Name>zeroflag.Serialization</Name>
+      <Name>zeroflag.Serialization.vs8</Name>
     </ProjectReference>
     <ProjectReference Include="..\Threading\zeroflag.Threading.csproj">
       <Project>{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}</Project>

@@ -144,9 +144,9 @@ namespace zeroflag.BridgeGenerator
 			get { return _Generics; }
 		}
 
-		List<Member> _Members = new List<Member>();
+		Dictionary<string, List<Member>> _Members = new Dictionary<string, List<Member>>();
 
-		public List<Member> Members
+		public Dictionary<string, List<Member>> Members
 		{
 			get { return _Members; }
 		}
@@ -191,8 +191,8 @@ namespace zeroflag.BridgeGenerator
 				accessor = "this." + accessor;
 
 			// create class head...
-			Content.Append("class ").Append(this.GenerateTypeTemplate(this.ClassName, this.Generics.Count)).AppendLine().Append("\t").Append(": ");
-			if (this.BaseType == null)
+			Content.Append("class ").Append(this.GenerateTypeTemplate(this.ClassName, this.Generics.Count));
+			if (this.Property == null && this.BaseType == null)
 			{
 				if (this.Implementation != null)
 					this.BaseType = this.Implementation;
@@ -216,8 +216,8 @@ namespace zeroflag.BridgeGenerator
 			if (this.BaseType != null)
 			{
 				if (!this.Interfaces.Contains(this.BaseType))
-					this.Interfaces.Add(this.BaseType);
-				if (!this.IgnoreInterfaces.Contains(this.BaseType))
+					this.Interfaces.Insert(0, this.BaseType);
+				if (this.Implementation == this.BaseType && !this.IgnoreInterfaces.Contains(this.BaseType))
 					this.IgnoreInterfaces.Add(this.BaseType);
 			}
 			//else if (this.Property == null && !this.Interfaces.Contains(this.Implementation))
@@ -241,6 +241,8 @@ namespace zeroflag.BridgeGenerator
 
 				if (c++ > 0)
 					Content.AppendLine().Append("\t").Append(",");
+				else
+					this.Content.AppendLine().Append("\t").Append(": ");
 
 				this.AppendInterface(this.Interfaces[i], Content);
 
@@ -254,7 +256,6 @@ namespace zeroflag.BridgeGenerator
 
 			if (accessor != null)
 			{
-
 				string impl = GenerateTypeTemplate(this.Implementation);
 				if (this.Property != null)
 				{
@@ -277,10 +278,21 @@ namespace zeroflag.BridgeGenerator
 			else
 				Content.Append("//ERROR: Property name was null!");
 
-			foreach (Member member in this.Members)
+
+			foreach (string itype in this.Members.Keys)
 			{
-				this.Content.Append(member.Content);
+				this.Content.Append("\t#region ").Append(itype).AppendLine().AppendLine();
+				foreach (Member member in this.Members[itype])
+				{
+					this.Content.Append(member.Content);
+				}
+				this.Content.Append("\t#endregion ").Append(itype).AppendLine().AppendLine().AppendLine();
 			}
+			//foreach (Member member in this.Members)
+			//{
+			//this.Content.Append(member.Content);
+			//}
+
 
 			// finish class
 			Content.AppendLine().Append("}").AppendLine();
@@ -312,7 +324,7 @@ namespace zeroflag.BridgeGenerator
 			if (interfacesDone.Contains(itype))
 				return content;
 
-			content.Append("\t#region " + (itype.FullName ?? (itype.Namespace + "." + itype.Name) ?? itype.ToString())).AppendLine().AppendLine();
+			//content.Append("\t#region " + (itype.FullName ?? (itype.Namespace + "." + itype.Name) ?? itype.ToString())).AppendLine().AppendLine();
 
 			Type[] generics = itype.GetGenericArguments();
 
@@ -322,7 +334,7 @@ namespace zeroflag.BridgeGenerator
 
 			foreach (MemberInfo info in itype.GetMembers())
 			{
-				if (this.IgnoreInterfaceMembers && this.IgnoreInterfaces.Contains(info.DeclaringType))
+				if (this.IgnoreInterfaceMembers && this.IgnoreInterfaces.Contains(itype))
 				{
 					done.Add(info);
 				}
@@ -332,47 +344,50 @@ namespace zeroflag.BridgeGenerator
 				}
 				else if (info is PropertyInfo)
 				{
-					this.BridgeProperty(accessor, info as PropertyInfo, done);
+					this.BridgeProperty(accessor, itype, info as PropertyInfo, done);
 				}
 				else if (info is EventInfo)
 				{
-					this.BridgeEvent(accessor, info as EventInfo, done);
+					this.BridgeEvent(accessor, itype, info as EventInfo, done);
 				}
 				else if (info is ConstructorInfo)
 				{
 					if (this.BridgeConstructors)
 					{
-						this.BridgeConstructor(accessor, info as ConstructorInfo, done);
+						this.BridgeConstructor(accessor, itype, info as ConstructorInfo, done);
 					}
 					else
 						done.Add(info);
 				}
 				else if (info is MethodInfo)
 				{
-					this.BridgeMethod(accessor, info as MethodInfo, done);
+					this.BridgeMethod(accessor, itype, info as MethodInfo, done);
 				}
 
 			}
 
-			content.Append("\t#endregion " + (itype.FullName ?? (itype.Namespace + "." + itype.Name) ?? itype.ToString())).AppendLine().AppendLine().AppendLine();
+			//content.Append("\t#endregion " + (itype.FullName ?? (itype.Namespace + "." + itype.Name) ?? itype.ToString())).AppendLine().AppendLine().AppendLine();
 
 			interfacesDone.Add(itype);
 
 			return content;
 		}
 
-		protected void BridgeMethod(string accessor, MethodInfo info, List<MemberInfo> done)
+		protected void BridgeMethod(string accessor, Type itype, MethodInfo info, List<MemberInfo> done)
 		{
-			if (done.Contains(info)
+			if (this.Contains(done, info)
 				|| info.Name.StartsWith("get_") || info.Name.StartsWith("set_")
 				|| info.Name.StartsWith("add_") || info.Name.StartsWith("remove_"))
 				return;
 
 			Member member = new Member();
-			this.Members.Add(member);
+			string type = (itype.FullName ?? (itype.Namespace + "." + itype.Name) ?? itype.ToString());
+			if (!this.Members.ContainsKey(type))
+				this.Members.Add(type, new List<Member>());
+			this.Members[type].Add(member);
 			member.ReturnType = info.ReturnType;
 			member.Name = info.Name;
-			member.OwnerType = info.DeclaringType;
+			member.OwnerType = itype;
 			StringBuilder content = member.Content;
 
 			this.AppendVisibility(info, content.Append("\t"));
@@ -413,16 +428,149 @@ namespace zeroflag.BridgeGenerator
 			return;
 		}
 
-		protected void BridgeConstructor(string accessor, ConstructorInfo info, List<MemberInfo> done)
+		string[] DebugMemberKeys
 		{
-			if (done.Contains(info))// || method.Name.StartsWith("get_") || method.Name.StartsWith("set_"))
-				return;
+			get
+			{
+				string[] types = new string[this.Members.Count];
+				this.Members.Keys.CopyTo(types, 0);
+				return types;
+			}
+		}
+
+		//bool MyEquals(MethodInfo method, object other)
+		//{
+		//    if (!method.IsGenericMethod)
+		//    {
+		//        return (other == this);
+		//    } 
+
+		//    MethodInfo info = other as RuntimeMethodInfo;
+		//    RuntimeMethodHandle handle = method.GetMethodHandle().StripMethodInstantiation();
+		//    RuntimeMethodHandle handle2 = info.GetMethodHandle().StripMethodInstantiation();
+		//    if (handle != handle2)
+		//    {
+		//        return false;
+		//    }
+		//    if ((info == null) || !info.IsGenericMethod)
+		//    {
+		//        return false;
+		//    }
+		//    Type[] genericArguments = method.GetGenericArguments();
+		//    Type[] typeArray2 = info.GetGenericArguments();
+		//    if (genericArguments.Length != typeArray2.Length)
+		//    {
+		//        return false;
+		//    }
+		//    for (int i = 0; i < genericArguments.Length; i++)
+		//    {
+		//        if (genericArguments[i] != typeArray2[i])
+		//        {
+		//            return false;
+		//        }
+		//    }
+		//    if (info.IsGenericMethod)
+		//    {
+		//        if (method.DeclaringType != itype)
+		//        {
+		//            return false;
+		//        }
+		//        if (method.ReflectedType != info.ReflectedType)
+		//        {
+		//            return false;
+		//        }
+		//    }
+
+		//}
+
+		protected void BridgeConstructor(string accessor, Type itype, ConstructorInfo info, List<MemberInfo> done)
+		{
+			try
+			{
+				if (this.Contains(done, info))// || method.Name.StartsWith("get_") || method.Name.StartsWith("set_"))
+					return;
+			}
+			catch (Exception exc)
+			{
+				#region BUGTRACKING
+#if BUGTRACKING
+				bool rethrow = false;
+				try
+				{
+					Console.WriteLine(exc);
+					new zeroflag.Serialization.XmlSerializer("failed_Info.xml").Serialize(info);
+					new zeroflag.Serialization.XmlSerializer("failed_Done.xml").Serialize(done);
+				}
+				catch (Exception exc2)
+				{
+					Console.WriteLine(exc2);
+				}
+				foreach (MemberInfo other in done)
+				{
+					try
+					{
+						if (info.Equals(other))
+							return;
+					}
+					catch
+					{
+						Console.WriteLine(info.GetType() + "[method=" + info.Name + ", type=" + info.DeclaringType + "].Equals(" + other.GetType() + "[method=" + other.Name + ", type=" + other.DeclaringType + "]) failed.");
+
+						//MyEquals(other as MethodInfo, info);
+
+						rethrow = true;
+						try
+						{
+							if (other.Equals(info))
+								return;
+							Console.WriteLine("but " + other.GetType() + "[method=" + other.Name + ", type=" + other.DeclaringType + "].Equals(" + info.GetType() + "[method=" + info.Name + ", type=" + info.DeclaringType + "]) succeeded.");
+						}
+						catch
+						{
+							Console.WriteLine("and " + other.GetType() + "[method=" + other.Name + ", type=" + other.DeclaringType + "].Equals(" + info.GetType() + "[method=" + info.Name + ", type=" + info.DeclaringType + "]) failed as well.");
+						}
+						break;
+					}
+					try
+					{
+						if (other.Equals(info))
+							return;
+					}
+					catch
+					{
+						Console.WriteLine(other.GetType() + "[method=" + other.Name + ", type=" + other.DeclaringType + "].Equals(" + info.GetType() + "[method=" + info.Name + ", type=" + info.DeclaringType + "]) failed.");
+						try
+						{
+							rethrow = true;
+							if (info.Equals(other))
+								return;
+							Console.WriteLine("but " + info.GetType() + "[method=" + info.Name + ", type=" + info.DeclaringType + "].Equals(" + other.GetType() + "[method=" + other.Name + ", type=" + other.DeclaringType + "]) succeeded.");
+						}
+						catch
+						{
+							Console.WriteLine("and " + info.GetType() + "[method=" + info.Name + ", type=" + info.DeclaringType + "].Equals(" + other.GetType() + "[method=" + other.Name + ", type=" + other.DeclaringType + "]) failed as well.");
+						}
+						break;
+					}
+				}
+				if (rethrow)
+					throw;
+#endif
+				#endregion BUGTRACKING
+
+				if (this.Contains(done, info))
+					return;
+
+			}
 
 			Member member = new Member();
-			this.Members.Add(member);
+			string type = (itype.FullName ?? (itype.Namespace + "." + itype.Name) ?? itype.ToString());
+			if (!this.Members.ContainsKey(type))
+				this.Members.Add(type, new List<Member>());
+			this.Members[type].Add(member);
 			member.ReturnType = null;
 			member.Name = info.Name;
-			member.OwnerType = info.DeclaringType;
+			member.OwnerType = itype;
 			StringBuilder content = member.Content;
 
 
@@ -455,7 +603,7 @@ namespace zeroflag.BridgeGenerator
 			content.Append(" = new ");
 
 			// public Name(type param) { this.Name = new Target
-			this.AppendTypeTemplate(info.DeclaringType, content);
+			this.AppendTypeTemplate(itype, content);
 
 			// public Name(type param) { this.Name = new Target(
 			content.Append("(");
@@ -474,16 +622,40 @@ namespace zeroflag.BridgeGenerator
 			done.Add(info);
 		}
 
-		protected void BridgeEvent(string accessor, EventInfo info, List<MemberInfo> done)
+		private bool Contains(List<MemberInfo> done, MemberInfo info)
+		{
+			MemberInfo y = info;
+			return done.Find(delegate(MemberInfo x)
+			{
+				try
+				{
+					if (object.ReferenceEquals(x, y))
+						return true;
+					if (object.ReferenceEquals(x, null) || object.ReferenceEquals(null, y))
+						return false;
+					return x.Equals(y);
+				}
+				catch
+				{
+					return y.Equals(x);
+				}
+			}) != null;
+		}
+
+
+		protected void BridgeEvent(string accessor, Type itype, EventInfo info, List<MemberInfo> done)
 		{
 			if (done.Contains(info))
 				return;
 
 			Member member = new Member();
-			this.Members.Add(member);
+			string type = (itype.FullName ?? (itype.Namespace + "." + itype.Name) ?? itype.ToString());
+			if (!this.Members.ContainsKey(type))
+				this.Members.Add(type, new List<Member>());
+			this.Members[type].Add(member);
 			member.ReturnType = info.EventHandlerType;
 			member.Name = info.Name;
-			member.OwnerType = info.DeclaringType;
+			member.OwnerType = itype;
 			StringBuilder content = member.Content;
 
 			content.Append("\tpublic event ");
@@ -538,16 +710,28 @@ namespace zeroflag.BridgeGenerator
 			done.Add(info);
 		}
 
-		protected void BridgeProperty(string accessor, PropertyInfo info, List<MemberInfo> done)
+		protected void BridgeProperty(string accessor, Type itype, PropertyInfo info, List<MemberInfo> done)
 		{
-			if (done.Contains(info))
-				return;
+			try
+			{
+				if (done.Contains(info))
+					return;
+			}
+			catch
+			{
+				if (this.Contains(done, info))
+					return;
+			}
+
 
 			Member member = new Member();
-			this.Members.Add(member);
+			string type = (itype.FullName ?? (itype.Namespace + "." + itype.Name) ?? itype.ToString());
+			if (!this.Members.ContainsKey(type))
+				this.Members.Add(type, new List<Member>());
+			this.Members[type].Add(member);
 			member.ReturnType = info.PropertyType;
 			member.Name = info.Name;
-			member.OwnerType = info.DeclaringType;
+			member.OwnerType = itype;
 			StringBuilder content = member.Content;
 
 			this.AppendVisibility(info, content.Append("\t"));
@@ -648,8 +832,9 @@ namespace zeroflag.BridgeGenerator
 			if (info.IsStatic)
 				content.Append("static ");
 
-			if (info.IsAbstract)
-				content.Append("abstract ");
+			if (info.IsAbstract && this.BaseType != null)
+				//content.Append("abstract ");
+				content.Append("override ");
 			else if (this.AllVirtual)
 				content.Append("virtual ");
 			else if (info.IsVirtual)
@@ -675,8 +860,8 @@ namespace zeroflag.BridgeGenerator
 			if (info.CanRead && info.GetGetMethod(true).IsStatic || info.CanWrite && info.GetSetMethod(true).IsStatic)
 				content.Append("static ");
 
-			if (info.CanRead && info.GetGetMethod(true).IsAbstract || info.CanWrite && info.GetSetMethod(true).IsAbstract)
-				content.Append("abstract ");
+			if (this.BaseType != null && (info.CanRead && info.GetGetMethod(true).IsAbstract || info.CanWrite && info.GetSetMethod(true).IsAbstract))
+				content.Append("override ");
 			else if (this.AllVirtual)
 				content.Append("virtual ");
 			else if ((info.CanRead && info.GetGetMethod(true).IsVirtual || info.CanWrite && info.GetSetMethod(true).IsVirtual))
@@ -840,5 +1025,6 @@ namespace zeroflag.BridgeGenerator
 				}
 			}
 		}
+
 	}
 }

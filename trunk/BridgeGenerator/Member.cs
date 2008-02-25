@@ -57,7 +57,7 @@ namespace zeroflag.BridgeGenerator
 			{
 				Member other = obj as Member;
 				if (other.Name == this.Name &&
-					other.ReturnType == this.ReturnType &&
+					//other.ReturnType == this.ReturnType &&
 					other.Parameters.Count == this.Parameters.Count)
 				{
 					for (int i = 0; i < this.Parameters.Count; i++)
@@ -72,7 +72,8 @@ namespace zeroflag.BridgeGenerator
 		}
 		public override int GetHashCode()
 		{
-			int value = this.Name.GetHashCode() ^ (this.ReturnType ?? typeof(object)).GetHashCode();
+			int value = this.Name.GetHashCode();
+				//^ (this.ReturnType ?? typeof(object)).GetHashCode();
 			foreach (Type param in this.Parameters)
 				value ^= param.GetHashCode();
 			return value;
