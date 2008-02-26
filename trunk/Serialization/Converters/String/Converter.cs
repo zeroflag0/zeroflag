@@ -54,30 +54,53 @@ namespace zeroflag.Serialization.Converters.String
 			return value != null && Base.GetConverter(typeof(string), value.GetType()) != null;
 		}
 
+		public static T Parse<T>(string text)
+		{
+			try
+			{
+				return (T)Parse(typeof(T), text);
+			}
+			catch (InvalidConversionException)
+			{
+				throw;
+			}
+			catch (Exception exc)
+			{
+				throw new InvalidConversionException(typeof(string), typeof(T), text, exc);
+			}
+		}
+
 		public static object Parse(Type type, string text)
 		{
-			IBase b = Base.GetConverter(typeof(string), type);
-			if (b != null)
+			try
 			{
-				return b.__Parse(type, text);
+				IBase b = Base.GetConverter(typeof(string), type);
+				if (b != null)
+				{
+					return b.__Parse(type, text);
+				}
+				else
+				{
+					try
+					{
+						System.Reflection.MethodInfo info = type.GetMethod("Parse");
+						if (info == null)
+							info = type.GetMethod("parse");
+						object result = info.Invoke(null, new object[] { text });
+						if (!type.IsAssignableFrom(result.GetType()))
+							throw new InvalidCastException();
+						return result;
+					}
+					catch (Exception exc)
+					{
+						Console.WriteLine(exc);
+					}
+					return null;
+				}
 			}
-			else
+			catch (Exception exc)
 			{
-				try
-				{
-					System.Reflection.MethodInfo info = type.GetMethod("Parse");
-					if (info == null)
-						info = type.GetMethod("parse");
-					object result = info.Invoke(null, new object[] { text });
-					if (!type.IsAssignableFrom(result.GetType()))
-						throw new InvalidCastException();
-					return result;
-				}
-				catch (Exception exc)
-				{
-					Console.WriteLine(exc);
-				}
-				return null;
+				throw new InvalidConversionException(typeof(string), type, text, exc);
 			}
 		}
 	}
