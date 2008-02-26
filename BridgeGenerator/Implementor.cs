@@ -980,7 +980,7 @@ namespace zeroflag.BridgeGenerator
 		{
 			if (this.Generics.Count > 0)
 			{
-				content.Append(name);
+				content.Append(name.Replace('+', '.'));
 
 				this.AppendGenerics(generics, content);
 			}
@@ -1042,7 +1042,7 @@ namespace zeroflag.BridgeGenerator
 					{
 						name = this[type.GetElementType()] + "[]";
 					}
-					return name.Split('`')[0];
+					return name.Split('`')[0].Replace('+', '.');
 				}
 			}
 		}
