@@ -311,12 +311,14 @@ namespace zeroflag.Serialization.Descriptors
 		}
 		public static Descriptor DoParse(Type t)
 		{
+			t = GetUsableType(t);
 			CWL("DoParse(" + t + ")");
 			return GetDescriptor(t).Parse(GetCleanName(t.Name), t, null);
 		}
 
 		public static Descriptor DoParse(Type t, Descriptor owner)
 		{
+			t = GetUsableType(t);
 			CWL("DoParse(" + t + ", " + owner + ")");
 			return GetDescriptor(t).Parse(GetCleanName(t.Name), t, owner);
 		}
@@ -324,17 +326,18 @@ namespace zeroflag.Serialization.Descriptors
 		public static Descriptor DoParse(string name, object value, Descriptor owner)
 		{
 			CWL("DoParse(" + name + ", " + value + ", " + owner + ")");
-			return GetDescriptor(value.GetType()).Parse(name, value.GetType(), value);
+			return GetDescriptor(GetUsableType(value.GetType())).Parse(name, GetUsableType(value.GetType()), value);
 		}
 
 		public static Descriptor DoParse(object value)
 		{
 			CWL("DoParse(" + value + ")");
-			return GetDescriptor(value.GetType()).Parse(GetCleanName(value.GetType().Name), value.GetType(), value);
+			return GetDescriptor(GetUsableType(value.GetType())).Parse(GetCleanName(GetUsableType(value.GetType()).Name), GetUsableType(value.GetType()), value);
 		}
 
 		public static Descriptor DoParse(object value, Type type, Descriptor owner)
 		{
+			type = GetUsableType(type);
 			CWL("DoParse(" + value + ", " + type + ", " + owner + ")");
 			return GetDescriptor(type).Parse(GetCleanName(type.Name), type, owner, value);
 		}
@@ -345,7 +348,7 @@ namespace zeroflag.Serialization.Descriptors
 			if (value == null)
 				return null;
 			CWL("DoParse(" + value + ", " + owner + ")");
-			return GetDescriptor(value.GetType()).Parse(GetCleanName(value.GetType().Name), value.GetType(), owner, value);
+			return GetDescriptor(GetUsableType(value.GetType())).Parse(GetCleanName(GetUsableType(value.GetType()).Name), GetUsableType(value.GetType()), owner, value);
 		}
 
 		public static Descriptor DoParse(System.Reflection.PropertyInfo info)
@@ -358,6 +361,14 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			CWL("DoParse(" + info + ", " + owner + ")");
 			return GetDescriptor(info.PropertyType).Parse(info, owner);
+		}
+
+		static Type GetUsableType(Type type)
+		{
+			if (!type.IsVisible && type.BaseType != null)
+				return GetUsableType(type.BaseType);
+			else
+				return type;
 		}
 		#endregion static Parse
 
@@ -387,7 +398,7 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			if (type == null)
 				type = this.Type;
-			this.Type = type;
+			this.Type = GetUsableType(type);
 
 			if (name == null)
 				name = type.Name;
