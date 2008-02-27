@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Tahoma" Size="8.25" />
+  <Class Name="zeroflag.Threading.ThreadManager">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>ThreadManager.cs</FileName>
+      <HashCode>EAAAAAAAAAgIAAAAAICAAAAAAEQAAAAAyAIAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Threads" />
+    </ShowAsCollectionAssociation>
+    <Members>
+      <Field Name="_Current" Hidden="true" />
+      <Field Name="_NativeThreads" Hidden="true" />
+      <Field Name="_ScheduleLockCount" Hidden="true" />
+      <Field Name="_Threads" Hidden="true" />
+      <Field Name="DefaultThreadCount" Hidden="true" />
+    </Members>
+  </Class>
+  <Class Name="zeroflag.Threading.Thread">
+    <Position X="3.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Thread.cs</FileName>
+      <HashCode>AAAAARAIAAACAAAAAAAgiIJAAIIABAAEAIAAAAAAAAI=</HashCode>
+    </TypeIdentifier>
+    <Members>
+      <Field Name="_CurrentTask" Hidden="true" />
+      <Field Name="_Manager" Hidden="true" />
+      <Field Name="_Native" Hidden="true" />
+      <Field Name="_NextTask" Hidden="true" />
+      <Field Name="_WaitHandler" Hidden="true" />
+    </Members>
+  </Class>
+</ClassDiagram>
