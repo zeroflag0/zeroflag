@@ -106,10 +106,6 @@
       <Project>{48823787-7042-494D-B250-A3E60085BB2B}</Project>
       <Name>zeroflag.Serialization.vs9</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Threading\zeroflag.Threading.csproj">
-      <Project>{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}</Project>
-      <Name>zeroflag.Threading</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

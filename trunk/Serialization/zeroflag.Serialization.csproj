@@ -12,6 +12,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Any CPU' ">
     <OutputType>Library</OutputType>
@@ -42,10 +43,23 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\bin\</OutputPath>
     <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DebugType>full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>..\bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Forms Debug|AnyCPU' ">
+    <OutputPath>bin\Forms Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'LogicSimple Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\LogicSimple Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -56,9 +70,11 @@
     <Compile Include="Converters\Converter.cs" />
     <Compile Include="Converters\Converter~2.cs" />
     <Compile Include="Converters\IConverter.cs" />
+    <Compile Include="Converters\InvalidConversionException.cs" />
     <Compile Include="Converters\String\Boolean.cs" />
     <Compile Include="Converters\String\Converter.cs" />
     <Compile Include="Converters\String\Converter~1.cs" />
+    <Compile Include="Converters\String\Enum.cs" />
     <Compile Include="Converters\String\String.cs" />
     <Compile Include="Converters\String\Byte.cs" />
     <Compile Include="Converters\String\Sbyte.cs" />
