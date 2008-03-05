@@ -88,32 +88,49 @@ namespace zeroflag
 			return type;
 		}
 
-		public static void ScanAssemblies()
+		public static void ScanAssemblies(params System.Reflection.Assembly[] assemblies)
 		{
-			// check if all assemblies are already parsed...
-			foreach (System.Reflection.Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+			lock (Assemblies)
 			{
-				if (!Assemblies.Contains(assembly))
+				//System.Reflection.Assembly[] available = AvailableAssemblies ?? (AvailableAssemblies = AppDomain.CurrentDomain.GetAssemblies());
+				System.Reflection.Assembly[] available = AppDomain.CurrentDomain.GetAssemblies();
+
+				// check if all assemblies are already parsed...
+				foreach (System.Reflection.Assembly assembly in assemblies)// AppDomain.CurrentDomain.GetAssemblies())
 				{
-					// assembly hasn't been parsed yet...
-					Type[] types = null;
-					try
+					if (!Assemblies.Contains(assembly))
 					{
-						types = assembly.GetTypes();
-					}
-					catch (System.Reflection.ReflectionTypeLoadException exc)
-					{
-						types = exc.Types;
-					}
-					// add all types...
-					foreach (System.Type type in types)
-					{
-						// avoid duplicates...
-						if (!Types.Contains(type))
+						// assembly hasn't been parsed yet...
+						Type[] types = null;
+						try
 						{
-							Types.Add(type);
-							if (type.FullName != null && !TypeNames.ContainsKey(type.FullName))
-								TypeNames.Add(type.FullName, type);
+							types = assembly.GetTypes();
+						}
+						catch (System.Reflection.ReflectionTypeLoadException exc)
+						{
+							types = exc.Types;
+						}
+						// add all types...
+						foreach (System.Type type in types)
+						{
+							// avoid duplicates...
+							if (!Types.Contains(type))
+							{
+								Types.Add(type);
+								if (type.FullName != null && !TypeNames.ContainsKey(type.FullName))
+									TypeNames.Add(type.FullName, type);
+							}
+						}
+
+						// check if there are any assemblies depending on the current...
+						foreach (var other in available)
+						{
+							foreach (var refe in other.GetReferencedAssemblies())
+							{
+								if (refe == assembly.GetName())
+									// if it depends, scan it...
+									ScanAssemblies(other);
+							}
 						}
 					}
 				}
@@ -124,6 +141,7 @@ namespace zeroflag
 		static Dictionary<string, Type> TypeNames = new Dictionary<string, Type>();
 		static Dictionary<Type, List<Type>> Derived = new Dictionary<Type, List<Type>>();
 		static List<System.Reflection.Assembly> Assemblies = new List<System.Reflection.Assembly>();
+		//static System.Reflection.Assembly[] AvailableAssemblies = null;
 		public static List<Type> GetDerived(System.Type baseType)
 		{
 			//if (baseType.IsGenericType)
@@ -134,7 +152,7 @@ namespace zeroflag
 			{
 				Derived[baseType] = new List<Type>();
 
-				ScanAssemblies();
+				ScanAssemblies(baseType.Assembly);
 
 				// find all types directly derived from the type...
 				foreach (System.Type type in Types)
