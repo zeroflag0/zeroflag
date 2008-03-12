@@ -86,23 +86,11 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Siemens.Device\Forms\Siemens.Forms.csproj">
-      <Project>{E88597DB-A4D4-4283-9E99-2B982D60632B}</Project>
-      <Name>Siemens.Forms</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Siemens.Device\Sandbox\Devices\Sandbox.Devices.csproj">
-      <Project>{8604AF07-C73B-49D7-A58C-EDB42907EB29}</Project>
-      <Name>Sandbox.Devices</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Siemens.Device\Sandbox\Sandbox.csproj">
-      <Project>{1A632212-98FD-45EC-920E-B1481F708474}</Project>
-      <Name>Sandbox</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Collections\zeroflag.Collections.vs9.csproj">
       <Project>{C4B9F045-0005-4B33-B426-4134C161C9EE}</Project>
       <Name>zeroflag.Collections.vs9</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Serialization\zeroflag.Serialization.vs9.csproj">
+    <ProjectReference Include="..\Serialization\zeroflag.Serialization.csproj">
       <Project>{48823787-7042-494D-B250-A3E60085BB2B}</Project>
       <Name>zeroflag.Serialization.vs9</Name>
     </ProjectReference>

@@ -19,22 +19,23 @@ namespace zeroflag.BridgeGenerator
 				Implementor imp = new Implementor();
 
 				// the bridge should implement these interfaces'/classes' public properties and methods...
-				imp.Interfaces.Add(typeof(System.Windows.Forms.WebBrowser));
+				imp.Interfaces.Add(typeof(System.Collections.Generic.IList<>));
+				//imp.Interfaces.Add(typeof(System.Collections.ICollection));
 				//imp.Interfaces.Add(typeof(List<>));
 
-				imp.IgnoreInterfaces.Add(typeof(System.Windows.Forms.Control));
-				imp.IgnoreInterfaceMembers = true;
+				//imp.IgnoreInterfaces.Add(typeof(object));
+				//imp.IgnoreInterfaceMembers = true;
 
 				// the actual implementation/bridge-target should be stored in...
-				imp.Property = "Native";
+				imp.Property = "Base";
 				// and should be of type...
-				imp.Implementation = typeof(System.Windows.Forms.WebBrowser);
+				imp.Implementation = typeof(System.Collections.Generic.IList<>);
 				//imp.BaseType = typeof(System.Windows.Forms.Control);
-				imp.ImplementOverrides = false;
+				imp.ImplementOverrides = true;
 
 
 				// the name of the generated class is...
-				imp.ClassName = "Browser";
+				imp.ClassName = "Collection";
 
 				// should we bridge constructors?
 				imp.BridgeConstructors = false;

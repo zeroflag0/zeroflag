@@ -393,9 +393,6 @@ namespace zeroflag.BridgeGenerator
 
 		protected void BridgeMethod(string accessor, Type itype, MethodInfo info, List<Member> done)
 		{
-			if (info.Name.StartsWith("get_") || info.Name.StartsWith("set_")
-			|| info.Name.StartsWith("add_") || info.Name.StartsWith("remove_"))
-				return;
 
 			string type = (itype.FullName ?? (itype.Namespace + "." + itype.Name) ?? itype.ToString());
 			Member member = new Member();
@@ -407,6 +404,11 @@ namespace zeroflag.BridgeGenerator
 			if (!this.Members.ContainsKey(type))
 				this.Members.Add(type, new List<Member>());
 			this.Members[type].Add(member);
+
+			if (info.Name.StartsWith("get_") || info.Name.StartsWith("set_")
+				|| info.Name.StartsWith("add_") || info.Name.StartsWith("remove_")
+				|| info.IsStatic)
+				return;
 
 			this.AppendVisibility(info, content.Append("\t"));
 

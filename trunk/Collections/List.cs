@@ -48,7 +48,7 @@ namespace zeroflag.Collections
 		public List(IEnumerable<T> list)
 			: this()
 		{
-			this.Values = new System.Collections.Generic.List<T>();
+			this._Values = new System.Collections.Generic.List<T>(list);
 		}
 
 		#endregion Constructors

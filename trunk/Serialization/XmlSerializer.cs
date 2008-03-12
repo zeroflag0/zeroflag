@@ -95,10 +95,13 @@ namespace zeroflag.Serialization
 				//this.WriteAttribute("value", StringConverters.Base.Write(value.Value), doc, node);
 			}
 
-			if (parent != null)
-				parent.AppendChild(node);
-			else
-				doc.AppendChild(node);
+			if (!value.IsNull)
+			{
+				if (parent != null)
+					parent.AppendChild(node);
+				else
+					doc.AppendChild(node);
+			}
 		}
 
 		protected XmlElement WriteAttribute(string name, string value, XmlDocument doc, XmlElement parent)

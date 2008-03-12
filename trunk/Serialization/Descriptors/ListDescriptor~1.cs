@@ -59,7 +59,7 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			if (this.Value != null)
 			{
-
+				Console.WriteLine(this + " parsing " + this.Value);
 				System.Collections.Generic.IList<T> value = this.GetValue();
 				int max = value.Count;
 				for (int i = 0; i < max; i++)

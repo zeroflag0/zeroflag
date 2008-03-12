@@ -42,7 +42,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <OutputPath>..\bin\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;VERBOSE</DefineConstants>
     <DebugType>full</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -67,6 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\IgnoreAttribute.cs" />
     <Compile Include="Converters\Converter.cs" />
     <Compile Include="Converters\Converter~2.cs" />
     <Compile Include="Converters\IConverter.cs" />
@@ -90,7 +91,7 @@
     <Compile Include="Converters\String\Int64.cs" />
     <Compile Include="Descriptors\Descriptor.cs" />
     <Compile Include="Descriptors\Descriptor~1.cs" />
-    <Compile Include="Descriptors\DictionaryDescriptor~2.cs" />
+    <None Include="Descriptors\DictionaryDescriptor~2.cs" />
     <Compile Include="Descriptors\ObjectDescriptor.cs" />
     <Compile Include="Descriptors\ListDescriptor~1.cs" />
     <Compile Include="Descriptors\StringDescriptor.cs" />
