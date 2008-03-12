@@ -114,7 +114,9 @@ namespace zeroflag.Serialization.Descriptors
 					foreach (Type interf in value.GetInterfaces())
 					{
 						descriptor = GetDescriptorType(interf, generics);
-						if (descriptor != null)
+						if (descriptor == null || descriptor == typeof(ObjectDescriptor))
+							continue;
+						else
 							break;
 					}
 				}
