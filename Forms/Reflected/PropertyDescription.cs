@@ -134,5 +134,10 @@ namespace zeroflag.Forms.Reflected
 			return this;
 		}
 		#endregion
+
+		public override string ToString()
+		{
+			return this.GetType().Name + "[" + this.Name + "," + this.Type + "]";
+		}
 	}
 }

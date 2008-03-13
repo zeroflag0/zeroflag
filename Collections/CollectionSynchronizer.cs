@@ -12,6 +12,7 @@ namespace zeroflag.Collections
 			this.PeerCreator = create;
 			this.PeerRemover = remove;
 			this.PeerUpdater = update;
+			Console.WriteLine("CollectionSynchronizer<" + typeof(ItemType).Name + ", " + typeof(PeerType).Name + "> created:\n" + new System.Diagnostics.StackTrace());
 		}
 
 		#region Collections
@@ -50,7 +51,8 @@ namespace zeroflag.Collections
 
 			foreach (PeerType peer in this.PeerItems.Keys)
 			{
-				removes.Add(this.PeerItems[peer]);
+				if (!items.Contains(this.PeerItems[peer]))
+					removes.Add(this.PeerItems[peer]);
 			}
 
 			foreach (ItemType item in removes)
@@ -61,6 +63,7 @@ namespace zeroflag.Collections
 				this.PeerItems.Remove(peer);
 				if (this.PeerRemover != null)
 					this.PeerRemover(peer);
+				Console.WriteLine(this + " Removed peer " + peer + "(" + peer.GetHashCode() + ")" + " for item " + item + "(" + item.GetHashCode() + ")");
 			}
 		}
 
@@ -70,16 +73,19 @@ namespace zeroflag.Collections
 			if (!this.ItemPeers.ContainsKey(item))
 			{
 				// create peer...
+				//Console.WriteLine("Creating peer for item " + item + "(" + item.GetHashCode() + ")");
 				peer = this.PeerCreator(item);
 
 				this.ItemPeers.Add(item, peer);
 				this.PeerItems.Add(peer, item);
+				Console.WriteLine(this + " Created peer " + peer + "(" + peer.GetHashCode() + ")" + " for item " + item + "(" + item.GetHashCode() + ")");
 			}
 			else
 				peer = this.ItemPeers[item];
 
 			if (this.PeerUpdater != null)
 				this.PeerUpdater(item, peer);
+			Console.WriteLine(this + " Updated peer " + peer + "(" + peer.GetHashCode() + ")" + " for item " + item + "(" + item.GetHashCode() + ")");
 		}
 
 		#region PeerUpdater
@@ -153,5 +159,10 @@ namespace zeroflag.Collections
 		//    }
 		//}
 		//#endregion ItemCreator
+
+		public override string ToString()
+		{
+			return this.GetType().Name + " " + this.GetHashCode();
+		}
 	}
 }

@@ -1,0 +1,65 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.zml", "zeroflag.zml.csproj", "{1D342DD8-8157-47A3-9065-79F604ED50CE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.zml.Test", "Test\zeroflag.zml.Test.csproj", "{60D5CAAA-5265-43F2-A227-0C8838A3C215}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.zml.UnitTest", "UnitTest\zeroflag.zml.UnitTest.csproj", "{D63C8C43-C41C-44A3-8452-D8204D581944}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{29A6B55F-03D1-416D-8033-04A3D451DFB0}"
+	ProjectSection(SolutionItems) = preProject
+		LocalTestRun.testrunconfig = LocalTestRun.testrunconfig
+		zml.vsmdi = zml.vsmdi
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Serialization", "..\Serialization\zeroflag.Serialization.csproj", "{48823787-7042-494D-B250-A3E60085BB2B}"
+EndProject
+Global
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = zml.vsmdi
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Forms Debug|Any CPU = Forms Debug|Any CPU
+		LogicSimple Debug|Any CPU = LogicSimple Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1D342DD8-8157-47A3-9065-79F604ED50CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D342DD8-8157-47A3-9065-79F604ED50CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D342DD8-8157-47A3-9065-79F604ED50CE}.Forms Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D342DD8-8157-47A3-9065-79F604ED50CE}.Forms Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D342DD8-8157-47A3-9065-79F604ED50CE}.LogicSimple Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D342DD8-8157-47A3-9065-79F604ED50CE}.LogicSimple Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D342DD8-8157-47A3-9065-79F604ED50CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D342DD8-8157-47A3-9065-79F604ED50CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60D5CAAA-5265-43F2-A227-0C8838A3C215}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60D5CAAA-5265-43F2-A227-0C8838A3C215}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60D5CAAA-5265-43F2-A227-0C8838A3C215}.Forms Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60D5CAAA-5265-43F2-A227-0C8838A3C215}.Forms Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60D5CAAA-5265-43F2-A227-0C8838A3C215}.LogicSimple Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60D5CAAA-5265-43F2-A227-0C8838A3C215}.LogicSimple Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60D5CAAA-5265-43F2-A227-0C8838A3C215}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60D5CAAA-5265-43F2-A227-0C8838A3C215}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D63C8C43-C41C-44A3-8452-D8204D581944}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D63C8C43-C41C-44A3-8452-D8204D581944}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D63C8C43-C41C-44A3-8452-D8204D581944}.Forms Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D63C8C43-C41C-44A3-8452-D8204D581944}.Forms Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D63C8C43-C41C-44A3-8452-D8204D581944}.LogicSimple Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D63C8C43-C41C-44A3-8452-D8204D581944}.LogicSimple Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D63C8C43-C41C-44A3-8452-D8204D581944}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D63C8C43-C41C-44A3-8452-D8204D581944}.Release|Any CPU.Build.0 = Release|Any CPU
+		{48823787-7042-494D-B250-A3E60085BB2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48823787-7042-494D-B250-A3E60085BB2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48823787-7042-494D-B250-A3E60085BB2B}.Forms Debug|Any CPU.ActiveCfg = Forms Debug|Any CPU
+		{48823787-7042-494D-B250-A3E60085BB2B}.Forms Debug|Any CPU.Build.0 = Forms Debug|Any CPU
+		{48823787-7042-494D-B250-A3E60085BB2B}.LogicSimple Debug|Any CPU.ActiveCfg = LogicSimple Debug|Any CPU
+		{48823787-7042-494D-B250-A3E60085BB2B}.LogicSimple Debug|Any CPU.Build.0 = LogicSimple Debug|Any CPU
+		{48823787-7042-494D-B250-A3E60085BB2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48823787-7042-494D-B250-A3E60085BB2B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
