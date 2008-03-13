@@ -31,7 +31,6 @@ namespace zeroflag.Forms.Reflected
 				var desc = new TypeDescription(typeof(T));
 				_ItemDescription = desc;
 				desc.Changed += new TypeDescription.ChangedHandler(TypeDescriptionChanged);
-				this.Synchronize();
 				return desc;
 			}
 		}
@@ -72,6 +71,7 @@ namespace zeroflag.Forms.Reflected
 
 				items.ItemAdded += __ItemAdded;
 				items.ItemRemoved += __ItemRemoved;
+
 				return items;
 			}
 		}
@@ -173,7 +173,7 @@ namespace zeroflag.Forms.Reflected
 		public System.Windows.Forms.ListView ListViewControl
 		{
 			get { return _List; }
-			set { _List = value; }
+			//set { _List = value; }
 		}
 
 		//public System.Windows.Forms.ListView.ColumnHeaderCollection Columns
