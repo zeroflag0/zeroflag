@@ -65,7 +65,7 @@ namespace zeroflag.Zml
 			System.Reflection.PropertyInfo info = PropertyFinder.Instance[type, node.Name];
 			if (info != null)
 			{
-				if (typeof(System.Collections.IEnumerable).IsAssignableFrom(info.PropertyType) && TypeHelper.SpecializeType(typeof(ICollection<>), type).IsAssignableFrom(info.PropertyType))
+				if (typeof(System.Collections.ICollection).IsAssignableFrom(info.PropertyType))// && TypeHelper.SpecializeType(typeof(ICollection<>), type).IsAssignableFrom(info.PropertyType))
 				{
 					this.ApplyNode(null, v =>
 						{

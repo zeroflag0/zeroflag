@@ -75,20 +75,20 @@ namespace zeroflag.Zml
 
 
 					// assembly hasn't been parsed yet...
-					PropertyInfo[] props = null;
+					List<PropertyInfo> props = new List<PropertyInfo>();
 
-					props = type.GetProperties();
+					Type current = type;
+					do
+					{
+						props.AddRange(current.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.SetProperty | BindingFlags.GetProperty));
+					}
+					while ((current = current.BaseType) != null);
 
 					// add all properties...
 					foreach (PropertyInfo prop in props)
 					{
-						// avoid duplicates...
-						if (!Properties.Contains(prop))
-						{
-							Properties.Add(prop);
-							if (prop.Name != null && !PropertyNames[type].ContainsKey(prop.Name) && this.ValidateProperty(prop))
-								this.Add(type, prop);
-						}
+						//if (prop.Name != null && this.ValidateProperty(prop))
+							this.Add(type, prop);
 					}
 
 				}
@@ -105,7 +105,6 @@ namespace zeroflag.Zml
 			return acc != null && acc.IsPublic && !acc.IsAbstract;
 		}
 
-		List<PropertyInfo> Properties = new List<PropertyInfo>();
 		List<System.Reflection.Assembly> Assemblies = new List<System.Reflection.Assembly>();
 		private Dictionary<Type, Dictionary<string, PropertyInfo>> _PropertyNames = new Dictionary<Type, Dictionary<string, PropertyInfo>>();
 
@@ -184,7 +183,7 @@ namespace zeroflag.Zml
 
 			PropertyInfo result = null;
 			List<PropertyInfo> results = new List<PropertyInfo>();
-			if (result != null && !results.Contains(result)) results.Insert(0, result);
+
 			List<string> found = tempKeys.FindAll(k => k.Contains(key));
 			found.AddRange(tempKeys.FindAll(k => k.ToLower().Contains(key.ToLower())));
 

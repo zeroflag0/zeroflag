@@ -9,23 +9,33 @@ namespace Test
 		static void Main(string[] args)
 		{
 			zeroflag.Zml.Manager reader = new zeroflag.Zml.Manager();
-			zeroflag.Zml.Manager writer = new zeroflag.Zml.Manager();
-			reader.Load("test.zml");
+			reader.Load("Form.zml");
+			System.Windows.Forms.Form form = new System.Windows.Forms.Form();
+			reader.ApplyTo(form);
 
-			writer.GenerateFrom(new Test());
+			System.Windows.Forms.Application.Run(form);
 
-			Test test = new Test();
-			Console.WriteLine("uninitialized: " + test);
-			Console.WriteLine("read:        \n" + reader.DocumentElement.OuterXml);
-			reader.ApplyTo<Test>(test);
-			Console.WriteLine("initialized:   " + test);
-			writer.GenerateFrom(test);
-			Console.WriteLine("generated:   \n" + writer.DocumentElement.OuterXml);
-			Console.WriteLine();
-			test = new Test();
-			writer.ApplyTo(test);
-			Console.WriteLine("parsed:        " + test);
-			writer.Save("result.zml");
+
+			//zeroflag.Zml.Manager reader = new zeroflag.Zml.Manager();
+			//zeroflag.Zml.Manager writer = new zeroflag.Zml.Manager();
+			//reader.Load("test.zml");
+
+			//writer.GenerateFrom(new Test());
+
+			//Test test = new Test();
+			//Console.WriteLine("uninitialized: " + test);
+			//Console.WriteLine("read:        \n" + reader.DocumentElement.OuterXml);
+			//reader.ApplyTo<Test>(test);
+			//Console.WriteLine("initialized:   " + test);
+			//writer.GenerateFrom(test);
+			//Console.WriteLine("generated:   \n" + writer.DocumentElement.OuterXml);
+			//Console.WriteLine();
+			//test = new Test();
+			//writer.ApplyTo(test);
+			//Console.WriteLine("parsed:        " + test);
+			//writer.Save("result.zml");
+
+
 
 			//System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 			//sw.Reset();
