@@ -36,7 +36,6 @@ namespace zeroflag.Zml
 		#region Types
 		public void Scan()
 		{
-			this.Add(typeof(List<>));
 			this.ScanAssemblies();
 
 			foreach (Type type in this.Types)
@@ -241,7 +240,12 @@ namespace zeroflag.Zml
 			return type.IsPublic && !type.IsAbstract && !type.IsInterface && type.GetConstructor(System.Type.EmptyTypes) != null;
 		}
 
-		List<Type> Types = new List<Type>();
+		List<Type> _Types = new List<Type>();
+
+		public List<Type> Types
+		{
+			get { return _Types; }
+		}
 		List<System.Reflection.Assembly> Assemblies = new List<System.Reflection.Assembly>();
 		private System.Collections.Generic.Dictionary<string, Type> _TypeNames = new System.Collections.Generic.Dictionary<string, Type>();
 
