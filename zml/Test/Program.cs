@@ -11,7 +11,14 @@ namespace Test
 			zeroflag.Zml.Manager reader = new zeroflag.Zml.Manager();
 			reader.Load("Form.zml");
 			System.Windows.Forms.Form form = new System.Windows.Forms.Form();
-			reader.ApplyTo(form);
+			try
+			{
+				reader.ApplyTo(form);
+			}
+			catch (Exception exc)
+			{
+				Console.WriteLine(exc);
+			}
 
 			System.Windows.Forms.Application.Run(form);
 

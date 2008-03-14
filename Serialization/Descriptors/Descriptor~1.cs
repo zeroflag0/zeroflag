@@ -96,5 +96,6 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			get { return default(T); }
 		}
+
 	}
 }

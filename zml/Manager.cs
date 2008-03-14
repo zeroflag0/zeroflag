@@ -16,11 +16,11 @@ namespace zeroflag.Zml
 
 		public virtual T ApplyTo<T>(T value)
 		{
-			value = (T)this.ApplyNode(value, null, value.GetType(), this.Document.DocumentElement);
+			value = (T)this.ApplyNode(value, null, zeroflag.Serialization.Descriptors.Descriptor.DoParse(value), value.GetType(), this.Document.DocumentElement);
 			return value;
 		}
 
-		protected virtual object ApplyNode(object value, Action<object> setter, Type type, XmlNode node)
+		protected virtual object ApplyNode(object value, Action<object> setter, zeroflag.Serialization.Descriptors.Descriptor description, Type type, XmlNode node)
 		{
 			string text = node.Value;
 			if (Converters.String.Converter.CanConvert(type))
@@ -46,12 +46,45 @@ namespace zeroflag.Zml
 				if (node.Attributes != null)
 					foreach (XmlAttribute att in node.Attributes)
 					{
-						this.ApplyProperty(value, type, att);
+						this.ApplyProperty(value, description, type, att);
 					}
 
 				foreach (XmlNode sub in node.ChildNodes)
 				{
-					this.ApplyProperty(value, type, sub);
+					if (typeof(System.Collections.IList).IsAssignableFrom(type) || typeof(IList<>).IsAssignableFrom(type))
+					{
+						// it's a collection, feed it...
+						Type itemType = null;
+						object item = null;
+						if (typeof(IList<>).IsAssignableFrom(type))
+						{
+							itemType = type;
+							while (!(itemType.IsAssignableFrom(typeof(IList<>))))
+								itemType = itemType.BaseType;
+							itemType = itemType.GetGenericArguments()[0];
+							item = TypeHelper.CreateInstance(itemType);
+						}
+						else
+						{
+							List<System.Reflection.PropertyInfo> props = description.GetProperties(type);
+							foreach (var p in props)
+							{
+								if (p.GetIndexParameters().Length > 0)
+								{
+									itemType = p.PropertyType;
+									break;
+								}
+							}
+							List<Type> types = TypeFinder.Instance.SearchAll(sub.Name, itemType);
+							itemType = types[0];
+							item = TypeHelper.CreateInstance(itemType);
+						}
+
+						this.ApplyNode(item, setter, zeroflag.Serialization.Descriptors.Descriptor.DoParse(item), itemType, sub);
+						value = null;
+					}
+					else
+						this.ApplyProperty(value, description, type, sub);
 				}
 			}
 
@@ -60,14 +93,45 @@ namespace zeroflag.Zml
 
 			return value;
 		}
-		protected virtual void ApplyProperty(object value, Type type, XmlNode node)
+		protected virtual void ApplyProperty(object value, zeroflag.Serialization.Descriptors.Descriptor description, Type type, XmlNode node)
 		{
 			System.Reflection.PropertyInfo info = PropertyFinder.Instance[type, node.Name];
+			if (info == null)
+			{
+				info = PropertyFinder.Instance[type, node.Name];
+				return;
+			}
+
+			zeroflag.Serialization.Descriptors.Descriptor inner = null;
+			foreach (var desc in description.Inner)
+			{
+				if (desc != null && desc.Name == info.Name)
+				{
+					inner = desc;
+					break;
+				}
+			}
+			object inst = null;
+			if (inner == null)
+			{
+				try
+				{
+					inner = zeroflag.Serialization.Descriptors.Descriptor.DoParse(inst = info.GetValue(value, null));
+				}
+				catch (Exception exc)
+				{
+					inst = null;
+					Console.WriteLine(exc);
+				}
+				if (inner == null)
+					inner = zeroflag.Serialization.Descriptors.Descriptor.DoParse(info.PropertyType);
+			}
+
 			if (info != null)
 			{
 				if (typeof(System.Collections.ICollection).IsAssignableFrom(info.PropertyType))// && TypeHelper.SpecializeType(typeof(ICollection<>), type).IsAssignableFrom(info.PropertyType))
 				{
-					this.ApplyNode(null, v =>
+					this.ApplyNode(inst, v =>
 						{
 							object instance = null;
 							if (info.CanRead)
@@ -82,11 +146,11 @@ namespace zeroflag.Zml
 								info.PropertyType.GetMethod("Add").Invoke(instance, new object[] { v });
 							}
 						}
-						, info.PropertyType.GetGenericArguments()[0], node);
+						, inner, inner.Type, node);
 				}
 				else
 				{
-					this.ApplyNode(null, v => info.SetValue(value, v, null), info.PropertyType, node);
+					this.ApplyNode(inst, v => info.SetValue(value, v, null), inner, info.PropertyType, node);
 				}
 			}
 		}
