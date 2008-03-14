@@ -43,10 +43,10 @@ namespace zeroflag.Zml
 				catch { }
 			if (!Converters.String.Converter.CanConvert(type))
 			{
-				if (node.Attributes != null)
+				if (node.Attributes != null && !(typeof(System.Collections.IList).IsAssignableFrom(type) || typeof(IList<>).IsAssignableFrom(type)))
 					foreach (XmlAttribute att in node.Attributes)
 					{
-						this.ApplyProperty(value, description, type, att);
+						this.ApplyProperty(value, description, type, att, node);
 					}
 
 				foreach (XmlNode sub in node.ChildNodes)
@@ -54,17 +54,11 @@ namespace zeroflag.Zml
 					if (typeof(System.Collections.IList).IsAssignableFrom(type) || typeof(IList<>).IsAssignableFrom(type))
 					{
 						// it's a collection, feed it...
-						Type itemType = null;
+						Type itemType = type.GetInterface("IList`1");
 						object item = null;
-						if (typeof(IList<>).IsAssignableFrom(type))
-						{
-							itemType = type;
-							while (!(itemType.IsAssignableFrom(typeof(IList<>))))
-								itemType = itemType.BaseType;
-							itemType = itemType.GetGenericArguments()[0];
-							item = TypeHelper.CreateInstance(itemType);
-						}
-						else
+
+
+						if (itemType == null)
 						{
 							List<System.Reflection.PropertyInfo> props = description.GetProperties(type);
 							foreach (var p in props)
@@ -79,27 +73,52 @@ namespace zeroflag.Zml
 							itemType = types[0];
 							item = TypeHelper.CreateInstance(itemType);
 						}
+						else
+						{
+							itemType = type.GetInterface("IList`1").GetGenericArguments()[0];
+							item = TypeHelper.CreateInstance(itemType);
+						}
 
+						//this.ApplyProperty(value, description, type, sub, node);
 						this.ApplyNode(item, setter, zeroflag.Serialization.Descriptors.Descriptor.DoParse(item), itemType, sub);
-						value = null;
 					}
 					else
-						this.ApplyProperty(value, description, type, sub);
+						this.ApplyProperty(value, description, type, sub, node);
 				}
 			}
 
-			if (setter != null && value != null)
-				setter(value);
+			if (setter != null && value != null && !(typeof(System.Collections.IList).IsAssignableFrom(type) || typeof(IList<>).IsAssignableFrom(type)))
+				try
+				{
+					setter(value);
+				}
+				catch (Exception exc)
+				{
+					try
+					{
+						setter(value);
+					}
+					catch
+					{
+					}
+					Console.WriteLine(exc);
+				}
 
 			return value;
 		}
-		protected virtual void ApplyProperty(object value, zeroflag.Serialization.Descriptors.Descriptor description, Type type, XmlNode node)
+		protected virtual void ApplyProperty(object value, zeroflag.Serialization.Descriptors.Descriptor description, Type type, XmlNode node, XmlNode parent)
 		{
+			bool direct = true;
 			System.Reflection.PropertyInfo info = PropertyFinder.Instance[type, node.Name];
 			if (info == null)
 			{
-				info = PropertyFinder.Instance[type, node.Name];
-				return;
+				direct = false;
+				info = PropertyFinder.Instance.SearchType(type, node.Name);
+				if (info == null)
+				{
+					info = PropertyFinder.Instance[type, node.Name];
+					return;
+				}
 			}
 
 			zeroflag.Serialization.Descriptors.Descriptor inner = null;
@@ -131,6 +150,8 @@ namespace zeroflag.Zml
 			{
 				if (typeof(System.Collections.ICollection).IsAssignableFrom(info.PropertyType))// && TypeHelper.SpecializeType(typeof(ICollection<>), type).IsAssignableFrom(info.PropertyType))
 				{
+					if (inst == null)
+						inst = info.GetValue(value, null);
 					this.ApplyNode(inst, v =>
 						{
 							object instance = null;
@@ -146,7 +167,7 @@ namespace zeroflag.Zml
 								info.PropertyType.GetMethod("Add").Invoke(instance, new object[] { v });
 							}
 						}
-						, inner, inner.Type, node);
+						, inner, inner.Type, direct ? node : parent);
 				}
 				else
 				{
