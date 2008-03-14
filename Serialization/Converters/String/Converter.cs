@@ -51,7 +51,11 @@ namespace zeroflag.Serialization.Converters.String
 
 		public static bool CanConvert(object value)
 		{
-			return value != null && Base.GetConverter(typeof(string), value.GetType()) != null;
+			return value != null && CanConvert(value.GetType());
+		}
+		public static bool CanConvert(Type type)
+		{
+			return type != null && Base.GetConverter(typeof(string), type) != null;
 		}
 
 		public static T Parse<T>(string text)
