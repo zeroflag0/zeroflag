@@ -1,6 +1,1 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<form text="Test">
-	<controls>
-		<label text="hello world"></label>
-	</controls>
-</form>
+﻿<form text="Test" backcolor="aaaaee" height ="150"><controls><control backcolor ="red" dock="top" height="50"/><label text="hello world" backcolor="white" dock="bottom"/></controls></form>

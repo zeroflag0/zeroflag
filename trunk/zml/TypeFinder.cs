@@ -294,20 +294,35 @@ namespace zeroflag.Zml
 
 		public List<Type> SearchAll(string key)
 		{
+			return this.SearchAll(key, null);
+		}
+
+		public List<Type> SearchAll(string key, Type baseType)
+		{
 			if (tempKeys == null || tempKeys.Count != this.TypeNames.Count)
 				tempKeys = new List<string>(this.TypeNames.Keys);
 
 			Type result = null;
 			List<Type> results = new List<Type>();
-			if (result != null && !results.Contains(result)) results.Insert(0, result);
-			List<string> found = tempKeys.FindAll(k => k.Contains(key));
-			found.AddRange(tempKeys.FindAll(k => k.ToLower().Contains(key.ToLower())));
+
+			//List<string> found = tempKeys.FindAll(k => k.Contains(key));
+			//found.AddRange(tempKeys.FindAll(k => k.ToLower().Contains(key.ToLower())));
+			List<Type> types = new List<Type>();
+			if (baseType != null)
+			{
+				types.Add(baseType);
+				types.AddRange(TypeHelper.GetDerived(baseType));
+			}
+			else
+				types.AddRange(this.Types);
 
 			string temp = key;
 			string target = null;
 			string targetMatch = null;
-			foreach (string f in found)
+			foreach (Type t in types)
 			{
+				string f;
+				f = t.Name ?? t.FullName;
 				temp = f;
 				if (temp.Contains("."))
 					temp = temp.Substring(temp.LastIndexOf('.') + 1);
@@ -316,45 +331,55 @@ namespace zeroflag.Zml
 				{
 					temp = temp.Substring(0, i);
 				}
-				if (temp == key || temp.ToLower() == key)
+				//if (temp == key || temp.ToLower() == key)
+				//{
+				//    targetMatch = temp;
+				//    target = f;
+				//    break;
+				//}
+				//else
+				if (temp.ToLower() == key.ToLower() || temp.Contains(key) || key.Contains(temp) || temp.ToLower().Contains(key.ToLower()) || key.ToLower().Contains(temp.ToLower()))
 				{
-					targetMatch = temp;
-					target = f;
-					break;
-				}
-				else if (temp.Contains(key) || key.Contains(temp))
-					if (target == null || Math.Abs(targetMatch.Length - key.Length) > Math.Abs(temp.Length - key.Length) || Math.Abs(target.Length) > Math.Abs(f.Length))
+					result = t;
+					if (result != null)
 					{
 						targetMatch = temp;
 						target = f;
-						result = this.TryGet(target);
 						if (result != null && !results.Contains(result))
 						{
-							if (results.Count <= 0)
-								results.Add(result);
-							else if (results[0].FullName.Length < result.FullName.Length)
+							if (Math.Abs(targetMatch.Length - key.Length) > Math.Abs(temp.Length - key.Length) || Math.Abs(target.Length) > Math.Abs(f.Length))
 							{
-								Console.WriteLine(result.FullName + " is longer than " + results[0].FullName);
-								results.Insert(1, result);
+								if (results.Count <= 0)
+									results.Add(result);
+								else if (results[0].FullName.Length < result.FullName.Length)
+								{
+									Console.WriteLine(result.FullName + " is longer than " + results[0].FullName);
+									results.Insert(1, result);
+								}
+								else
+								{
+									results.Insert(0, result);
+								}
 							}
 							else
 							{
-								results.Insert(0, result);
+								results.Add(result);
 							}
 						}
 					}
+				}
 			}
 
-			result = this.TryGet(target);
-			if (result != null && !results.Contains(result)) results.Insert(0, result);
-			result = GetType(key);
-			if (result != null && !results.Contains(result))
-			{
-				if (results[0].FullName.Length < target.Length && results.Count > 0)
-					results.Insert(1, result);
-				else
-					results.Insert(0, result);
-			}
+			//result = this.TryGet(target);
+			//if (result != null && !results.Contains(result)) results.Insert(0, result);
+			//result = GetType(key);
+			//if (result != null && !results.Contains(result))
+			//{
+			//    if (results.Count > 0 && results[0].FullName.Length < target.Length && results.Count > 0)
+			//        results.Insert(1, result);
+			//    else
+			//        results.Insert(0, result);
+			//}
 
 			return results;
 

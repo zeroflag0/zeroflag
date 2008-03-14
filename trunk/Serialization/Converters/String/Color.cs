@@ -1,4 +1,4 @@
-#region LGPL License
+﻿#region LGPL License
 //********************************************************************
 //	author:         Thomas "zeroflag" Kraemer
 //	author email:   zeroflag@zeroflag.de
@@ -30,35 +30,33 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace zeroflag.Serialization
+namespace zeroflag.Serialization.Converters.String
 {
-	public class UpgradeAttribute : SerializationAttribute
+	public class Color : Converter<System.Drawing.Color>
 	{
-		string[] _Previous = new string[0];
-
-		public string[] Previous
+		public override System.Drawing.Color ___Parse(Type type, string value)
 		{
-			get { return _Previous; }
-			set { _Previous = value; }
-		}
-
-		public UpgradeAttribute(params string[] from)
-		{
-			this.Previous = from;
-		}
-
-		public override void ApplyTo(zeroflag.Serialization.Descriptors.Descriptor desc)
-		{
-			Type type = desc.Type;
-			List<string> previous = new List<string>(this.Previous);
-			foreach (System.Reflection.PropertyInfo prop in desc.GetProperties(type))
+			System.Drawing.Color result = System.Drawing.Color.Empty;
+			try
 			{
-				if (previous.Contains(prop.Name))
+				result = System.Drawing.Color.FromName(value);
+			}
+			catch
+			{
+			}
+			if (result.IsEmpty || (!result.IsKnownColor && result.IsNamedColor && result.A == 0 && result.R == 0 && result.B == 0 && result.G == 0))
+			{
+				value = value.Trim().TrimStart('#');
+				try
 				{
-					desc.Name = prop.Name;
-					break;
+					result = System.Drawing.Color.FromArgb(255, System.Drawing.Color.FromArgb(int.Parse(value, System.Globalization.NumberStyles.HexNumber)));
+				}
+				catch
+				{
+					result = System.Drawing.Color.FromArgb(255, System.Drawing.Color.FromArgb(int.Parse(value)));
 				}
 			}
+			return result;
 		}
 	}
 }

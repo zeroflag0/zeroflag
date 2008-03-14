@@ -41,7 +41,7 @@ namespace zeroflag.Serialization.Descriptors
 
 			Type type = this.Type;
 
-			System.Reflection.PropertyInfo[] properties = type.GetProperties();
+			System.Reflection.PropertyInfo[] properties = this.GetProperties(type).ToArray();
 
 			foreach (System.Reflection.PropertyInfo property in properties)
 			{

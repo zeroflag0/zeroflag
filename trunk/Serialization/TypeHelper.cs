@@ -100,6 +100,7 @@ namespace zeroflag
 				{
 					if (!Assemblies.Contains(assembly))
 					{
+						Assemblies.Add(assembly);
 						// assembly hasn't been parsed yet...
 						Type[] types = null;
 						try
@@ -127,7 +128,7 @@ namespace zeroflag
 						{
 							foreach (var refe in other.GetReferencedAssemblies())
 							{
-								if (refe == assembly.GetName())
+								if (refe.FullName == assembly.GetName().FullName)
 									// if it depends, scan it...
 									ScanAssemblies(other);
 							}

@@ -546,6 +546,17 @@ namespace zeroflag.Serialization.Descriptors
 		}
 		#endregion Generate
 
+		public List<System.Reflection.PropertyInfo> GetProperties(Type type)
+		{
+			List<System.Reflection.PropertyInfo> props = new List<System.Reflection.PropertyInfo>();
+			do
+			{
+				props.AddRange(type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance));
+			}
+			while ((type = type.BaseType) != null);
+			return props;
+		}
+
 		public override string ToString()
 		{
 			//return this.GetType().Name + "[" + this.Name + ", " + this.Type + ", " + this.Id + "] -> " + this.Owner;
