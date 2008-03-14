@@ -149,10 +149,10 @@ namespace zeroflag.Zml
 			if (stack != null && stack.Count > 0 && stack[0] != null)
 				return stack[0];
 			else
-				return this.SearchType(type, key);
+				return null;
 		}
 
-		protected PropertyInfo SearchType(Type type, string key)
+		public PropertyInfo SearchType(Type type, string key)
 		{
 			List<Type> possibleMatches = TypeFinder.Instance.SearchAll(key);
 			var props = type.GetProperties();

@@ -8,41 +8,47 @@ namespace Test
 	{
 		static void Main(string[] args)
 		{
-			zeroflag.Zml.Manager reader = new zeroflag.Zml.Manager();
-			reader.Load("Form.zml");
-			System.Windows.Forms.Form form = new System.Windows.Forms.Form();
 			try
 			{
-				reader.ApplyTo(form);
+
+				zeroflag.Zml.Manager reader = new zeroflag.Zml.Manager();
+				zeroflag.Zml.Manager writer = new zeroflag.Zml.Manager();
+				reader.Load("test.zml");
+
+				writer.GenerateFrom(new Test());
+
+				Test test = new Test();
+				Console.WriteLine("uninitialized: " + test);
+				Console.WriteLine("read:        \n" + reader.DocumentElement.OuterXml);
+				reader.ApplyTo<Test>(test);
+				Console.WriteLine("initialized:   " + test);
+				writer.GenerateFrom(test);
+				Console.WriteLine("generated:   \n" + writer.DocumentElement.OuterXml);
+				Console.WriteLine();
+				test = new Test();
+				writer.ApplyTo(test);
+				Console.WriteLine("parsed:        " + test);
+				writer.Save("result.zml");
+
+
+
+				zeroflag.Zml.Manager formReader = new zeroflag.Zml.Manager();
+				formReader.Load("Form.zml");
+				System.Windows.Forms.Form form = new System.Windows.Forms.Form();
+				formReader.ApplyTo(form);
+
+				System.Windows.Forms.Application.Run(form);
+
+
+
 			}
-			catch (Exception exc)
+			//catch (Exception exc)
+			//{
+			//    Console.WriteLine(exc);
+			//}
+			finally
 			{
-				Console.WriteLine(exc);
 			}
-
-			System.Windows.Forms.Application.Run(form);
-
-
-			//zeroflag.Zml.Manager reader = new zeroflag.Zml.Manager();
-			//zeroflag.Zml.Manager writer = new zeroflag.Zml.Manager();
-			//reader.Load("test.zml");
-
-			//writer.GenerateFrom(new Test());
-
-			//Test test = new Test();
-			//Console.WriteLine("uninitialized: " + test);
-			//Console.WriteLine("read:        \n" + reader.DocumentElement.OuterXml);
-			//reader.ApplyTo<Test>(test);
-			//Console.WriteLine("initialized:   " + test);
-			//writer.GenerateFrom(test);
-			//Console.WriteLine("generated:   \n" + writer.DocumentElement.OuterXml);
-			//Console.WriteLine();
-			//test = new Test();
-			//writer.ApplyTo(test);
-			//Console.WriteLine("parsed:        " + test);
-			//writer.Save("result.zml");
-
-
 
 			//System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 			//sw.Reset();
