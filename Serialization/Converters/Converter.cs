@@ -53,7 +53,7 @@ namespace zeroflag.Serialization.Converters
 				if (!_Converters.ContainsKey(t1))
 					_Converters.Add(t1, new Dictionary<Type, IConverter>());
 
-				_Converters[t1].Add(t2, converter);
+				_Converters[t1][t2] = converter;
 			}
 		}
 

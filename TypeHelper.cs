@@ -88,12 +88,15 @@ namespace zeroflag
 			return type;
 		}
 
-		public static void ScanAssemblies(params System.Reflection.Assembly[] assemblies)
+		public static List<Type> ScanAssemblies()
 		{
 			lock (Assemblies)
 			{
+				if (_Types == null)
+					_Types = new List<Type>();
 				//System.Reflection.Assembly[] available = AvailableAssemblies ?? (AvailableAssemblies = AppDomain.CurrentDomain.GetAssemblies());
 				System.Reflection.Assembly[] available = AppDomain.CurrentDomain.GetAssemblies();
+				System.Reflection.Assembly[] assemblies = available;
 
 				// check if all assemblies are already parsed...
 				foreach (System.Reflection.Assembly assembly in assemblies)// AppDomain.CurrentDomain.GetAssemblies())
@@ -124,21 +127,27 @@ namespace zeroflag
 						}
 
 						// check if there are any assemblies depending on the current...
-						foreach (var other in available)
-						{
-							foreach (var refe in other.GetReferencedAssemblies())
-							{
-								if (refe.FullName == assembly.GetName().FullName)
-									// if it depends, scan it...
-									ScanAssemblies(other);
-							}
-						}
+						//foreach (var other in available)
+						//{
+						//    foreach (var refe in other.GetReferencedAssemblies())
+						//    {
+						//        if (refe.FullName == assembly.GetName().FullName)
+						//            // if it depends, scan it...
+						//            ScanAssemblies(other);
+						//    }
+						//}
 					}
 				}
+				return _Types;
 			}
 		}
 
-		static List<Type> Types = new List<Type>();
+		static List<Type> _Types;
+
+		public static List<Type> Types
+		{
+			get { return TypeHelper._Types ?? ScanAssemblies(); }
+		}
 		static Dictionary<string, Type> TypeNames = new Dictionary<string, Type>();
 		static Dictionary<Type, List<Type>> Derived = new Dictionary<Type, List<Type>>();
 		static List<System.Reflection.Assembly> Assemblies = new List<System.Reflection.Assembly>();
@@ -153,7 +162,7 @@ namespace zeroflag
 			{
 				Derived[baseType] = new List<Type>();
 
-				ScanAssemblies(baseType.Assembly);
+				//ScanAssemblies(baseType.Assembly);
 
 				// find all types directly derived from the type...
 				foreach (System.Type type in Types)
