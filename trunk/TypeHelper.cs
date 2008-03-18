@@ -198,6 +198,8 @@ namespace zeroflag
 
 		public static Type GetType(string name)
 		{
+			if (name == null)
+				return null;
 			Type type = null;
 			if (TypeNames.ContainsKey(name))
 				type = TypeNames[name];

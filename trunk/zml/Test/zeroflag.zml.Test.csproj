@@ -49,12 +49,18 @@
     <Compile Include="Test.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Serialization\zeroflag.Serialization.csproj">
+      <Project>{48823787-7042-494D-B250-A3E60085BB2B}</Project>
+      <Name>zeroflag.Serialization</Name>
+    </ProjectReference>
     <ProjectReference Include="..\zeroflag.zml.csproj">
       <Project>{1D342DD8-8157-47A3-9065-79F604ED50CE}</Project>
       <Name>zeroflag.zml</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\Debug\result.xml" />
+    <Content Include="bin\Debug\result2.xml" />
     <Content Include="Form.zml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -64,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\Debug\result.zml" />
+    <None Include="bin\Debug\result2.zml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

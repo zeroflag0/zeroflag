@@ -10,34 +10,58 @@ namespace Test
 		{
 			try
 			{
+				//{
+				//    Test test = new Test("root", 1, 1.5f);
 
-				zeroflag.Zml.Manager reader = new zeroflag.Zml.Manager();
-				zeroflag.Zml.Manager writer = new zeroflag.Zml.Manager();
-				reader.Load("test.zml");
+				//    test.Add(
+				//        new Test("foo", 2, 51),
+				//        new Test2("bar", 3, 0.0005f));
 
-				writer.GenerateFrom(new Test());
+				//    new zeroflag.Serialization.XmlSerializer("test.xml").Serialize(test);
+				//    new zeroflag.Zml.ZmlSerializer("result.zml").Serialize(test);
+				//    Test result = new zeroflag.Zml.ZmlSerializer("result.zml").Deserialize<Test>();
+				//    new zeroflag.Serialization.XmlSerializer("result.xml").Serialize(result);
+				//}
+				{
+					Test test = new zeroflag.Zml.ZmlSerializer("test.zml").Deserialize<Test>();
+					Console.WriteLine("2.1) " + test);
+					new zeroflag.Serialization.XmlSerializer("test2.xml").Serialize(test);
+					new zeroflag.Zml.ZmlSerializer("result2.zml").Serialize(test);
+					Test result = new zeroflag.Zml.ZmlSerializer("result2.zml").Deserialize<Test>();
+					Console.WriteLine("2.2) " + result);
+					new zeroflag.Serialization.XmlSerializer("result2.xml").Serialize(result);
+				}
 
-				Test test = new Test();
-				Console.WriteLine("uninitialized: " + test);
-				Console.WriteLine("read:        \n" + reader.DocumentElement.OuterXml);
-				reader.ApplyTo<Test>(test);
-				Console.WriteLine("initialized:   " + test);
-				writer.GenerateFrom(test);
-				Console.WriteLine("generated:   \n" + writer.DocumentElement.OuterXml);
-				Console.WriteLine();
-				test = new Test();
-				writer.ApplyTo(test);
-				Console.WriteLine("parsed:        " + test);
-				writer.Save("result.zml");
+				//zeroflag.Zml.Manager reader = new zeroflag.Zml.Manager();
+				//zeroflag.Zml.Manager writer = new zeroflag.Zml.Manager();
+				//reader.Load("test.zml");
+
+				//writer.GenerateFrom(new Test());
+
+				//Test test = new Test();
+				//Console.WriteLine("uninitialized: " + test);
+				//Console.WriteLine("read:        \n" + reader.Document.DocumentElement.OuterXml);
+				//reader.ApplyTo<Test>(test);
+				//Console.WriteLine("initialized:   " + test);
+
+				//new zeroflag.Serialization.XmlSerializer("result.xml").Serialize(test);
+				//new zeroflag.Zml.ZmlSerializer("result.new.zml").Serialize(test);
+				//writer.GenerateFrom(test);
 
 
+				//Console.WriteLine("generated:   \n" + writer.Document.DocumentElement.OuterXml);
+				//Console.WriteLine();
+				//test = new Test();
+				//writer.ApplyTo(test);
+				//Console.WriteLine("parsed:        " + test);
+				//writer.Save("result.zml");
 
-				zeroflag.Zml.Manager formReader = new zeroflag.Zml.Manager();
-				formReader.Load("Form.zml");
-				System.Windows.Forms.Form form = new System.Windows.Forms.Form();
-				formReader.ApplyTo(form);
+				//zeroflag.Zml.Manager formReader = new zeroflag.Zml.Manager();
+				//formReader.Load("Form.zml");
+				//System.Windows.Forms.Form form = new System.Windows.Forms.Form();
+				//formReader.ApplyTo(form);
 
-				System.Windows.Forms.Application.Run(form);
+				//System.Windows.Forms.Application.Run(form);
 
 
 

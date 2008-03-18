@@ -375,7 +375,7 @@ namespace zeroflag.Serialization.Descriptors
 
 		static Type GetUsableType(Type type)
 		{
-			if (!type.IsVisible && type.BaseType != null)
+			if (type != null && !type.IsVisible && type.BaseType != null)
 				return GetUsableType(type.BaseType);
 			else
 				return type;
