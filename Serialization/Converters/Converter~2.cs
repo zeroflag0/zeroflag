@@ -34,6 +34,7 @@ namespace zeroflag.Serialization.Converters
 {
 	public abstract class Converter<T1, T2> : zeroflag.Serialization.Converters.Converter
 	{
+#if OLD
 		public static T1 Generate(Type type, T2 value)
 		{
 			return (T1)GetConverter().__Generate(type, value);
@@ -48,7 +49,7 @@ namespace zeroflag.Serialization.Converters
 		{
 			return GetConverter(typeof(T1), typeof(T2));
 		}
-
+#endif
 		public override Type Type1 { get { return typeof(T1); } }
 		public override Type Type2 { get { return typeof(T2); } }
 

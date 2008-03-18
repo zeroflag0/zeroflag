@@ -131,5 +131,13 @@ namespace zeroflag.Serialization.Descriptors
 		//        }
 		//    }
 		//}
+
+		protected override bool NeedsWriteAccess
+		{
+			get
+			{
+				return false;
+			}
+		}
 	}
 }

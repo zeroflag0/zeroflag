@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="Attributes\IgnoreAttribute.cs" />
     <Compile Include="Converters\Converter.cs" />
+    <Compile Include="Converters\ConverterCollection.cs" />
     <Compile Include="Converters\Converter~2.cs" />
     <Compile Include="Converters\IConverter.cs" />
     <Compile Include="Converters\InvalidConversionException.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="Converters\String\Int16.cs" />
     <Compile Include="Converters\String\Int32.cs" />
     <Compile Include="Converters\String\Int64.cs" />
+    <Compile Include="Descriptors\DelegateDescriptor.cs" />
     <Compile Include="Descriptors\Descriptor.cs" />
     <Compile Include="Descriptors\Descriptor~1.cs" />
     <None Include="Descriptors\DictionaryDescriptor~2.cs" />

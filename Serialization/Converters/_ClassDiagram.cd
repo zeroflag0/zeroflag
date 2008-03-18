@@ -1,11 +1,138 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
-  <Font Name="Tahoma" Size="8.25" />
   <Class Name="zeroflag.Serialization.Converters.Converter&lt;T1, T2&gt;">
-    <Position X="1" Y="0.75" Width="1.5" />
+    <Position X="27.25" Y="4" Width="3" />
     <TypeIdentifier>
+      <HashCode>QIAgAEAAAABAAAAAAAAgAAAQAAAAAAAAAEAAAEAAAAA=</HashCode>
       <FileName>Converters\Converter~2.cs</FileName>
-      <HashCode>AAAAAGAAAAAABABQAAAgAQAAAAAAAAAAAEAAAAAAAAA=</HashCode>
     </TypeIdentifier>
   </Class>
+  <Class Name="zeroflag.Serialization.Converters.Converter">
+    <Position X="26.75" Y="0.75" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AIAAAEAAAABAAAAAAAAgAAAAAAIAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>Converters\Converter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Converter&lt;T&gt;">
+    <Position X="27.5" Y="7.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAIAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\String\Converter~1.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Boolean">
+    <Position X="1" Y="9.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\String\Boolean.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Byte">
+    <Position X="4.5" Y="9.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\String\Byte.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Char">
+    <Position X="8" Y="9.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\String\Char.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Color">
+    <Position X="11.5" Y="9.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\String\Color.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Decimal">
+    <Position X="15" Y="9.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\String\Decimal.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Double">
+    <Position X="18.75" Y="9.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\String\Double.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Enum">
+    <Position X="22.25" Y="9.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\String\Enum.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Int16">
+    <Position X="25.75" Y="9.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\String\Int16.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Int32">
+    <Position X="29.25" Y="9.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\String\Int32.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Int64">
+    <Position X="32.5" Y="9.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\String\Int64.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.SByte">
+    <Position X="36" Y="9.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\String\Sbyte.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.Single">
+    <Position X="39.5" Y="9.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\String\Single.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.String">
+    <Position X="43" Y="9.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\String\String.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.UInt16">
+    <Position X="46.5" Y="9.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\String\UInt16.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.UInt32">
+    <Position X="50" Y="9.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\String\UInt32.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Converters.String.UInt64">
+    <Position X="53.5" Y="9.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Converters\String\UInt64.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Tahoma" Size="8.25" />
 </ClassDiagram>

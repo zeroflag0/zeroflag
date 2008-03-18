@@ -70,7 +70,23 @@ namespace zeroflag.Serialization
 			get { return _Descriptor; }
 			set { _Descriptor = value; }
 		}
-	
+
+		#region Converters
+
+		private Converters.ConverterCollection _Converters = new zeroflag.Serialization.Converters.ConverterCollection();
+
+		public Converters.ConverterCollection Converters
+		{
+			get { return _Converters; }
+			//set
+			//{
+			//    if (_Converters != value)
+			//    {
+			//        _Converters = value;
+			//    }
+			//}
+		}
+		#endregion Converters
 		public Serializer()
 		{
 		}
