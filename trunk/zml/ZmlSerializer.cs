@@ -31,13 +31,14 @@ namespace zeroflag.Zml
 		protected virtual void Serialize(zeroflag.Serialization.Descriptors.Descriptor value, XmlDocument doc, zeroflag.Serialization.Descriptors.Descriptor valueParent, XmlElement xmlParent)
 		{
 			if (value == null || value.IsNull ||
-				(typeof(System.Collections.ICollection).IsAssignableFrom(value.Type) && value.Inner.Count <= 0)
+				(typeof(System.Collections.ICollection).IsAssignableFrom(value.Type) && value.Inner.Count <= 0 && this.HideUnused)
 				)
 				return;
 
+
 			string name = value.Name ?? value.Type.Name.Split('`')[0];
 			CWL("Serialize(" + value + ")");
-			if (!Converters.Converter.CanConvert(value.Value) || value.Name == null)
+			if (!this.Converters.CanConvert<string>(value.Value))// || value.Name == null)
 			{
 				// complex type...
 				XmlElement node = doc.CreateElement(name);
@@ -62,7 +63,7 @@ namespace zeroflag.Zml
 				//#if DEBUG
 				//            this.WriteAttribute("descriptor", value.ToString(), doc, node);
 				//#endif
-				if (!Converters.Converter.CanConvert(value.Value))
+				if (!this.Converters.CanConvert<string>(value.Value))
 				{
 
 					foreach (zeroflag.Serialization.Descriptors.Descriptor desc in value.Inner)
@@ -71,7 +72,34 @@ namespace zeroflag.Zml
 					}
 				}
 
-				if (!value.IsNull)
+				if (!value.IsNull && this.HideUnused)
+				{
+					if (xmlParent != null)
+						xmlParent.AppendChild(node);
+					else
+						doc.AppendChild(node);
+				}
+			}
+			else if (value.Name == null)
+			{
+				XmlElement node = doc.CreateElement(name);
+				bool explicitType = false;
+
+				if (valueParent != null && valueParent.Value != null && value.Name != null)
+				{
+					var info = valueParent.Type.GetProperty(value.Name);
+					if (info != null)
+					{
+						explicitType = info.PropertyType != value.Type;
+					}
+				}
+
+				if (explicitType)
+					this.WriteAttribute(AttributeType, value.Type.FullName, doc, node);
+
+				node.InnerText = this.Converters.Generate<string>(value.Type, value.Value);
+
+				if (!value.IsNull && this.HideUnused)
 				{
 					if (xmlParent != null)
 						xmlParent.AppendChild(node);
@@ -83,11 +111,11 @@ namespace zeroflag.Zml
 			{
 				XmlAttribute node = doc.CreateAttribute(value.Name);
 				//Console.WriteLine("Convert(" + value + ")");
-				node.Value = Converters.Converter.Generate(value.Type, value.Value);
+				node.Value = this.Converters.Generate<string>(value.Type, value.Value);
 
 				//this.WriteAttribute("value", StringConverters.Base.Write(value.Value), doc, node);
 
-				if (!value.IsNull)
+				if (!value.IsNull && this.HideUnused)
 				{
 					if (xmlParent != null)
 						xmlParent.Attributes.Append(node);
@@ -166,7 +194,7 @@ namespace zeroflag.Zml
 				if (sub is XmlText)
 				{
 					string text = ((XmlText)sub).Value;
-					desc.Value = Converters.Converter.Parse(desc.Type, text);
+					desc.Value = this.Converters.Parse<string>(desc.Type, text);
 				}
 				else //if (sub is XmlElement)
 				{
@@ -242,6 +270,23 @@ namespace zeroflag.Zml
 		}
 		#endregion Deserialize
 
+
+		#region HideUnused
+
+		private bool _HideUnused = true;
+
+		public bool HideUnused
+		{
+			get { return _HideUnused; }
+			set
+			{
+				if (_HideUnused != value)
+				{
+					_HideUnused = value;
+				}
+			}
+		}
+		#endregion HideUnused
 
 		public ZmlSerializer()
 		{

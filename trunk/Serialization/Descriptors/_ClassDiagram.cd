@@ -1,14 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Font Name="Tahoma" Size="8.25" />
   <Class Name="zeroflag.Serialization.Descriptors.Descriptor">
     <Position X="0.5" Y="0.5" Width="1.5" />
-    <TypeIdentifier>
-      <FileName>Descriptors\Descriptor.cs</FileName>
-      <HashCode>AAAigECAIAAAggAEAAAAoAQAAAAIBAAAAQAAAAAABAA=</HashCode>
-    </TypeIdentifier>
     <Members>
-      <Field Name="_Descriptors" Hidden="true" />
       <Field Name="_Name" Hidden="true" />
       <Field Name="_Type" Hidden="true" />
     </Members>
@@ -24,24 +18,24 @@
         </TypeIdentifier>
       </Delegate>
     </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAiiECIEAAAAhAEEQEgoASAAQANBAAJBwAgAEgEBQA=</HashCode>
+      <FileName>Descriptors\Descriptor.cs</FileName>
+    </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Serialization.Descriptors.Descriptor&lt;T&gt;">
     <Position X="3" Y="0.5" Width="1.5" />
     <TypeIdentifier>
+      <HashCode>AAAiAAAAIAAAAgAAAAAAIAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
       <FileName>Descriptors\Descriptor~1.cs</FileName>
-      <HashCode>AAAiAAAAIAAABhBQAAAAAQAAAAAAAAAAAQAgAAAAAAA=</HashCode>
     </TypeIdentifier>
-    <Members>
-      <Field Name="_Get" Hidden="true" />
-      <Field Name="_Set" Hidden="true" />
-      <Field Name="_Value" Hidden="true" />
-    </Members>
   </Class>
-  <Class Name="zeroflag.Serialization.Descriptors.Default">
-    <Position X="5.5" Y="0.5" Width="1.5" />
+  <Class Name="zeroflag.Serialization.Descriptors.DelegateDescriptor">
+    <Position X="6.25" Y="1.25" Width="1.5" />
     <TypeIdentifier>
-      <FileName>Descriptors\Default.cs</FileName>
-      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Descriptors\DelegateDescriptor.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Font Name="Tahoma" Size="8.25" />
 </ClassDiagram>

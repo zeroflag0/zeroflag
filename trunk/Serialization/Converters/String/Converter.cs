@@ -37,6 +37,7 @@ namespace zeroflag.Serialization.Converters.String
 	public class Converter
 	{
 		//public const string NullToken = "~!~null~!~";
+#if OLD
 		public static string Generate(object value)
 		{
 			return value == null ? null : Generate(value.GetType(), value);
@@ -107,5 +108,6 @@ namespace zeroflag.Serialization.Converters.String
 				throw new InvalidConversionException(typeof(string), type, text, exc);
 			}
 		}
+#endif
 	}
 }

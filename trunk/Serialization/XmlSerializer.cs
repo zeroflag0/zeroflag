@@ -73,7 +73,7 @@ namespace zeroflag.Serialization
 			this.WriteAttribute("descriptor", value.ToString(), doc, node);
 #endif
 
-			if (!Converters.String.Converter.CanConvert(value.Value))
+			if (!this.Converters.CanConvert<string>(value.Value))// Converters.String.Converter.CanConvert(value.Value))
 			{
 				int nonsense = 0;
 				foreach (zeroflag.Serialization.Descriptors.Descriptor desc in value.Inner)
@@ -92,7 +92,8 @@ namespace zeroflag.Serialization
 			else
 			{
 				//Console.WriteLine("Convert(" + value + ")");
-				node.InnerText = Converters.String.Converter.Generate(value.Type, value.Value);
+				//node.InnerText = Converters.String.Converter.Generate(value.Type, value.Value);
+				node.InnerText = this.Converters.Generate<string>(value.Type, value.Value);
 
 				//this.WriteAttribute("value", StringConverters.Base.Write(value.Value), doc, node);
 			}
@@ -166,7 +167,7 @@ namespace zeroflag.Serialization
 				else if (sub is XmlText)
 				{
 					string text = ((XmlText)sub).Value;
-					desc.Value = Converters.String.Converter.Parse(desc.Type, text);
+					desc.Value = this.Converters.Parse(desc.Type, text);
 				}
 			}
 			depth--;

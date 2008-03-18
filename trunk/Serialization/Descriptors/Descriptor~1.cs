@@ -70,7 +70,7 @@ namespace zeroflag.Serialization.Descriptors
 
 		public override Descriptor Parse(System.Reflection.PropertyInfo info)
 		{
-			if (info.CanRead && info.CanWrite && info.GetIndexParameters().Length == 0)
+			if (info.CanRead && (info.CanWrite || !this.NeedsWriteAccess) && info.GetIndexParameters().Length == 0)
 			{
 				object value = null;
 				if (this.Owner != null && this.Owner.Value != null)
@@ -78,6 +78,11 @@ namespace zeroflag.Serialization.Descriptors
 				return this.Parse(info.Name, info.PropertyType, value);
 			}
 			else return this;
+		}
+
+		protected virtual bool NeedsWriteAccess
+		{
+			get { return true; }
 		}
 
 		public override Descriptor Parse(string name, Type type, object value)
