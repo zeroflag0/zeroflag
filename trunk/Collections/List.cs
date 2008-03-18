@@ -53,6 +53,15 @@ namespace zeroflag.Collections
 
 		#endregion Constructors
 
+		#region Helper Methods
+		public List<T> Modify(Action<List<T>> modifier)
+		{
+			if (modifier != null)
+				modifier(this);
+			return this;
+		}
+		#endregion Helper Methods
+
 		#region event ItemAdded
 		public delegate void ItemAddedHandler(T item);
 

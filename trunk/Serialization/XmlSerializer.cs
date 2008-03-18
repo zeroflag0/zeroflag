@@ -69,17 +69,19 @@ namespace zeroflag.Serialization
 				this.WriteAttribute(AttributeNull, value.IsNull.ToString(), doc, node);
 			if (value.Id > -1)
 				this.WriteAttribute(AttributeId, value.Id.ToString(), doc, node);
-			//this.WriteAttribute("descriptor", value.ToString(), doc, node);
+#if DEBUG
+			this.WriteAttribute("descriptor", value.ToString(), doc, node);
+#endif
 
 			if (!Converters.String.Converter.CanConvert(value.Value))
 			{
 				int nonsense = 0;
 				foreach (zeroflag.Serialization.Descriptors.Descriptor desc in value.Inner)
 				{
-					if (desc.Name != null && desc.Name != "")
+					//if (desc.Name != null && desc.Name != "")
 						this.Serialize(desc, doc, node);
-					else
-						nonsense++;
+					//else
+					//    nonsense++;
 				}
 				if (nonsense > 0)
 				{

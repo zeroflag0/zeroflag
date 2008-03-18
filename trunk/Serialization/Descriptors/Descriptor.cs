@@ -294,6 +294,14 @@ namespace zeroflag.Serialization.Descriptors
 			set { _Id = value; }
 		}
 
+		bool _IsReferenced = false;
+
+		public bool IsReferenced
+		{
+			get { return _IsReferenced; }
+			set { _IsReferenced = value; }
+		}
+
 		//public abstract object GetValue();
 		//public abstract void SetValue(object value);
 
@@ -428,6 +436,7 @@ namespace zeroflag.Serialization.Descriptors
 					//this.Name = old.Name;
 					//this.Key = old.Key;
 					this.Id = old.Id;
+					old.IsReferenced = true;
 					this.Inner.Clear();
 					//return this.Parsed[this.Value];
 				}

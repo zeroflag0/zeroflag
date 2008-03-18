@@ -53,7 +53,7 @@ namespace zeroflag.Serialization.Descriptors
 
 		//    return this.Parse();
 		//}
-		public const string NameItem = "Item";
+		public const string NameItem = null;
 
 		protected override void DoParse()
 		{
@@ -100,10 +100,10 @@ namespace zeroflag.Serialization.Descriptors
 				value.Clear();
 				foreach (Descriptor sub in this.Inner)
 				{
-					if (sub.Name == NameItem)
-					{
+					//if (sub.Name == NameItem)
+					//{
 						value.Add((T)sub.GenerateLink());
-					}
+					//}
 				}
 			}
 			return this.Value;
