@@ -27,7 +27,7 @@
 #endregion LGPL License
 
 #define TEST1 // class A
-#define TEST2 // dictionary
+//#define TEST2 // dictionary
 //#define TEST3 // winforms <-- doesn't work and it's not because my serializer is too stupid...
 
 using System;
@@ -111,7 +111,8 @@ namespace Test
 			try
 			{
 #if TEST1
-				Serializer seri = new XmlSerializer("test.xml");
+				Serializer seri = new XmlSerializer();
+				seri.FileName = "test1.xml";
 
 				A a = new A("root", new A("foo"), new A("bar"), new A(null), null);
 
@@ -125,8 +126,10 @@ namespace Test
 				//b = (A)desc.Generate();
 				b = seri.Deserialize<A>();
 
-				Console.Write("a = " + a);
-				Console.WriteLine(" b = " + b);
+				new XmlSerializer("test1.result.xml").Serialize(b);
+
+				Console.WriteLine("a = " + a);
+				Console.WriteLine("b = " + b);
 				//b.Children[2] = new A("new");
 				//Console.WriteLine("Modified b...");
 				//Console.Write("a = " + a);
