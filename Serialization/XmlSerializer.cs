@@ -79,7 +79,7 @@ namespace zeroflag.Serialization
 				foreach (zeroflag.Serialization.Descriptors.Descriptor desc in value.Inner)
 				{
 					//if (desc.Name != null && desc.Name != "")
-						this.Serialize(desc, doc, node);
+					this.Serialize(desc, doc, node);
 					//else
 					//    nonsense++;
 				}
@@ -128,7 +128,8 @@ namespace zeroflag.Serialization
 		protected virtual object Deserialize(object value, Descriptor desc, XmlElement node)
 		{
 			depth++;
-			desc.Name = this.GetAttribute(AttributeName, node);
+			if (desc.Name == null)
+				desc.Name = this.GetAttribute(AttributeName, node) ?? node.Name;
 
 			if (node.Attributes[AttributeNull] != null)
 			{

@@ -54,5 +54,33 @@ namespace Test
 			b.Append("}");
 			return b.ToString();
 		}
+
+		public Test()
+		{
+		}
+
+		public Test(string name, int integer, float real)
+		{
+			this.Name = name;
+			this.Int = integer;
+			this.Real = real;
+		}
+
+		public Test Add(params Test[] inner)
+		{
+			this.Inner.AddRange(inner);
+			return this;
+		}
+	}
+
+	public class Test2 : Test
+	{
+		public Test2()
+		{
+		}
+
+		public Test2(string name, int integer, float real)
+			: base(name, integer, real)
+		{ }
 	}
 }
