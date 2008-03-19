@@ -21,10 +21,10 @@ namespace zeroflag.Zml
 			XmlDocument doc = new XmlDocument();
 
 			doc.AppendChild(doc.CreateXmlDeclaration("1.0", null, null));
+			doc.AppendChild(doc.CreateComment(value.ToStringTree().ToString()));
 			//doc.AppendChild(doc.CreateElement("root"));
 
 			this.Serialize(value, doc, null, doc.DocumentElement);
-
 			doc.Save(this.FileName);
 		}
 
@@ -149,6 +149,14 @@ namespace zeroflag.Zml
 			doc.Load(this.FileName);
 
 			value = this.Deserialize(value, desc, doc.DocumentElement);
+
+			Console.WriteLine("<Deserialized>");
+			Console.WriteLine(desc.ToStringTree().ToString());
+			Console.WriteLine("</Deserialized>");
+			Console.WriteLine("<Created>");
+			Console.WriteLine(zeroflag.Serialization.Descriptors.Descriptor.DoParse(value).ToStringTree().ToString());
+			Console.WriteLine("</Created>");
+
 			return value;
 		}
 		int depth = 0;
@@ -156,7 +164,14 @@ namespace zeroflag.Zml
 		{
 			depth++;
 			if (desc.Name == null)
+			{
 				desc.Name = this.GetAttribute(AttributeName, node) ?? node.Name;
+				var types = TypeFinder.Instance.SearchAll(node.Name, desc.Type);
+				if (types.Count > 0)
+				{
+					desc.Type = types.Find(t => t.Name != null && t.Name.ToLower() == node.Name.ToLower()) ?? types[0];
+				}
+			}
 
 			if (this.GetAttribute(AttributeNull, node) != null)
 				desc.IsNull = false;
@@ -178,6 +193,7 @@ namespace zeroflag.Zml
 			desc.Value = value;
 			//desc.PreGenerate();
 			//desc.DoCreateInstance();
+
 
 			CWL(new StringBuilder().Append(' ', depth).Append("Deserialize(name='" + desc.Name + "', type='" + desc.Type + "', isnull='" + desc.IsNull + "', id='" + desc.Id + "', value='" + desc.Value + "', children='" + node.ChildNodes.Count + "')").ToString());
 			//foreach (Descriptor cr in desc.Generated.Values) Console.WriteLine("\tid=" + cr.Id + ", name=" + cr.Name + ", type=" + cr.Type + ", value=" + cr.Value);
@@ -210,11 +226,12 @@ namespace zeroflag.Zml
 						else
 						{
 							// try to find the property on the type...
-							var info = new List<System.Reflection.PropertyInfo>(desc.Type.GetProperties()).Find(i => i.Name.ToLower() == sub.Name.ToLower());
+							//var info = new List<System.Reflection.PropertyInfo>(desc.Type.GetProperties()).Find(i => i.Name.ToLower() == sub.Name.ToLower());
+							var info = desc.Property(subTypeName);
 							if (info != null)
 							{
 								subType = info.PropertyType;
-								subTypeName = info.Name;
+								//subTypeName = info.Name;
 							}
 							else
 							{
