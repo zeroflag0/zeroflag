@@ -410,9 +410,9 @@ namespace zeroflag.Serialization.Descriptors
 				type = this.Type;
 			this.Type = GetUsableType(type);
 
-			if (name == null)
-				name = type.Name;
-			this.Name = name;
+			//if (name == null)
+			//    name = type.Name;
+			this.Name = name ?? this.Name;
 
 			return this.Parse();
 		}
@@ -427,6 +427,7 @@ namespace zeroflag.Serialization.Descriptors
 					{
 						this.Parsed.Add(this.Value, this);
 					}
+					CWL("Parsing " + this);
 					this.DoParse();
 				}
 				else
@@ -555,15 +556,67 @@ namespace zeroflag.Serialization.Descriptors
 		}
 		#endregion Generate
 
-		public List<System.Reflection.PropertyInfo> GetProperties(Type type)
+		public System.Reflection.PropertyInfo Property(string property)
 		{
-			List<System.Reflection.PropertyInfo> props = new List<System.Reflection.PropertyInfo>();
+			var props = this.GetPropertyNames(this.Type);
+			// search by name, case sensitive (fast)...
+			if (props.ContainsKey(property))
+				return props[property];
+			var names = new List<string>(props.Keys);
+			// search by name, case insensitive...
+			string key = names.Find(n => n.ToLower() == property.ToLower());
+			if (key != null)
+				return props[key];
+
+			// get all property types...
+			Dictionary<Type, string> types = new Dictionary<Type, string>();
+			foreach (string name in props.Keys)
+			{
+				types.Add(props[name].PropertyType, name);
+			}
+
+			// search types, case insensitive...
+			List<Type> typeSearch = new List<Type>(types.Keys);
+			Type type = typeSearch.Find(t => t.Name != null && t.Name.ToLower() == property.ToLower());
+			if (type != null && types.ContainsKey(type) && props.ContainsKey(types[type]))
+				return props[types[type]];
+
+			type = typeSearch.Find(t => t.Name != null && (t.Name.ToLower().Contains(property.ToLower()) || property.ToLower().Contains(t.Name.ToLower())));
+			if (type != null && types.ContainsKey(type) && props.ContainsKey(types[type]))
+				return props[types[type]];
+
+			return null;
+		}
+
+		public Dictionary<string, System.Reflection.PropertyInfo> GetPropertyNames(Type type)
+		{
+			//List<System.Reflection.PropertyInfo> props = new List<System.Reflection.PropertyInfo>();
+			Dictionary<string, System.Reflection.PropertyInfo> props = new Dictionary<string, System.Reflection.PropertyInfo>();
 			do
 			{
-				props.AddRange(type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance));
+				//break;
+				//props.AddRange(type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.));
+				foreach (var prop in type.GetProperties())
+					if (!props.ContainsKey(prop.Name))
+						props.Add(prop.Name, prop);
 			}
 			while ((type = type.BaseType) != null);
 			return props;
+		}
+		public List<System.Reflection.PropertyInfo> GetProperties(Type type)
+		{
+			//List<System.Reflection.PropertyInfo> props = new List<System.Reflection.PropertyInfo>();
+			Dictionary<string, System.Reflection.PropertyInfo> props = new Dictionary<string, System.Reflection.PropertyInfo>();
+			do
+			{
+				//break;
+				//props.AddRange(type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.));
+				foreach (var prop in type.GetProperties())
+					if (!props.ContainsKey(prop.Name))
+						props.Add(prop.Name, prop);
+			}
+			while ((type = type.BaseType) != null);
+			return new List<System.Reflection.PropertyInfo>(props.Values);
 		}
 
 		public override string ToString()
@@ -575,6 +628,18 @@ namespace zeroflag.Serialization.Descriptors
 		public StringBuilder ToString(StringBuilder builder)
 		{
 			return builder.Append(this.GetType().Name).Append("[").Append(this.Name).Append(", ").Append(this.Type).Append(", ").Append(this.Id).Append("]");// -> { ");
+		}
+
+		public StringBuilder ToStringTree()
+		{
+			return this.ToStringTree(new StringBuilder("\n"), 0).AppendLine();
+		}
+		public StringBuilder ToStringTree(StringBuilder builder, int depth)
+		{
+			builder.Append(' ', depth * 2).Append(this.Name ?? "<noname>").Append(" (").Append(this.Type).Append(",").Append(this.Id).Append(") := ").Append(this.Value ?? (object)"<null>").AppendLine();
+			foreach (Descriptor child in this.Inner)
+				child.ToStringTree(builder, depth + 1);
+			return builder;
 		}
 
 		[System.Diagnostics.Conditional("VERBOSE")]

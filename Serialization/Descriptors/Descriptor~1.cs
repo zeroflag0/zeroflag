@@ -77,7 +77,7 @@ namespace zeroflag.Serialization.Descriptors
 					value = info.GetValue(this.Owner.Value, new object[] { });
 				return this.Parse(info.Name, info.PropertyType, value);
 			}
-			else return this;
+			else return base.Parse(info);
 		}
 
 		protected virtual bool NeedsWriteAccess
