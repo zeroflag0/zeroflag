@@ -10,10 +10,10 @@ namespace zeroflag.Zml
 {
 	public class ZmlSerializer : zeroflag.Serialization.Serializer
 	{
-		const string AttributeName = "name";
-		const string AttributeType = "type";
-		const string AttributeNull = "null";
-		const string AttributeId = "id";
+		const string AttributeName = "_name";
+		const string AttributeType = "_type";
+		const string AttributeNull = "_null";
+		const string AttributeId = "_id";
 
 		#region Serialize
 		public override void Serialize(zeroflag.Serialization.Descriptors.Descriptor value)
@@ -136,14 +136,7 @@ namespace zeroflag.Zml
 		#endregion Serialize
 
 		#region Deserialize
-		public override object Deserialize(zeroflag.Serialization.Descriptors.Descriptor desc)
-		{
-			XmlDocument doc = new XmlDocument();
-			doc.Load(this.FileName);
-
-			return this.Deserialize(null, desc, doc.DocumentElement);
-		}
-		public virtual object Deserialize(object value, zeroflag.Serialization.Descriptors.Descriptor desc)
+		public override object Deserialize(object value, zeroflag.Serialization.Descriptors.Descriptor desc)
 		{
 			XmlDocument doc = new XmlDocument();
 			doc.Load(this.FileName);
@@ -163,15 +156,38 @@ namespace zeroflag.Zml
 		protected virtual object Deserialize(object value, Descriptor desc, XmlNode node)
 		{
 			depth++;
+
+			string explicitType = this.GetAttribute(AttributeType, node);
 			if (desc.Name == null)
 			{
-				desc.Name = this.GetAttribute(AttributeName, node) ?? node.Name;
-				var types = TypeFinder.Instance.SearchAll(node.Name, desc.Type);
+				//desc.Name = this.GetAttribute(AttributeName, node) ?? node.Name;
+
+
+				explicitType = explicitType ?? node.Name;
+			}
+
+			if (explicitType != null)
+			{
+				var types = TypeFinder.Instance.SearchAll(explicitType, desc.Type);
 				if (types.Count > 0)
 				{
-					desc.Type = types.Find(t => t.Name != null && t.Name.ToLower() == node.Name.ToLower()) ?? types[0];
+					Type type = types.Find(t => t.Name != null && t.Name.ToLower() == explicitType.ToLower()) ?? desc.Type;
+					if (type != desc.Type)
+					{
+						desc = zeroflag.Serialization.Descriptors.Descriptor.GetDescriptor(type).Parse(desc.Name, type, desc.Owner);
+					}
 				}
 			}
+
+			desc.Value = value;
+			if (desc.Value == null && desc.Name != null && desc.Owner != null && desc.Owner.Value != null)
+			{
+				var info = desc.Owner.Property(desc.Name);
+				if (info != null && info.GetIndexParameters().Length == 0)
+					value = desc.Value = info.GetValue(desc.Owner.Value, null);
+			}
+			if (value != null && value.GetType() != desc.Type && !desc.Type.IsAssignableFrom(value.GetType()))
+				value = null;
 
 			if (this.GetAttribute(AttributeNull, node) != null)
 				desc.IsNull = false;
@@ -191,17 +207,20 @@ namespace zeroflag.Zml
 
 
 			desc.Value = value;
-			//desc.PreGenerate();
-			//desc.DoCreateInstance();
+
+			desc.GenerateParse();
+			desc.GenerateCreate();
 
 
 			CWL(new StringBuilder().Append(' ', depth).Append("Deserialize(name='" + desc.Name + "', type='" + desc.Type + "', isnull='" + desc.IsNull + "', id='" + desc.Id + "', value='" + desc.Value + "', children='" + node.ChildNodes.Count + "')").ToString());
 			//foreach (Descriptor cr in desc.Generated.Values) Console.WriteLine("\tid=" + cr.Id + ", name=" + cr.Name + ", type=" + cr.Type + ", value=" + cr.Value);
 
+
 			List<XmlNode> nodes = new List<XmlNode>();
 			if (node.Attributes != null)
 				foreach (XmlNode n in node.Attributes)
-					nodes.Add(n);
+					if (n.Name != AttributeType)
+						nodes.Add(n);
 			foreach (XmlNode n in node.ChildNodes)
 				nodes.Add(n);
 
@@ -210,51 +229,63 @@ namespace zeroflag.Zml
 				if (sub is XmlText)
 				{
 					string text = ((XmlText)sub).Value;
-					desc.Value = this.Converters.Parse<string>(desc.Type, text);
+					if (this.Converters.CanConvert<string>(desc.Type))
+					{
+						desc.Value = this.Converters.Parse<string>(desc.Type, text);
+					}
+					else
+					{
+						try
+						{
+							Descriptor inner = desc.Inner.Find(i => i.Name != null && i.Name.ToLower() == "value");
+							if (inner != null)
+								inner.Value = this.Converters.Parse<string>(typeof(string), text);
+							//desc.Property("Value").SetValue(desc.Value, this.Converters.Parse<string>(typeof(string), text), null);
+						}
+						catch
+						{
+						}
+					}
 				}
 				else //if (sub is XmlElement)
 				{
 					string subTypeName = this.GetAttribute(AttributeType, sub) ?? sub.Name;
-					Type subType = TypeHelper.GetType(subTypeName);
+					Type subType = null;
 					Descriptor inner = null;
-					if (subType == null)
+					inner = desc.Inner.Find(i => i.Name != null && i.Name.ToLower() == sub.Name.ToLower());
+					// try to find the property in the parent descriptor...
+					if (inner != null)
+						subType = inner.Type;
+					else
 					{
-						inner = desc.Inner.Find(i => i.Name.ToLower() == sub.Name.ToLower());
-						// try to find the property in the parent descriptor...
-						if (inner != null)
-							subType = inner.Type;
+						// try to find the property on the type...
+						//var info = new List<System.Reflection.PropertyInfo>(desc.Type.GetProperties()).Find(i => i.Name.ToLower() == sub.Name.ToLower());
+						var info = desc.Property(subTypeName);
+						if (info != null)
+						{
+							subType = info.PropertyType;
+							//subTypeName = info.Name;
+						}
 						else
 						{
-							// try to find the property on the type...
-							//var info = new List<System.Reflection.PropertyInfo>(desc.Type.GetProperties()).Find(i => i.Name.ToLower() == sub.Name.ToLower());
-							var info = desc.Property(subTypeName);
-							if (info != null)
-							{
-								subType = info.PropertyType;
-								//subTypeName = info.Name;
-							}
-							else
-							{
-								// try to find the type...
-								subType = TypeFinder.Instance[subTypeName];
-							}
+							// try to find the type...
+							subType = TypeFinder.Instance[subTypeName];
 						}
-
-						if (subType == null)
-							continue;
 					}
+
+					if (subType == null)
+						continue;
+
 					if (inner == null)
 						inner = Descriptor.DoParse(subType, desc);
 					if (inner != null && !desc.Inner.Contains(inner))
 						desc.Inner.Add(inner);
-					if (subTypeName != null)
-						inner.Name = subTypeName;
-					this.Deserialize(null, inner, sub);
+					//if (subTypeName != null)
+					//    inner.Name = subTypeName;
+					this.Deserialize(inner.Value, inner, sub);
 				}
 			}
 			depth--;
-			desc.GenerateParse();
-			desc.GenerateCreate();
 
 			return desc.GenerateLink();
 			//return desc.Generate();

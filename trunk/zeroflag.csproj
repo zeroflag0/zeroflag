@@ -38,6 +38,7 @@
   <ItemGroup>
     <Compile Include="Bindable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Translated.cs" />
     <Compile Include="TypeHelper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

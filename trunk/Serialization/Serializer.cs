@@ -129,11 +129,16 @@ namespace zeroflag.Serialization
 
 		public object Deserialize(Type type)
 		{
-			Descriptors.Descriptor desc = Descriptors.Descriptor.DoParse(type);
-
-			return this.Deserialize(desc);
+			return this.Deserialize(null, type);
 		}
 
-		public abstract object Deserialize(Descriptors.Descriptor desc);
+		public object Deserialize(object value, Type type)
+		{
+			Descriptors.Descriptor desc = Descriptors.Descriptor.DoParse(type);
+			desc.Value = value;
+			return this.Deserialize(value, desc);
+		}
+
+		public abstract object Deserialize(object value, Descriptors.Descriptor desc);
 	}
 }

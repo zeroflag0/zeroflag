@@ -1,4 +1,4 @@
-#region LGPL License
+﻿#region LGPL License
 //********************************************************************
 //	author:         Thomas "zeroflag" Kraemer
 //	author email:   zeroflag@zeroflag.de
@@ -32,21 +32,35 @@ using System.Text;
 
 namespace zeroflag.Serialization.Descriptors
 {
-	public class ObjectDescriptor : Descriptor<object>
+	public class TranslationDescriptor : Descriptor<zeroflag.Translated>
 	{
 		protected override void DoParse()
 		{
-			//if (this.Value == null)
-			//    return;
-
-			Type type = this.Type;
-
-			System.Reflection.PropertyInfo[] properties = this.GetProperties(type).ToArray();
-
-			foreach (System.Reflection.PropertyInfo property in properties)
+			CWL(this + " parsing " + (this.Value ?? this.Type ?? (object)"<null>"));
+			zeroflag.Translated collection = this.GetValue();
+			if (collection != null)
 			{
-				Descriptor.DoParse(property, this);
+				foreach (zeroflag.Translated.Translation value in collection)
+				{
+					Descriptor item = DoParse(value, typeof(zeroflag.Translated.Translation), this);
+					item.Name = null;
+				}
 			}
+		}
+
+		public override object DoCreateInstance()
+		{
+			return this.Value;//base.DoCreateInstance();
+		}
+
+		//protected override object DoGenerate()
+		//{
+		//    return this.Value;
+		//    //return base.DoGenerate();
+		//}
+		public override object GenerateLink()
+		{
+			return this.Value;
 		}
 	}
 }

@@ -42,24 +42,27 @@ namespace zeroflag.Serialization.Descriptors
 
 		static Descriptor()
 		{
-			List<Type> types = TypeHelper.GetDerived(typeof(Descriptor<>));
-			Type valueType, descriptor;
-			foreach (Type descriptorType in types)
+			lock (typeof(Descriptor))
 			{
-				if (descriptorType.IsAbstract || descriptorType.IsInterface)
-					continue;
+				List<Type> types = TypeHelper.GetDerived(typeof(Descriptor<>));
+				Type valueType, descriptor;
+				foreach (Type descriptorType in types)
+				{
+					if (descriptorType.IsAbstract || descriptorType.IsInterface)
+						continue;
 
-				descriptor = descriptorType;
+					descriptor = descriptorType;
 
-				Type genericDescriptor = descriptor;
-				while (!genericDescriptor.IsGenericType || typeof(Descriptor<>) != genericDescriptor.GetGenericTypeDefinition())
-					genericDescriptor = genericDescriptor.BaseType;
+					Type genericDescriptor = descriptor;
+					while (!genericDescriptor.IsGenericType || typeof(Descriptor<>) != genericDescriptor.GetGenericTypeDefinition())
+						genericDescriptor = genericDescriptor.BaseType;
 
-				valueType = genericDescriptor.GetGenericArguments()[0];
-				if (valueType.IsGenericType)
-					valueType = valueType.GetGenericTypeDefinition();
+					valueType = genericDescriptor.GetGenericArguments()[0];
+					if (valueType.IsGenericType)
+						valueType = valueType.GetGenericTypeDefinition();
 
-				_DescriptorTypes.Add(valueType, descriptor);
+					_DescriptorTypes.Add(valueType, descriptor);
+				}
 			}
 		}
 
@@ -70,62 +73,68 @@ namespace zeroflag.Serialization.Descriptors
 		public static Type GetDescriptorType(Type value, params Type[] generics)
 		{
 			if (!_DescriptorTypes.ContainsKey(value))
-			{
-				CWL("GetDescriptorType(" + value + ", " + generics + ")");
-				Type descriptor = null;
-				if (value.IsGenericType)
-				// value type is generic...
+				lock (_DescriptorTypes)
 				{
-					if (!value.IsGenericTypeDefinition)
-					// if the value type is specialized (e.g. not <T> but <int> or <string>)...
+					if (!_DescriptorTypes.ContainsKey(value))
 					{
-						if (generics.Length <= 0)
-							// get the generic arguments...
-							generics = value.GetGenericArguments();
-
-						// get the fully generic type definition... (get <T> instead of <int>)
-						Type genericValue = value.GetGenericTypeDefinition();
-
-						// search for any descriptor that fits the generic definition...
-						Type genericDescriptor = GetDescriptorType(genericValue, generics);
-
-						if (genericDescriptor != null && genericValue != null)
+						CWL("GetDescriptorType(" + value + ", " + generics + ")");
+						Type descriptor = null;
+						if (value.IsGenericType)
+						// value type is generic...
 						{
-							// we got ourselves a base descriptor... now we need to specialize it for our generic type...
-							if (genericDescriptor.IsGenericType && !genericDescriptor.IsGenericTypeDefinition)
-								genericDescriptor = genericDescriptor.GetGenericTypeDefinition();
-							descriptor = TypeHelper.SpecializeType(genericDescriptor, generics);
+							if (!value.IsGenericTypeDefinition)
+							// if the value type is specialized (e.g. not <T> but <int> or <string>)...
+							{
+								if (generics.Length <= 0)
+									// get the generic arguments...
+									generics = value.GetGenericArguments();
+
+								// get the fully generic type definition... (get <T> instead of <int>)
+								Type genericValue = value.GetGenericTypeDefinition();
+
+								// search for any descriptor that fits the generic definition...
+								Type genericDescriptor = GetDescriptorType(genericValue, generics);
+
+								if (genericDescriptor != null && genericValue != null)
+								{
+									// we got ourselves a base descriptor... now we need to specialize it for our generic type...
+									if (genericDescriptor.IsGenericType && !genericDescriptor.IsGenericTypeDefinition)
+										genericDescriptor = genericDescriptor.GetGenericTypeDefinition();
+									descriptor = TypeHelper.SpecializeType(genericDescriptor, generics);
+								}
+							}
 						}
-					}
-				}
 
-				if (descriptor == null || descriptor == typeof(ObjectDescriptor))
-				// no suitable descriptor yet...
-				{
-					// scan base types...
-					if (value.BaseType != null)
-						descriptor = GetDescriptorType(value.BaseType, generics);
-				}
-
-				if (descriptor == null || descriptor == typeof(ObjectDescriptor))
-				// no suitable descriptor yet...
-				{
-					// scan interfaces...
-					foreach (Type interf in value.GetInterfaces())
-					{
-						descriptor = GetDescriptorType(interf, generics);
 						if (descriptor == null || descriptor == typeof(ObjectDescriptor))
-							continue;
+						// no suitable descriptor yet...
+						{
+							// scan base types...
+							if (value.BaseType != null)
+							{
+								descriptor = GetDescriptorType(value.BaseType, generics);
+							}
+						}
+
+						if (descriptor == null || descriptor == typeof(ObjectDescriptor))
+						// no suitable descriptor yet...
+						{
+							// scan interfaces...
+							foreach (Type interf in value.GetInterfaces())
+							{
+								descriptor = GetDescriptorType(interf, generics);
+								if (descriptor == null || descriptor == typeof(ObjectDescriptor))
+									continue;
+								else
+									break;
+							}
+						}
+
+						if (descriptor != null)
+							_DescriptorTypes.Add(value, descriptor);
 						else
-							break;
+							return typeof(ObjectDescriptor);
 					}
 				}
-
-				if (descriptor != null)
-					_DescriptorTypes.Add(value, descriptor);
-				else
-					return typeof(ObjectDescriptor);
-			}
 			return _DescriptorTypes[value];
 		}
 #if OBSOLETE
@@ -240,7 +249,7 @@ namespace zeroflag.Serialization.Descriptors
 			get { return _Owner; }
 			set
 			{
-				if (_Owner != value)
+				if (_Owner != value && value != this)
 				{
 					if (_Owner != null)
 						_Owner.Inner.Remove(this);
@@ -258,7 +267,7 @@ namespace zeroflag.Serialization.Descriptors
 
 		public object Value
 		{
-			get { return _Value; }
+			get { return _Value ?? (_Value = DefaultValue); }
 			set
 			{
 				if (_Value != value)
@@ -269,6 +278,8 @@ namespace zeroflag.Serialization.Descriptors
 				}
 			}
 		}
+
+		protected abstract object DefaultValue { get; }
 		#endregion Value
 
 		bool? _IsNull = true;
@@ -323,14 +334,14 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			t = GetUsableType(t);
 			CWL("DoParse(" + t + ")");
-			return GetDescriptor(t).Parse(GetCleanName(t.Name), t, null);
+			return GetDescriptor(t).Parse(null, t, null);
 		}
 
 		public static Descriptor DoParse(Type t, Descriptor owner)
 		{
 			t = GetUsableType(t);
 			CWL("DoParse(" + t + ", " + owner + ")");
-			return GetDescriptor(t).Parse(GetCleanName(t.Name), t, owner);
+			return GetDescriptor(t).Parse(null, t, owner);
 		}
 
 		public static Descriptor DoParse(string name, object value, Descriptor owner)
@@ -342,14 +353,14 @@ namespace zeroflag.Serialization.Descriptors
 		public static Descriptor DoParse(object value)
 		{
 			CWL("DoParse(" + value + ")");
-			return GetDescriptor(GetUsableType(value.GetType())).Parse(GetCleanName(GetUsableType(value.GetType()).Name), GetUsableType(value.GetType()), value);
+			return GetDescriptor(GetUsableType(value.GetType())).Parse(null, GetUsableType(value.GetType()), value);
 		}
 
 		public static Descriptor DoParse(object value, Type type, Descriptor owner)
 		{
 			type = GetUsableType(type);
 			CWL("DoParse(" + value + ", " + type + ", " + owner + ")");
-			return GetDescriptor(type).Parse(GetCleanName(type.Name), type, owner, value);
+			return GetDescriptor(type).Parse(null, type, owner, value);
 		}
 
 
@@ -358,7 +369,7 @@ namespace zeroflag.Serialization.Descriptors
 			if (value == null)
 				return null;
 			CWL("DoParse(" + value + ", " + owner + ")");
-			return GetDescriptor(GetUsableType(value.GetType())).Parse(GetCleanName(GetUsableType(value.GetType()).Name), GetUsableType(value.GetType()), owner, value);
+			return GetDescriptor(GetUsableType(value.GetType())).Parse(null, GetUsableType(value.GetType()), owner, value);
 		}
 
 		public static Descriptor DoParse(System.Reflection.PropertyInfo info)
@@ -386,7 +397,14 @@ namespace zeroflag.Serialization.Descriptors
 
 		protected Dictionary<object, Descriptor> Parsed
 		{
-			get { return this.Owner != null ? this.Owner.Parsed : _Parsed ?? (_Parsed = new Dictionary<object, Descriptor>()); }
+			get { return this.Owner != null && this.Owner != this ? this.Owner.Parsed : (_Parsed ?? (_Parsed = new Dictionary<object, Descriptor>())); }
+		}
+
+		Dictionary<Type, Descriptor> _ParsedTypes = null;
+
+		protected Dictionary<Type, Descriptor> ParsedTypes
+		{
+			get { return this.Owner != null && this.Owner != this ? this.Owner.ParsedTypes : (_ParsedTypes ?? (_ParsedTypes = new Dictionary<Type, Descriptor>())); }
 		}
 
 		public Descriptor Parse(System.Reflection.PropertyInfo info, Descriptor owner)
@@ -419,32 +437,44 @@ namespace zeroflag.Serialization.Descriptors
 
 		protected Descriptor Parse()
 		{
-			if (this.Value != null)
+			if (this.Value == null || !this.Parsed.ContainsKey(this.Value) || this.Type.IsValueType)
 			{
-				if (this.Type.IsValueType || !this.Parsed.ContainsKey(this.Value))
-				{
-					if (this.Value != null && !this.Type.IsValueType)
-					{
-						this.Parsed.Add(this.Value, this);
-					}
-					CWL("Parsing " + this);
-					this.DoParse();
-				}
-				else
-				{
-					Descriptor old = this.Parsed[this.Value];
-					CWL("Skipping " + this + " for reference to " + old);
-					//this.Name = old.Name;
-					//this.Key = old.Key;
-					this.Id = old.Id;
-					old.IsReferenced = true;
-					this.Inner.Clear();
-					//return this.Parsed[this.Value];
-				}
+				this.RememberAndParse();
+			}
+			//else if (this.Type.IsValueType)// || !this.ParsedTypes.ContainsKey(this.Type))
+			//{
+			//    this.RememberAndParse();
+			//}
+			else
+			{
+				Descriptor old = this.Value != null ? this.Parsed[this.Value] : this.ParsedTypes[this.Type];
+				CWL("Skipping " + this + " for reference to " + old);
+				//this.Name = old.Name;
+				//this.Key = old.Key;
+				this.Id = old.Id;
+				old.IsReferenced = true;
+				this.Inner.Clear();
+				//return this.Parsed[this.Value];
 			}
 
 			return this;
 		}
+		private void RememberAndParse()
+		{
+			if (!this.Type.IsValueType)
+			{
+				if (this.Value != null)
+				{
+					this.Parsed.Add(this.Value, this);
+					this.ParsedTypes[this.Value.GetType()] = this;
+				}
+				else
+					this.ParsedTypes[this.Type] = this;
+			}
+			CWL("Parsing " + this);
+			this.DoParse();
+		}
+
 		public abstract Descriptor Parse(string name, Type type, Descriptor owner, object value);
 		public abstract Descriptor Parse(string name, Type type, object value);
 		protected abstract void DoParse();
@@ -530,8 +560,8 @@ namespace zeroflag.Serialization.Descriptors
 			{
 				foreach (Descriptor sub in this.Inner)
 				{
-					System.Reflection.PropertyInfo prop = this.Type.GetProperty(sub.Name);
-					if (prop != null)
+					System.Reflection.PropertyInfo prop = this.Type.GetProperty(sub.Name);//TODO: trace sub.Name = null;
+					if (prop != null && sub.GenerateLink() != null)
 					{
 						//sub.SetValue(this.Value, prop);
 						if (prop.CanWrite)

@@ -43,6 +43,14 @@ namespace zeroflag.Serialization.Descriptors
 			this.Value = (T)value;
 		}
 
+		protected override object DefaultValue
+		{
+			get
+			{
+				return this.Type.IsValueType ? TypeHelper.CreateInstance(this.Type) : default(T);
+			}
+		}
+
 		//static int count = 0;
 		public override int? Id
 		{
@@ -60,7 +68,8 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			get
 			{
-				return this.Value != null ? this.Value.GetType() : base.Type ?? typeof(T);
+				//return this.Value != null ? this.Value.GetType() : base.Type ?? typeof(T);
+				return base.Type ?? typeof(T);
 			}
 			set
 			{

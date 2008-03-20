@@ -118,12 +118,12 @@ namespace zeroflag.Serialization
 		#endregion Serialize
 
 		#region Deserialize
-		public override object Deserialize(zeroflag.Serialization.Descriptors.Descriptor desc)
+		public override object Deserialize(object value, zeroflag.Serialization.Descriptors.Descriptor desc)
 		{
 			XmlDocument doc = new XmlDocument();
 			doc.Load(this.FileName);
 
-			return this.Deserialize(null, desc, doc.DocumentElement);
+			return this.Deserialize(value, desc, doc.DocumentElement);
 		}
 		int depth = 0;
 		protected virtual object Deserialize(object value, Descriptor desc, XmlElement node)

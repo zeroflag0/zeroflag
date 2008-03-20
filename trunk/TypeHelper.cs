@@ -90,13 +90,17 @@ namespace zeroflag
 
 		public static List<Type> ScanAssemblies()
 		{
+			return ScanAssemblies((System.Reflection.Assembly[])null);
+		}
+		public static List<Type> ScanAssemblies(params System.Reflection.Assembly[] assemblies)
+		{
 			lock (Assemblies)
 			{
 				if (_Types == null)
 					_Types = new List<Type>();
 				//System.Reflection.Assembly[] available = AvailableAssemblies ?? (AvailableAssemblies = AppDomain.CurrentDomain.GetAssemblies());
 				System.Reflection.Assembly[] available = AppDomain.CurrentDomain.GetAssemblies();
-				System.Reflection.Assembly[] assemblies = available;
+				assemblies = assemblies ?? available;
 
 				// check if all assemblies are already parsed...
 				foreach (System.Reflection.Assembly assembly in assemblies)// AppDomain.CurrentDomain.GetAssemblies())
@@ -126,17 +130,18 @@ namespace zeroflag
 							}
 						}
 
-						// check if there are any assemblies depending on the current...
-						//foreach (var other in available)
-						//{
-						//    foreach (var refe in other.GetReferencedAssemblies())
-						//    {
-						//        if (refe.FullName == assembly.GetName().FullName)
-						//            // if it depends, scan it...
-						//            ScanAssemblies(other);
-						//    }
-						//}
 					}
+					// check if there are any assemblies depending on the current...
+					if (assemblies != available)
+						foreach (var other in available)
+						{
+							foreach (var refe in other.GetReferencedAssemblies())
+							{
+								if (refe.FullName == assembly.GetName().FullName)
+									// if it depends, scan it...
+									ScanAssemblies(other);
+							}
+						}
 				}
 				return _Types;
 			}
@@ -162,7 +167,7 @@ namespace zeroflag
 			{
 				Derived[baseType] = new List<Type>();
 
-				//ScanAssemblies(baseType.Assembly);
+				ScanAssemblies(baseType.Assembly);
 
 				// find all types directly derived from the type...
 				foreach (System.Type type in Types)

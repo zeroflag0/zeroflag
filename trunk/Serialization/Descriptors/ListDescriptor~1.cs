@@ -32,7 +32,7 @@ using System.Text;
 
 namespace zeroflag.Serialization.Descriptors
 {
-	public class ListDescriptor<T> : Descriptor<System.Collections.Generic.IList<T>>
+	public class ListDescriptor<T> : Descriptor<System.Collections.Generic.ICollection<T>>
 	{
 		//public override Type Type
 		//{
@@ -57,15 +57,17 @@ namespace zeroflag.Serialization.Descriptors
 
 		protected override void DoParse()
 		{
-			if (this.Value != null)
+			//if (this.Value != null)
 			{
-				CWL(this + " parsing " + this.Value);
-				System.Collections.Generic.IList<T> value = this.GetValue();
-				int max = value.Count;
-				for (int i = 0; i < max; i++)
+				CWL(this + " parsing " + (this.Value ?? this.Type ?? (object)"<null>"));
+				System.Collections.Generic.ICollection<T> collection = this.GetValue();
+				if (collection != null)
 				{
-					Descriptor item = DoParse(value[i], typeof(T), this);
-					item.Name = NameItem;
+					foreach (T value in collection)
+					{
+						Descriptor item = DoParse(value, typeof(T), this);
+						item.Name = NameItem;
+					}
 				}
 			}
 		}
@@ -93,7 +95,7 @@ namespace zeroflag.Serialization.Descriptors
 		public override object GenerateLink()
 		{
 			//return base.GenerateLink();
-			IList<T> value = this.GetValue();
+			ICollection<T> value = this.GetValue();
 
 			if (value != null && this.Inner.Count > 0)
 			{
@@ -102,7 +104,7 @@ namespace zeroflag.Serialization.Descriptors
 				{
 					//if (sub.Name == NameItem)
 					//{
-						value.Add((T)sub.GenerateLink());
+					value.Add((T)sub.GenerateLink());
 					//}
 				}
 			}

@@ -3,14 +3,14 @@
   <Class Name="zeroflag.Serialization.Converters.Converter&lt;T1, T2&gt;">
     <Position X="27.25" Y="4" Width="3" />
     <TypeIdentifier>
-      <HashCode>QIAgAEAAAABAAAAAAAAgAAAQAAAAAAAAAEAAAEAAAAA=</HashCode>
+      <HashCode>QIAAAEAAAABAAAAAAAAgAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Converters\Converter~2.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Serialization.Converters.Converter">
     <Position X="26.75" Y="0.75" Width="4" />
     <TypeIdentifier>
-      <HashCode>AIAAAEAAAABAAAAAAAAgAAAAAAIAAAAAAEAAAAAAAAA=</HashCode>
+      <HashCode>AIAAAEAAAABAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Converters\Converter.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -90,13 +90,6 @@
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Converters\String\Int64.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="zeroflag.Serialization.Converters.String.SByte">
-    <Position X="36" Y="9.5" Width="2.75" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Converters\String\Sbyte.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Serialization.Converters.String.Single">
