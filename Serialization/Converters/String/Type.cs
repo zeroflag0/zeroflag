@@ -1,4 +1,4 @@
-#region LGPL License
+﻿#region LGPL License
 //********************************************************************
 //	author:         Thomas "zeroflag" Kraemer
 //	author email:   zeroflag@zeroflag.de
@@ -30,23 +30,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace zeroflag.Serialization.Descriptors
+namespace zeroflag.Serialization.Converters.String
 {
-	public class ObjectDescriptor : Descriptor<object>
+	public class TypeC : Converter<System.Type>
 	{
-		protected override void DoParse()
+		public override System.Type ___Parse(System.Type type, string value)
 		{
-			//if (this.Value == null)
-			//    return;
-
-			Type type = this.Type;
-
-			System.Reflection.PropertyInfo[] properties = this.GetProperties(type).ToArray();
-
-			foreach (System.Reflection.PropertyInfo property in properties)
-			{
-				Descriptor.DoParse(property, this);
-			}
+			return zeroflag.TypeHelper.GetType(value);
 		}
 	}
 }

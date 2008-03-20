@@ -19,17 +19,17 @@ namespace zeroflag.BridgeGenerator
 				Implementor imp = new Implementor();
 
 				// the bridge should implement these interfaces'/classes' public properties and methods...
-				imp.Interfaces.Add(typeof(Siemens.Forms.ToggleButton));
+				imp.Interfaces.Add(typeof(Siemens.Device.Sandbox.Devices.IOPortButton));
 				//imp.Interfaces.Add(typeof(System.Collections.ICollection));
 				//imp.Interfaces.Add(typeof(List<>));
 
-				imp.IgnoreInterfaces.Add(typeof(System.Windows.Forms.Control));
+				imp.IgnoreInterfaces.Add(typeof(Siemens.Device.Sandbox.Devices.IOPort));
 				imp.IgnoreInterfaceMembers = true;
 
 				// the actual implementation/bridge-target should be stored in...
 				imp.Property = "Button";
 				// and should be of type...
-				imp.Implementation = typeof(Siemens.Forms.ToggleButton);
+				imp.Implementation = typeof(Siemens.Device.Sandbox.Devices.IOPortButton);
 				//imp.BaseType = typeof(System.Windows.Forms.Control);
 				imp.ImplementOverrides = true;
 
