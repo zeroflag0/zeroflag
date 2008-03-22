@@ -94,6 +94,10 @@
       <Project>{48823787-7042-494D-B250-A3E60085BB2B}</Project>
       <Name>zeroflag.Serialization</Name>
     </ProjectReference>
+    <ProjectReference Include="..\zeroflag.csproj">
+      <Project>{22563556-8B26-42A2-A395-74A3452A49CA}</Project>
+      <Name>zeroflag</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
