@@ -36,7 +36,7 @@ namespace Test
 		public List<Test> Inner
 		{
 			get { return _Inner; }
-			set { _Inner = value; }
+			//set { _Inner = value; }
 		}
 
 		public override string ToString()

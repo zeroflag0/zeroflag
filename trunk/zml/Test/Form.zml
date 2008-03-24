@@ -1,1 +1,6 @@
-﻿<form text="Test" backcolor="aaaaee" height ="150"><controls><control backcolor ="red" dock="top" height="50"/><label text="hello world" backcolor="white" dock="bottom"/></controls></form>
+﻿<form _type="System.Windows.Forms.Form" text="Test" backcolor="aaaaee" height ="150">
+	<controls>
+		<control backcolor ="red" dock="top" height="50"/>
+		<label text="hello world" backcolor="white" dock="bottom"/>
+	</controls>
+</form>

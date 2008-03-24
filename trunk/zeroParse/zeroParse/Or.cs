@@ -64,6 +64,18 @@ namespace zeroParse
 			return this.Name ?? ("(" + this.Either + " | " + this.Otherwise + ")");
 		}
 
+		public override string DescribeStructure(List<Rule> done)
+		{
+			if (done.Contains(this) || this.Ignore || this.Primitive)
+				return "<" + (this.Name ?? this.GetType().Name) + ">";
+			done.Add(this);
+			return this.Name + "(" + 
+				(this.Either != null ? this.Either.DescribeStructure(done) : "") + 
+				" | " + 
+				(this.Otherwise != null ? this.Otherwise.DescribeStructure(done) : "") +
+				")";
+		}
+
 		protected override IEnumerable<Rule> Iterate()
 		{
 			yield return this.Either;

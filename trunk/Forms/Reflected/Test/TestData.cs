@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace Test
 {
-	public class TestData
+	[Serializable]
+	public class TestData : System.Runtime.Serialization.ISerializable
 	{
 		#region Name
 
@@ -42,7 +43,6 @@ namespace Test
 		#endregion Int
 
 		#region Hidden
-
 		private bool _Hidden = default(bool);
 
 		[System.ComponentModel.Browsable(false)]
@@ -58,5 +58,32 @@ namespace Test
 			}
 		}
 		#endregion Hidden
+
+		#region ISerializable Members
+
+		public TestData()
+		{
+		}
+
+		protected TestData(SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new System.ArgumentNullException("info");
+			this.Name = (string)info.GetValue("Name", typeof(string));
+			this.Int = (int)info.GetValue("Int", typeof(int));
+			this.Hidden = (bool)info.GetValue("Hidden", typeof(bool));
+		}
+
+		public virtual void GetObjectData(
+		SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new System.ArgumentNullException("info");
+			info.AddValue("Name", this.Name);
+			info.AddValue("Int", this.Int);
+			info.AddValue("Hidden", this.Hidden);
+		}
+
+		#endregion
 	}
 }

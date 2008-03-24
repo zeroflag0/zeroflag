@@ -1,15 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
   <Class Name="zeroParse.Terminal">
-    <Position X="4.25" Y="4" Width="1.5" />
+    <Position X="4" Y="9.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Terminal.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroParse.Token">
-    <Position X="6" Y="3.75" Width="1.5" />
+    <Position X="5.75" Y="4.5" Width="2.5" />
     <Members>
+      <Field Name="_Context" Hidden="true" />
       <Field Name="_Inner" Hidden="true" />
       <Field Name="_Length" Hidden="true" />
       <Field Name="_Name" Hidden="true" />
@@ -19,19 +20,20 @@
       <Field Name="_Value" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AADAgEQAAmAAABAEAAAAIgRAAQAAgQAAgAAgAAAAAAA=</HashCode>
+      <HashCode>AADAgEQAAmAAABAEAAAAIiRAAQAAgQAAgAAgAAAAAAA=</HashCode>
       <FileName>Token.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Outer" />
       <Property Name="Rule" />
+      <Property Name="Context" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="Inner" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="zeroParse.RegexTerminal">
-    <Position X="0.5" Y="8.5" Width="2.5" />
+    <Position X="0.5" Y="11" Width="2.5" />
     <Members>
       <Field Name="_Pattern" Hidden="true" />
       <Field Name="_Regex" Hidden="true" />
@@ -42,7 +44,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroParse.CharTerminal">
-    <Position X="3.75" Y="5.75" Width="2.25" />
+    <Position X="3.75" Y="11" Width="2.25" />
     <Members>
       <Field Name="_Char" Hidden="true" />
     </Members>
@@ -52,7 +54,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroParse.StringTerminal">
-    <Position X="6.75" Y="5.75" Width="2.5" />
+    <Position X="6.75" Y="11" Width="2.5" />
     <Members>
       <Field Name="_String" Hidden="true" />
     </Members>
@@ -62,10 +64,13 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroParse.Parser">
-    <Position X="13.5" Y="3.75" Width="2.25" />
+    <Position X="16" Y="3.75" Width="2.25" />
     <Members>
+      <Field Name="_Letter" Hidden="true" />
       <Field Name="_Root" Hidden="true" />
       <Field Name="_WhiteSpace" Hidden="true" />
+      <Property Name="LetterCreate" Hidden="true" />
+      <Property Name="WhiteSpaceCreate" Hidden="true" />
     </Members>
     <TypeIdentifier>
       <HashCode>AAAgAAAEiAAAACAAAAAAAABAQAAQAABAAQAAAAAAAAA=</HashCode>
@@ -73,22 +78,26 @@
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="Root" />
+      <Property Name="Letter" />
+      <Property Name="WhiteSpace" />
     </ShowAsAssociation>
   </Class>
   <Class Name="zeroParse.ParserContext">
-    <Position X="13" Y="0.5" Width="2.75" />
+    <Position X="5.5" Y="0.5" Width="2.75" />
     <Members>
       <Field Name="_Context" Hidden="true" />
       <Field Name="_Index" Hidden="true" />
       <Field Name="_Inner" Hidden="true" />
       <Field Name="_Outer" Hidden="true" />
       <Field Name="_Parser" Hidden="true" />
+      <Field Name="_Result" Hidden="true" />
       <Field Name="_Rule" Hidden="true" />
       <Field Name="_Source" Hidden="true" />
       <Field Name="_Success" Hidden="true" />
+      <Field Name="SnippetLength" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AABggFAAAkAAACAEAAAAAgQAA0EAAAAggAEAAAAAKAM=</HashCode>
+      <HashCode>AABggFAAAkAAACAEAAAAAgQAA0EAAAAggAEAAAABKAM=</HashCode>
       <FileName>ParserContext.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -97,14 +106,16 @@
       <Property Name="Rule" />
       <Property Name="WhiteSpaces" />
       <Property Name="Root" />
+      <Property Name="Result" />
     </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="Inner" />
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="zeroParse.Rule">
-    <Position X="9" Y="3" Width="3.25" />
+    <Position X="9.75" Y="3.25" Width="4.25" />
     <Members>
+      <Field Name="_Ignore" Hidden="true" />
       <Field Name="_Inner" Hidden="true" />
       <Field Name="_Name" Hidden="true" />
       <Property Name="DefaultName" Hidden="true" />
@@ -113,38 +124,48 @@
       <HashCode>ACAAgkEACBAACBAEQBADICQIAAAAAYACAIAAAAEAAAA=</HashCode>
       <FileName>Rule.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Inner" />
+    </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="zeroParse.Or">
-    <Position X="12.75" Y="6.75" Width="2.25" />
+    <Position X="15.75" Y="9.25" Width="2.25" />
+    <Members>
+      <Field Name="_Either" Hidden="true" />
+      <Field Name="_Otherwise" Hidden="true" />
+    </Members>
     <TypeIdentifier>
-      <HashCode>AAAAABAAAAAAGAAEAAAAAAAIAAAAAAAiAAAAAAAAAAA=</HashCode>
+      <HashCode>AABAABAAAAAACAAEAAAAQAAIAAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Or.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroParse.Optional">
-    <Position X="15.75" Y="6.75" Width="2" />
+    <Position X="18.75" Y="9.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Optional.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroParse.Repeat">
-    <Position X="18.5" Y="6.75" Width="2" />
+    <Position X="21.5" Y="9.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Repeat.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroParse.Chain">
-    <Position X="10.25" Y="9.25" Width="1.75" />
+    <Position X="12.75" Y="9.25" Width="2.25" />
+    <Members>
+      <Field Name="_Next" Hidden="true" />
+    </Members>
     <TypeIdentifier>
       <HashCode>AgAAIAAAAAAAAAAEAAAAAAAIAAAAAAACAEAAAAAAAAA=</HashCode>
       <FileName>Chain.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroParse.Group">
-    <Position X="10" Y="6.75" Width="2" />
+    <Position X="10" Y="9.25" Width="2" />
     <Members>
       <Field Name="_Items" Hidden="true" />
       <Property Name="ItemsCreate" Hidden="true" />

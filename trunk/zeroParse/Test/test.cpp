@@ -1,6 +1,11 @@
 #include <queue>
 #include "test.h"
 
+int main()
+{
+	std::cout << "main!" << std::endl;
+}
+
 /**
  *	The world!
  */

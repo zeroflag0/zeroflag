@@ -1,18 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
   <Class Name="zeroParse.Or">
-    <Position X="2.75" Y="6.5" Width="2.25" />
+    <Position X="2.75" Y="7.5" Width="2.25" />
     <Members>
       <Field Name="_Either" Hidden="true" />
-      <Field Name="_Or" Hidden="true" />
+      <Field Name="_Otherwise" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAAAABAAAAAAGAAEAAAAAAAIAAAAAAAiAAAAAAAAAAA=</HashCode>
+      <HashCode>AABAABAAAAAACAAEAAAAQAAIAAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Or.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroParse.Chain">
-    <Position X="26" Y="7" Width="1.75" />
+    <Position X="26" Y="7.5" Width="1.75" />
     <Members>
       <Field Name="_Next" Hidden="true" />
     </Members>
@@ -22,7 +22,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroParse.CharTerminal">
-    <Position X="17.75" Y="8.75" Width="2.25" />
+    <Position X="17.75" Y="9.25" Width="2.25" />
     <Members>
       <Field Name="_Char" Hidden="true" />
     </Members>
@@ -32,14 +32,14 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroParse.Optional">
-    <Position X="5.75" Y="6.5" Width="2" />
+    <Position X="5.75" Y="7.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Optional.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroParse.RegexTerminal">
-    <Position X="14.5" Y="8.75" Width="2.5" />
+    <Position X="14.5" Y="9.25" Width="2.5" />
     <Members>
       <Field Name="_Pattern" Hidden="true" />
       <Field Name="_Regex" Hidden="true" />
@@ -50,7 +50,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroParse.Repeat">
-    <Position X="20.75" Y="7" Width="2" />
+    <Position X="20.75" Y="7.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Repeat.cs</FileName>
@@ -59,6 +59,7 @@
   <Class Name="zeroParse.Rule">
     <Position X="13.75" Y="0.75" Width="3.25" />
     <Members>
+      <Field Name="_Ignore" Hidden="true" />
       <Field Name="_Inner" Hidden="true" />
       <Field Name="_Name" Hidden="true" />
     </Members>
@@ -69,7 +70,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="zeroParse.StringTerminal">
-    <Position X="11.25" Y="8.75" Width="2.5" />
+    <Position X="11.25" Y="9.25" Width="2.5" />
     <Members>
       <Field Name="_String" Hidden="true" />
     </Members>
@@ -79,24 +80,38 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroParse.Terminal">
-    <Position X="15" Y="7" Width="1.5" />
+    <Position X="15" Y="7.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Terminal.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroParse.Not">
-    <Position X="23.5" Y="7" Width="1.75" />
+    <Position X="23.5" Y="7.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Not.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroParse.Debug">
-    <Position X="8.5" Y="7" Width="2" />
+    <Position X="8.5" Y="7.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAACAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Debug.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroParse.Nothing">
+    <Position X="10.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAIAAAAAAAAA=</HashCode>
+      <FileName>Nothing.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroParse.Anything">
+    <Position X="7.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAIAAAAAAAAA=</HashCode>
+      <FileName>Anything.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

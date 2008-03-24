@@ -22,7 +22,7 @@ namespace zeroParse
 		/// </summary>
 		public Rule WhiteSpace
 		{
-			get { try { return _WhiteSpace ?? (this.WhiteSpace = this.WhiteSpaceCreate); } finally { _WhiteSpace.Name = "space"; _WhiteSpace.Ignore = true; } }
+			get { try { return _WhiteSpace ?? (this.WhiteSpace = this.WhiteSpaceCreate); } finally { _WhiteSpace.Name = "space"; _WhiteSpace.Primitive = true; _WhiteSpace.Ignore = true; } }
 			set { _WhiteSpace = value; }
 		}
 
@@ -45,7 +45,7 @@ namespace zeroParse
 		/// </summary>
 		public Rule Letter
 		{
-			get { try { return _Letter ?? (_Letter = this.LetterCreate); } finally { _Letter.Name = "char"; } }
+			get { try { return _Letter ?? (_Letter = this.LetterCreate); } finally { _Letter.Name = "letter"; _Letter.Primitive = true; } }
 		}
 
 		/// <summary>

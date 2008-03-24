@@ -39,6 +39,8 @@ namespace Test
 				if (!this.treeView.Nodes.Contains(node) && !this.treeView.Nodes.ContainsKey(node.Text))
 					this.treeView.Nodes.Add(node);
 				this.treeView.Nodes[0].Expand();
+				foreach (TreeNode inner in this.treeView.Nodes[0].Nodes)
+					inner.Expand();
 			}
 			catch (Exception exc)
 			{
@@ -55,12 +57,17 @@ namespace Test
 			{
 				//Console.Write("node: " + context + "\r");
 				Application.DoEvents();
-				zeroParse.ParserContext named = this.FindNamed(context);
+				zeroParse.ParserContext named = null;// this.FindNamed(context);
 
 				TreeNode node = new TreeNode();
+				if (context.Outer != null && context.Outer.Rule is zeroParse.Chain && context.Rule is zeroParse.Chain && parent != null ||
+					context.Outer != null && context.Outer.Rule is zeroParse.Or && context.Rule is zeroParse.Or && parent != null)
+				{
+					node = parent;
+				}
 				if (depth < 3)
 				{
-					if (parent != null)
+					if (parent != null && parent != node)
 					{
 						if (!parent.Nodes.Contains(node) && !parent.Nodes.ContainsKey(node.Text))
 							parent.Nodes.Add(node);
@@ -73,22 +80,6 @@ namespace Test
 					node.Expand();
 				}
 				string text = "";
-				if (named != null && named != context)
-				{
-					text += "[" + named.Rule.Name + "] ";
-					if (named.Rule.Ignore)
-						return node;
-
-					TreeNode namedNode = new TreeNode("[" + named.Rule.Name + "] " + named.Result);
-					node.Nodes.Add(namedNode);
-					//TreeNode namedNode = this.Parse(named, null, depth);
-					//if (namedNode != null)
-					//{
-					//    namedNode.Text = "named=" + namedNode.Text;
-					//    if (!node.Nodes.Contains(namedNode) && !node.Nodes.ContainsKey(namedNode.Text))
-					//        node.Nodes.Add(namedNode);
-					//}
-				}
 
 				if (context.Rule != null)
 				{
@@ -97,33 +88,62 @@ namespace Test
 				else
 					text += "<null>";
 
-				if (context.Success)
+				if (node != parent)
 				{
-					node.BackColor = Color.FromArgb(100, Color.LightGreen);
-					//text += " success";
-				}
-				else
-				{
-					node.BackColor = Color.FromArgb(100, Color.Red);
-					text += " FAILED";
-				}
-				text = text.Replace("\r", "").Replace("\0", "");
-				if (text.Length < 20)
-				{
-					text = text.PadRight(20);
-					text = text.Replace("\n", "\\n");
-				}
-				node.Text = text;
+					if (named != null && named != context)
+					{
+						text = "[" + named.Rule.Name + "] " + text;
+						if (named.Rule.Ignore)
+							return node;
 
-				node.Nodes.Add("rule=" + (context.Rule != null ? context.Rule.GetType().Name + ":=" + context.Rule : "<null>"));
-				node.Nodes.Add("result=" + (context.Result ?? (object)"<null>"));
-				node.Nodes.Add("line=" + context.Line + ", source=" + context.ToString());
+						TreeNode namedNode = new TreeNode("[" + named.Rule.Name + "] " + named.Result);
+						node.Nodes.Add(namedNode);
+						//TreeNode namedNode = this.Parse(named, null, depth);
+						//if (namedNode != null)
+						//{
+						//    namedNode.Text = "named=" + namedNode.Text;
+						//    if (!node.Nodes.Contains(namedNode) && !node.Nodes.ContainsKey(namedNode.Text))
+						//        node.Nodes.Add(namedNode);
+						//}
+					}
+					if (context.Success)
+					{
+						node.BackColor = Color.FromArgb(100, Color.LightGreen);
+						//text += " success";
+					}
+					else
+					{
+						node.BackColor = Color.FromArgb(100, Color.Red);
+						text += " FAILED";
+					}
 
-				if (depth < 10)
+					if (context.Rule != null)
+					{
+						string structure = context.Rule.Structure;
+						structure = structure.Replace("\0", @"\0").Replace("\r\n", @"\n").Replace("\n", @"\n");
+						if (context.Rule.Name != null)
+							text = "['" + context.Rule.Name + "']" + text;
+						TreeNode rulenode = new TreeNode("rule=" + context.Rule.GetType().Name + (context.Rule.Name != null ? "['" + context.Rule.Name + "']" : "") + ":=" + structure);
+						//rulenode.Nodes.Add(structure);
+						node.Nodes.Add(rulenode);
+
+					}
+					node.Nodes.Add("result=" + (context.Result ?? (object)"<null>"));
+					node.Nodes.Add("line=" + context.Line + ", source=" + context.ToString());
+				
+					text = text.Replace("\r", "").Replace("\0", "");
+					if (text.Length < 20)
+					{
+						text = text.PadRight(20);
+						text = text.Replace("\n", "\\n");
+					}
+					node.Text = text;
+				}
+				if (depth < 30)
 					foreach (var inner in context.Inner)
 					{
 						TreeNode sub = this.Parse(inner, node, depth + 1);
-						if (sub != null && !node.Nodes.Contains(sub))
+						if (sub != null && sub != node && !node.Nodes.Contains(sub))
 							node.Nodes.Add(sub);
 					}
 				else
@@ -160,6 +180,39 @@ namespace Test
 				}
 			}
 			return null;
+		}
+
+		private void treeView_MouseClick(object sender, MouseEventArgs e)
+		{
+			if (this.treeView.SelectedNode != null)
+			{
+				if (e.Button == MouseButtons.Right)
+				{
+					this.CollapseOne(this.treeView.SelectedNode);
+				}
+				//else if (e.Button == MouseButtons.Left)
+				//{
+				//    this.treeView.SelectedNode.Expand();
+				//}
+			}
+		}
+
+		void CollapseOne(TreeNode node)
+		{
+			if (node == null)
+				return;
+			if (node.IsExpanded)
+			{
+				node.Collapse();
+				this.treeView.SelectedNode = node;
+			}
+			else
+				this.CollapseOne(node.Parent);
+		}
+
+		private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
+		{
+			this.treeView.SelectedNode.Expand();
 		}
 	}
 }

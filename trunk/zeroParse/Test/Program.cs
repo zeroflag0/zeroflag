@@ -10,10 +10,9 @@ namespace Test
 		static void Main(string[] args)
 		{
 			zeroParse.Parser parser = new CppParser();
-			Token document = parser.Parse("test.c");
+			Token document = parser.Parse("test.txt");
 			if (document != null)
 			{
-
 				Console.WriteLine(document);
 
 				//new RuleDebugForm(parser.Root).Show();
@@ -25,7 +24,7 @@ namespace Test
 				{
 					Console.WriteLine(exc);
 				}
-					 
+
 				//foreach (Token token in document.Inner)
 				//{
 				//    Console.WriteLine(token.Name + ":=" + token.BlockValue);

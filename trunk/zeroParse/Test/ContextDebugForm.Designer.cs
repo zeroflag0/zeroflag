@@ -39,15 +39,17 @@
 			this.treeView.HideSelection = false;
 			this.treeView.Location = new System.Drawing.Point(0, 0);
 			this.treeView.Name = "treeView";
-			this.treeView.PathSeparator = "/";
-			this.treeView.Size = new System.Drawing.Size(425, 839);
+			this.treeView.PathSeparator = ".";
+			this.treeView.Size = new System.Drawing.Size(902, 839);
 			this.treeView.TabIndex = 0;
+			this.treeView.MouseClick += new System.Windows.Forms.MouseEventHandler(this.treeView_MouseClick);
+			this.treeView.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView_AfterSelect);
 			// 
 			// ContextDebugForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(425, 839);
+			this.ClientSize = new System.Drawing.Size(902, 839);
 			this.Controls.Add(this.treeView);
 			this.Name = "ContextDebugForm";
 			this.Text = "ContextDebugForm";

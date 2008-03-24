@@ -85,10 +85,22 @@ namespace zeroParse
 			return this.Name ?? ("(" + this.Inner + " & " + this.Next + ")");
 		}
 
+		public override string DescribeStructure(List<Rule> done)
+		{
+			if (done.Contains(this) || this.Ignore || this.Primitive)
+				return "<" + (this.Name ?? this.GetType().Name) + ">";
+			done.Add(this);
+			return this.Name + "(" +
+				(this.Inner != null ? this.Inner.DescribeStructure(done) : "") +
+				" & " +
+				(this.Next != null ? this.Next.DescribeStructure(done) : "") +
+				")";
+		}
+
 		protected override IEnumerable<Rule> Iterate()
 		{
 			yield return this.Inner;
-			yield return this.Next; 
+			yield return this.Next;
 		}
 	}
 }

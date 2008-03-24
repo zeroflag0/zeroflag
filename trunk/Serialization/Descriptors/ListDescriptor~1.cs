@@ -104,7 +104,9 @@ namespace zeroflag.Serialization.Descriptors
 				{
 					//if (sub.Name == NameItem)
 					//{
-					value.Add((T)sub.GenerateLink());
+					T item = (T)sub.GenerateLink();
+					if (item != null)
+						value.Add(item);
 					//}
 				}
 			}

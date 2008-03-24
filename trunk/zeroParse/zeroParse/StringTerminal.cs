@@ -16,7 +16,7 @@ namespace zeroParse
 
 		protected override Token MatchThis(ParserContext context)
 		{
-			if (this.String != null && context.Source.Substring(context.Index, this.String.Length) == this.String)
+			if (this.String != null && context.Source.Length > context.Index + this.String.Length && context.Source.Substring(context.Index, this.String.Length) == this.String)
 			{
 				return this.CreateToken(context, this.String.Length);
 			}
@@ -37,5 +37,11 @@ namespace zeroParse
 		{
 			return "\"" + (this.String != null ? System.Text.RegularExpressions.Regex.Escape(this.String) : "<null>") + "\"";
 		}
+
+		public override string DescribeStructure(List<Rule> done)
+		{
+			return "\"" + this.String + "\"";
+		}
+
 	}
 }
