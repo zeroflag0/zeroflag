@@ -51,5 +51,11 @@ namespace zeroParse
 		{
 			return "@\"" + (this.Pattern != null ? System.Text.RegularExpressions.Regex.Escape(this.Pattern) : "<null>") + "\"";
 		}
+
+		public override string DescribeStructure(List<Rule> done)
+		{
+			return "@\"" + (this.Pattern != null ? System.Text.RegularExpressions.Regex.Escape(this.Pattern) : "<null>") + "\"";
+		}
+
 	}
 }

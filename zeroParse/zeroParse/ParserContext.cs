@@ -26,7 +26,7 @@ namespace zeroParse
 		public ParserContext Outer
 		{
 			get { return _Outer; }
-			set { _Outer = value; }
+			set { if (value == this || (value != null && value.Outer == this)) throw new ArgumentException("reference loop"); _Outer = value; }
 		}
 
 		public bool Success
@@ -66,7 +66,7 @@ namespace zeroParse
 
 		public string Source
 		{
-			get { return _Source ?? (this.Outer != null ? this.Outer.Source : null); }
+			get { /*Console.Write(this.Depth.ToString().PadLeft(3) + "\r"); */return _Source ?? (this.Outer != null ? this.Outer.Source : null); }
 			set { _Source = value; }
 		}
 

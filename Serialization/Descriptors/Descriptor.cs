@@ -602,7 +602,8 @@ namespace zeroflag.Serialization.Descriptors
 			Dictionary<Type, string> types = new Dictionary<Type, string>();
 			foreach (string name in props.Keys)
 			{
-				types.Add(props[name].PropertyType, name);
+				if (!types.ContainsKey(props[name].PropertyType))
+					types.Add(props[name].PropertyType, name);
 			}
 
 			// search types, case insensitive...

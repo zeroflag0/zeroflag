@@ -25,7 +25,7 @@ namespace zeroParse
 
 		protected override Token MatchThis(ParserContext context)
 		{
-			if (context.Source[context.Index] == this.Char)
+			if (context.Source.Length > context.Index && context.Source[context.Index] == this.Char)
 				return this.CreateToken(context, 1);
 			return null;
 		}
@@ -39,6 +39,11 @@ namespace zeroParse
 		public override string ToString()
 		{
 			return "'" + System.Text.RegularExpressions.Regex.Escape(this.Char.ToString()) + "'";
+		}
+
+		public override string DescribeStructure(List<Rule> done)
+		{
+			return "'" + this.Char.ToString() + "'";
 		}
 	}
 }

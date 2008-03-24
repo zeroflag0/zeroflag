@@ -14,6 +14,8 @@ namespace zeroflag.Forms.Reflected
 		{
 			InitializeComponent();
 			this.Synchronize();
+
+			//new zeroflag.Forms.DebugForm(AppDomain.CurrentDomain.GetAssemblies());
 		}
 
 		#region ItemDescription
@@ -46,21 +48,16 @@ namespace zeroflag.Forms.Reflected
 
 		zeroflag.Collections.Collection<T> _Items;
 
+		[MergableProperty(false)]
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		//[Editor(typeof(System.Windows.Forms.Design.ListViewItemCollectionEditor)
+		//"System.Windows.Forms.Design.ListViewItemCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
+		//[Editor(typeof(zeroflag.Collections.Collection<>), typeof(System.Drawing.Design.UITypeEditor))]
+		[Editor("System.Windows.Forms.Design.ListViewItemCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(System.Drawing.Design.UITypeEditor))]
+		[Browsable(true)]
 		public zeroflag.Collections.Collection<T> Items
 		{
 			get { return _Items ?? (this._Items = this.ItemsCreate); }
-			//set
-			//{
-			//    if (value != _Items)
-			//    {
-			//        _Items = value;
-			//        if (_Items != null)
-			//        {
-			//            _Items.ItemAdded += __ItemAdded;
-			//            _Items.ItemRemoved += __ItemRemoved;
-			//        }
-			//    }
-			//}
 		}
 
 		protected virtual zeroflag.Collections.Collection<T> ItemsCreate

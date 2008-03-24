@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Anything.cs" />
+    <Compile Include="Nothing.cs" />
     <Compile Include="Or.cs" />
     <Compile Include="Chain.cs" />
     <Compile Include="CharTerminal.cs" />

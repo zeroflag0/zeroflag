@@ -25,11 +25,11 @@ namespace Test
 				{
 					Test test = new zeroflag.Zml.ZmlSerializer("test.zml").Deserialize<Test>();
 					Console.WriteLine("2.1) " + test);
-					new zeroflag.Serialization.XmlSerializer("test2.xml").Serialize(test);
-					new zeroflag.Zml.ZmlSerializer("result2.zml").Serialize(test);
-					Test result = new zeroflag.Zml.ZmlSerializer("result2.zml").Deserialize<Test>();
-					Console.WriteLine("2.2) " + result);
-					new zeroflag.Serialization.XmlSerializer("result2.xml").Serialize(result);
+					//new zeroflag.Serialization.XmlSerializer("test2.xml").Serialize(test);
+					//new zeroflag.Zml.ZmlSerializer("result2.zml").Serialize(test);
+					//Test result = new zeroflag.Zml.ZmlSerializer("result2.zml").Deserialize<Test>();
+					//Console.WriteLine("2.2) " + result);
+					//new zeroflag.Serialization.XmlSerializer("result2.xml").Serialize(result);
 				}
 
 				//zeroflag.Zml.Manager reader = new zeroflag.Zml.Manager();
@@ -56,10 +56,8 @@ namespace Test
 				//Console.WriteLine("parsed:        " + test);
 				//writer.Save("result.zml");
 
-				//zeroflag.Zml.Manager formReader = new zeroflag.Zml.Manager();
-				//formReader.Load("Form.zml");
-				//System.Windows.Forms.Form form = new System.Windows.Forms.Form();
-				//formReader.ApplyTo(form);
+				//zeroflag.Zml.ZmlSerializer formReader = new zeroflag.Zml.ZmlSerializer("Form.zml");
+				//System.Windows.Forms.Form form = formReader.Deserialize<System.Windows.Forms.Form>();
 
 				//System.Windows.Forms.Application.Run(form);
 

@@ -13,6 +13,11 @@ namespace zeroParse
 		{
 		}
 
+		public Rule(string name)
+		{
+			this.Name = name;
+		}
+
 		public Rule(params Rule[] rules)
 		{
 			this.Inner = this.Append(null, 0, rules);
@@ -58,35 +63,67 @@ namespace zeroParse
 			set { _Ignore = value; }
 		}
 
+		#region Primitive
+
+		private bool _Primitive = false;
+
+		public bool Primitive
+		{
+			get { return _Primitive; }
+			set
+			{
+				if (_Primitive != value)
+				{
+					_Primitive = value;
+				}
+			}
+		}
+		#endregion Primitive
+
 		public Token Match(ParserContext context)
 		{
-			try
-			{
-				//Console.WriteLine(new StringBuilder().Append(' ', context.Depth).Append(this).Append("").ToString());
-				context.Rule = this;
+			//try
+			//{
+			//Console.WriteLine(new StringBuilder().Append(' ', context.Depth).Append(this).Append("").ToString());
+			context.Rule = this;
+			if (context.Source == null || context.Index >= context.Source.Length - 1)
+				return null;
+
 #if !VERBOSE
+			{
 				Token result = this.MatchAll(context);
 				if (result != null)
 				{
 					//Console.WriteLine(new StringBuilder().Append(' ', context.Depth).Append(result).Append("").ToString());
+					if (context.Success)
+					{
+						//Console.WriteLine(((this.Name ?? this.GetType().Name) + ": " + context.Line + "." + context.Index + " := " + context).ToString().Replace("\0", @"\0").Replace("\r\n", @"\n").Replace("\n", @"\n").PadRight(78));
+						//Token inner;
+						//while ((inner = context.WhiteSpaces.Match((context.Push(result.Start + result.BlockLength)))) != null)
+						//    if (inner.Length > 0)
+						//        result.Append(inner);
+					}
+					//context.WhiteSpaces.Match(context);
+
 					return result;
 				}
 				else
 					return null;
+			}
 #else
 				return this.MatchAll(context);
 #endif
-			}
+			//}
 			//catch (Exception exc)
 			//{
 			//    throw new ParseFailedException(this, context, exc.Message, exc);
 			//}
-			finally { }
+			//finally { }
 		}
 
 		protected virtual Token MatchAll(ParserContext context)
 		{
-			Token result = null;
+			Token result = context.Result;
 
 			if (this.Inner != null)
 			{
@@ -97,12 +134,11 @@ namespace zeroParse
 				inner = this.MatchInner(context.Push());
 				if (inner != null)
 				{
-					result = this.CreateToken(context, 0);
+					result = result ?? this.CreateToken(context, 0);
 					result.Append(inner);
 				}
 				else
 				{
-					result = null;
 					context.Success = false;
 				}
 			}
@@ -162,7 +198,20 @@ namespace zeroParse
 
 		public override string ToString()
 		{
-			return this.Name ?? (this.Inner != null ? this.Inner.ToString() : base.ToString());
+			return this.Name ?? this.Structure ?? base.ToString();
+		}
+
+		public string Structure
+		{
+			get { return this.DescribeStructure(new List<Rule>()); }
+		}
+
+		public virtual string DescribeStructure(List<Rule> done)
+		{
+			if (done.Contains(this) || this.Inner == null || this.Ignore || this.Primitive)
+				return "<" + (this.Name ?? this.GetType().Name) + ">";
+			done.Add(this);
+			return this.Name + (this.Inner != null ? this.Inner.DescribeStructure(done) : "<empty>");
 		}
 
 		#region operators

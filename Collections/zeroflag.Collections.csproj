@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Collection.cs" />
+    <Compile Include="Collection2.cs" />
     <None Include="CollectionHelper.cs" />
     <Compile Include="CollectionSynchronizer.cs" />
     <Compile Include="ITreeNode.cs" />
