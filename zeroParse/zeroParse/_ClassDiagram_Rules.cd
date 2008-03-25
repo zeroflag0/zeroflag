@@ -7,7 +7,7 @@
       <Field Name="_Otherwise" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AABAABAAAAAACAAEAAAAQAAIAAAAAAACAAAAAAAAAAA=</HashCode>
+      <HashCode>AABAABAAAAAACAAEAAAAQAAIAAAAAgACAAAAAAAAAAA=</HashCode>
       <FileName>Or.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -17,7 +17,7 @@
       <Field Name="_Next" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AgAAIAAAAAAAAAAEAAAAAAAIAAAAAAACAEAAAAAAAAA=</HashCode>
+      <HashCode>AgAAIAAAAAAAAAAEAAAAAAAIAAAAAgACAEAAAAAAAAA=</HashCode>
       <FileName>Chain.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -27,7 +27,7 @@
       <Field Name="_Char" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAABAACAAEAAAAAAAAAAAAACAAAAAAAAAAAIA=</HashCode>
+      <HashCode>AAAAAAAAABAACAAEAAAAAAAAAAAAAiAAAAAAAAAAAIA=</HashCode>
       <FileName>CharTerminal.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -45,7 +45,7 @@
       <Field Name="_Regex" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAABAABAAEAAAAAAAQgAAAAAACAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAABAABAAEAAAAAAAQgAAAAgACAAAAAAAAAAA=</HashCode>
       <FileName>RegexTerminal.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -62,9 +62,10 @@
       <Field Name="_Ignore" Hidden="true" />
       <Field Name="_Inner" Hidden="true" />
       <Field Name="_Name" Hidden="true" />
+      <Field Name="_Primitive" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>ACAAgkEACBAACBAEQBADICQIAAAAAYACAIAAAAEAAAA=</HashCode>
+      <HashCode>ACAAgkEACBAACBAEQBADICQMAAIAA4ACAIAAAIEAgAA=</HashCode>
       <FileName>Rule.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -75,7 +76,7 @@
       <Field Name="_String" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAABAAAAAEQAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAABAAAAAEQAAAAAAAAAAAAgAAAABAAAAAAAA=</HashCode>
       <FileName>StringTerminal.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -112,6 +113,13 @@
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAIAAAAAAAAA=</HashCode>
       <FileName>Anything.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroParse.Whitespace">
+    <Position X="8.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAIAAAAAAAAA=</HashCode>
+      <FileName>Whitespace.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

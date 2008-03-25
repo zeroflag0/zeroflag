@@ -58,6 +58,7 @@
     <Compile Include="StringTerminal.cs" />
     <Compile Include="Terminal.cs" />
     <Compile Include="Token.cs" />
+    <Compile Include="Whitespace.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="_ClassDiagram.cd" />

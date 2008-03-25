@@ -80,24 +80,51 @@ namespace zeroParse
 		}
 		#endregion Primitive
 
+		const int MaxDepth = 2000;
 		public Token Match(ParserContext context)
 		{
 			//try
 			//{
 			//Console.WriteLine(new StringBuilder().Append(' ', context.Depth).Append(this).Append("").ToString());
 			context.Rule = this;
-			if (context.Source == null || context.Index >= context.Source.Length - 1)
+			context.Success = true;
+			if (context.Depth > MaxDepth)
+			{
+				Console.WriteLine("Canceling in " + this + " at depth" + context.Depth + ", line" + context.Line + ":\n\t" + context);
+				//return null;
+				throw new ParseFailedException(this, context, "MaxDepth reached", null);
+			}
+
+			if (context.Source == null || context.Index >= context.Source.Length)
+			{
+				Console.WriteLine("EOF in " + this + " at depth" + context.Depth + ", line" + context.Line + ":\n\t" + context);
 				return null;
+			}
 
 #if !VERBOSE
 			{
-				Token result = this.MatchAll(context);
+				Token result = null;
+				try
+				{
+					result = this.MatchAll(context);
+				}
+				catch (ParseFailedException exc)
+				{
+					exc.ContextTrace.Add(context);
+					throw exc;
+				}
 				if (result != null)
 				{
 					//Console.WriteLine(new StringBuilder().Append(' ', context.Depth).Append(result).Append("").ToString());
 					if (context.Success)
 					{
-						//Console.WriteLine(((this.Name ?? this.GetType().Name) + ": " + context.Line + "." + context.Index + " := " + context).ToString().Replace("\0", @"\0").Replace("\r\n", @"\n").Replace("\n", @"\n").PadRight(78));
+						if (context.Debug && !this.Primitive && !this.Ignore)
+						{
+							if (this.Name != null)
+								Console.WriteLine(this.Name + ": " + context.Line + "." + context.Index + " := " + result.ToString().Replace("\0", @"\0").Replace("\r\n", @"\n").Replace("\n", @"\n") + " := " + context.ToString().Replace("\0", @"\0").Replace("\r\n", @"\n").Replace("\n", @"\n"));
+							//else
+							//    Console.Write((this.GetType().Name + ": " + context.Line + "." + context.Index + " := " + context.ToString().Replace("\0", @"\0").Replace("\r\n", @"\n").Replace("\n", @"\n")).PadRight(Console.WindowWidth - 3) + "\r");
+						}
 						//Token inner;
 						//while ((inner = context.WhiteSpaces.Match((context.Push(result.Start + result.BlockLength)))) != null)
 						//    if (inner.Length > 0)
@@ -108,7 +135,14 @@ namespace zeroParse
 					return result;
 				}
 				else
+				{
+					if (context.Debug && !this.Primitive && !this.Ignore && this.Name != null)
+					{
+						Console.Write((this.Name.PadRight(15) + " failed" + context.ToString().Replace("\0", @"\0").Replace("\r\n", @"\n").Replace("\n", @"\n")).PadRight(50) + "\r");
+					}
+					context.Success = false;
 					return null;
+				}
 			}
 #else
 				return this.MatchAll(context);
@@ -211,7 +245,7 @@ namespace zeroParse
 			if (done.Contains(this) || this.Inner == null || this.Ignore || this.Primitive)
 				return "<" + (this.Name ?? this.GetType().Name) + ">";
 			done.Add(this);
-			return this.Name + (this.Inner != null ? this.Inner.DescribeStructure(done) : "<empty>");
+			return (this.Name ?? this.GetType().Name) + (this.Inner != null ? this.Inner.DescribeStructure(done) : "<empty>");
 		}
 
 		#region operators
@@ -311,11 +345,61 @@ namespace zeroParse
 		#endregion Or
 
 		#region Then
-		public static Rule operator &(Rule a, Rule b)
+		public static Rule operator ^(Rule a, Rule b)
 		{
 			if (a != null && b != null)
 			{
 				return new Chain(a, b);
+			}
+			return a ?? b;
+		}
+
+		public static Rule operator ^(Rule a, char b)
+		{
+			return a ^ (Rule)b;
+		}
+		public static Rule operator ^(Rule a, string b)
+		{
+			return a ^ (Rule)b;
+		}
+		public static Rule operator ^(Rule a, System.Text.RegularExpressions.Regex b)
+		{
+			return a ^ (Rule)b;
+		}
+
+		public static Rule operator ^(char a, Rule b)
+		{
+			return (Rule)a ^ b;
+		}
+		public static Rule operator ^(string a, Rule b)
+		{
+			return (Rule)a ^ b;
+		}
+		public static Rule operator ^(System.Text.RegularExpressions.Regex a, Rule b)
+		{
+			return (Rule)a ^ b;
+		}
+		#endregion Then
+
+		#region Then
+		public static Rule operator &(Rule a, Rule b)
+		{
+			if (a != null && b != null)
+			{
+				if (b is Optional)
+				{
+					return a ^ ~(~new Whitespace() ^ b.Inner);
+					//return b ^ new Optional(~new Whitespace() ^ b.Inner);
+				}
+				if (b is Repeat)
+				{
+					return a ^ b;
+					//return b ^ new Repeat(~new Whitespace() ^ b.Inner);
+				}
+				if (a is Whitespace || b is Whitespace)
+					return a ^ b;
+				else
+					return a ^ ~new Whitespace() ^ b;
 			}
 			return a ?? b;
 		}

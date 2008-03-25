@@ -3,6 +3,7 @@
 
 int main()
 {
+	int foo = 1 * 5 + 4;
 	std::cout << "main!" << std::endl;
 }
 
@@ -25,7 +26,7 @@ private:
 };
 
 World::World()
-	: mSatelite("Moon");
+	: mSatelite("Moon")
 {
 	std::cout << "Hello World!" << std::endl;
 }

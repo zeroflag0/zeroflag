@@ -22,7 +22,7 @@ namespace zeroParse
 		/// </summary>
 		public Rule WhiteSpace
 		{
-			get { try { return _WhiteSpace ?? (this.WhiteSpace = this.WhiteSpaceCreate); } finally { _WhiteSpace.Name = "space"; _WhiteSpace.Primitive = true; _WhiteSpace.Ignore = true; } }
+			get { try { return (_WhiteSpace as Whitespace) ?? (this.WhiteSpace = new Whitespace(_WhiteSpace ?? this.WhiteSpaceCreate)); } finally { _WhiteSpace.Name = "space"; _WhiteSpace.Primitive = true; _WhiteSpace.Ignore = true; } }
 			set { _WhiteSpace = value; }
 		}
 
@@ -32,7 +32,7 @@ namespace zeroParse
 		/// </summary>
 		protected virtual Rule WhiteSpaceCreate
 		{
-			get { return (CharTerminal)' ' | '\t'; }
+			get { return (CharTerminal)' ' | '\t' | '\0'; }
 		}
 
 		#endregion WhiteSpaces
@@ -76,14 +76,31 @@ namespace zeroParse
 			return this.Parse(fileName, reader.ReadToEnd());
 		}
 
-		public virtual Token Parse(string fileName, string content)
+		public Token Parse(string fileName, out ParserContext context)
+		{
+			return this.Parse(fileName, new System.IO.StreamReader(fileName), out context);
+		}
+
+		public Token Parse(string fileName, System.IO.TextReader reader, out ParserContext context)
+		{
+			return this.Parse(fileName, reader.ReadToEnd(), out context);
+		}
+
+		public Token Parse(string fileName, string content)
+		{
+			ParserContext context;
+			return this.Parse(fileName, content, out context);
+		}
+
+		public virtual Token Parse(string fileName, string content, out ParserContext context)
 		{
 			if (this.Root != null)
 			{
-				ParserContext context = new ParserContext(this, fileName, "\0" + content + "\0");
+				context = new ParserContext(this, fileName, content);
 				return this.Root.Match(context);
 			}
-
+			else
+				context = null;
 			return null;
 		}
 	}
