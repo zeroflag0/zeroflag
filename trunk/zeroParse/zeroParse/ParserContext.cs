@@ -16,6 +16,13 @@ namespace zeroParse
 		private ParserContext _Outer;
 		private bool _Success = false;
 		Token _Result;
+		bool _Debug = false;
+
+		public bool Debug
+		{
+			get { return _Debug || (this.Outer != null && this.Outer.Debug); }
+			set { _Debug = value; }
+		}
 
 		public Token Result
 		{
@@ -75,6 +82,22 @@ namespace zeroParse
 			get { return this.Outer != null ? this.Outer.Depth + 1 : 0; }
 		}
 
+		public int InnerDepth
+		{
+			get
+			{
+				int max = 0;
+				int temp = 0;
+				foreach (ParserContext inner in this.Inner)
+				{
+					temp = inner.InnerDepth;
+					if (temp > max)
+						max = temp;
+				}
+				return max;
+			}
+		}
+
 		public int Line
 		{
 			get { return this.Source.Substring(0, this.Index).Split('\n').Length; }
@@ -126,6 +149,17 @@ namespace zeroParse
 			var cont = new ParserContext(this, index);
 			this.Inner.Add(cont);
 			return cont;
+		}
+
+		public ParserContext RootContext
+		{
+			get
+			{
+				if (this.Outer == null)
+					return this;
+				else
+					return this.Outer.RootContext;
+			}
 		}
 
 		public const int SnippetLength = 80;

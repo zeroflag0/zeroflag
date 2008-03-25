@@ -32,15 +32,39 @@ namespace Test
 		public void Show(zeroParse.ParserContext context)
 		{
 			this.Show();
-			this.treeView.Nodes.Clear();
+			//this.treeView.Nodes.Clear();
 			try
 			{
 				TreeNode node = this.Parse(context, null, 0);
+
+				this.progress.Value = 0;
+				this.progress.Maximum = context.InnerDepth;
+
 				if (!this.treeView.Nodes.Contains(node) && !this.treeView.Nodes.ContainsKey(node.Text))
 					this.treeView.Nodes.Add(node);
-				this.treeView.Nodes[0].Expand();
-				foreach (TreeNode inner in this.treeView.Nodes[0].Nodes)
+				node.Expand();
+				foreach (TreeNode inner in node.Nodes)
 					inner.Expand();
+			}
+			catch (Exception exc)
+			{
+				Console.WriteLine("Show(): " + exc);
+				this.treeView.Nodes.Add(exc.ToString());
+			}
+		}
+
+		public void Show(ICollection<zeroParse.ParserContext> context)
+		{
+			this.Show();
+			//this.treeView.Nodes.Clear();
+			try
+			{
+				TreeNode node = this.Parse(context);
+				if (!this.treeView.Nodes.Contains(node) && !this.treeView.Nodes.ContainsKey(node.Text))
+					this.treeView.Nodes.Add(node);
+				node.Expand();
+				foreach (TreeNode inner in node.Nodes)
+					inner.Collapse();
 			}
 			catch (Exception exc)
 			{
@@ -55,6 +79,9 @@ namespace Test
 				return null;
 			try
 			{
+				if (this.progress.Maximum < depth)
+					this.progress.Maximum = depth + 1;
+				this.progress.Value = depth;
 				//Console.Write("node: " + context + "\r");
 				Application.DoEvents();
 				zeroParse.ParserContext named = null;// this.FindNamed(context);
@@ -65,19 +92,20 @@ namespace Test
 				{
 					node = parent;
 				}
-				if (depth < 3)
+				if (depth < 5)
 				{
 					if (parent != null && parent != node)
 					{
 						if (!parent.Nodes.Contains(node) && !parent.Nodes.ContainsKey(node.Text))
 							parent.Nodes.Add(node);
 					}
-					else if (this.treeView.Nodes.Count < 1)
+					//else 
+					if (parent == null)
 					{
 						if (!this.treeView.Nodes.Contains(node) && !this.treeView.Nodes.ContainsKey(node.Text))
 							this.treeView.Nodes.Add(node);
+						node.Expand();
 					}
-					node.Expand();
 				}
 				string text = "";
 
@@ -90,6 +118,7 @@ namespace Test
 
 				if (node != parent)
 				{
+					node.Tag = context;
 					if (named != null && named != context)
 					{
 						text = "[" + named.Rule.Name + "] " + text;
@@ -119,18 +148,17 @@ namespace Test
 
 					if (context.Rule != null)
 					{
-						string structure = context.Rule.Structure;
-						structure = structure.Replace("\0", @"\0").Replace("\r\n", @"\n").Replace("\n", @"\n");
+						string structure = context.Rule.Structure.Replace("\0", @"\0").Replace("\r\n", "\n");
 						if (context.Rule.Name != null)
 							text = "['" + context.Rule.Name + "']" + text;
 						TreeNode rulenode = new TreeNode("rule=" + context.Rule.GetType().Name + (context.Rule.Name != null ? "['" + context.Rule.Name + "']" : "") + ":=" + structure);
-						//rulenode.Nodes.Add(structure);
+						rulenode.Nodes.Add(this.Parse(context.Rule, 0));
 						node.Nodes.Add(rulenode);
 
 					}
 					node.Nodes.Add("result=" + (context.Result ?? (object)"<null>"));
 					node.Nodes.Add("line=" + context.Line + ", source=" + context.ToString());
-				
+
 					text = text.Replace("\r", "").Replace("\0", "");
 					if (text.Length < 20)
 					{
@@ -139,15 +167,22 @@ namespace Test
 					}
 					node.Text = text;
 				}
-				if (depth < 30)
+				if (depth < MaxDepth || node == parent)
 					foreach (var inner in context.Inner)
 					{
 						TreeNode sub = this.Parse(inner, node, depth + 1);
-						if (sub != null && sub != node && !node.Nodes.Contains(sub))
+						if (sub != null && !object.ReferenceEquals(node, sub) && !node.Nodes.Contains(sub))
 							node.Nodes.Add(sub);
+						else
+							Console.WriteLine("Skipping node " + sub);
 					}
 				else
-					node.Nodes.Add("[...]");
+				{
+
+					TreeNode demand = new TreeNode("...");
+					demand.Tag = "load";
+					node.Nodes.Add(demand);
+				}
 
 				return node;
 			}
@@ -160,7 +195,74 @@ namespace Test
 				return node;
 			}
 		}
+		const int MaxDepth = 10;
 
+		TreeNode Parse(ICollection<zeroParse.ParserContext> context)
+		{
+			int depth = 0;
+			if (closing)
+				return null;
+			try
+			{
+				//Console.Write("node: " + context + "\r");
+				Application.DoEvents();
+				this.treeView.SuspendLayout();
+				TreeNode node = new TreeNode("Trace[" + context.Count + "]");
+
+				//if (this.treeView.Nodes.Count < 1)
+				//{
+				//    if (!this.treeView.Nodes.Contains(node) && !this.treeView.Nodes.ContainsKey(node.Text))
+				//        this.treeView.Nodes.Add(node);
+				//}
+
+				foreach (var inner in context)
+				{
+					TreeNode sub = this.Parse(inner, node, depth + 1);
+					if (sub != null && sub != node && !node.Nodes.Contains(sub))
+						node.Nodes.Add(sub);
+				}
+				this.treeView.ResumeLayout();
+				return node;
+			}
+			catch (Exception exc)
+			{
+				Console.WriteLine(exc);
+				TreeNode node = new TreeNode(exc.GetType().Name);
+				node.Nodes.Add(exc.ToString());
+				node.BackColor = Color.FromArgb(150, Color.OrangeRed);
+				return node;
+			}
+		}
+
+		TreeNode Parse(zeroParse.Rule rule, int depth)
+		{
+			try
+			{
+				Application.DoEvents();
+				TreeNode node = new TreeNode();
+				node.Text = "" + rule;
+
+				if (rule.Name != null)
+					node.BackColor = Color.FromArgb(100, Color.LightSkyBlue);
+				//else
+				//    node.Expand();
+				if (!rule.Primitive && !rule.Ignore && depth < 5)
+					foreach (var inner in rule)
+					{
+						if (inner != null)
+							node.Nodes.Add(this.Parse(inner, depth + 1));
+					}
+
+				return node;
+			}
+			catch (Exception exc)
+			{
+				TreeNode node = new TreeNode(exc.GetType().Name);
+				node.Nodes.Add(exc.ToString());
+				node.BackColor = Color.FromArgb(150, Color.Red);
+				return node;
+			}
+		}
 
 		zeroParse.ParserContext FindNamed(zeroParse.ParserContext context)
 		{
@@ -190,6 +292,10 @@ namespace Test
 				{
 					this.CollapseOne(this.treeView.SelectedNode);
 				}
+				else if (e.Button == MouseButtons.Middle)
+				{
+					this.ExpandSuccess(this.treeView.SelectedNode);
+				}
 				//else if (e.Button == MouseButtons.Left)
 				//{
 				//    this.treeView.SelectedNode.Expand();
@@ -210,9 +316,73 @@ namespace Test
 				this.CollapseOne(node.Parent);
 		}
 
+		void ExpandSuccess(TreeNode node)
+		{
+			this.ExpandSuccess(node, 0);
+		}
+		void ExpandSuccess(TreeNode node, int depth)
+		{
+			depth++;
+			if (node == null || depth > MaxDepth)
+				return;
+			if (node.Tag is zeroParse.ParserContext && ((zeroParse.ParserContext)node.Tag).Success)
+			{
+				node.Expand();
+				foreach (TreeNode inner in node.Nodes)
+					this.ExpandSuccess(inner, depth);
+			}
+		}
+
+		void FlattenPeers(TreeNode node)
+		{
+			if (node == null)
+				return;
+			node = node.Parent ?? node;
+			this.treeView.SuspendLayout();
+			node.Expand();
+			foreach (TreeNode inner in node.Nodes)
+				inner.Collapse();
+			this.treeView.ResumeLayout();
+		}
+
 		private void treeView_AfterSelect(object sender, TreeViewEventArgs e)
 		{
 			this.treeView.SelectedNode.Expand();
+		}
+
+		private void treeView_KeyDown(object sender, KeyEventArgs e)
+		{
+			if (e.KeyCode == Keys.F4)
+				this.ExpandSuccess(this.treeView.SelectedNode);
+			else if (e.KeyCode == Keys.F3)
+				this.FlattenPeers(this.treeView.SelectedNode);
+		}
+
+		private void treeView_AfterExpand(object sender, TreeViewEventArgs e)
+		{
+			TreeNode selected = e.Node;
+			if (selected == null)
+				return;
+			TreeNode last = null;
+			if (((selected.Tag + "") == "load" || selected.Text == "...") && selected.Parent != null)
+			{
+				last = selected;
+				selected = selected.Parent;
+			}
+
+			//if (last == null)
+			foreach (TreeNode node in selected.Nodes)
+				if ((node.Tag + "") == "load" || node.Text == "...")
+					last = node;
+
+			if (last != null)
+			{
+				Console.WriteLine("Loading nodes for " + selected.Text);
+				this.Parse(selected.Tag as zeroParse.ParserContext, selected, 0);
+				selected.Nodes.Remove(last);
+			}
+			//else
+			//    Console.WriteLine("Couldn't find a node to load... " + selected.Tag);
 		}
 	}
 }

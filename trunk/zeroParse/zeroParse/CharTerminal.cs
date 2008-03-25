@@ -43,7 +43,7 @@ namespace zeroParse
 
 		public override string DescribeStructure(List<Rule> done)
 		{
-			return "'" + this.Char.ToString() + "'";
+			return "'" + this.Char.ToString().Replace("\0", @"\0").Replace("\r\n", @"\n").Replace("\n", @"\n") + "'";
 		}
 	}
 }

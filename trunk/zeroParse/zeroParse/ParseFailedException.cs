@@ -31,6 +31,13 @@ namespace zeroParse
 			set { _Context = value; }
 		}
 
+		List<ParserContext> _ContextTrace = new List<ParserContext>();
+
+		public List<ParserContext> ContextTrace
+		{
+			get { return _ContextTrace; }
+		}
+
 		int _Line;
 
 		public int Line

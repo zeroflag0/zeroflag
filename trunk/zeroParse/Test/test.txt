@@ -1,1 +1,4 @@
-﻿	std::cout << "main!" << std::endl;
+﻿std::string World::getSatelite()
+{
+	return this->mSatelite;
+}

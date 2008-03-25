@@ -41,5 +41,13 @@ namespace zeroParse
 		{
 			return "{ " + this.Inner + " }";
 		}
+
+		public override string DescribeStructure(List<Rule> done)
+		{
+			if (done.Contains(this) || this.Inner == null || this.Ignore || this.Primitive)
+				return "<" + (this.Name ?? this.GetType().Name) + ">";
+			done.Add(this);
+			return (this.Name ?? "+") + (this.Inner != null ? this.Inner.DescribeStructure(done) : "<empty>");
+		}
 	}
 }
