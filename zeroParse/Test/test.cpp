@@ -1,12 +1,6 @@
 #include <queue>
 #include "test.h"
 
-int main()
-{
-	int foo = 1 * 5 + 4;
-	std::cout << "main!" << std::endl;
-}
-
 /**
  *	The world!
  */

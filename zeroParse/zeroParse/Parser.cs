@@ -59,7 +59,11 @@ namespace zeroParse
 
 		#endregion Letter
 
-
+		protected virtual string Preprocess(string content)
+		{
+			content = content.Replace("\r\n", "\n");
+			return content;
+		}
 
 		public virtual Rule CreateRules()
 		{
@@ -96,6 +100,10 @@ namespace zeroParse
 		{
 			if (this.Root != null)
 			{
+				Console.Write("Preprocessing... ");
+				content = this.Preprocess(content);
+				//System.IO.File.WriteAllText(fileName + ".pp.cpp", content);
+				Console.WriteLine("done.");
 				context = new ParserContext(this, fileName, content);
 				return this.Root.Match(context);
 			}

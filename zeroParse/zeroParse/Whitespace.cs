@@ -34,6 +34,11 @@ namespace zeroParse
 				return context.WhiteSpaces.Match(context);
 		}
 
+		public override string ToString()
+		{
+			return "' '";
+		}
+
 		public override string DescribeStructure(List<Rule> done)
 		{
 			return "' '";

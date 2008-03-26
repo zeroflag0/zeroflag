@@ -107,6 +107,22 @@ namespace zeroParse
 		}
 		#endregion Context
 
+		public Token Trim()
+		{
+			List<Token> inners = new List<Token>();
+			foreach (Token inner in inners)
+			{
+				if (inner.Context == null || !inner.Context.Success)
+					this.Inner.Remove(inner);
+				else
+				{
+					inner.Trim();
+					//inner.Context.Trim();
+				}
+			}
+			return this;
+		}
+
 		public override string ToString()
 		{
 			return this.BlockValue ?? this.Name;

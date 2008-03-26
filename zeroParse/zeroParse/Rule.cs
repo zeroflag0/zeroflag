@@ -81,11 +81,14 @@ namespace zeroParse
 		#endregion Primitive
 
 		const int MaxDepth = 2000;
+		static DateTime lastOutput;
+		static TimeSpan outputInterval = TimeSpan.FromSeconds(1);
 		public Token Match(ParserContext context)
 		{
 			//try
 			//{
 			//Console.WriteLine(new StringBuilder().Append(' ', context.Depth).Append(this).Append("").ToString());
+
 			context.Rule = this;
 			context.Success = true;
 			if (context.Depth > MaxDepth)
@@ -129,8 +132,16 @@ namespace zeroParse
 						//while ((inner = context.WhiteSpaces.Match((context.Push(result.Start + result.BlockLength)))) != null)
 						//    if (inner.Length > 0)
 						//        result.Append(inner);
+
+
+						//context.Trim();
 					}
 					//context.WhiteSpaces.Match(context);
+					if (DateTime.Now - lastOutput > outputInterval)
+					{
+						Console.Write(("Parsing " + (result.Start + result.Length).ToString().PadLeft(6) + " / " + context.Source.Length.ToString().PadRight(6) + ": " + context.ToString().Replace("\0", @"\0").Replace("\n", @"\n").Replace("\t", @"\t")).PadRight(Console.WindowWidth - 2) + "\r");
+						lastOutput = DateTime.Now;
+					}
 
 					return result;
 				}
@@ -344,6 +355,67 @@ namespace zeroParse
 
 		#endregion Or
 
+		#region And
+		public static Rule operator *(Rule a, Rule b)
+		{
+			if (a != null && b != null)
+				return new And(a, b);
+
+			return a ?? b;
+		}
+		public static Rule operator *(Rule a, char b)
+		{
+			if (a != null)
+				return new And(a, b);
+
+			return a ?? b;
+		}
+		public static Rule operator *(Rule a, char[] b)
+		{
+			if (a != null && b != null)
+				return new And(a, b);
+
+			return a ?? b;
+		}
+		public static Rule operator *(Rule a, string b)
+		{
+			if (a != null)
+				return new And(a, b);
+
+			return a ?? b;
+		}
+		public static Rule operator *(Rule a, System.Text.RegularExpressions.Regex b)
+		{
+			if (a != null)
+				return new And(a, b);
+
+			return a ?? b;
+		}
+
+		public static Rule operator *(char a, Rule b)
+		{
+			if (b != null)
+				return (Rule)a * b;
+
+			return (Rule)a ?? b;
+		}
+		public static Rule operator *(string a, Rule b)
+		{
+			if (a != null && b != null)
+				return (Rule)a * b;
+
+			return a ?? b;
+		}
+		public static Rule operator *(System.Text.RegularExpressions.Regex a, Rule b)
+		{
+			if (a != null && b != null)
+				return (Rule)a * b;
+
+			return a ?? b;
+		}
+
+		#endregion And
+
 		#region Then
 		public static Rule operator ^(Rule a, Rule b)
 		{
@@ -436,7 +508,14 @@ namespace zeroParse
 		{
 			return new Optional(optional);
 		}
-		#endregion Optional
+		#endregion Optional	
+		
+		#region Exists
+		public static Rule operator -(Rule exists)
+		{
+			return new Exists(exists);
+		}
+		#endregion Exists
 
 		#region Repeat
 		public static Rule operator +(Rule repeat)
