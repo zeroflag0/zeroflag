@@ -14,8 +14,11 @@ namespace Test
 
 			string[] files = null;
 			//files = System.IO.Directory.GetFiles("source");
-			//files = new string[] { "source/OgreAlignedAllocator.cpp" };
-			files = new string[] { "test.txt" };
+			files = new string[] { "source/OgreAlignedAllocator.cpp" };
+			//files = new string[] { "test.txt" };
+			//files = new string[] { "test.cpp" };
+			//files = new string[] { "test2.cpp" }; 
+			
 			foreach (string file in files)
 			{
 				Console.WriteLine("Processing file " + file + "...");
@@ -29,7 +32,7 @@ namespace Test
 							parser.Parse(file, out context);
 						}));
 					thread.Start();
-					thread.Join(5000);
+					thread.Join();
 					try
 					{
 						debugForm.ParserThread = thread;

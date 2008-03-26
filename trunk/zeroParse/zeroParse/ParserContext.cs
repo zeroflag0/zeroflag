@@ -161,7 +161,10 @@ namespace zeroParse
 			foreach (ParserContext inner in inners)
 			{
 				if (!inner.Success)
+				{
+					Console.WriteLine("Trimmed " + inner.Rule + " " + inner + "...");
 					this.Inner.Remove(inner);
+				}
 				else
 				{
 					inner.Trim();
