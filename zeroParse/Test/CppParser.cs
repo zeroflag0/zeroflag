@@ -39,6 +39,7 @@ namespace Test
 
 			Rule expression = new Rule() { Name = "expression" };
 			Rule functionCall = new Rule() { Name = "call" };
+			Rule functionCallTail = new Rule("functionCallT");
 			Rule assign = new Rule("assign");
 			Rule root = new Rule("root");
 			Rule rootElement = new Rule("rootel");
@@ -109,7 +110,7 @@ namespace Test
 			Rule types = "typeList" %
 				(type & ~+("," & type));
 			Rule pointers = "pointer" %
-				+((Rule)"*" | "[]");
+				+((Rule)"*" | "[]" | "&");
 			Rule typeTail = "typeTail" %
 				(pointers);
 
@@ -124,7 +125,10 @@ namespace Test
 			Rule typeSimple = "simpleType" %
 				(baseType | genericTypeName);
 
-			type.Inner = ((~("const" ^ space) ^ ~+(~space ^ ((Rule)"*") ^ ~space) ^ ~(scopeType) & typeSimple & ~+(scopeType & typeSimple) ^ ~(~space ^ typeTail)) ^ ~(~space ^ functionPointerTail));
+			Rule staticInstance = "static" %
+				(typeSimple & ~+(scopeType & typeSimple));
+
+			type.Inner = ((~("const" ^ space) ^ ~+(~space ^ ((Rule)"*") ^ ~space) ^ ~(scopeType) & staticInstance ^ ~(~space ^ typeTail)) ^ ~(~space ^ functionPointerTail));
 
 			Rule typedef = "typedef" %
 				("typedef" ^ space ^ ((classDefinition | type) ^ +(~(~space & ",") ^ space & type ^ ~(~space & type))) & ";");
@@ -137,13 +141,16 @@ namespace Test
 			Rule variablePrototype = "variablePrototype" %
 				(type ^ ~space & id);
 			Rule variableDeclaration = "variable" %
-				(type ^ ~space ^ (assign | id) ^ ~indexer & ";");
+				(type ^ ~space ^ (assign | id) & ~indexer & ~(functionCallTail) & ";");
 
 			Rule instance = "instance" % (
 				//(id & ~+(((Rule)"." | "->") & id)) |
 				(~(typeCast ^ ~space) ^
 				(
-				(type | id) & ~+(((Rule)"." | "->") & id) ^ ~indexer)
+				staticInstance | 
+				(~(type & ((Rule)"." | "->")) & id)
+				)
+				^ ~(~space ^ indexer)
 				));
 			#endregion
 
@@ -161,7 +168,7 @@ namespace Test
 
 			Rule functionBody = new Rule("functionBody");
 			functionBody.Inner =
-				("{" & 
+				("{" &
 				~+(space |
 				statement |
 				variableDeclaration |
@@ -171,12 +178,11 @@ namespace Test
 
 			Rule functionCallParameters = "parameters" %
 				((expression | value) & ~+(',' & (expression | value)));
-			Rule functionCallTail = "functionCallT" %
-				('(' & (functionCallParameters | nothing) & ')');
+			functionCallTail.Inner = ('(' & ~functionCallParameters & ')');
 			functionCall.Inner = ((instance | (type & ~instance)) & functionCallTail);
 
 			Rule functionDefinition = "functionDefinition" %
-				(functionPrototype &  functionBody );
+				(functionPrototype & functionBody);
 			#endregion
 
 			#region Expressions
@@ -193,7 +199,7 @@ namespace Test
 			//               | Id
 			//               | '(' <Expr> ')'
 
-			value.Inner = (~(typeCast ^ ~space) ^ (hexValue | realValue | intValue | stringValue | charValue | functionCall | instance | id | ("(" & expression & ")")));
+			value.Inner = (~(typeCast ^ ~space) ^ (hexValue | realValue | intValue | stringValue | charValue | functionCall | instance | id | ("(" & expression & ")")) ^ ~(~space ^ indexer));
 
 			#region Operators
 			Rule primaryOperators = "primaryOp" %
@@ -201,11 +207,13 @@ namespace Test
 
 			Rule newOp = "new" %
 				("new" & (functionCall | (type & indexer)));
+			Rule deleteOp = "delete" %
+				("delete" & ~((Rule)"[" & "]") & instance);
 			Rule typeofOp = "typeof" %
 				((Rule)"typeof" & "(" & type & ")");
 
 			Rule unaryOperators = "unaryOp" %
-				(((Rule)"!" | "~" | "+" | "-" | "*" | "++" | "--"));
+				(((Rule)"!" | "~" | "++" | "--" | "+" | "-" | "*"));
 
 			Rule mpyOperators = "mpyOp" %
 				((Rule)"*" | "/" | "%");
@@ -226,13 +234,16 @@ namespace Test
 
 
 			Rule primary = "primary" %
-				~(typeCast & ~space) ^ (newOp | typeofOp | value);
+				~(typeCast & ~space) ^ (newOp | deleteOp | typeofOp | ("(" & expression & ")") | value);
 
 			Rule unary = "unary" %
 				(~unaryOperators & primary);
 
+			Rule reference = "ref" %
+				(unary & ~+(~space ^ ((Rule)"." | "->") & unary));
+
 			Rule mpy = "mpy" %
-				((unary & ~+(~space ^ mpyOperators & unary)));//| unary);
+				((reference & ~+(~space ^ mpyOperators & reference)));//| unary);
 			Rule add = "add" %
 				((mpy & ~+(~space ^ addOperators & mpy)));//| mpy);
 
@@ -246,7 +257,7 @@ namespace Test
 				((compare & ~+(~space ^ equalOperators & compare)));//| compare);
 
 			Rule logicalAND = "logicAND" %
-				((equal & ~+(~space ^ ("&" ^ -(Rule)"&") & equal)));//| equal);
+				((equal & ~+(~space ^ ("&" ^ -!(Rule)"&") & equal)));//| equal);
 			Rule logicalXOR = "logicXOR" %
 				((logicalAND & ~+(~space ^ "^" & logicalAND)));//| logicalAND);
 			Rule logicalOR = "logicOR" %
@@ -266,14 +277,39 @@ namespace Test
 			assign.Inner =
 				(instance & assignOperator & expression);
 
-			expression.Inner = (assign | ops);
+			expression.Inner = (assign | ops | functionCall);
 
 			#endregion
 
 			#region Statements
 			//Rule returnStatement = "return" %
 			//    ("return" ^ ~(+space & expression) & ";");
-			statement.Inner = ((~((Rule)"return" ^ ~space) ^ expression & ";") | typedef | variableDeclaration);
+			#region if/else
+			Rule ifStatement = new Rule("if");
+
+			Rule elseStatement = "else" %
+				("else" & (ifStatement | functionBody | statement));
+
+			ifStatement = ((Rule)"if" & "(" & expression & ")" & (functionBody | statement) ^ ~(~space & elseStatement));
+			#endregion if/else
+
+			#region for
+			Rule forStatement = "for" %
+				((Rule)"for" & "(" & (variableDeclaration | (expression & ";") | ";") & expression & ";" & expression & ")" & (functionBody | statement));
+			#endregion for
+
+			#region while
+			Rule whileHeadStatement = "whileHead" %
+				((Rule)"while" & "(" & expression & ")");
+
+			Rule whileStatement = "while" %
+				(whileHeadStatement & (functionBody | statement));
+
+			Rule dowhileStatement = "dowhile" %
+				("do" & (functionBody | statement) & whileHeadStatement & ";");
+			#endregion while
+
+			statement.Inner = ((~((Rule)"return" ^ ~space) ^ expression & ";") | typedef | variableDeclaration | ifStatement | forStatement | whileStatement | dowhileStatement);
 
 			#endregion
 

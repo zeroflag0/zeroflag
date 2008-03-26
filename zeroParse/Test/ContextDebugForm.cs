@@ -105,12 +105,14 @@ namespace Test
 				zeroParse.ParserContext named = null;// this.FindNamed(context);
 
 				TreeNode node = new TreeNode();
+				bool redecorate = true;
 				if (parent != null)
 					foreach (TreeNode peer in parent.Nodes)
 						if (peer != null && peer.Tag == context)
 						{
 							node = peer;
 							parent = node.Parent;
+							redecorate = false;
 							break;
 						}
 
@@ -119,6 +121,8 @@ namespace Test
 					parent != null && parent.Tag == context)
 				{
 					node = parent;
+
+					redecorate = false;
 				}
 				if (depth < 5)
 				{
@@ -147,69 +151,73 @@ namespace Test
 
 				if (parent == null)
 					text = "'" + context.Context + "'" + text;
-				if (context.Success)
+				if (redecorate)
 				{
-					node.BackColor = Color.FromArgb(100, Color.LightGreen);
-					//text += " success";
-				}
-				else
-				{
-					node.BackColor = Color.FromArgb(100, Color.Red);
-					text += " FAILED";
-				}
-				if (node != parent)
-				{
-					node.Tag = context;
-
-					List<TreeNode> empty = new List<TreeNode>();
-					foreach (TreeNode item in node.Nodes)
-						if (item.Tag as zeroParse.ParserContext == null)
-							empty.Add(item);
-					foreach (TreeNode item in empty)
-						node.Nodes.Remove(item);
-
-					if (named != null && named != context)
+					if (context.Success)
 					{
-						text = "[" + named.Rule.Name + "] " + text;
-						if (named.Rule.Ignore)
-							return node;
-
-						TreeNode namedNode = new TreeNode("[" + named.Rule.Name + "] " + named.Result);
-						node.Nodes.Insert(0, namedNode);
-						//TreeNode namedNode = this.Parse(named, null, depth);
-						//if (namedNode != null)
-						//{
-						//    namedNode.Text = "named=" + namedNode.Text;
-						//    if (!node.Nodes.Contains(namedNode) && !node.Nodes.ContainsKey(namedNode.Text))
-						//        node.Nodes.Add(namedNode);
-						//}
+						node.BackColor = Color.FromArgb(100, Color.LightGreen);
+						if (depth > 4)
+							context.Trim();
+						//text += " success";
 					}
-					node.Nodes.Insert(0, "line=" + context.Line + ", source=" + context.ToString());
+					else
 					{
-						TreeNode resultNode = new TreeNode("result=" + (context.Result ?? (object)"<null>"));
-						resultNode.Tag = context.Result;
-						node.Nodes.Insert(0, resultNode);
+						node.BackColor = Color.FromArgb(100, Color.Red);
+						text += " FAILED";
 					}
-					if (context.Rule != null)
+					if (node != parent)
 					{
-						string structure = context.Rule.Structure.Replace("\0", @"\0").Replace("\r\n", "\n");
-						if (context.Rule.Name != null)
-							text = "['" + context.Rule.Name + "']" + text;
-						TreeNode rulenode = new TreeNode("rule=" + context.Rule.GetType().Name + (context.Rule.Name != null ? "['" + context.Rule.Name + "']" : "") + ":=" + structure);
-						rulenode.Nodes.Insert(0, this.Parse(context.Rule, 0));
-						node.Nodes.Insert(0, rulenode);
+						node.Tag = context;
 
+						List<TreeNode> empty = new List<TreeNode>();
+						foreach (TreeNode item in node.Nodes)
+							if (item.Tag as zeroParse.ParserContext == null)
+								empty.Add(item);
+						foreach (TreeNode item in empty)
+							node.Nodes.Remove(item);
+
+						if (named != null && named != context)
+						{
+							text = "[" + named.Rule.Name + "] " + text;
+							if (named.Rule.Ignore)
+								return node;
+
+							TreeNode namedNode = new TreeNode("[" + named.Rule.Name + "] " + named.Result);
+							node.Nodes.Insert(0, namedNode);
+							//TreeNode namedNode = this.Parse(named, null, depth);
+							//if (namedNode != null)
+							//{
+							//    namedNode.Text = "named=" + namedNode.Text;
+							//    if (!node.Nodes.Contains(namedNode) && !node.Nodes.ContainsKey(namedNode.Text))
+							//        node.Nodes.Add(namedNode);
+							//}
+						}
+						node.Nodes.Insert(0, "line=" + context.Line + ", source=" + context.ToString());
+						{
+							TreeNode resultNode = new TreeNode("result=" + (context.Result ?? (object)"<null>"));
+							resultNode.Tag = context.Result;
+							node.Nodes.Insert(0, resultNode);
+						}
+						if (context.Rule != null)
+						{
+							string structure = context.Rule.Structure.Replace("\0", @"\0").Replace("\r\n", "\n");
+							if (context.Rule.Name != null)
+								text = "['" + context.Rule.Name + "']" + text;
+							TreeNode rulenode = new TreeNode("rule=" + context.Rule.GetType().Name + (context.Rule.Name != null ? "['" + context.Rule.Name + "']" : "") + ":=" + structure);
+							rulenode.Nodes.Insert(0, this.Parse(context.Rule, 0));
+							node.Nodes.Insert(0, rulenode);
+
+						}
 					}
-				}
 
-				text = text.Replace("\r", "").Replace("\0", "");
-				if (text.Length < 20)
-				{
-					text = text.PadRight(20);
-					text = text.Replace("\n", "\\n");
+					text = text.Replace("\r", "").Replace("\0", "");
+					if (text.Length < 20)
+					{
+						text = text.PadRight(20);
+						text = text.Replace("\n", "\\n");
+					}
+					node.Text = text;
 				}
-				node.Text = text;
-
 				if (!(context.Rule is zeroParse.Whitespace) && depth < MaxDepth || node == parent)
 				{
 					foreach (zeroParse.ParserContext inner in context.Inner)
@@ -445,8 +453,18 @@ namespace Test
 				this.ExpandSuccess(this.treeView.SelectedNode);
 			else if (e.KeyCode == Keys.F3)
 				this.FlattenPeers(this.treeView.SelectedNode);
-			else if (e.KeyCode == Keys.F9)
+			else if (e.KeyCode == Keys.F5)
 				this.RebuildNode(this.treeView.SelectedNode);
+			else if (e.KeyCode == Keys.F9)
+			{
+				List<zeroParse.ParserContext> contexts = new List<zeroParse.ParserContext>();
+				foreach (TreeNode node in this.treeView.Nodes)
+					if (node.Tag is zeroParse.ParserContext)
+						contexts.Add(node.Tag as zeroParse.ParserContext);
+				this.treeView.Nodes.Clear();
+				foreach (var cont in contexts)
+					this.Show(cont);
+			}
 			else if (e.KeyCode == Keys.F1)
 				Console.WriteLine(this.treeView.SelectedNode);
 			else if (e.KeyCode == Keys.F11)

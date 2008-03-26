@@ -838,6 +838,7 @@
   <ItemGroup>
     <EmbeddedResource Include="ContextDebugForm.resx">
       <DependentUpon>ContextDebugForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="RuleDebugForm.resx">
       <DependentUpon>RuleDebugForm.cs</DependentUpon>
@@ -888,6 +889,9 @@
     <None Include="source\Makefile.am" />
     <None Include="source\Makefile.in" />
     <Content Include="source\ogremain.map">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="test2.cpp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="source\OSX\CVS\Entries" />

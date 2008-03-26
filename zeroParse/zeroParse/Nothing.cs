@@ -8,8 +8,8 @@ namespace zeroParse
 	{
 		protected override Token MatchAll(ParserContext context)
 		{
-			context.Success = false;
-			return null;
+			context.Success = true;
+			return this.CreateToken(context, 0);
 		}
 
 		public Nothing()
