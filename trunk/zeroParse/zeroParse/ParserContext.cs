@@ -88,12 +88,16 @@ namespace zeroParse
 			{
 				int max = 0;
 				int temp = 0;
-				foreach (ParserContext inner in this.Inner)
+				try
 				{
-					temp = inner.InnerDepth;
-					if (temp > max)
-						max = temp;
+					foreach (ParserContext inner in this.Inner)
+					{
+						temp = inner.InnerDepth;
+						if (temp > max)
+							max = temp;
+					}
 				}
+				catch { }
 				return max;
 			}
 		}
@@ -149,6 +153,23 @@ namespace zeroParse
 			var cont = new ParserContext(this, index);
 			this.Inner.Add(cont);
 			return cont;
+		}
+
+		public ParserContext Trim()
+		{
+			List<ParserContext> inners = new List<ParserContext>();
+			foreach (ParserContext inner in inners)
+			{
+				if (!inner.Success)
+					this.Inner.Remove(inner);
+				else
+				{
+					inner.Trim();
+					if (inner.Result != null)
+						inner.Result.Trim();
+				}
+			}
+			return this;
 		}
 
 		public ParserContext RootContext

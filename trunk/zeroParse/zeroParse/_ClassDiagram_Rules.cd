@@ -34,7 +34,7 @@
   <Class Name="zeroParse.Optional">
     <Position X="5.75" Y="7.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAgACAAAAAAAAAAA=</HashCode>
       <FileName>Optional.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -52,7 +52,7 @@
   <Class Name="zeroParse.Repeat">
     <Position X="20.75" Y="7.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAgACAAAAAAAAAAA=</HashCode>
       <FileName>Repeat.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -65,7 +65,7 @@
       <Field Name="_Primitive" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>ACAAgkEACBAACBAEQBADICQMAAIAA4ACAIAAAIEAgAA=</HashCode>
+      <HashCode>ACAAgkEACBAACBAEQBADICQMAAIAA4ACEYAAAIEAgAA=</HashCode>
       <FileName>Rule.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -118,8 +118,26 @@
   <Class Name="zeroParse.Whitespace">
     <Position X="8.5" Y="0.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAIAAAAAAAAA=</HashCode>
+      <HashCode>AAAAgAAAAAAAAAAEAAAAAAAAAAAAAgAAAIAAAAAAAAA=</HashCode>
       <FileName>Whitespace.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroParse.And">
+    <Position X="2" Y="4" Width="1.5" />
+    <Members>
+      <Field Name="_First" Hidden="true" />
+      <Field Name="_Second" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAFAAQAEAAAAAAIIAAAAAgACAAAAAAAAAAA=</HashCode>
+      <FileName>And.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroParse.Exists">
+    <Position X="4.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAgACAAAAAAAAAAA=</HashCode>
+      <FileName>Exists.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

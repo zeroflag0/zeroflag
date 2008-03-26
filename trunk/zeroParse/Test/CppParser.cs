@@ -10,7 +10,7 @@ namespace Test
 		public override zeroParse.Rule CreateRules()
 		{
 			Rule newline = @"\n" %
-				(Rule)"\r\n" | "\n" | "\0";
+				((Rule)"\n" | "\0");//"\r\n" | 
 			newline.Ignore = true;
 			this.WhiteSpace = this.WhiteSpace.Inner | newline;// | (Rule)'\r';
 
@@ -40,6 +40,14 @@ namespace Test
 			Rule expression = new Rule() { Name = "expression" };
 			Rule functionCall = new Rule() { Name = "call" };
 			Rule assign = new Rule("assign");
+			Rule root = new Rule("root");
+			Rule rootElement = new Rule("rootel");
+			Rule type = new Rule() { Name = "type" };
+			Rule classDefinition = new Rule("class");
+			Rule value = new Rule("value");
+			Rule structDefinition = new Rule("struct");
+			Rule statement = new Rule("statement");
+
 
 			#region Values
 			// strings...
@@ -51,7 +59,8 @@ namespace Test
 			//    (
 			//    quote2 & ~+!(nonescapedQuote | nl) & ~!(quote2 | nl) & quote2
 			//    );
-			Rule stringValue = "string" % (quote2 & ~+((esc & !newline) | !(esc | quote2)) & quote2);
+			Rule stringValue = "string" %
+				(quote2 & ~+((esc & !newline) | !(esc | quote2) | (quote2 & quote2)) & quote2);
 			//new RegexTerminal(@"");
 
 			// char...
@@ -85,37 +94,89 @@ namespace Test
 			Rule id = "id" %
 				(idHead ^ ~+idTail);
 
+
+			Rule baseType = "typeB" %
+				(
+				//(Rule)"char" | "bool" | "short" | "int" | 
+				("__int" ^ ~+digit) |
+				("long" ^ ~(space & ((Rule)"long" | "double"))) |
+				("unsigned" ^ ~(space & ((Rule)"int" | "short" | "long" | "char"))) | "float" | "double" | "char" |
+				("signed" ^ ~(space & ((Rule)"char"))) |
+				("enum" ^ ~(space & type)) |
+				("struct" ^ ~(space & type)));
+
 			Rule scopeType = "::";
-			Rule type = new Rule() { Name = "type" };
 			Rule types = "typeList" %
 				(type & ~+("," & type));
 			Rule pointers = "pointer" %
-				+((Rule)"*" | "&" | "[]");
+				+((Rule)"*" | "[]");
 			Rule typeTail = "typeTail" %
 				(pointers);
+
+			Rule functionPointerTail = "func*tail" %
+				((Rule)"(" & "*" & ")" & "(" & types & ")");
+
 			Rule genericTypeName = "generic" %
 				(id & ~("<" & types & ">"));
 
 			Rule typeCast = "cast" %
 				("(" & type & ")");
 			Rule typeSimple = "simpleType" %
-				(genericTypeName | id);
+				(baseType | genericTypeName);
 
-			type.Inner = (typeSimple & ~+(scopeType & typeSimple) ^ ~(~space ^ typeTail));
+			type.Inner = ((~("const" ^ space) ^ ~+(~space ^ ((Rule)"*") ^ ~space) ^ ~(scopeType) & typeSimple & ~+(scopeType & typeSimple) ^ ~(~space ^ typeTail)) ^ ~(~space ^ functionPointerTail));
+
+			Rule typedef = "typedef" %
+				("typedef" ^ space ^ ((classDefinition | type) ^ +(~(~space & ",") ^ space & type ^ ~(~space & type))) & ";");
 			#endregion
 
 			#region Variables
+			Rule indexer = "indexer" %
+				(~space ^ "[" & expression & "]");
+
 			Rule variablePrototype = "variablePrototype" %
-				(type ^ space & id);
+				(type ^ ~space & id);
 			Rule variableDeclaration = "variable" %
-				(type ^ space ^ (assign | id) & ";");
+				(type ^ ~space ^ (assign | id) ^ ~indexer & ";");
 
 			Rule instance = "instance" % (
 				//(id & ~+(((Rule)"." | "->") & id)) |
 				(~(typeCast ^ ~space) ^
 				(
-				(type | id) & ~+(((Rule)"." | "->") & id))
+				(type | id) & ~+(((Rule)"." | "->") & id) ^ ~indexer)
 				));
+			#endregion
+
+			#region Functions
+			Rule functionParameterDecs = new Rule() { Name = "functionParameterDecs" };
+			functionParameterDecs.Inner = ((variablePrototype & ~+("," & variablePrototype)) | types);
+
+			Rule constructorPrototype = "constructorPrototype" %
+				//(~(type & scopeType) & (id | type) & "(" & ~(functionParameterDecs) & ")");
+				(type & "(" & ~(functionParameterDecs) & ")");
+			Rule functionPrototype = "functionPrototype" %
+				(type ^ space ^ constructorPrototype);
+			Rule functionDeclaration = "functionDeclaration" %
+				(functionPrototype & ";");
+
+			Rule functionBody = new Rule("functionBody");
+			functionBody.Inner =
+				("{" & 
+				~+(space |
+				statement |
+				variableDeclaration |
+				functionBody
+				)
+				& "}");
+
+			Rule functionCallParameters = "parameters" %
+				((expression | value) & ~+(',' & (expression | value)));
+			Rule functionCallTail = "functionCallT" %
+				('(' & (functionCallParameters | nothing) & ')');
+			functionCall.Inner = ((instance | (type & ~instance)) & functionCallTail);
+
+			Rule functionDefinition = "functionDefinition" %
+				(functionPrototype &  functionBody );
 			#endregion
 
 			#region Expressions
@@ -132,259 +193,88 @@ namespace Test
 			//               | Id
 			//               | '(' <Expr> ')'
 
-			#region Old
-#if OLD
-			//<Op Pointer> ::= <Op Pointer> '.' <Value>
-			//               | <Op Pointer> '->' <Value>
-			//               | <Op Pointer> '[' <Expr> ']'
-			//               | <Value>
-			Rule opPointer = new Rule("opPointer");
-			opPointer.Inner =
-				//((type | instance) & (
-				//(opPointer & "." & value) |
-				//(opPointer & "->" & value) |
-				//(opPointer & "[" & expression & "]"))
-				//) | 
-				instance |value;
+			value.Inner = (~(typeCast ^ ~space) ^ (hexValue | realValue | intValue | stringValue | charValue | functionCall | instance | id | ("(" & expression & ")")));
 
-			Rule primaryOperators = "primaryOps" %
+			#region Operators
+			Rule primaryOperators = "primaryOp" %
 				(((Rule)"++" | "--"));
 
-			Rule opPrimary = new Rule("opPrimary");
-			opPrimary.Inner =
-				(
-				(opPointer & primaryOperators) |
-				("new" ^ space & ((type & ~functionCall) | (~type & functionCall))) |
-				opPointer
-				);
-			//<Op Unary>   ::= '!'    <Op Unary>
-			//               | '~'    <Op Unary>
-			//               | '-'    <Op Unary>
-			//               | '*'    <Op Unary>
-			//               | '&'    <Op Unary>
-			//               | '++'   <Op Unary>
-			//               | '--'   <Op Unary>
-			//               | <Op Pointer> '++'
-			//               | <Op Pointer> '--'
-			//               | '(' <Type> ')' <Op Unary>   !CAST
-			//               | sizeof '(' <Type> ')'
-			//               | sizeof '(' ID <Pointers> ')'
-			//               | <Op Pointer>
-			Rule unaryOperatorsPre = "unaryOps" %
-				(((Rule)"!" | "~" | "+" | "-" | "*" | "&" | "++" | "--"));
+			Rule newOp = "new" %
+				("new" & (functionCall | (type & indexer)));
+			Rule typeofOp = "typeof" %
+				((Rule)"typeof" & "(" & type & ")");
 
-			Rule opUnary = new Rule("opUnary");
-			opUnary.Inner =
-				((unaryOperatorsPre & (instance | opPrimary)) |
-				((Rule)"sizeof" & "(" & type & ")") |
-				((Rule)"sizeof" & "(" & id & pointers & ")") |
-				(opPrimary));
+			Rule unaryOperators = "unaryOp" %
+				(((Rule)"!" | "~" | "+" | "-" | "*" | "++" | "--"));
 
+			Rule mpyOperators = "mpyOp" %
+				((Rule)"*" | "/" | "%");
+			Rule addOperators = "addOp" %
+				((Rule)"+" | "-");
+			Rule shiftOperators = "shiftOp" %
+				((Rule)">>" | "<<");
 
+			Rule compareOperators = "compareOp" %
+				((Rule)">=" | ">" | "<=" | "<");
+			Rule equalOperators = "equalOp" %
+				((Rule)"==" | "!=");
 
-			//<Op Mult>    ::= <Op Mult> '*' <Op Unary>
-			//               | <Op Mult> '/' <Op Unary>
-			//               | <Op Mult> '%' <Op Unary>
-			//               | <Op Unary>
-			Rule opMpy = "opMpy" %
-				(
-				(+((instance | opUnary) & ((Rule)"*" | "/" | "%")) & opUnary) |
-				opUnary);
-
-			//<Op Add>     ::= <Op Add> '+' <Op Mult>
-			//               | <Op Add> '-' <Op Mult>
-			//               | <Op Mult>
-			Rule opAdd = "opAdd" %  //any |
-				(
-				(+((instance | opMpy) & ((Rule)"+" | "-")) & opMpy) |
-				opMpy);
-
-
-			// Shift operators << >>
-			Rule opShift = "opShift" %
-				(
-				(+((instance | opAdd) & ((Rule)"<<" | ">>")) & opAdd) |
-				opAdd);
-
-
-			Rule compareOperator = "compareOperator" %
-				(((Rule)"<" | ">" | "<=" | ">=" | "==" | "!="));
-			Rule compare = "compare" %
-				(
-				((instance | value) & compareOperator & value) |
-				opShift);
-
-
-			Rule opLogAND = "opLogAND" %
-				(
-				(+((instance | compare) & ((Rule)"&")) & compare) |
-				compare);
-
-			Rule opLogXOR = "opLogXOR" %
-				(
-				(+((instance | opLogAND) & ((Rule)"&")) & opLogAND) |
-				opLogAND);
-
-			Rule opLogOR = "opLogOR" %
-				(
-				(+((instance | opLogXOR) & ((Rule)"&")) & opLogXOR) |
-				opLogXOR);
-
-			Rule opCondAND = "opCondAND" %
-				(
-				(+((instance | opLogOR) & ((Rule)"&")) & opLogOR) |
-				opLogOR);
-			Rule opCondOR = "opCondOR" %
-				(
-				(+((instance | opCondAND) & ((Rule)"&")) & opCondAND) |
-				opCondAND);
-
-			Rule opConditional = "opConditional" %
-				(
-				(((instance | opCondOR) & (Rule)"?" & expression & ":" & expression)) |
-				opCondOR);
-
-			Rule ops = "ops" %
-				new Debug(opConditional);
-
-
-			//<Op Assign>  ::= <Op If> '='   <Op Assign>
-			//               | <Op If> '+='  <Op Assign>
-			//               | <Op If> '-='  <Op Assign>
-			//               | <Op If> '*='  <Op Assign>
-			//               | <Op If> '/='  <Op Assign>
-			//               | <Op If> '^='  <Op Assign>
-			//               | <Op If> '&='  <Op Assign>
-			//               | <Op If> '|='  <Op Assign>
-			//               | <Op If> '>>=' <Op Assign>
-			//               | <Op If> '<<=' <Op Assign>
-			//               | <Op If>
-			Rule assignOperator = "assignOperator" %
+			Rule assignOperator = "assignOp" %
 				(((Rule)"=" | "+=" | "-=" | "*=" | "/=" | "^=" | "&=" | "|=" | ">>=" | "<<="));
-			Rule assign = new Rule("assign");
+
+			#endregion Operators
+
+
+			Rule primary = "primary" %
+				~(typeCast & ~space) ^ (newOp | typeofOp | value);
+
+			Rule unary = "unary" %
+				(~unaryOperators & primary);
+
+			Rule mpy = "mpy" %
+				((unary & ~+(~space ^ mpyOperators & unary)));//| unary);
+			Rule add = "add" %
+				((mpy & ~+(~space ^ addOperators & mpy)));//| mpy);
+
+			Rule shift = "shift" %
+				((add & ~+(~space ^ shiftOperators & add)));//| add);
+
+			Rule compare = "compare" %
+				((shift & ~+(~space ^ compareOperators & shift)));//| shift);
+
+			Rule equal = "equal" %
+				((compare & ~+(~space ^ equalOperators & compare)));//| compare);
+
+			Rule logicalAND = "logicAND" %
+				((equal & ~+(~space ^ ("&" ^ -(Rule)"&") & equal)));//| equal);
+			Rule logicalXOR = "logicXOR" %
+				((logicalAND & ~+(~space ^ "^" & logicalAND)));//| logicalAND);
+			Rule logicalOR = "logicOR" %
+				((logicalXOR & ~+(~space ^ "|" & logicalXOR)));//| logicalXOR);
+
+			Rule conditionalAND = "AND" %
+				((logicalOR & ~+(~space ^ "&&" & logicalOR)));// | logicalOR);
+			Rule conditionalOR = "OR" %
+				((conditionalAND & ~+(~space ^ "||" & conditionalAND)));// | conditionalAND);
+
+			Rule conditional = "?:" %
+				(conditionalOR & ~("?" & value & ":" & value));// | conditionalOR);
+
+			Rule ops = "op" %
+				(conditional);
+
 			assign.Inner =
-				(instance & assignOperator & (value | assign));
+				(instance & assignOperator & expression);
 
-			//<Expr>       ::= <Expr> ',' <Op Assign>
-			//               | <Op Assign>
-			expression.Inner = (ops | functionCall | assign);
+			expression.Inner = (assign | ops);
 
-#endif
-			#endregion Old
-			Rule value = "value" %
-				(~(typeCast & space) ^ (hexValue | realValue | intValue | stringValue | charValue | functionCall | instance | id | ("(" & expression & ")")));
-
-			{
-				#region Operators
-				Rule primaryOperators = "primaryOp" %
-					(((Rule)"++" | "--"));
-
-				Rule newOp = "new" %
-					("new" & functionCall);
-				Rule typeofOp = "typeof" %
-					((Rule)"typeof" & "(" & type & ")");
-
-				Rule unaryOperators = "unaryOp" %
-					(((Rule)"!" | "~" | "+" | "-" | "*" | "&" | "++" | "--"));
-
-				Rule mpyOperators = "mpyOp" %
-					((Rule)"*" | "/" | "%");
-				Rule addOperators = "addOp" %
-					((Rule)"+" | "-");
-				Rule shiftOperators = "shiftOp" %
-					((Rule)">>" | "<<");
-
-				Rule compareOperators = "compareOp" %
-					((Rule)">" | ">=" | "<" | "<=");
-				Rule equalOperators = "equalOp" %
-					((Rule)"==" | "!=");
-
-				Rule assignOperator = "assignOp" %
-					(((Rule)"=" | "+=" | "-=" | "*=" | "/=" | "^=" | "&=" | "|=" | ">>=" | "<<="));
-
-				#endregion Operators
-
-
-				Rule primary = "primary" %
-					~(typeCast & space) ^ (newOp | typeofOp | new Debug(value));
-
-				Rule unary = "unary" %
-					(~unaryOperators & primary);
-
-				Rule mpy = "mpy" %
-					(unary ^ ~+(~space ^ mpyOperators & unary));
-				Rule add = "add" %
-					(mpy ^ ~+(~space ^ addOperators & mpy));
-
-				Rule shift = "shift" %
-					(add ^ ~+(~space ^ shiftOperators & add));
-
-				Rule compare = "compare" %
-					(shift ^ ~+(~space ^ compareOperators & shift));
-
-				Rule equal = "equal" %
-					(compare ^ ~+(~space ^ equalOperators & compare));
-
-				Rule logicalAND = "logicAND" %
-					(equal ^ ~+(~space ^ "&" & equal));
-				Rule logicalXOR = "logicXOR" %
-					(logicalAND ^ ~+(~space ^ "^" & logicalAND));
-				Rule logicalOR = "logicOR" %
-					(logicalXOR ^ ~+(~space ^ "|" & logicalXOR));
-
-				Rule conditionalAND = "AND" %
-					(logicalOR ^ ~+(~space ^ "&&" & logicalOR));
-				Rule conditionalOR = "OR" %
-					(conditionalAND ^ ~+(~space ^ "&&" & conditionalAND));
-
-				Rule conditional = "?:" %
-					(conditionalOR ^ ~+(~space ^ "?" & value & ":" & value));
-
-				Rule ops = "op" %
-					(conditional);
-
-				assign.Inner =
-					(instance & assignOperator & expression);
-
-				expression.Inner = (functionCall | assign | ops);
-
-			}
 			#endregion
 
 			#region Statements
 			//Rule returnStatement = "return" %
 			//    ("return" ^ ~(+space & expression) & ";");
-			Rule statement = "statement" %
-				(~((Rule)"return" ^ ~space) ^ expression & ";");
+			statement.Inner = ((~((Rule)"return" ^ ~space) ^ expression & ";") | typedef | variableDeclaration);
 
-			Rule processingBlock = "block" %
-				(nothing);
-			#endregion
-
-			#region Functions
-			Rule functionParameterDecs = new Rule() { Name = "functionParameterDecs" };
-			functionParameterDecs.Inner = (variablePrototype & ~+("," & variablePrototype));
-
-			Rule constructorPrototype = "constructorPrototype" %
-				//(~(type & scopeType) & (id | type) & "(" & ~(functionParameterDecs) & ")");
-				(type & "(" & ~(functionParameterDecs) & ")");
-			Rule functionPrototype = "functionPrototype" %
-				(type ^ space ^ constructorPrototype);
-			Rule functionDeclaration = "functionDeclaration" %
-				(functionPrototype & ";");
-
-			Rule functionBody = "functionBody" %
-				~+(space |
-				statement |
-				variableDeclaration
-				);
-
-			Rule functionCallParameters = "parameters" %
-				((expression | value) & ~+(',' & (expression | value)));
-			functionCall.Inner = (instance & '(' & (functionCallParameters | nothing) & ')');
-
-			Rule functionDefinition = "function" %
-				(functionPrototype & "{" & functionBody & "}");
 			#endregion
 
 			#region Classes
@@ -396,7 +286,8 @@ namespace Test
 			#endregion
 
 			Rule classPrototype = "classProt" %
-				(((Rule)"class" | "struct") ^ space & id);
+				(((Rule)"class" | "struct") ^ ~(space & id));
+
 
 			Rule classDeclaration = "classDec" %
 				(classPrototype & ~inherit & ";");
@@ -404,8 +295,8 @@ namespace Test
 			Rule classVisibility = "visiblity" %
 				(((Rule)"public" | "protected" | "private") & ":");
 
-			Rule virtua = "virtual" %
-				~("virtual" ^ space);
+			Rule declaration = "decl" %
+				~(((Rule)"virtual" | "explicit" | "implicit" | "static") ^ space);
 
 			#region Constructor
 			Rule constructorDeclaration = "constructorDeclaration" %
@@ -423,27 +314,102 @@ namespace Test
 				("~" & constructorDefinition);
 			#endregion Destructor
 
-			#region Body
+			#region Class Body
 			Rule classBody = "classBody" %
 				(space |
-				(virtua & (
+				(declaration & (
 				functionDeclaration | functionDefinition |
 				constructorDeclaration | constructorDefinition |
 				destructorDeclaration | destructorDefinition)) |
-				variableDeclaration | classVisibility);
-			#endregion Body
+				variableDeclaration | classVisibility | root);
+			#endregion Class Body
 
-			Rule classDefinition = "class" %
-				(classPrototype & ~inherit & "{" & +classBody & "}" ^ ~(Rule)";");
+			structDefinition.Inner = ((Rule)"struct" & "{" & +classBody & "}" ^ ~(~space & instance));
+
+			Rule structDef = "structdef" %
+				(structDefinition ^ ~(~space & ";"));
+			classDefinition.Inner =
+				(structDefinition | (classPrototype & ~inherit & "{" & +classBody & "}"));// ^ ~(~space & instance)));
+			Rule classDef = "class" %
+				(classDefinition ^ ~(Rule)";");
 			#endregion
 
-			Rule rootElement =
-				(classDefinition | functionDefinition | variableDeclaration | functionDeclaration | constructorDefinitionExtern);
-			Rule root = "root" %
-				+((space) | rootElement);
+			#region Enums
+			Rule enumHead = "enumHead" %
+				("enum" ^ ~(space & id));
+			Rule enumItem = "enumItem" %
+				((assign | id));
+			Rule enumBody = "enumBody" %
+				(+(~space & enumItem & ~space & ~(Rule)"," & ~space));
+			Rule enumDef = "enum" %
+				(enumHead & "{" & enumBody & "}" & ~(Rule)";");
+			#endregion Enums
+
+			#region Namespaces
+			Rule namespaceBody = "namespaceBody" %
+				(+(rootElement));
+			Rule namespaceDefinition = "namespace" %
+				("namespace" ^ ~(space & id) & "{" & namespaceBody & "}" & ~(Rule)";");
+			#endregion Namespaces
+
+			#region Compiler Hacks
+			// some stupid C/C++ compiler(-specific) stuff to ignore...
+
+			// it seems msvc has picked up [attributes]... just ignore them.
+			Rule attribute = "attribute" %
+				("[" & ((functionCall | type) ^ ~+(":" & (functionCall | type))) & "]");
+
+			// __declspec... whatever...
+			Rule declspec = "__declspec" %
+				((Rule)"__declspec" & "(" & value & ")");
+
+			Rule callspec = "__call" %
+				((Rule)"__thiscall" | "__cdecl" | "__clrcall" | "__stdcall" | "__fastcall");
+
+			Rule hacks = "hacks" %
+				(callspec | attribute | declspec);
+			//hacks.Ignore = true;
+			//hacks.Primitive = true;
+
+			this.WhiteSpace = new Whitespace(hacks | this.WhiteSpace.Inner);
+
+			#endregion Compiler Hacks
+
+			#region Extern "C"
+			Rule externalC = "externC" %
+				("extern" & quote2 & ((Rule)"c" | "C") & quote2 & "{" & +(rootElement | space) & "}");
+			#endregion Extern "C"
+
+			rootElement.Inner = (space |
+				namespaceDefinition | classDef | classDefinition | typedef | enumDef | functionDefinition |
+				classDeclaration | variableDeclaration | functionDeclaration | constructorDefinitionExtern |
+				externalC);
+			root.Inner = (+rootElement);
 
 
 			return root;
+		}
+
+		protected override string Preprocess(string content)
+		{
+			content = base.Preprocess(content);
+			//Trigraph     Equivalent
+			//========     ==========
+			//  ??=            #
+			//  ??/            \
+			//  ??'            ^
+			//  ??(            [
+			//  ??)            ]
+			//  ??!            |
+			//  ??<            {
+			//  ??>            }
+			//  ??-            ~
+
+			content = content.Replace("??=", "#").Replace("??/", "\\").Replace("??'", "^").Replace("??(", "[").Replace("??)", "]")
+				.Replace("??!", "|").Replace("??<", "{").Replace("??>", "}").Replace("??-", "~");
+
+			content = content.Replace("\\\n", "");
+			return content;
 		}
 	}
 }
