@@ -14,10 +14,11 @@ namespace Test
 
 			string[] files = null;
 			//files = System.IO.Directory.GetFiles("source");
-			files = new string[] { "source/OgreAlignedAllocator.cpp" };
+			//files = new string[] { "source/OgreAutoParamDataSource.cpp" };
+			files = new string[] { "source/OgreAnimationTrack.cpp" };
 			//files = new string[] { "test.txt" };
 			//files = new string[] { "test.cpp" };
-			//files = new string[] { "test2.cpp" }; 
+			files = new string[] { "test2.cpp" }; 
 			
 			foreach (string file in files)
 			{

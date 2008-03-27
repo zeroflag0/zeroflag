@@ -414,6 +414,24 @@ namespace Test
 			}
 		}
 
+		private void TrimNode(TreeNode node)
+		{
+			if (node != null )
+			{
+				Console.WriteLine("Trimming " + node + "(try)");
+				zeroParse.ParserContext context = node.Tag as zeroParse.ParserContext;
+
+				if (context != null)
+				{
+					Console.WriteLine("Trimming " + node);
+					context.Trim();
+
+					Console.WriteLine("Collecting " + node);
+					GC.Collect();
+				}
+			}
+		}
+
 		private void treeView_AfterExpand(object sender, TreeViewEventArgs e)
 		{
 			TreeNode selected = e.Node;
@@ -455,6 +473,8 @@ namespace Test
 				this.FlattenPeers(this.treeView.SelectedNode);
 			else if (e.KeyCode == Keys.F5)
 				this.RebuildNode(this.treeView.SelectedNode);
+			else if (e.KeyCode == Keys.F8)
+				this.TrimNode(this.treeView.SelectedNode);
 			else if (e.KeyCode == Keys.F9)
 			{
 				List<zeroParse.ParserContext> contexts = new List<zeroParse.ParserContext>();
