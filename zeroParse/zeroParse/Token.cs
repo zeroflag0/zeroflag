@@ -113,7 +113,10 @@ namespace zeroParse
 			foreach (Token inner in inners)
 			{
 				if (inner.Context == null || !inner.Context.Success)
+				{
+					Console.WriteLine("Trimmed result " + inner.Rule + " " + inner + "...");
 					this.Inner.Remove(inner);
+				}
 				else
 				{
 					inner.Trim();

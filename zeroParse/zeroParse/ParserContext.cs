@@ -162,7 +162,7 @@ namespace zeroParse
 			{
 				if (!inner.Success)
 				{
-					Console.WriteLine("Trimmed " + inner.Rule + " " + inner + "...");
+					Console.WriteLine("Trimmed context " + inner.Rule + " " + inner + "...");
 					this.Inner.Remove(inner);
 				}
 				else

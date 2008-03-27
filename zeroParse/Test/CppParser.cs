@@ -136,53 +136,27 @@ namespace Test
 
 			#region Variables
 			Rule indexer = "indexer" %
-				(~space ^ "[" & expression & "]");
+				+(~space ^ "[" & expression & "]");
 
 			Rule variablePrototype = "variablePrototype" %
 				(type ^ ~space & id);
 			Rule variableDeclaration = "variable" %
-				(type ^ ~space ^ (assign | id) & ~indexer & ~(functionCallTail) & ";");
+				(type ^ ~space ^ +(~space & (assign | id) & ~indexer & ~(functionCallTail) & ~(Rule)"," & ~space) & ";");
 
+			Rule instancePart = "instancePart" %
+				((staticInstance | type | id) ^ ~+((~space ^ functionCallTail) | (~space ^ indexer)));
+			Rule instances = "instances" %
+				(instancePart & ~+(~space & ((Rule)"." | "->") & instancePart));
 			Rule instance = "instance" % (
 				//(id & ~+(((Rule)"." | "->") & id)) |
 				(~(typeCast ^ ~space) ^
 				(
-				staticInstance | 
-				(~(type & ((Rule)"." | "->")) & id)
+				instances |
+				staticInstance |
+				id
 				)
 				^ ~(~space ^ indexer)
 				));
-			#endregion
-
-			#region Functions
-			Rule functionParameterDecs = new Rule() { Name = "functionParameterDecs" };
-			functionParameterDecs.Inner = ((variablePrototype & ~+("," & variablePrototype)) | types);
-
-			Rule constructorPrototype = "constructorPrototype" %
-				//(~(type & scopeType) & (id | type) & "(" & ~(functionParameterDecs) & ")");
-				(type & "(" & ~(functionParameterDecs) & ")");
-			Rule functionPrototype = "functionPrototype" %
-				(type ^ space ^ constructorPrototype);
-			Rule functionDeclaration = "functionDeclaration" %
-				(functionPrototype & ";");
-
-			Rule functionBody = new Rule("functionBody");
-			functionBody.Inner =
-				("{" &
-				~+(space |
-				statement |
-				variableDeclaration |
-				functionBody
-				)
-				& "}");
-
-			Rule functionCallParameters = "parameters" %
-				((expression | value) & ~+(',' & (expression | value)));
-			functionCallTail.Inner = ('(' & ~functionCallParameters & ')');
-			functionCall.Inner = ((instance | (type & ~instance)) & functionCallTail);
-
-			Rule functionDefinition = "functionDefinition" %
-				(functionPrototype & functionBody);
 			#endregion
 
 			#region Expressions
@@ -199,7 +173,7 @@ namespace Test
 			//               | Id
 			//               | '(' <Expr> ')'
 
-			value.Inner = (~(typeCast ^ ~space) ^ (hexValue | realValue | intValue | stringValue | charValue | functionCall | instance | id | ("(" & expression & ")")) ^ ~(~space ^ indexer));
+			value.Inner = (~(typeCast ^ ~space) ^ ~+(((Rule)"&" | "*") ^ ~space) ^ (hexValue | realValue | intValue | stringValue | charValue | instance | id | ("(" & expression & ")")) ^ ~(~space ^ indexer));
 
 			#region Operators
 			Rule primaryOperators = "primaryOp" %
@@ -232,53 +206,114 @@ namespace Test
 
 			#endregion Operators
 
+			Rule ops = new Rule("op");
 
 			Rule primary = "primary" %
 				~(typeCast & ~space) ^ (newOp | deleteOp | typeofOp | ("(" & expression & ")") | value);
+			ops = primary;
 
 			Rule unary = "unary" %
-				(~unaryOperators & primary);
+				(~unaryOperators & ops);
+			ops = ops | (unary);
 
 			Rule reference = "ref" %
 				(unary & ~+(~space ^ ((Rule)"." | "->") & unary));
+			ops = ops | (reference);
 
 			Rule mpy = "mpy" %
 				((reference & ~+(~space ^ mpyOperators & reference)));//| unary);
+			ops = ops | (mpy);
 			Rule add = "add" %
 				((mpy & ~+(~space ^ addOperators & mpy)));//| mpy);
+			ops = ops | (add);
 
 			Rule shift = "shift" %
 				((add & ~+(~space ^ shiftOperators & add)));//| add);
+			ops = ops | (shift);
 
 			Rule compare = "compare" %
 				((shift & ~+(~space ^ compareOperators & shift)));//| shift);
+			ops = ops | (compare);
 
 			Rule equal = "equal" %
 				((compare & ~+(~space ^ equalOperators & compare)));//| compare);
+			ops = ops | (equal);
 
 			Rule logicalAND = "logicAND" %
 				((equal & ~+(~space ^ ("&" ^ -!(Rule)"&") & equal)));//| equal);
+			ops = ops | (logicalAND);
 			Rule logicalXOR = "logicXOR" %
 				((logicalAND & ~+(~space ^ "^" & logicalAND)));//| logicalAND);
+			ops = ops | (logicalXOR);
 			Rule logicalOR = "logicOR" %
-				((logicalXOR & ~+(~space ^ "|" & logicalXOR)));//| logicalXOR);
+				((logicalXOR & ~+(~space ^ ("|" ^ -!(Rule)"|") & logicalXOR)));//| logicalXOR);
+			ops = ops | (logicalOR);
 
 			Rule conditionalAND = "AND" %
 				((logicalOR & ~+(~space ^ "&&" & logicalOR)));// | logicalOR);
+			ops = ops | (conditionalAND);
 			Rule conditionalOR = "OR" %
 				((conditionalAND & ~+(~space ^ "||" & conditionalAND)));// | conditionalAND);
+			ops = ops | (conditionalOR);
 
 			Rule conditional = "?:" %
-				(conditionalOR & ~("?" & value & ":" & value));// | conditionalOR);
+				(conditionalAND & ~("?" & value & ":" & value));// | conditionalOR);
 
-			Rule ops = "op" %
+			ops = "ops" %
 				(conditional);
 
 			assign.Inner =
-				(instance & assignOperator & expression);
+				(value & assignOperator & expression);
 
 			expression.Inner = (assign | ops | functionCall);
 
+			#endregion
+
+			#region Functions
+			Rule functionParameterDecs = new Rule() { Name = "functionParameterDecs" };
+			functionParameterDecs.Inner = ((variablePrototype & ~+("," & variablePrototype)) | types);
+
+			#region Operator Overloads
+			// bool operator() (const KeyFrame* kf, const KeyFrame* kf2) const
+
+			Rule operatorOverload = "operatorOl" %
+				("operator" & (
+				((Rule)"(" & ")") |
+				((Rule)"[" & "]") |
+				assignOperator | equalOperators | compareOperators | shiftOperators | addOperators | mpyOperators | unaryOperators | primaryOperators
+				));
+			#endregion Operator Overloads
+
+			Rule constructorPrototype = "constructorPrototype" %
+				//(~(type & scopeType) & (id | type) & "(" & ~(functionParameterDecs) & ")");
+				((
+					(operatorOverload | (type & ~scopeType & operatorOverload)) |
+					(~type & (~scopeType & ~(Rule)"~" & id)) |
+					type
+				) &
+				"(" & ~(functionParameterDecs) & ")" ^ ~(~space & "const"));
+			Rule functionPrototype = "functionPrototype" %
+				(type ^ space ^ constructorPrototype);
+			Rule functionDeclaration = "functionDeclaration" %
+				(functionPrototype & ";");
+
+			Rule functionBody = new Rule("functionBody");
+			functionBody.Inner =
+				("{" &
+				~+(space |
+				statement |
+				variableDeclaration |
+				functionBody
+				)
+				& "}");
+
+			Rule functionCallParameters = "parameters" %
+				((expression | value) & ~+(',' & (expression | value)));
+			functionCallTail.Inner = ('(' & ~functionCallParameters & ')');
+			functionCall.Inner = ((instance | (type & ~instance)) & functionCallTail);
+
+			Rule functionDefinition = "functionDefinition" %
+				(functionPrototype & functionBody);
 			#endregion
 
 			#region Statements
@@ -290,7 +325,7 @@ namespace Test
 			Rule elseStatement = "else" %
 				("else" & (ifStatement | functionBody | statement));
 
-			ifStatement = ((Rule)"if" & "(" & expression & ")" & (functionBody | statement) ^ ~(~space & elseStatement));
+			ifStatement.Inner = ((Rule)"if" & "(" & expression & ")" & (functionBody | statement) ^ ~(~space & elseStatement));
 			#endregion if/else
 
 			#region for
@@ -318,7 +353,7 @@ namespace Test
 			Rule inheritItem = "inheritItem" %
 				(functionCall | (type & ~functionCall) | id);
 			Rule inherit = "inherit" %
-				(":" & inheritItem & ~+("," & inheritItem));
+				(":" & inheritItem ^ ~+(~space & "," & inheritItem));
 			#endregion
 
 			Rule classPrototype = "classProt" %
@@ -338,9 +373,9 @@ namespace Test
 			Rule constructorDeclaration = "constructorDeclaration" %
 				(constructorPrototype & ~inherit & ";");
 			Rule constructorDefinition = "constructor" %
-				(constructorPrototype & ~inherit & "{" & functionBody & "}");
+				(constructorPrototype & ~inherit & functionBody);
 			Rule constructorDefinitionExtern = "constructorExt" %
-				(constructorPrototype & ~inherit & "{" & functionBody & "}");
+				(constructorPrototype & ~inherit & functionBody);
 			#endregion Constructor
 
 			#region Destructor

@@ -90,7 +90,7 @@ namespace zeroParse
 			//Console.WriteLine(new StringBuilder().Append(' ', context.Depth).Append(this).Append("").ToString());
 
 			context.Rule = this;
-			context.Success = true;
+			//context.Success = true;
 			if (context.Depth > MaxDepth)
 			{
 				Console.WriteLine("Canceling in " + this + " at depth" + context.Depth + ", line" + context.Line + ":\n\t" + context);
