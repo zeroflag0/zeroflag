@@ -65,7 +65,7 @@
       <Field Name="_Primitive" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>ACAAgkEACBAACBAEQBADICQMAAIAA4ACEYAAAIEAgAA=</HashCode>
+      <HashCode>ACAAgkEACBAACBAEYBEDICQMAAIAA4ACEYAAAIEAgAA=</HashCode>
       <FileName>Rule.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -138,6 +138,13 @@
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAgACAAAAAAAAAAA=</HashCode>
       <FileName>Exists.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroParse.FailedBefore">
+    <Position X="11.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>FailedBefore.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

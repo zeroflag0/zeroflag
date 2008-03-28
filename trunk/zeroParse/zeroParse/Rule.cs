@@ -93,15 +93,26 @@ namespace zeroParse
 			//context.Success = true;
 			if (context.Depth > MaxDepth)
 			{
+				int index = context.Index;
+				if (context.Result != null)
+					index = context.Result.Start + context.Result.Length;
+				Console.WriteLine(("Reached " + (index).ToString().PadLeft(6) + " / " + context.Source.Length.ToString().PadRight(6) + ": " + context.ToString().Replace("\0", @"\0").Replace("\n", @"\n").Replace("\t", @"\t")).PadRight(Console.WindowWidth - 2));
+				Console.WriteLine();
 				Console.WriteLine("Canceling in " + this + " at depth" + context.Depth + ", line" + context.Line + ":\n\t" + context);
 				//return null;
-				throw new ParseFailedException(this, context, "MaxDepth reached", null);
+				throw new DepthMaxException(this, context, "Canceling in " + this + " at depth" + context.Depth + ", line" + context.Line, null);
 			}
 
 			if (context.Source == null || context.Index >= context.Source.Length)
 			{
+				int index = context.Index;
+				if (context.Result != null)
+					index = context.Result.Start + context.Result.Length;
+				Console.WriteLine(("Reached " + (index).ToString().PadLeft(6) + " / " + context.Source.Length.ToString().PadRight(6) + ": " + context.ToString().Replace("\0", @"\0").Replace("\n", @"\n").Replace("\t", @"\t")).PadRight(Console.WindowWidth - 2));
+				Console.WriteLine(); 
 				Console.WriteLine("EOF in " + this + " at depth" + context.Depth + ", line" + context.Line + ":\n\t" + context);
-				return null;
+				throw new EndOfFileException(this, context, "in " + this + " at depth" + context.Depth + ", line" + context.Line, null);
+				//return null;
 			}
 
 #if !VERBOSE
@@ -113,8 +124,9 @@ namespace zeroParse
 				}
 				catch (ParseFailedException exc)
 				{
-					exc.ContextTrace.Add(context);
-					throw exc;
+					//exc.ContextTrace.Add(context);
+					//throw exc;
+					throw;
 				}
 				if (result != null)
 				{
@@ -152,6 +164,11 @@ namespace zeroParse
 						Console.Write((this.Name.PadRight(15) + " failed" + context.ToString().Replace("\0", @"\0").Replace("\r\n", @"\n").Replace("\n", @"\n")).PadRight(50) + "\r");
 					}
 					context.Success = false;
+
+					if (context.LastError == null || context.LastError.Rule == null || context.LastError.Rule.Name == null && this.Name != null)
+					{
+						context.Errors.Add(new ParseFailedException(this, context, this + " could not match.", null));
+					}
 					return null;
 				}
 			}
@@ -508,8 +525,8 @@ namespace zeroParse
 		{
 			return new Optional(optional);
 		}
-		#endregion Optional	
-		
+		#endregion Optional
+
 		#region Exists
 		public static Rule operator -(Rule exists)
 		{

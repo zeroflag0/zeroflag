@@ -27,6 +27,7 @@ namespace zeroParse
 		{
 			if (context.Source.Length > context.Index && context.Source[context.Index] == this.Char)
 				return this.CreateToken(context, 1);
+			context.Errors.Add(new ParseFailedException(this, context, this + " cannot match: \'" + this.Char.ToString() + "\'", null));
 			return null;
 		}
 
