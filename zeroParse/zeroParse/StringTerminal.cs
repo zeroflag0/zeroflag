@@ -20,6 +20,7 @@ namespace zeroParse
 			{
 				return this.CreateToken(context, this.String.Length);
 			}
+			context.Errors.Add(new ParseFailedException(this, context, this + " cannot match: \"" + this.String + "\"", null));
 			return null;
 		}
 

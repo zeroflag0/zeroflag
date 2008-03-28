@@ -157,6 +157,46 @@ namespace Test
 				)
 				^ ~(~space ^ indexer)
 				));
+
+
+			Rule variablePrototype = "variablePrototype" %
+				(type ^ ~space & instance);
+			Rule variableDeclaration = "variable" %
+				(type ^ ~space ^ (assign | instance) & ~indexer & ~(functionCallTail) & ";");
+
+			#endregion
+
+			#region Functions
+			Rule functionParameterDecs = new Rule() { Name = "functionParameterDecs" };
+			functionParameterDecs.Inner = ((variablePrototype & ~+("," & variablePrototype)) | types);
+
+			Rule constructorPrototype = "constructorPrototype" %
+				//(~(type & scopeType) & (id | type) & "(" & ~(functionParameterDecs) & ")");
+				(type & "(" & ~(functionParameterDecs) & ")");
+			Rule functionPrototype = "functionPrototype" %
+				(type ^ space ^ constructorPrototype);
+			Rule functionDeclaration = "functionDeclaration" %
+				(functionPrototype & ";");
+
+			Rule functionBody = new Rule("functionBody");
+			functionBody.Inner =
+				("{" &
+				 new FailedBefore(
+					 ~+(space |
+						statement |
+						variableDeclaration |
+						functionBody
+						)
+					& "}")
+				);
+
+			Rule functionCallParameters = "parameters" %
+				((expression | value) & ~+(',' & (expression | value)));
+			functionCallTail.Inner = ('(' & ~functionCallParameters & ')');
+			functionCall.Inner = ((instance | (type & ~instance)) & functionCallTail);
+
+			Rule functionDefinition = "functionDefinition" %
+				(functionPrototype & functionBody);
 			#endregion
 
 			#region Expressions
@@ -400,7 +440,7 @@ namespace Test
 			Rule structDef = "structdef" %
 				(structDefinition ^ ~(~space & ";"));
 			classDefinition.Inner =
-				(structDefinition | (classPrototype & ~inherit & "{" & +classBody & "}"));// ^ ~(~space & instance)));
+				(structDefinition | (classPrototype & ~inherit & "{" & new FailedBefore(+classBody & "}")));// ^ ~(~space & instance)));
 			Rule classDef = "class" %
 				(classDefinition ^ ~(Rule)";");
 			#endregion
@@ -455,7 +495,7 @@ namespace Test
 				namespaceDefinition | classDef | classDefinition | typedef | enumDef | functionDefinition |
 				classDeclaration | variableDeclaration | functionDeclaration | constructorDefinitionExtern |
 				externalC);
-			root.Inner = (+rootElement);
+			root.Inner = (+rootElement) ^ new FailedBefore("\0");
 
 
 			return root;

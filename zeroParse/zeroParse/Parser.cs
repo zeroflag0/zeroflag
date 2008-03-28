@@ -100,12 +100,37 @@ namespace zeroParse
 		{
 			if (this.Root != null)
 			{
-				Console.Write("Preprocessing... ");
+				Console.Write("Preprocessing " + fileName + "... ");
 				content = this.Preprocess(content);
 				//System.IO.File.WriteAllText(fileName + ".pp.cpp", content);
 				Console.WriteLine("done.");
 				context = new ParserContext(this, fileName, content);
-				return this.Root.Match(context);
+				Console.WriteLine("Processing " + fileName + "...");
+				Token result = null;
+				try
+				{
+					result = this.Root.Match(context);
+				}
+				catch (EndOfFileException exc)
+				{
+					Console.WriteLine(exc.ToString(false));
+					return result ?? context.Result;
+				}
+				catch (ParseFailedException exc)
+				{
+					Console.WriteLine(exc);
+					return context.Result;
+				}
+				Console.WriteLine();
+				if (result == null || !context.Success)
+				{
+					Console.WriteLine("Processing " + fileName + " failed:");
+					//Console.WriteLine(context.LastError);
+				}
+				else
+					Console.WriteLine("Processing " + fileName + " succeeded.");
+				Console.WriteLine(context.LastError);
+				return result;
 			}
 			else
 				context = null;

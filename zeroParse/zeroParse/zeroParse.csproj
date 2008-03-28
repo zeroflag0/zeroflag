@@ -41,7 +41,10 @@
   <ItemGroup>
     <Compile Include="And.cs" />
     <Compile Include="Anything.cs" />
+    <Compile Include="DepthMaxException.cs" />
+    <Compile Include="EndOfFileException.cs" />
     <Compile Include="Exists.cs" />
+    <Compile Include="FailedBefore.cs" />
     <Compile Include="Nothing.cs" />
     <Compile Include="Or.cs" />
     <Compile Include="Chain.cs" />

@@ -7,7 +7,7 @@ namespace zeroParse
 	public class ParseFailedException : System.Exception
 	{
 		public ParseFailedException(Rule rule, ParserContext context, string message, Exception inner)
-			: base(message ?? inner.Message, inner)
+			: base(message ?? (inner != null ? inner.Message : ""), inner)
 		{
 			this.Rule = rule;
 			this.Context = context;
@@ -49,6 +49,10 @@ namespace zeroParse
 
 		public override string ToString()
 		{
+			return this.ToString(true);
+		}
+		public string ToString(bool showStackTrace)
+		{
 			if (this.Rule != null && this.Context != null && this.Context.Source != null)
 				try
 				{
@@ -63,7 +67,8 @@ namespace zeroParse
 							builder.AppendLine();
 						}
 					}
-					builder.Append(this.StackTrace);
+					if (showStackTrace)
+						builder.Append(this.StackTrace);
 					return builder.ToString();
 				}
 				catch

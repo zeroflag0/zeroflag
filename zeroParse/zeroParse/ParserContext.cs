@@ -116,6 +116,23 @@ namespace zeroParse
 		{
 			get { return this.Parser.Root; }
 		}
+
+
+		#region Errors
+
+		private List<ParseFailedException> _Errors;
+
+		public List<ParseFailedException> Errors
+		{
+			get { return this.Outer != null ? this.Outer.Errors : (this._Errors ?? (this._Errors = new List<ParseFailedException>())); }
+		}
+
+		public ParseFailedException LastError
+		{
+			get { try { return this.Errors[this.Errors.Count - 1]; } catch { return null; } }
+		}
+		#endregion Errors
+
 		#endregion Properties
 
 		#region Constructors

@@ -12,9 +12,12 @@ namespace zeroParse
 			if (match == null || match.Context == null || !match.Context.Success)
 				match = this.Otherwise.Match(context.Push());
 			if (match != null)
-				return this.CreateToken(context, 0).Append(match);
+				return match;//this.CreateToken(context, 0).Append(match);
 			else
+			{
+				context.Errors.Add(new ParseFailedException(this, context, this + " could not match.", null));
 				return null;
+			}
 		}
 
 		public Or()
