@@ -48,6 +48,8 @@ namespace Test
 			Rule value = new Rule("value");
 			Rule structDefinition = new Rule("struct");
 			Rule statement = new Rule("statement");
+			Rule functionParameterDecs = new Rule() { Name = "functionParameterDecs" };
+			Rule instance = new Rule("instance");
 
 
 			#region Values
@@ -87,6 +89,41 @@ namespace Test
 				("0x" & +hexDigit);
 
 			#endregion Values
+
+
+			#region Operators
+			Rule primaryOperators = "primaryOp" %
+				(((Rule)"++" | "--"));
+
+			Rule indexer = "indexer" %
+				+(~space ^ "[" & expression & "]");
+
+			Rule newOp = "new" %
+				("new" & (functionCall | (type & indexer)));
+			Rule deleteOp = "delete" %
+				("delete" & ~((Rule)"[" & "]") & instance);
+			Rule typeofOp = "typeof" %
+				((Rule)"typeof" & "(" & type & ")");
+
+			Rule unaryOperators = "unaryOp" %
+				(((Rule)"!" | "~" | "++" | "--" | "+" | "-" | "*"));
+
+			Rule mpyOperators = "mpyOp" %
+				((Rule)"*" | "/" | "%");
+			Rule addOperators = "addOp" %
+				((Rule)"+" | "-");
+			Rule shiftOperators = "shiftOp" %
+				((Rule)">>" | "<<");
+
+			Rule compareOperators = "compareOp" %
+				((Rule)">=" | ">" | "<=" | "<");
+			Rule equalOperators = "equalOp" %
+				((Rule)"==" | "!=");
+
+			Rule assignOperator = "assignOp" %
+				(((Rule)"=" | "+=" | "-=" | "*=" | "/=" | "^=" | "&=" | "|=" | ">>=" | "<<="));
+
+			#endregion Operators
 
 			#region Type Usage
 			Rule idHead = letter | "_";
@@ -135,19 +172,14 @@ namespace Test
 			#endregion
 
 			#region Variables
-			Rule indexer = "indexer" %
-				+(~space ^ "[" & expression & "]");
-
 			Rule variablePrototype = "variablePrototype" %
 				(type ^ ~space & id);
-			Rule variableDeclaration = "variable" %
-				(type ^ ~space ^ +(~space & (assign | id) & ~indexer & ~(functionCallTail) & ~(Rule)"," & ~space) & ";");
 
 			Rule instancePart = "instancePart" %
 				((staticInstance | type | id) ^ ~+((~space ^ functionCallTail) | (~space ^ indexer)));
 			Rule instances = "instances" %
 				(instancePart & ~+(~space & ((Rule)"." | "->") & instancePart));
-			Rule instance = "instance" % (
+			instance.Inner = (
 				//(id & ~+(((Rule)"." | "->") & id)) |
 				(~(typeCast ^ ~space) ^
 				(
@@ -158,21 +190,34 @@ namespace Test
 				^ ~(~space ^ indexer)
 				));
 
-
-			Rule variablePrototype = "variablePrototype" %
-				(type ^ ~space & instance);
 			Rule variableDeclaration = "variable" %
-				(type ^ ~space ^ (assign | instance) & ~indexer & ~(functionCallTail) & ";");
+				(type ^ ~space ^ +(~space & (assign | instance) & ~indexer & ~(functionCallTail) & ~(Rule)"," & ~space) & ";");
 
 			#endregion
 
 			#region Functions
-			Rule functionParameterDecs = new Rule() { Name = "functionParameterDecs" };
+			//Rule functionParameterDecs = new Rule() { Name = "functionParameterDecs" };
 			functionParameterDecs.Inner = ((variablePrototype & ~+("," & variablePrototype)) | types);
+
+			#region Operator Overloads
+			// bool operator() (const KeyFrame* kf, const KeyFrame* kf2) const
+
+			Rule operatorOverload = "operatorOl" %
+				("operator" & (
+				((Rule)"(" & ")") |
+				((Rule)"[" & "]") |
+				assignOperator | equalOperators | compareOperators | shiftOperators | addOperators | mpyOperators | unaryOperators | primaryOperators
+				));
+			#endregion Operator Overloads
 
 			Rule constructorPrototype = "constructorPrototype" %
 				//(~(type & scopeType) & (id | type) & "(" & ~(functionParameterDecs) & ")");
-				(type & "(" & ~(functionParameterDecs) & ")");
+				((
+					(operatorOverload | (type & ~scopeType & operatorOverload)) |
+					(~type & (~scopeType & ~(Rule)"~" & id)) |
+					type
+				) &
+				"(" & ~(functionParameterDecs) & ")" ^ ~(~space & "const"));
 			Rule functionPrototype = "functionPrototype" %
 				(type ^ space ^ constructorPrototype);
 			Rule functionDeclaration = "functionDeclaration" %
@@ -181,19 +226,17 @@ namespace Test
 			Rule functionBody = new Rule("functionBody");
 			functionBody.Inner =
 				("{" &
-				 new FailedBefore(
-					 ~+(space |
-						statement |
-						variableDeclaration |
-						functionBody
-						)
-					& "}")
-				);
+				~+(space |
+				statement |
+				variableDeclaration |
+				functionBody
+				)
+				& new FailedBefore("}"));
 
 			Rule functionCallParameters = "parameters" %
 				((expression | value) & ~+(',' & (expression | value)));
 			functionCallTail.Inner = ('(' & ~functionCallParameters & ')');
-			functionCall.Inner = ((instance | (type & ~instance)) & functionCallTail);
+			functionCall.Inner = ((instance & functionCallTail | (type & ~instance) & functionCallTail | id & functionCallTail));
 
 			Rule functionDefinition = "functionDefinition" %
 				(functionPrototype & functionBody);
@@ -214,37 +257,6 @@ namespace Test
 			//               | '(' <Expr> ')'
 
 			value.Inner = (~(typeCast ^ ~space) ^ ~+(((Rule)"&" | "*") ^ ~space) ^ (hexValue | realValue | intValue | stringValue | charValue | instance | id | ("(" & expression & ")")) ^ ~(~space ^ indexer));
-
-			#region Operators
-			Rule primaryOperators = "primaryOp" %
-				(((Rule)"++" | "--"));
-
-			Rule newOp = "new" %
-				("new" & (functionCall | (type & indexer)));
-			Rule deleteOp = "delete" %
-				("delete" & ~((Rule)"[" & "]") & instance);
-			Rule typeofOp = "typeof" %
-				((Rule)"typeof" & "(" & type & ")");
-
-			Rule unaryOperators = "unaryOp" %
-				(((Rule)"!" | "~" | "++" | "--" | "+" | "-" | "*"));
-
-			Rule mpyOperators = "mpyOp" %
-				((Rule)"*" | "/" | "%");
-			Rule addOperators = "addOp" %
-				((Rule)"+" | "-");
-			Rule shiftOperators = "shiftOp" %
-				((Rule)">>" | "<<");
-
-			Rule compareOperators = "compareOp" %
-				((Rule)">=" | ">" | "<=" | "<");
-			Rule equalOperators = "equalOp" %
-				((Rule)"==" | "!=");
-
-			Rule assignOperator = "assignOp" %
-				(((Rule)"=" | "+=" | "-=" | "*=" | "/=" | "^=" | "&=" | "|=" | ">>=" | "<<="));
-
-			#endregion Operators
 
 			Rule ops = new Rule("op");
 
@@ -309,52 +321,6 @@ namespace Test
 
 			#endregion
 
-			#region Functions
-			Rule functionParameterDecs = new Rule() { Name = "functionParameterDecs" };
-			functionParameterDecs.Inner = ((variablePrototype & ~+("," & variablePrototype)) | types);
-
-			#region Operator Overloads
-			// bool operator() (const KeyFrame* kf, const KeyFrame* kf2) const
-
-			Rule operatorOverload = "operatorOl" %
-				("operator" & (
-				((Rule)"(" & ")") |
-				((Rule)"[" & "]") |
-				assignOperator | equalOperators | compareOperators | shiftOperators | addOperators | mpyOperators | unaryOperators | primaryOperators
-				));
-			#endregion Operator Overloads
-
-			Rule constructorPrototype = "constructorPrototype" %
-				//(~(type & scopeType) & (id | type) & "(" & ~(functionParameterDecs) & ")");
-				((
-					(operatorOverload | (type & ~scopeType & operatorOverload)) |
-					(~type & (~scopeType & ~(Rule)"~" & id)) |
-					type
-				) &
-				"(" & ~(functionParameterDecs) & ")" ^ ~(~space & "const"));
-			Rule functionPrototype = "functionPrototype" %
-				(type ^ space ^ constructorPrototype);
-			Rule functionDeclaration = "functionDeclaration" %
-				(functionPrototype & ";");
-
-			Rule functionBody = new Rule("functionBody");
-			functionBody.Inner =
-				("{" &
-				~+(space |
-				statement |
-				variableDeclaration |
-				functionBody
-				)
-				& "}");
-
-			Rule functionCallParameters = "parameters" %
-				((expression | value) & ~+(',' & (expression | value)));
-			functionCallTail.Inner = ('(' & ~functionCallParameters & ')');
-			functionCall.Inner = ((instance | (type & ~instance)) & functionCallTail);
-
-			Rule functionDefinition = "functionDefinition" %
-				(functionPrototype & functionBody);
-			#endregion
 
 			#region Statements
 			//Rule returnStatement = "return" %

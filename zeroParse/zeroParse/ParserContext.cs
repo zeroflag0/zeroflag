@@ -174,6 +174,7 @@ namespace zeroParse
 
 		public ParserContext Trim()
 		{
+#if TRIM
 			List<ParserContext> inners = new List<ParserContext>();
 			foreach (ParserContext inner in inners)
 			{
@@ -189,6 +190,7 @@ namespace zeroParse
 						inner.Result.Trim();
 				}
 			}
+#endif
 			return this;
 		}
 
