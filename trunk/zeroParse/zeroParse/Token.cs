@@ -109,6 +109,7 @@ namespace zeroParse
 
 		public Token Trim()
 		{
+#if TRIM
 			List<Token> inners = new List<Token>();
 			foreach (Token inner in inners)
 			{
@@ -123,6 +124,7 @@ namespace zeroParse
 					//inner.Context.Trim();
 				}
 			}
+#endif
 			return this;
 		}
 
