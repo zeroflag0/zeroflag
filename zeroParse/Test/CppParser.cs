@@ -96,7 +96,10 @@ namespace Test
 				(((Rule)"++" | "--"));
 
 			Rule indexer = "indexer" %
-				+(~space ^ "[" & expression & "]");
+				+new Debug(~space ^ (
+				("[" & +((value | instance | expression) ^ ~(~space & "," & ~space)) & "]") |
+				("[" & +(expression ^ ~(~space & "," & ~space)) & "]")
+				));
 
 			Rule newOp = "new" %
 				("new" & (functionCall | (type & indexer)));
@@ -165,7 +168,7 @@ namespace Test
 			Rule staticInstance = "static" %
 				(typeSimple & ~+(scopeType & typeSimple));
 
-			type.Inner = ((~("const" ^ space) ^ ~+(~space ^ ((Rule)"*") ^ ~space) ^ ~(scopeType) & staticInstance ^ ~(~space ^ typeTail)) ^ ~(~space ^ functionPointerTail));
+			type.Inner = ((~("const" ^ space) ^ ~(scopeType) & staticInstance ^ ~(~space ^ typeTail)) ^ ~(~space ^ functionPointerTail));
 
 			Rule typedef = "typedef" %
 				("typedef" ^ space ^ ((classDefinition | type) ^ +(~(~space & ",") ^ space & type ^ ~(~space & type))) & ";");
