@@ -225,6 +225,27 @@ namespace zeroflag
 			return type;
 		}
 
+		public static Type GetType(string name, Type baseType)
+		{
+			if (name == null)
+				return null;
+
+			List<Type> types = GetDerived(baseType);
+			types.Add(baseType);
+
+			foreach (Type type in types)
+			{
+				if (type.Name == name)
+					return type;
+			}
+			foreach (Type type in types)
+			{
+				if (type.Name.StartsWith(name) || type.Name.EndsWith(name))
+					return type;
+			}
+			return null;
+		}
+
 		public static List<Type> GetAllBaseTypesAndInterfaces(Type type)
 		{
 			return GetAllBaseTypesAndInterfaces(type, new List<Type>());
