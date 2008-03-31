@@ -153,10 +153,10 @@ namespace Test
 				System.Windows.Forms.Application.Run(restore);
 #endif
 			}
-			catch (Exception exc)
-			{
-				Console.WriteLine(exc);
-			}
+			//catch (Exception exc)
+			//{
+			//    Console.WriteLine(exc);
+			//}
 			finally { }
 		}
 

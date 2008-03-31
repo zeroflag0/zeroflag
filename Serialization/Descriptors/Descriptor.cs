@@ -242,14 +242,19 @@ namespace zeroflag.Serialization.Descriptors
 
 		#region Owner
 
-		private Descriptor _Owner = default(Descriptor);
+		private Descriptor _Owner;
 
 		public Descriptor Owner
 		{
-			get { return _Owner; }
+			get
+			{
+				//if (!this.IsCircularReference(new List<Descriptor>()))
+				return _Owner;
+				//return null;
+			}
 			set
 			{
-				if (_Owner != value && value != this)
+				if (_Owner != value && value != this)// && !IsCircularReference(new List<Descriptor>() { value }))
 				{
 					if (_Owner != null)
 						_Owner.Inner.Remove(this);
@@ -258,6 +263,34 @@ namespace zeroflag.Serialization.Descriptors
 						value.Inner.Add(this);
 				}
 			}
+		}
+
+		public Descriptor Root
+		{
+			get { return this.GetRoot(new List<Descriptor>()); }
+		}
+
+		protected Descriptor GetRoot(List<Descriptor> trace)
+		{
+			if (this.Owner == null || trace.Contains(this))
+			{
+				return this;
+			}
+			trace.Add(this);
+			return this.Owner.GetRoot(trace);
+		}
+
+		protected bool IsCircularReference(List<Descriptor> trace)
+		{
+			if (trace.Contains(this) || trace.Count > 100)
+			{
+				Console.WriteLine("CIRCULAR REFERENCE!");
+				return true;
+			}
+			trace.Add(this);
+			if (this._Owner == null)
+				return false;
+			return this._Owner.IsCircularReference(trace);
 		}
 		#endregion Owner
 
@@ -397,14 +430,33 @@ namespace zeroflag.Serialization.Descriptors
 
 		protected Dictionary<object, Descriptor> Parsed
 		{
-			get { return this.Owner != null && this.Owner != this ? this.Owner.Parsed : (_Parsed ?? (_Parsed = new Dictionary<object, Descriptor>())); }
+			get { return this.Root != null && this.Root != this ? this.Root.Parsed : (_Parsed ?? (_Parsed = new Dictionary<object, Descriptor>())); }
 		}
 
 		Dictionary<Type, Descriptor> _ParsedTypes = null;
 
 		protected Dictionary<Type, Descriptor> ParsedTypes
 		{
-			get { return this.Owner != null && this.Owner != this ? this.Owner.ParsedTypes : (_ParsedTypes ?? (_ParsedTypes = new Dictionary<Type, Descriptor>())); }
+			//get { return this.Root != null && this.Root != this ? this.Root.ParsedTypes : (_ParsedTypes ?? (_ParsedTypes = new Dictionary<Type, Descriptor>())); }
+			get
+			{
+				var root = this.Root;
+				return this.Root != null && this.Root != this ? this.Root.ParsedTypes : (_ParsedTypes ?? (_ParsedTypes = new Dictionary<Type, Descriptor>()));
+				if (root != null && root != this)
+				{
+					return root.ParsedTypes;
+				}
+				else
+				{
+					if (_ParsedTypes != null)
+						return _ParsedTypes;
+					else
+					{
+						_ParsedTypes = new Dictionary<Type, Descriptor>();
+						return _ParsedTypes;
+					}
+				}
+			}
 		}
 
 		public Descriptor Parse(System.Reflection.PropertyInfo info, Descriptor owner)
@@ -437,7 +489,7 @@ namespace zeroflag.Serialization.Descriptors
 
 		protected Descriptor Parse()
 		{
-			if (this.Value == null || !this.Parsed.ContainsKey(this.Value) || this.Type.IsValueType)
+			if (this.Value != null && !this.Parsed.ContainsKey(this.Value) || this.Value == null && !this.ParsedTypes.ContainsKey(this.Type) || this.Type.IsValueType)
 			{
 				this.RememberAndParse();
 			}
@@ -466,10 +518,12 @@ namespace zeroflag.Serialization.Descriptors
 				if (this.Value != null)
 				{
 					this.Parsed.Add(this.Value, this);
-					this.ParsedTypes[this.Value.GetType()] = this;
+					//this.ParsedTypes[this.Value.GetType()] = this;
 				}
-				else
+				else if (!this.ParsedTypes.ContainsKey(this.Type))
+				{
 					this.ParsedTypes[this.Type] = this;
+				}
 			}
 			CWL("Parsing " + this);
 			this.DoParse();

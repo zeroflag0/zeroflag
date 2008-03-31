@@ -14,6 +14,8 @@ namespace Test
 
 			string[] files = null;
 			//files = System.IO.Directory.GetFiles("source");
+			files = new string[] { "source/OgreAnimable.cpp" };
+			//files = new string[] { "source/OgreAlignedAllocator.cpp" };
 			//files = new string[] { "source/OgreAutoParamDataSource.cpp" };
 			files = new string[] { "source/OgreAnimationTrack.cpp" };
 			//files = new string[] { "test.txt" };
@@ -33,7 +35,7 @@ namespace Test
 							parser.Parse(file, out context);
 						}));
 					thread.Start();
-					thread.Join();
+					thread.Join(20000);
 					try
 					{
 						debugForm.ParserThread = thread;
