@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace zeroParse
+namespace zeroflag.Parsing
 {
 	public class Token
 	{
-		private int _Start;
+		private int _Index;
 
-		public int Start
+		public int Index
 		{
-			get { return _Start; }
-			set { _Start = value; }
+			get { return _Index; }
+			set { _Index = value; }
 		}
 		private int _Length;
 
@@ -73,7 +73,7 @@ namespace zeroParse
 			{
 				try
 				{
-					return this.Context.Source.Substring(this.Start, this.BlockLength);
+					return this.Context.Source.Substring(this.Index, this.BlockLength);
 				}
 				catch
 				{

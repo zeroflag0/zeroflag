@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
-  <Class Name="zeroParse.Or">
+  <Class Name="zeroflag.Parsing.Or">
     <Position X="2.75" Y="7.5" Width="2.25" />
     <Members>
       <Field Name="_Either" Hidden="true" />
@@ -11,7 +11,7 @@
       <FileName>Or.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="zeroParse.Chain">
+  <Class Name="zeroflag.Parsing.Chain">
     <Position X="26" Y="7.5" Width="1.75" />
     <Members>
       <Field Name="_Next" Hidden="true" />
@@ -21,7 +21,7 @@
       <FileName>Chain.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="zeroParse.CharTerminal">
+  <Class Name="zeroflag.Parsing.CharTerminal">
     <Position X="17.75" Y="9.25" Width="2.25" />
     <Members>
       <Field Name="_Char" Hidden="true" />
@@ -31,14 +31,14 @@
       <FileName>CharTerminal.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="zeroParse.Optional">
+  <Class Name="zeroflag.Parsing.Optional">
     <Position X="5.75" Y="7.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAgACAAAAAAAAAAA=</HashCode>
       <FileName>Optional.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="zeroParse.RegexTerminal">
+  <Class Name="zeroflag.Parsing.RegexTerminal">
     <Position X="14.5" Y="9.25" Width="2.5" />
     <Members>
       <Field Name="_Pattern" Hidden="true" />
@@ -49,14 +49,14 @@
       <FileName>RegexTerminal.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="zeroParse.Repeat">
+  <Class Name="zeroflag.Parsing.Repeat">
     <Position X="20.75" Y="7.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAgACAAAAAAAAAAA=</HashCode>
       <FileName>Repeat.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="zeroParse.Rule">
+  <Class Name="zeroflag.Parsing.Rule">
     <Position X="13.75" Y="0.75" Width="3.25" />
     <Members>
       <Field Name="_Ignore" Hidden="true" />
@@ -70,7 +70,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="zeroParse.StringTerminal">
+  <Class Name="zeroflag.Parsing.StringTerminal">
     <Position X="11.25" Y="9.25" Width="2.5" />
     <Members>
       <Field Name="_String" Hidden="true" />
@@ -80,49 +80,49 @@
       <FileName>StringTerminal.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="zeroParse.Terminal">
+  <Class Name="zeroflag.Parsing.Terminal">
     <Position X="15" Y="7.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Terminal.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="zeroParse.Not">
+  <Class Name="zeroflag.Parsing.Not">
     <Position X="23.5" Y="7.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Not.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="zeroParse.Debug">
+  <Class Name="zeroflag.Parsing.Debug">
     <Position X="8.5" Y="7.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAACAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Debug.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="zeroParse.Nothing">
+  <Class Name="zeroflag.Parsing.Nothing">
     <Position X="10.25" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAIAAAAAAAAA=</HashCode>
       <FileName>Nothing.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="zeroParse.Anything">
+  <Class Name="zeroflag.Parsing.Anything">
     <Position X="7.5" Y="3" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAIAAAAAAAAA=</HashCode>
       <FileName>Anything.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="zeroParse.Whitespace">
+  <Class Name="zeroflag.Parsing.Whitespace">
     <Position X="8.5" Y="0.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAgAAAAAAAAAAEAAAAAAAAAAAAAgAAAIAAAAAAAAA=</HashCode>
       <FileName>Whitespace.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="zeroParse.And">
+  <Class Name="zeroflag.Parsing.And">
     <Position X="2" Y="4" Width="1.5" />
     <Members>
       <Field Name="_First" Hidden="true" />
@@ -133,14 +133,14 @@
       <FileName>And.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="zeroParse.Exists">
+  <Class Name="zeroflag.Parsing.Exists">
     <Position X="4.5" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAgACAAAAAAAAAAA=</HashCode>
       <FileName>Exists.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="zeroParse.FailedBefore">
+  <Class Name="zeroflag.Parsing.FailedBefore">
     <Position X="11.25" Y="7.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>

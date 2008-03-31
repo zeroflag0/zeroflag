@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace zeroParse
+namespace zeroflag.Parsing
 {
 	public class Repeat : Rule
 	{
@@ -15,7 +15,7 @@ namespace zeroParse
 			//    this.AppendToken(result, inner);
 
 			context.Success = false;
-			while ((inner = this.MatchInner(context.Push(result.Start + result.BlockLength))) != null)
+			while ((inner = this.MatchInner(context.Push(result.Index + result.BlockLength))) != null)
 			{
 				if (inner != null)
 				{

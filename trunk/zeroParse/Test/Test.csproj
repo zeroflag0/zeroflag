@@ -58,9 +58,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\zeroParse\zeroParse.csproj">
+    <ProjectReference Include="..\zeroParse\zeroflag.Parsing.csproj">
       <Project>{10869FD3-6DC4-4E72-83B1-C53F3A9E71F0}</Project>
-      <Name>zeroParse</Name>
+      <Name>zeroflag.Parsing</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -831,9 +831,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Vector3.cpp" />
-    <Content Include="Vector3.nc.cpp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ContextDebugForm.resx">

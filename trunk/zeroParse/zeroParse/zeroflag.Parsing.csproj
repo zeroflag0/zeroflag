@@ -8,8 +8,8 @@
     <ProjectGuid>{10869FD3-6DC4-4E72-83B1-C53F3A9E71F0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>zeroParse</RootNamespace>
-    <AssemblyName>zeroParse</AssemblyName>
+    <RootNamespace>zeroflag.Parsing</RootNamespace>
+    <AssemblyName>zeroflag.Parsing</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -45,6 +45,9 @@
     <Compile Include="EndOfFileException.cs" />
     <Compile Include="Exists.cs" />
     <Compile Include="FailedBefore.cs" />
+    <Compile Include="Structure\Builder.cs" />
+    <Compile Include="Structure\ItemLeaf.cs" />
+    <Compile Include="Structure\ItemNode.cs" />
     <Compile Include="Nothing.cs" />
     <Compile Include="Or.cs" />
     <Compile Include="Chain.cs" />
@@ -61,11 +64,13 @@
     <Compile Include="Rule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StringTerminal.cs" />
+    <Compile Include="Structure\Item.cs" />
     <Compile Include="Terminal.cs" />
     <Compile Include="Token.cs" />
     <Compile Include="Whitespace.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Structure\_ClassDiagram.cd" />
     <None Include="_ClassDiagram.cd" />
     <None Include="_ClassDiagram_Rules.cd" />
   </ItemGroup>

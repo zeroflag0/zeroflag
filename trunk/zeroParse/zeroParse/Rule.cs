@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace zeroParse
+namespace zeroflag.Parsing
 {
 	public class Rule : IEnumerable<Rule>
 	{
@@ -95,7 +95,7 @@ namespace zeroParse
 			{
 				int index = context.Index;
 				if (context.Result != null)
-					index = context.Result.Start + context.Result.Length;
+					index = context.Result.Index + context.Result.Length;
 				Console.WriteLine(("Reached " + (index).ToString().PadLeft(6) + " / " + context.Source.Length.ToString().PadRight(6) + ": " + context.ToString().Replace("\0", @"\0").Replace("\n", @"\n").Replace("\t", @"\t")).PadRight(Console.WindowWidth - 2));
 				Console.WriteLine();
 				Console.WriteLine("Canceling in " + this + " at depth" + context.Depth + ", line" + context.Line + ":\n\t" + context);
@@ -103,17 +103,17 @@ namespace zeroParse
 				throw new DepthMaxException(this, context, "Canceling in " + this + " at depth" + context.Depth + ", line" + context.Line, null);
 			}
 
-			if (context.Source == null || context.Index >= context.Source.Length)
-			{
-				int index = context.Index;
-				if (context.Result != null)
-					index = context.Result.Start + context.Result.Length;
-				Console.WriteLine(("Reached " + (index).ToString().PadLeft(6) + " / " + context.Source.Length.ToString().PadRight(6) + ": " + context.ToString().Replace("\0", @"\0").Replace("\n", @"\n").Replace("\t", @"\t")).PadRight(Console.WindowWidth - 2));
-				Console.WriteLine(); 
-				Console.WriteLine("EOF in " + this + " at depth" + context.Depth + ", line" + context.Line + ":\n\t" + context);
-				throw new EndOfFileException(this, context, "in " + this + " at depth" + context.Depth + ", line" + context.Line, null);
-				//return null;
-			}
+			//if (context.Source == null || context.Index >= context.Source.Length)
+			//{
+			//    int index = context.Index;
+			//    if (context.Result != null)
+			//        index = context.Result.Index + context.Result.Length;
+			//    Console.WriteLine(("Reached " + (index).ToString().PadLeft(6) + " / " + context.Source.Length.ToString().PadRight(6) + ": " + context.ToString().Replace("\0", @"\0").Replace("\n", @"\n").Replace("\t", @"\t")).PadRight(Console.WindowWidth - 2));
+			//    Console.WriteLine();
+			//    Console.WriteLine("EOF in " + this + " at depth" + context.Depth + ", line" + context.Line + ":\n\t" + context);
+			//    //throw new EndOfFileException(this, context, "in " + this + " at depth" + context.Depth + ", line" + context.Line, null);
+			//    return null;
+			//}
 
 #if !VERBOSE
 			{
@@ -151,7 +151,7 @@ namespace zeroParse
 					//context.WhiteSpaces.Match(context);
 					if (DateTime.Now - lastOutput > outputInterval)
 					{
-						Console.Write(("Parsing " + (result.Start + result.Length).ToString().PadLeft(6) + " / " + context.Source.Length.ToString().PadRight(6) + ": " + context.ToString().Replace("\0", @"\0").Replace("\n", @"\n").Replace("\t", @"\t")).PadRight(Console.WindowWidth - 2) + "\r");
+						Console.Write(("Parsing " + (result.Index + result.Length).ToString().PadLeft(6) + " / " + context.Source.Length.ToString().PadRight(6) + ": " + context.ToString().Replace("\0", @"\0").Replace("\n", @"\n").Replace("\t", @"\t")).PadRight(Console.WindowWidth - 2) + "\r");
 						lastOutput = DateTime.Now;
 					}
 
@@ -235,7 +235,7 @@ namespace zeroParse
 			token.Rule = this;
 			token.Name = this.Name;
 
-			token.Start = context.Index;
+			token.Index = context.Index;
 			token.Length = length;
 			token.Context = context;
 			if (context != null)

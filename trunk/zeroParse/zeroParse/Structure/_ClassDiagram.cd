@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Class Name="zeroflag.Parsing.Structure.Item">
+    <Position X="5.5" Y="1" Width="1.5" />
+    <Members>
+      <Field Name="_Index" Hidden="true" />
+      <Field Name="_Outer" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAIgQAAAAAAAAAgAEgAAAAAAA=</HashCode>
+      <FileName>Structure\Item.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Outer" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="zeroflag.Parsing.Structure.ItemNode">
+    <Position X="6.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Structure\ItemNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.Structure.ItemLeaf">
+    <Position X="4.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Structure\ItemLeaf.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.Token">
+    <Position X="9" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AADggEQAAkAAgBAEAAAAIiRAAQAAAQAAgAEgAAAAAAA=</HashCode>
+      <FileName>Token.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.Structure.Builder">
+    <Position X="0.75" Y="1.5" Width="1.5" />
+    <Members>
+      <Field Name="_Result" Hidden="true" />
+      <Field Name="_Source" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAAAAAAAAQAAEAAgAAAAAAAAAAAAAI=</HashCode>
+      <FileName>Structure\Builder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
