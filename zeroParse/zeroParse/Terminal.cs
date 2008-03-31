@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace zeroParse
+namespace zeroflag.Parsing
 {
 	public abstract class Terminal : Rule
 	{

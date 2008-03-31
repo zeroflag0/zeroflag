@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroParse", "zeroParse\zeroParse.csproj", "{10869FD3-6DC4-4E72-83B1-C53F3A9E71F0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Parsing", "zeroParse\zeroflag.Parsing.csproj", "{10869FD3-6DC4-4E72-83B1-C53F3A9E71F0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{A0BA7368-FC33-4D4A-8636-4A4F5C033051}"
 EndProject

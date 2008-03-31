@@ -28,7 +28,7 @@ namespace Test
 		}
 		#endregion ParserThread
 
-		public ContextDebugForm(zeroParse.ParserContext context)
+		public ContextDebugForm(zeroflag.Parsing.ParserContext context)
 			: this()
 		{
 			this.Show(context);
@@ -46,7 +46,7 @@ namespace Test
 			base.OnClosed(e);
 		}
 
-		public void Show(zeroParse.ParserContext context)
+		public void Show(zeroflag.Parsing.ParserContext context)
 		{
 			this.Show();
 			//this.treeView.Nodes.Clear();
@@ -70,7 +70,7 @@ namespace Test
 			}
 		}
 
-		public void Show(ICollection<zeroParse.ParserContext> context)
+		public void Show(ICollection<zeroflag.Parsing.ParserContext> context)
 		{
 			this.Show();
 			//this.treeView.Nodes.Clear();
@@ -90,7 +90,7 @@ namespace Test
 			}
 		}
 
-		TreeNode Parse(zeroParse.ParserContext context, TreeNode parent, int depth)
+		TreeNode Parse(zeroflag.Parsing.ParserContext context, TreeNode parent, int depth)
 		{
 			if (closing)
 				return null;
@@ -102,7 +102,7 @@ namespace Test
 				this.progress.Value = depth;
 				//Console.Write("node: " + context + "\r");
 				Application.DoEvents();
-				zeroParse.ParserContext named = null;// this.FindNamed(context);
+				zeroflag.Parsing.ParserContext named = null;// this.FindNamed(context);
 
 				TreeNode node = new TreeNode();
 				bool redecorate = true;
@@ -116,8 +116,8 @@ namespace Test
 							break;
 						}
 
-				if (context.Outer != null && context.Outer.Rule is zeroParse.Chain && context.Rule is zeroParse.Chain && parent != null ||
-					context.Outer != null && context.Outer.Rule is zeroParse.Or && context.Rule is zeroParse.Or && parent != null ||
+				if (context.Outer != null && context.Outer.Rule is zeroflag.Parsing.Chain && context.Rule is zeroflag.Parsing.Chain && parent != null ||
+					context.Outer != null && context.Outer.Rule is zeroflag.Parsing.Or && context.Rule is zeroflag.Parsing.Or && parent != null ||
 					parent != null && parent.Tag == context)
 				{
 					node = parent;
@@ -171,7 +171,7 @@ namespace Test
 
 						List<TreeNode> empty = new List<TreeNode>();
 						foreach (TreeNode item in node.Nodes)
-							if (item.Tag as zeroParse.ParserContext == null)
+							if (item.Tag as zeroflag.Parsing.ParserContext == null)
 								empty.Add(item);
 						foreach (TreeNode item in empty)
 							node.Nodes.Remove(item);
@@ -218,9 +218,9 @@ namespace Test
 					}
 					node.Text = text;
 				}
-				if (!(context.Rule is zeroParse.Whitespace) && depth < MaxDepth || node == parent)
+				if (!(context.Rule is zeroflag.Parsing.Whitespace) && depth < MaxDepth || node == parent)
 				{
-					foreach (zeroParse.ParserContext inner in context.Inner)
+					foreach (zeroflag.Parsing.ParserContext inner in context.Inner)
 					{
 						TreeNode sub = null;
 
@@ -266,7 +266,7 @@ namespace Test
 		}
 		const int MaxDepth = 10;
 
-		TreeNode Parse(ICollection<zeroParse.ParserContext> context)
+		TreeNode Parse(ICollection<zeroflag.Parsing.ParserContext> context)
 		{
 			int depth = 0;
 			if (closing)
@@ -303,7 +303,7 @@ namespace Test
 			}
 		}
 
-		TreeNode Parse(zeroParse.Rule rule, int depth)
+		TreeNode Parse(zeroflag.Parsing.Rule rule, int depth)
 		{
 			try
 			{
@@ -333,7 +333,7 @@ namespace Test
 			}
 		}
 
-		zeroParse.ParserContext FindNamed(zeroParse.ParserContext context)
+		zeroflag.Parsing.ParserContext FindNamed(zeroflag.Parsing.ParserContext context)
 		{
 			if (context != null)
 			{
@@ -341,8 +341,8 @@ namespace Test
 					return context;
 				else
 				{
-					zeroParse.ParserContext match = null;
-					foreach (zeroParse.ParserContext inner in context.Inner)
+					zeroflag.Parsing.ParserContext match = null;
+					foreach (zeroflag.Parsing.ParserContext inner in context.Inner)
 					{
 						match = this.FindNamed(inner);
 						if (match != null)
@@ -373,12 +373,12 @@ namespace Test
 		void ExpandSuccess(TreeNode node, int depth)
 		{
 			depth++;
-			if (node == null || depth > MaxDepth || !(node.Tag is zeroParse.ParserContext) ||
-				((zeroParse.ParserContext)node.Tag).Rule == null || (((zeroParse.ParserContext)node.Tag).Rule is zeroParse.Whitespace) ||
-				((zeroParse.ParserContext)node.Tag).Rule.Ignore || ((zeroParse.ParserContext)node.Tag).Rule.Primitive
+			if (node == null || depth > MaxDepth || !(node.Tag is zeroflag.Parsing.ParserContext) ||
+				((zeroflag.Parsing.ParserContext)node.Tag).Rule == null || (((zeroflag.Parsing.ParserContext)node.Tag).Rule is zeroflag.Parsing.Whitespace) ||
+				((zeroflag.Parsing.ParserContext)node.Tag).Rule.Ignore || ((zeroflag.Parsing.ParserContext)node.Tag).Rule.Primitive
 				)
 				return;
-			if (node.Tag is zeroParse.ParserContext && ((zeroParse.ParserContext)node.Tag).Success)
+			if (node.Tag is zeroflag.Parsing.ParserContext && ((zeroflag.Parsing.ParserContext)node.Tag).Success)
 			{
 				node.Expand();
 				this.treeView.SelectedNode = node;
@@ -419,7 +419,7 @@ namespace Test
 			if (node != null )
 			{
 				Console.WriteLine("Trimming " + node + "(try)");
-				zeroParse.ParserContext context = node.Tag as zeroParse.ParserContext;
+				zeroflag.Parsing.ParserContext context = node.Tag as zeroflag.Parsing.ParserContext;
 
 				if (context != null)
 				{
@@ -454,7 +454,7 @@ namespace Test
 			{
 				Console.WriteLine("Loading nodes for " + selected.Text);
 				selected.Nodes.Remove(last);
-				this.Parse(selected.Tag as zeroParse.ParserContext, selected.Parent, 0);
+				this.Parse(selected.Tag as zeroflag.Parsing.ParserContext, selected.Parent, 0);
 			}
 			//else
 			//    Console.WriteLine("Couldn't find a node to load... " + selected.Tag);
@@ -477,10 +477,10 @@ namespace Test
 				this.TrimNode(this.treeView.SelectedNode);
 			else if (e.KeyCode == Keys.F9)
 			{
-				List<zeroParse.ParserContext> contexts = new List<zeroParse.ParserContext>();
+				List<zeroflag.Parsing.ParserContext> contexts = new List<zeroflag.Parsing.ParserContext>();
 				foreach (TreeNode node in this.treeView.Nodes)
-					if (node.Tag is zeroParse.ParserContext)
-						contexts.Add(node.Tag as zeroParse.ParserContext);
+					if (node.Tag is zeroflag.Parsing.ParserContext)
+						contexts.Add(node.Tag as zeroflag.Parsing.ParserContext);
 				this.treeView.Nodes.Clear();
 				foreach (var cont in contexts)
 					this.Show(cont);

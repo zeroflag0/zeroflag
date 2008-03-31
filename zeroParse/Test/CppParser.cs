@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using zeroParse;
+using zeroflag.Parsing;
 using System.Text;
 
 namespace Test
 {
-	class CppParser : zeroParse.Parser
+	class CppParser : zeroflag.Parsing.Parser
 	{
-		public override zeroParse.Rule CreateRules()
+		public override zeroflag.Parsing.Rule CreateRules()
 		{
 			Rule newline = @"\n" %
 				((Rule)"\n" | "\0");//"\r\n" | 
@@ -96,8 +96,8 @@ namespace Test
 				(((Rule)"++" | "--"));
 
 			Rule indexer = "indexer" %
-				+new Debug(~space ^ (
-				("[" & +((value | instance | expression) ^ ~(~space & "," & ~space)) & "]") |
+				+(~space ^ (
+				("[" & +((value | instance) ^ ~(~space & "," & ~space)) & "]") |
 				("[" & +(expression ^ ~(~space & "," & ~space)) & "]")
 				));
 
@@ -464,7 +464,10 @@ namespace Test
 				namespaceDefinition | classDef | classDefinition | typedef | enumDef | functionDefinition |
 				classDeclaration | variableDeclaration | functionDeclaration | constructorDefinitionExtern |
 				externalC);
-			root.Inner = (+rootElement) ^ new FailedBefore("\0");
+
+			Rule eof = "EOF" %
+				((Rule)"\0");
+			root.Inner = (+rootElement);// ^ eof;
 
 
 			return root;

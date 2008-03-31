@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using zeroParse;
+using zeroflag.Parsing;
 
 namespace Test
 {
@@ -10,7 +10,7 @@ namespace Test
 		static void Main(string[] args)
 		{
 			ContextDebugForm debugForm = new ContextDebugForm();
-			zeroParse.Parser parser = new CppParser();
+			zeroflag.Parsing.Parser parser = new CppParser();
 
 			string[] files = null;
 			//files = System.IO.Directory.GetFiles("source");
@@ -20,7 +20,7 @@ namespace Test
 			files = new string[] { "source/OgreAnimationTrack.cpp" };
 			//files = new string[] { "test.txt" };
 			//files = new string[] { "test.cpp" };
-			files = new string[] { "test2.cpp" }; 
+			files = new string[] { "test2.cpp" };
 			
 			foreach (string file in files)
 			{
@@ -35,7 +35,7 @@ namespace Test
 							parser.Parse(file, out context);
 						}));
 					thread.Start();
-					thread.Join(20000);
+					thread.Join();
 					try
 					{
 						debugForm.ParserThread = thread;
@@ -75,6 +75,14 @@ namespace Test
 						//Console.WriteLine(exc);
 					}
 				}
+				else
+				{
+					document = context.Result;
+					if (document == null)
+						foreach (var c in context.Inner)
+							if ((document = c.Result) != null)
+								break;
+				}
 				//new RuleDebugForm(parser.Root).Show();
 				//try
 				//{
@@ -87,6 +95,14 @@ namespace Test
 					}
 				}
 				catch { }
+
+				{
+					zeroflag.Parsing.Structure.Builder builder = new zeroflag.Parsing.Structure.Builder();
+					builder.Source = context;
+
+					builder.Build();
+
+				}
 				//}
 				//catch (Exception exc)
 				//{
@@ -97,7 +113,7 @@ namespace Test
 				//{
 				//    Console.WriteLine(token.Name + ":=" + token.BlockValue);
 				//}
-				//Console.WriteLine((token ?? new zeroParse.Token() { Value = "<null>" }));
+				//Console.WriteLine((token ?? new zeroflag.Parsing.Token() { Value = "<null>" }));
 				Console.WriteLine("Finished file " + file + ".");
 			}
 			System.Windows.Forms.Application.Run(debugForm);

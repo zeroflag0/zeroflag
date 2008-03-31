@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace zeroParse
+namespace zeroflag.Parsing
 {
 	public class Not : Rule
 	{
@@ -14,7 +14,7 @@ namespace zeroParse
 			//while ((inner = this.MatchWhiteSpace(context.Push(result.Start + result.BlockLength))) != null)
 			//    this.AppendToken(result, inner);
 
-			context.Success = this.MatchInner(context.Push(result.Start)) == null;
+			context.Success = this.MatchInner(context.Push(result.Index)) == null;
 			//context.Success = !context.Success;
 			if (!context.Success)
 				return null;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace zeroParse
+namespace zeroflag.Parsing
 {
 	public class Chain : Rule
 	{
@@ -23,7 +23,7 @@ namespace zeroParse
 				//while ((inner = this.MatchWhiteSpace(context.Push(result.Start + result.BlockLength))) != null)
 				//    this.AppendToken(result, inner);
 
-				inner = this.MatchNext(context.Push(result.Start + result.BlockLength));
+				inner = this.MatchNext(context.Push(result.Index + result.BlockLength));
 				if (inner != null)
 				{
 					result.Append(inner);

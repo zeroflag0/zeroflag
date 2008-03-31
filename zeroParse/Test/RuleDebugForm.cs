@@ -11,7 +11,7 @@ namespace Test
 {
 	public partial class RuleDebugForm : Form
 	{
-		public RuleDebugForm(zeroParse.Rule rule)
+		public RuleDebugForm(zeroflag.Parsing.Rule rule)
 			: this()
 		{
 			this.Show(rule);
@@ -22,7 +22,7 @@ namespace Test
 			InitializeComponent();
 		}
 
-		public void Show(zeroParse.Rule rule)
+		public void Show(zeroflag.Parsing.Rule rule)
 		{
 			this.treeView.Nodes.Clear();
 			this.treeView.Nodes.Add(this.Parse(rule));
@@ -30,7 +30,7 @@ namespace Test
 			this.Show();
 		}
 
-		TreeNode Parse(zeroParse.Rule rule)
+		TreeNode Parse(zeroflag.Parsing.Rule rule)
 		{
 			try
 			{
