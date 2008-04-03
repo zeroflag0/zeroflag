@@ -34,7 +34,7 @@ namespace zeroflag.Serialization.Descriptors
 {
 	public class StringDescriptor : Descriptor<string>
 	{
-		protected override void DoParse()
+		protected override void Parse()
 		{
 		}
 

@@ -87,6 +87,29 @@ namespace zeroflag.Serialization
 			//}
 		}
 		#endregion Converters
+
+		#region Context
+		private Descriptors.Context _Context;
+
+		/// <summary>
+		/// The serializers's descriptor context...
+		/// </summary>
+		public Descriptors.Context Context
+		{
+			get { return _Context ?? (_Context = this.ContextCreate); }
+		}
+
+		/// <summary>
+		/// Creates the default/initial value for Context.
+		/// The serializers's descriptor context...
+		/// </summary>
+		protected virtual Descriptors.Context ContextCreate
+		{
+			get { return new Descriptors.Context(); }
+		}
+
+		#endregion Context
+
 		public Serializer()
 		{
 		}
@@ -103,7 +126,7 @@ namespace zeroflag.Serialization
 
 		public void Serialize(object value)
 		{
-			this.Descriptor = Descriptors.Descriptor.DoParse(value);
+			this.Descriptor = this.Context.Parse(value);
 			//desc.Parse(value);
 			this.Serialize(this.Descriptor);
 		}
@@ -134,7 +157,7 @@ namespace zeroflag.Serialization
 
 		public object Deserialize(object value, Type type)
 		{
-			Descriptors.Descriptor desc = Descriptors.Descriptor.DoParse(type);
+			Descriptors.Descriptor desc = this.Context.Parse(type);
 			desc.Value = value;
 			return this.Deserialize(value, desc);
 		}

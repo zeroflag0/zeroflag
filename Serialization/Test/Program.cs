@@ -38,6 +38,7 @@ using zeroflag.Serialization;
 namespace Test
 {
 #if TEST1 || TEST2
+	[System.ComponentModel.TypeConverter(typeof(System.ComponentModel.ExpandableObjectConverter))]
 	public class A
 	{
 		A _Parent;
@@ -116,11 +117,13 @@ namespace Test
 
 				A a = new A("root", new A("foo"), new A("bar"), new A(null), null);
 
+				Console.WriteLine("a:= " + a);
 				//zeroflag.Serialization.Descriptors.Descriptor desc = zeroflag.Serialization.Descriptors.Descriptor.DoParse(a);
 
 				//Console.WriteLine(desc);
 				seri.Serialize(a);
 				//seri.Serialize(desc);
+				//System.Windows.Forms.Application.Run(new DebugForm() { Target = a });
 
 				A b = null;
 				//b = (A)desc.Generate();
