@@ -77,34 +77,29 @@ namespace zeroflag.Serialization.Descriptors
 			}
 		}
 
-		public override Descriptor Parse(System.Reflection.PropertyInfo info)
-		{
-			if (info.CanRead && (info.CanWrite || !this.NeedsWriteAccess) && info.GetIndexParameters().Length == 0)
-			{
-				object value = null;
-				if (this.Owner != null && this.Owner.Value != null)
-					value = info.GetValue(this.Owner.Value, new object[] { });
-				return this.Parse(info.Name, info.PropertyType, value);
-			}
-			else return base.Parse(info);
-		}
+		//public override Descriptor Parse(System.Reflection.PropertyInfo info)
+		//{
+		//    if (info.CanRead && (info.CanWrite || !this.NeedsWriteAccess) && info.GetIndexParameters().Length == 0)
+		//    {
+		//        object value = null;
+		//        if (this.Owner != null && this.Owner.Value != null)
+		//            value = info.GetValue(this.Owner.Value, new object[] { });
+		//        return this.Parse(info.Name, info.PropertyType, value);
+		//    }
+		//    else return base.Parse(info);
+		//}
 
-		protected virtual bool NeedsWriteAccess
-		{
-			get { return true; }
-		}
 
-		public override Descriptor Parse(string name, Type type, object value)
-		{
-			this.Value = (T)value;
-			return this.Parse(name, type);
-		}
+		//public override Descriptor Parse(string name, Type type, object value)
+		//{
 
-		public override Descriptor Parse(string name, Type type, Descriptor owner, object value)
-		{
-			this.Value = (T)value;
-			return this.Parse(name, type, owner);
-		}
+		//}
+
+		//public override Descriptor Parse(string name, Type type, Descriptor owner, object value)
+		//{
+		//    this.Value = (T)value;
+		//    return this.Parse(name, type, owner);
+		//}
 
 		protected T Default
 		{

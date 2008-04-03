@@ -34,7 +34,7 @@ namespace zeroflag.Serialization.Descriptors
 {
 	public class ObjectDescriptor : Descriptor<object>
 	{
-		protected override void DoParse()
+		protected override void Parse()
 		{
 			//if (this.Value == null)
 			//    return;
@@ -45,7 +45,9 @@ namespace zeroflag.Serialization.Descriptors
 
 			foreach (System.Reflection.PropertyInfo property in properties)
 			{
-				Descriptor.DoParse(property, this);
+				Descriptor desc = this.Context.Parse(property, this.Value);
+				if (desc != null && !this.Inner.Contains(desc))
+					this.Inner.Add(desc);
 			}
 		}
 	}

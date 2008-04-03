@@ -55,7 +55,7 @@ namespace zeroflag.Serialization.Descriptors
 		//}
 		public const string NameItem = null;
 
-		protected override void DoParse()
+		protected override void Parse()
 		{
 			//if (this.Value != null)
 			{
@@ -65,8 +65,8 @@ namespace zeroflag.Serialization.Descriptors
 				{
 					foreach (T value in collection)
 					{
-						Descriptor item = DoParse(value, typeof(T), this);
-						item.Name = NameItem;
+						Descriptor item = this.Context.Parse(null, typeof(T), value, this.Value, null);
+						//item.Name = NameItem;
 					}
 				}
 			}
@@ -136,7 +136,7 @@ namespace zeroflag.Serialization.Descriptors
 		//    }
 		//}
 
-		protected override bool NeedsWriteAccess
+		public override bool NeedsWriteAccess
 		{
 			get
 			{

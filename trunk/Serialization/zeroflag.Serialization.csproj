@@ -93,6 +93,7 @@
     <Compile Include="Converters\String\Int16.cs" />
     <Compile Include="Converters\String\Int32.cs" />
     <Compile Include="Converters\String\Int64.cs" />
+    <Compile Include="Descriptors\Context.cs" />
     <Compile Include="Descriptors\DelegateDescriptor.cs" />
     <Compile Include="Descriptors\Descriptor.cs" />
     <Compile Include="Descriptors\Descriptor~1.cs" />

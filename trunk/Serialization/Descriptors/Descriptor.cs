@@ -37,199 +37,8 @@ namespace zeroflag.Serialization.Descriptors
 	/// </summary>
 	public abstract class Descriptor
 	{
-		#region Descriptors
-		static Dictionary<Type, Type> _DescriptorTypes = new Dictionary<Type, Type>();
-
-		static Descriptor()
-		{
-			lock (typeof(Descriptor))
-			{
-				List<Type> types = TypeHelper.GetDerived(typeof(Descriptor<>));
-				Type valueType, descriptor;
-				foreach (Type descriptorType in types)
-				{
-					if (descriptorType.IsAbstract || descriptorType.IsInterface)
-						continue;
-
-					descriptor = descriptorType;
-
-					Type genericDescriptor = descriptor;
-					while (!genericDescriptor.IsGenericType || typeof(Descriptor<>) != genericDescriptor.GetGenericTypeDefinition())
-						genericDescriptor = genericDescriptor.BaseType;
-
-					valueType = genericDescriptor.GetGenericArguments()[0];
-					if (valueType.IsGenericType)
-						valueType = valueType.GetGenericTypeDefinition();
-
-					_DescriptorTypes.Add(valueType, descriptor);
-				}
-			}
-		}
-
-		public static Descriptor GetDescriptor(Type value, params Type[] generics)
-		{
-			return (Descriptor)TypeHelper.CreateInstance(GetDescriptorType(value, generics), generics);
-		}
-		public static Type GetDescriptorType(Type value, params Type[] generics)
-		{
-			if (!_DescriptorTypes.ContainsKey(value))
-				lock (_DescriptorTypes)
-				{
-					if (!_DescriptorTypes.ContainsKey(value))
-					{
-						CWL("GetDescriptorType(" + value + ", " + generics + ")");
-						Type descriptor = null;
-						if (value.IsGenericType)
-						// value type is generic...
-						{
-							if (!value.IsGenericTypeDefinition)
-							// if the value type is specialized (e.g. not <T> but <int> or <string>)...
-							{
-								if (generics.Length <= 0)
-									// get the generic arguments...
-									generics = value.GetGenericArguments();
-
-								// get the fully generic type definition... (get <T> instead of <int>)
-								Type genericValue = value.GetGenericTypeDefinition();
-
-								// search for any descriptor that fits the generic definition...
-								Type genericDescriptor = GetDescriptorType(genericValue, generics);
-
-								if (genericDescriptor != null && genericValue != null)
-								{
-									// we got ourselves a base descriptor... now we need to specialize it for our generic type...
-									if (genericDescriptor.IsGenericType && !genericDescriptor.IsGenericTypeDefinition)
-										genericDescriptor = genericDescriptor.GetGenericTypeDefinition();
-									descriptor = TypeHelper.SpecializeType(genericDescriptor, generics);
-								}
-							}
-						}
-
-						if (descriptor == null || descriptor == typeof(ObjectDescriptor))
-						// no suitable descriptor yet...
-						{
-							// scan base types...
-							if (value.BaseType != null)
-							{
-								descriptor = GetDescriptorType(value.BaseType, generics);
-							}
-						}
-
-						if (descriptor == null || descriptor == typeof(ObjectDescriptor))
-						// no suitable descriptor yet...
-						{
-							// scan interfaces...
-							foreach (Type interf in value.GetInterfaces())
-							{
-								descriptor = GetDescriptorType(interf, generics);
-								if (descriptor == null || descriptor == typeof(ObjectDescriptor))
-									continue;
-								else
-									break;
-							}
-						}
-
-						if (descriptor != null)
-							_DescriptorTypes.Add(value, descriptor);
-						else
-							return typeof(ObjectDescriptor);
-					}
-				}
-			return _DescriptorTypes[value];
-		}
-#if OBSOLETE
-		//static Dictionary<Type, Descriptor> _Descriptors = new Dictionary<Type, Descriptor>();
-		static Dictionary<Type, Type> _DescriptorTypes = new Dictionary<Type, Type>();
-		static Descriptor()
-		{
-			List<Type> types = TypeHelper.GetDerived(typeof(Descriptor<>));
-
-			Type valueType, descriptor;
-			foreach (Type descriptorType in types)
-			{
-				if (descriptorType.IsAbstract || descriptorType.IsInterface)
-					continue;
-
-				descriptor = descriptorType;
-
-				//if (!descriptor.IsGenericType)
-				//{
-				//    Descriptor instance = (Descriptor)TypeHelper.CreateInstance(descriptor);
-
-				//    if (!_Descriptors.ContainsKey(instance.Type))
-				//        _Descriptors.Add(instance.Type, instance);
-				//}
-				//else
-				{
-					Type genericDescriptor = descriptor;
-					while (typeof(Descriptor<>) != genericDescriptor.GetGenericTypeDefinition())
-						genericDescriptor = genericDescriptor.BaseType;
-					//descriptor = descriptor.GetGenericTypeDefinition();
-					valueType = genericDescriptor.GetGenericArguments()[0].GetGenericTypeDefinition();
-					_DescriptorTypes.Add(valueType, descriptor);
-				}
-			}
-		}
-
-		protected static Descriptor GetDescriptor(Type type, params Type[] generics)
-		{
-			if (type == null)
-				return null;
-			if (!_DescriptorTypes.ContainsKey(type))
-			{
-				Descriptor inner = null;
-
-				if (type.IsGenericType)
-				{
-					if (!type.IsGenericTypeDefinition)
-					{
-						Type generic = type.GetGenericTypeDefinition();
-						if (generics.Length <= 0)
-							generics = type.GetGenericArguments();
-						else
-						{
-							List<Type> genericTypes = new List<Type>(generics);
-							genericTypes.AddRange(type.GetGenericArguments());
-							//generics = new Type[generics.Length + t.GetGenericArguments().Length];
-						}
-						if (_DescriptorTypes.ContainsKey(generic))
-						{
-							type = generic;
-							generic = TypeHelper.SpecializeType(generic, generics);
-							//inner = (Descriptor)TypeHelper.CreateInstance(_DescriptorTypes[type], generics);
-							inner = GetDescriptor(_DescriptorTypes[type], generics);
-						}
-
-						if ((inner == null || inner.GetType() == typeof(Default)) && generic != type && generic != null)
-						{
-							inner = GetDescriptor(generic, generics);
-						}
-					}
-				}
-
-				if (inner == null || inner.GetType() == typeof(Default))
-				{
-					Type[] interfaces = type.GetInterfaces();
-					foreach (Type inter in interfaces)
-					{
-						inner = GetDescriptor(inter, generics);
-						if (inner != null && inner.GetType() != typeof(Default))
-							break;
-					}
-
-					if ((inner == null || inner.GetType() == typeof(Default)) && type.BaseType != null)
-						inner = GetDescriptor(type.BaseType, generics);
-				}
-				_DescriptorTypes.Add(type, inner.GetType());
-			}
-			//CWL("Selected " + _Descriptors[t] + " for " + t);
-			return (Descriptor)TypeHelper.CreateInstance(_DescriptorTypes[type], generics);
-		}
-#endif//OBSOLETE
-		#endregion Descriptors
-
 		public delegate T GetHandler<T>();
-		public delegate void SetHandler<T>(T value);
+		//public delegate void SetHandler<T>(T value);
 
 		private Type _Type;
 
@@ -241,7 +50,7 @@ namespace zeroflag.Serialization.Descriptors
 
 
 		#region Owner
-
+#if OWNER
 		private Descriptor _Owner;
 
 		public Descriptor Owner
@@ -292,7 +101,21 @@ namespace zeroflag.Serialization.Descriptors
 				return false;
 			return this._Owner.IsCircularReference(trace);
 		}
+#endif
 		#endregion Owner
+
+		#region Context
+
+		Context _Context;
+
+		public Context Context
+		{
+			get { return _Context; }
+			set { _Context = value; }
+		}
+
+		#endregion
+
 
 		#region Value
 
@@ -314,6 +137,11 @@ namespace zeroflag.Serialization.Descriptors
 
 		protected abstract object DefaultValue { get; }
 		#endregion Value
+
+		public virtual bool NeedsWriteAccess
+		{
+			get { return true; }
+		}
 
 		bool? _IsNull = true;
 
@@ -358,190 +186,49 @@ namespace zeroflag.Serialization.Descriptors
 
 
 		#region Parse
-		#region static Parse
-		static string GetCleanName(string value)
+
+		//public Descriptor Parse(System.Reflection.PropertyInfo info, Descriptor owner)
+		//{
+		//    this.Owner = owner;
+		//    return this.Parse(info);
+		//}
+
+		//public virtual Descriptor Parse(System.Reflection.PropertyInfo info)
+		//{
+		//    return this.Parse(info.Name, info.PropertyType);
+		//}
+		//public virtual Descriptor Parse(string name, Type type, Descriptor owner)
+		//{
+		//    this.Owner = owner;
+		//    return this.Parse(name, type);
+		//}
+		//public Descriptor Parse(string name, Type type)
+		//{
+		//    if (type == null)
+		//        type = this.Type;
+		//    this.Type = this.Context.GetUsableType(type);
+
+		//    //if (name == null)
+		//    //    name = type.Name;
+		//    this.Name = name ?? this.Name;
+
+		//    this.Parse();
+		//    return this;
+		//}
+
+		protected abstract void Parse();
+
+		public virtual Descriptor Parse(string name, Type type, object value)
 		{
-			return value.Replace("~", "_").Replace("`", "_");
-		}
-		public static Descriptor DoParse(Type t)
-		{
-			t = GetUsableType(t);
-			CWL("DoParse(" + t + ")");
-			return GetDescriptor(t).Parse(null, t, null);
-		}
-
-		public static Descriptor DoParse(Type t, Descriptor owner)
-		{
-			t = GetUsableType(t);
-			CWL("DoParse(" + t + ", " + owner + ")");
-			return GetDescriptor(t).Parse(null, t, owner);
-		}
-
-		public static Descriptor DoParse(string name, object value, Descriptor owner)
-		{
-			CWL("DoParse(" + name + ", " + value + ", " + owner + ")");
-			return GetDescriptor(GetUsableType(value.GetType())).Parse(name, GetUsableType(value.GetType()), value);
-		}
-
-		public static Descriptor DoParse(object value)
-		{
-			CWL("DoParse(" + value + ")");
-			return GetDescriptor(GetUsableType(value.GetType())).Parse(null, GetUsableType(value.GetType()), value);
-		}
-
-		public static Descriptor DoParse(object value, Type type, Descriptor owner)
-		{
-			type = GetUsableType(type);
-			CWL("DoParse(" + value + ", " + type + ", " + owner + ")");
-			return GetDescriptor(type).Parse(null, type, owner, value);
-		}
-
-
-		public static Descriptor DoParse(object value, Descriptor owner)
-		{
-			if (value == null)
-				return null;
-			CWL("DoParse(" + value + ", " + owner + ")");
-			return GetDescriptor(GetUsableType(value.GetType())).Parse(null, GetUsableType(value.GetType()), owner, value);
-		}
-
-		public static Descriptor DoParse(System.Reflection.PropertyInfo info)
-		{
-			CWL("DoParse(" + info + ")");
-			return GetDescriptor(info.PropertyType).Parse(info);
-		}
-
-		public static Descriptor DoParse(System.Reflection.PropertyInfo info, Descriptor owner)
-		{
-			CWL("DoParse(" + info + ", " + owner + ")");
-			return GetDescriptor(info.PropertyType).Parse(info, owner);
-		}
-
-		static Type GetUsableType(Type type)
-		{
-			if (type != null && !type.IsVisible && type.BaseType != null)
-				return GetUsableType(type.BaseType);
-			else
-				return type;
-		}
-		#endregion static Parse
-
-		Dictionary<object, Descriptor> _Parsed = null;
-
-		protected Dictionary<object, Descriptor> Parsed
-		{
-			get { return this.Root != null && this.Root != this ? this.Root.Parsed : (_Parsed ?? (_Parsed = new Dictionary<object, Descriptor>())); }
-		}
-
-		Dictionary<Type, Descriptor> _ParsedTypes = null;
-
-		protected Dictionary<Type, Descriptor> ParsedTypes
-		{
-			//get { return this.Root != null && this.Root != this ? this.Root.ParsedTypes : (_ParsedTypes ?? (_ParsedTypes = new Dictionary<Type, Descriptor>())); }
-			get
-			{
-				var root = this.Root;
-				return this.Root != null && this.Root != this ? this.Root.ParsedTypes : (_ParsedTypes ?? (_ParsedTypes = new Dictionary<Type, Descriptor>()));
-				if (root != null && root != this)
-				{
-					return root.ParsedTypes;
-				}
-				else
-				{
-					if (_ParsedTypes != null)
-						return _ParsedTypes;
-					else
-					{
-						_ParsedTypes = new Dictionary<Type, Descriptor>();
-						return _ParsedTypes;
-					}
-				}
-			}
-		}
-
-		public Descriptor Parse(System.Reflection.PropertyInfo info, Descriptor owner)
-		{
-			this.Owner = owner;
-			return this.Parse(info);
-		}
-
-		public virtual Descriptor Parse(System.Reflection.PropertyInfo info)
-		{
-			return this.Parse(info.Name, info.PropertyType);
-		}
-		public virtual Descriptor Parse(string name, Type type, Descriptor owner)
-		{
-			this.Owner = owner;
-			return this.Parse(name, type);
-		}
-		public Descriptor Parse(string name, Type type)
-		{
-			if (type == null)
-				type = this.Type;
-			this.Type = GetUsableType(type);
-
-			//if (name == null)
-			//    name = type.Name;
-			this.Name = name ?? this.Name;
-
-			return this.Parse();
-		}
-
-		protected Descriptor Parse()
-		{
-			if (this.Value != null && !this.Parsed.ContainsKey(this.Value) || this.Value == null && !this.ParsedTypes.ContainsKey(this.Type) || this.Type.IsValueType)
-			{
-				this.RememberAndParse();
-			}
-			//else if (this.Type.IsValueType)// || !this.ParsedTypes.ContainsKey(this.Type))
-			//{
-			//    this.RememberAndParse();
-			//}
-			else
-			{
-				Descriptor old = this.Value != null ? this.Parsed[this.Value] : this.ParsedTypes[this.Type];
-				CWL("Skipping " + this + " for reference to " + old);
-				//this.Name = old.Name;
-				//this.Key = old.Key;
-				this.Id = old.Id;
-				old.IsReferenced = true;
-				this.Inner.Clear();
-				//return this.Parsed[this.Value];
-			}
-
+			this.Name = name;
+			this.Type = type;
+			this.Value = value;
+			this.Parse();
 			return this;
 		}
-		private void RememberAndParse()
-		{
-			if (!this.Type.IsValueType)
-			{
-				if (this.Value != null)
-				{
-					this.Parsed.Add(this.Value, this);
-					//this.ParsedTypes[this.Value.GetType()] = this;
-				}
-				else if (!this.ParsedTypes.ContainsKey(this.Type))
-				{
-					this.ParsedTypes[this.Type] = this;
-				}
-			}
-			CWL("Parsing " + this);
-			this.DoParse();
-		}
-
-		public abstract Descriptor Parse(string name, Type type, Descriptor owner, object value);
-		public abstract Descriptor Parse(string name, Type type, object value);
-		protected abstract void DoParse();
 		#endregion Parse
 
 		#region Generate
-		Dictionary<int, Descriptor> _Generated = null;
-
-		public Dictionary<int, Descriptor> Generated
-		{
-			get { return this.Owner != null ? this.Owner.Generated : _Generated ?? (_Generated = new Dictionary<int, Descriptor>()); }
-		}
-
 		bool _IsParsed = false;
 		public void GenerateParse()
 		{
@@ -549,13 +236,13 @@ namespace zeroflag.Serialization.Descriptors
 				return;
 			_IsParsed = true;
 
-			if (this.Id != null && this.Generated.ContainsKey(this.Id.Value))// && this != this.Generated[this.Id.Value])
+			if (this.Id != null && this.Context.Instances.ContainsKey(this.Id.Value))// && this != this.Generated[this.Id.Value])
 			{
-				if (this == this.Generated[this.Id.Value])
+				if (this == this.Context.Instances[this.Id.Value])
 					CWL("Link self!");
 				CWL("Link(name='" + this.Name + "', type='" + this.Type + "', isnull='" + this.IsNull + "', id='" + this.Id + "', value='" + this.Value + "', children='" + this.Inner.Count + "')");
 
-				Descriptor other = this.Generated[this.Id.Value];
+				Descriptor other = this.Context.Instances[this.Id.Value];
 				CWL("  To(name='" + other.Name + "', type='" + other.Type + "', isnull='" + other.IsNull + "', id='" + other.Id + "', value='" + other.Value + "', children='" + other.Inner.Count + "')");
 				this.Type = other.Type;
 				this.Value = other.Value;
@@ -571,10 +258,10 @@ namespace zeroflag.Serialization.Descriptors
 				}
 				if (this.Id != null)
 				{
-					if (!this.Generated.ContainsKey(this.Id.Value))
+					if (!this.Context.Instances.ContainsKey(this.Id.Value))
 					{
 						CWL("Reference(name='" + this.Name + "', type='" + this.Type + "', isnull='" + this.IsNull + "', id='" + this.Id + "', value='" + this.Value + "', children='" + this.Inner.Count + "')");
-						this.Generated.Add(this.Id.Value, this);
+						this.Context.Instances.Add(this.Id.Value, this);
 					}
 					else
 						CWL("Reference already exists for " + this.Id);
@@ -721,6 +408,8 @@ namespace zeroflag.Serialization.Descriptors
 		}
 		public StringBuilder ToStringTree(StringBuilder builder, int depth)
 		{
+			//if (depth > 20)
+				return builder;
 			builder.Append(' ', depth * 2).Append(this.Name ?? "<noname>").Append(" (").Append(this.Type).Append(",").Append(this.Id).Append(") := ").Append(this.Value ?? (object)"<null>").AppendLine();
 			foreach (Descriptor child in this.Inner)
 				child.ToStringTree(builder, depth + 1);

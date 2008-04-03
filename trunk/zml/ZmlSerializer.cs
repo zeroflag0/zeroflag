@@ -141,19 +141,19 @@ namespace zeroflag.Zml
 			XmlDocument doc = new XmlDocument();
 			doc.Load(this.FileName);
 
-			value = this.Deserialize(value, desc, doc.DocumentElement);
+			value = this.Deserialize(value, desc, null, doc.DocumentElement);
 
 			Console.WriteLine("<Deserialized>");
 			Console.WriteLine(desc.ToStringTree().ToString());
 			Console.WriteLine("</Deserialized>");
 			Console.WriteLine("<Created>");
-			Console.WriteLine(zeroflag.Serialization.Descriptors.Descriptor.DoParse(value).ToStringTree().ToString());
+			Console.WriteLine(this.Context.Parse(value).ToStringTree().ToString());
 			Console.WriteLine("</Created>");
 
 			return value;
 		}
 		int depth = 0;
-		protected virtual object Deserialize(object value, Descriptor desc, XmlNode node)
+		protected virtual object Deserialize(object value, Descriptor desc, Descriptor outer, XmlNode node)
 		{
 			depth++;
 
@@ -174,17 +174,17 @@ namespace zeroflag.Zml
 					Type type = types.Find(t => t.Name != null && t.Name.ToLower() == explicitType.ToLower()) ?? desc.Type;
 					if (type != desc.Type)
 					{
-						desc = zeroflag.Serialization.Descriptors.Descriptor.GetDescriptor(type).Parse(desc.Name, type, desc.Owner);
+						desc = this.Context.Parse(desc.Name, type, outer);
 					}
 				}
 			}
 
 			desc.Value = value;
-			if (desc.Value == null && desc.Name != null && desc.Owner != null && desc.Owner.Value != null)
+			if (desc.Value == null && desc.Name != null && outer != null && outer.Value != null)
 			{
-				var info = desc.Owner.Property(desc.Name);
+				var info = outer.Property(desc.Name);
 				if (info != null && info.GetIndexParameters().Length == 0)
-					value = desc.Value = info.GetValue(desc.Owner.Value, null);
+					value = desc.Value = info.GetValue(outer.Value, null);
 			}
 			if (value != null && value.GetType() != desc.Type && !desc.Type.IsAssignableFrom(value.GetType()))
 				value = null;
@@ -250,6 +250,7 @@ namespace zeroflag.Zml
 				else //if (sub is XmlElement)
 				{
 					string subTypeName = this.GetAttribute(AttributeType, sub) ?? sub.Name;
+					string subName = this.GetAttribute(AttributeName, sub);
 					Type subType = null;
 					Descriptor inner = null;
 					inner = desc.Inner.Find(i => i.Name != null && i.Name.ToLower() == sub.Name.ToLower());
@@ -264,7 +265,7 @@ namespace zeroflag.Zml
 						if (info != null)
 						{
 							subType = info.PropertyType;
-							//subTypeName = info.Name;
+							subName = info.Name;
 						}
 						else
 						{
@@ -277,12 +278,12 @@ namespace zeroflag.Zml
 						continue;
 
 					if (inner == null)
-						inner = Descriptor.DoParse(subType, desc);
+						inner = Descriptor.Parse(subName, subType, desc);
 					if (inner != null && !desc.Inner.Contains(inner))
 						desc.Inner.Add(inner);
 					//if (subTypeName != null)
 					//    inner.Name = subTypeName;
-					this.Deserialize(inner.Value, inner, sub);
+					this.Deserialize(inner.Value, inner, desc, sub);
 				}
 			}
 			depth--;
