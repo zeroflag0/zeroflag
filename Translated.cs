@@ -221,6 +221,8 @@ namespace zeroflag
 
 		public void Add(Translated.Translation item)
 		{
+			//if (item == null) System.Diagnostics.Debug.Assert(item != null, "Item is null...");
+			System.Diagnostics.Debug.Assert(item.Language != null && item.Value != null, "Item is not fully defined: language='" + item.Language + "' value='" + item.Value + "'");
 			this.Translations.Add(item.Language, item.Value);
 		}
 

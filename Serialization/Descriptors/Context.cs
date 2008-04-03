@@ -8,12 +8,28 @@ namespace zeroflag.Serialization.Descriptors
 	public class Context
 	{
 		#region Descriptors
-		Dictionary<Type, Type> _DescriptorTypes;
+		#region DescriptorTypes
+		private Dictionary<Type, Type> _DescriptorTypes;
 
+		/// <summary>
+		/// The types of the available descriptors...
+		/// </summary>
 		public Dictionary<Type, Type> DescriptorTypes
 		{
-			get { return _DescriptorTypes ?? (_DescriptorTypes = new Dictionary<Type, Type>(_StaticDescriptorTypes)); }
+			get { return _DescriptorTypes ?? (_DescriptorTypes = this.DescriptorTypesCreate); }
 		}
+
+		/// <summary>
+		/// Creates the default/initial value for DescriptorTypes.
+		/// The types of the available descriptors...
+		/// </summary>
+		protected virtual Dictionary<Type, Type> DescriptorTypesCreate
+		{
+			get { return new Dictionary<Type, Type>(_StaticDescriptorTypes); }
+		}
+
+		#endregion DescriptorTypes
+
 		static Dictionary<Type, Type> _StaticDescriptorTypes = new Dictionary<Type, Type>();
 
 		static Context()
@@ -231,12 +247,21 @@ namespace zeroflag.Serialization.Descriptors
 			object owner = outer.Value;
 
 			System.Reflection.PropertyInfo info = null;
-			if (owner != null)
+			if (owner != null && name != null)
 				info = owner.GetType().GetProperty(name);
 
-			return this.Parse(info, owner);
+			if (info != null)
+				return this.Parse(info, owner);
+			else
+				return this.Parse(name, type, null, outer.Value, null);
 		}
 
+		public Descriptor Parse(System.Reflection.PropertyInfo info, Descriptor outer)
+		{
+			dbg.Assert(outer != null, "Outer is null! info='" + info + "'");
+
+			return this.Parse(info, outer.Value);
+		}
 		public Descriptor Parse(System.Reflection.PropertyInfo info, object owner)
 		{
 			dbg.Assert(info != null, "Info is null!");
@@ -248,7 +273,7 @@ namespace zeroflag.Serialization.Descriptors
 			{
 				instance = info.GetValue(owner, null);
 			}
-			dbg.Assert(info.CanRead, "Property read inaccessible. type='" + type + "' instance='" + instance + "' instancetype='" + (instance ?? System.DBNull.Value).GetType() + "' " + name);
+			dbg.Assert(info.CanRead && info.GetGetMethod() != null && info.GetGetMethod().IsPublic, "Property read inaccessible. type='" + type + "' instance='" + instance + "' owner='" + owner + "' " + name);
 
 			return this.Parse(name, type, instance, owner, info);
 		}
@@ -258,7 +283,7 @@ namespace zeroflag.Serialization.Descriptors
 			if (type == null && instance != null)
 				type = instance.GetType();
 
-			System.Diagnostics.Debug.Assert(type != null, "Type and instance were null! " + name);
+			System.Diagnostics.Debug.Assert(type != null, "Type and instance were null! type='" + type + "' instance='" + instance + "' owner='" + owner + "' " + name);
 
 			//if (instance == null)
 			//    System.Diagnostics.Debug.Assert(instance == null || type.IsAssignableFrom(instance.GetType()), "Type and instance do not match! type='" + type + "' instance='" + instance + "' instancetype='" + (instance != null?instance.GetType():null) + "' " + name);
@@ -284,7 +309,7 @@ namespace zeroflag.Serialization.Descriptors
 			{
 				desc = GetDescriptor(type);
 
-				System.Diagnostics.Debug.Assert(desc != null, "Cannot find descriptor for type='" + type + "' instance='" + instance + "' " + name);
+				System.Diagnostics.Debug.Assert(desc != null, "Cannot find descriptor for type='" + type + "' instance='" + instance + "' owner='" + owner + "' " + name);
 
 				if (instance != null)
 				{
@@ -298,8 +323,10 @@ namespace zeroflag.Serialization.Descriptors
 				}
 			}
 
-			System.Diagnostics.Debug.Assert(desc.NeedsWriteAccess || owner == null || info == null || info.CanWrite,
-				"Property write inaccessible. type='" + type + "' instance='" + instance + "' " + name);
+			if (owner != null && info != null && !(info.CanWrite && info.GetSetMethod() != null && info.GetSetMethod().IsPublic) && desc.NeedsWriteAccess)
+				return null;
+			System.Diagnostics.Debug.Assert(owner == null || info == null || (info.CanWrite || !desc.NeedsWriteAccess),
+				"Property write inaccessible. type='" + type + "' instance='" + instance + "' owner='" + owner + "' " + name);
 
 			if (owner != null && info != null && info.CanRead && (info.CanWrite || !desc.NeedsWriteAccess) && info.GetIndexParameters().Length == 0)
 			{

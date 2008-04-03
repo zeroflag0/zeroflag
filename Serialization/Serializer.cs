@@ -63,12 +63,12 @@ namespace zeroflag.Serialization
 			}
 		}
 
-		Descriptors.Descriptor _Descriptor;
+		Descriptors.Descriptor _RootDescriptor;
 
-		public Descriptors.Descriptor Descriptor
+		public Descriptors.Descriptor RootDescriptor
 		{
-			get { return _Descriptor; }
-			set { _Descriptor = value; }
+			get { return _RootDescriptor; }
+			set { _RootDescriptor = value; }
 		}
 
 		#region Converters
@@ -126,9 +126,9 @@ namespace zeroflag.Serialization
 
 		public void Serialize(object value)
 		{
-			this.Descriptor = this.Context.Parse(value);
+			this.RootDescriptor = this.Context.Parse(value);
 			//desc.Parse(value);
-			this.Serialize(this.Descriptor);
+			this.Serialize(this.RootDescriptor);
 		}
 		public abstract void Serialize(Descriptors.Descriptor value);
 
