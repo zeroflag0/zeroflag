@@ -278,7 +278,7 @@ namespace zeroflag.Zml
 						continue;
 
 					if (inner == null)
-						inner = Descriptor.Parse(subName, subType, desc);
+						inner = this.Context.Parse(subName, subType, desc);
 					if (inner != null && !desc.Inner.Contains(inner))
 						desc.Inner.Add(inner);
 					//if (subTypeName != null)

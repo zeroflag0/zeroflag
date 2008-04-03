@@ -132,16 +132,16 @@ namespace zeroflag
 
 					}
 					// check if there are any assemblies depending on the current...
-					if (assemblies != available)
-						foreach (var other in available)
-						{
-							foreach (var refe in other.GetReferencedAssemblies())
-							{
-								if (refe.FullName == assembly.GetName().FullName)
-									// if it depends, scan it...
-									ScanAssemblies(other);
-							}
-						}
+					//if (assemblies != available)
+					//    foreach (var other in available)
+					//    {
+					//        foreach (var refe in other.GetReferencedAssemblies())
+					//        {
+					//            if (refe.FullName == assembly.GetName().FullName)
+					//                // if it depends, scan it...
+					//                ScanAssemblies(other);
+					//        }
+					//    }
 				}
 				return _Types;
 			}
@@ -167,7 +167,8 @@ namespace zeroflag
 			{
 				Derived[baseType] = new List<Type>();
 
-				ScanAssemblies(baseType.Assembly);
+				//TODO: ScanAssemblies(baseType.Assembly);
+				ScanAssemblies(AppDomain.CurrentDomain.GetAssemblies());
 
 				// find all types directly derived from the type...
 				foreach (System.Type type in Types)
