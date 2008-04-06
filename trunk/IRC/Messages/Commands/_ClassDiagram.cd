@@ -1,47 +1,94 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Font Name="Tahoma" Size="8.25" />
   <Class Name="zeroflag.IRC.Messages.Commands.Command">
     <Position X="0.5" Y="0.75" Width="1.5" />
+    <Members>
+      <Field Name="_CommandTypes" Hidden="true" />
+      <Field Name="_Message" Hidden="true" />
+    </Members>
     <TypeIdentifier>
-      <FileName>Messages\Commands\Command.cs</FileName>
       <HashCode>AAAkQAAAACAAAADAAAAAAAYAABAAAAAAAAAAIEAgAAA=</HashCode>
+      <FileName>Messages\Commands\Command.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.IRC.Messages.Commands.Nick">
-    <Position X="3.25" Y="0.75" Width="1.5" />
+    <Position X="2.75" Y="4.75" Width="1.5" />
+    <Members>
+      <Field Name="_NewNick" Hidden="true" />
+      <Field Name="_OldNick" Hidden="true" />
+    </Members>
     <TypeIdentifier>
-      <FileName>Messages\Commands\Nick.cs</FileName>
       <HashCode>AIAAQAAQAAAAAAAEAAAAACAAAAAAAAAAAAAAAAAhAAA=</HashCode>
+      <FileName>Messages\Commands\Nick.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.IRC.Messages.Commands.Join">
-    <Position X="3.25" Y="4.25" Width="1.5" />
+    <Position X="5" Y="4.75" Width="1.5" />
+    <Members>
+      <Field Name="_Channel" Hidden="true" />
+    </Members>
     <TypeIdentifier>
-      <FileName>Messages\Commands\Join.cs</FileName>
       <HashCode>AAAAQAAgAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Messages\Commands\Join.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="zeroflag.IRC.Messages.Commands.Unknown" Collapsed="true">
-    <Position X="0.5" Y="5.5" Width="1.5" />
+  <Class Name="zeroflag.IRC.Messages.Commands.Unknown">
+    <Position X="0.5" Y="4.75" Width="1.5" />
+    <Members>
+      <Field Name="_Name" Hidden="true" />
+      <Field Name="_Parameters" Hidden="true" />
+    </Members>
     <TypeIdentifier>
-      <FileName>Messages\Commands\Unknown.cs</FileName>
       <HashCode>AAAAQAAAAAAAAAAEAAAAIAQAAAAAAAAAAIAAAAAgAAA=</HashCode>
+      <FileName>Messages\Commands\Unknown.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.IRC.Messages.Commands.Mode">
-    <Position X="6.5" Y="0.75" Width="1.5" />
+    <Position X="7.25" Y="4.75" Width="1.5" />
+    <Members>
+      <Field Name="_Modification" Hidden="true" />
+      <Field Name="_Target" Hidden="true" />
+    </Members>
     <TypeIdentifier>
-      <FileName>Messages\Commands\Mode.cs</FileName>
       <HashCode>AAAAQBAAQAAAAAAAAAAAACAIAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Messages\Commands\Mode.cs</FileName>
     </TypeIdentifier>
-    <InheritanceLine Type="zeroflag.IRC.Messages.Commands.Command" FixedToPoint="true">
-      <Path>
-        <Point X="1.25" Y="0.75" />
-        <Point X="1.25" Y="0.375" />
-        <Point X="6.688" Y="0.375" />
-        <Point X="6.688" Y="0.75" />
-      </Path>
-    </InheritanceLine>
   </Class>
+  <Class Name="zeroflag.IRC.Messages.Message">
+    <Position X="3.75" Y="0.75" Width="1.5" />
+    <Members>
+      <Field Name="_Command" Hidden="true" />
+      <Field Name="_Peer" Hidden="true" />
+      <Property Name="CreateRegex" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAQAAAAAAAAAAGAAAARBAAAABAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>Messages\Message.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Command" />
+      <Property Name="Peer" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="zeroflag.IRC.Messages.Peer">
+    <Position X="7.25" Y="0.75" Width="1.5" />
+    <Members>
+      <Field Name="_Host" Hidden="true" />
+      <Field Name="_Nick" Hidden="true" />
+      <Field Name="_User" Hidden="true" />
+      <Property Name="CreateRegex" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Enum Name="zeroflag.IRC.Messages.Peer.PeerType" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Messages\Peer.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>gAABQAAAAAAAAIAEAAAAAEAAABBACAAAAQAAAEAAAAA=</HashCode>
+      <FileName>Messages\Peer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Tahoma" Size="8.25" />
 </ClassDiagram>
