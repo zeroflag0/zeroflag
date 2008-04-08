@@ -94,6 +94,7 @@
     <Compile Include="Converters\String\Int32.cs" />
     <Compile Include="Converters\String\Int64.cs" />
     <Compile Include="Descriptors\Context.cs" />
+    <Compile Include="Descriptors\DateTimeDescriptor.cs" />
     <Compile Include="Descriptors\DelegateDescriptor.cs" />
     <Compile Include="Descriptors\Descriptor.cs" />
     <Compile Include="Descriptors\Descriptor~1.cs" />
@@ -103,6 +104,8 @@
     <Compile Include="Descriptors\StringDescriptor.cs" />
     <None Include="Descriptors\TranslationDescriptor.cs" />
     <Compile Include="Descriptors\TypeDescriptor.cs" />
+    <Compile Include="ExceptionCollection.cs" />
+    <Compile Include="ExceptionTrace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerializationAttribute.cs" />
     <Compile Include="Serializer.cs" />
@@ -118,6 +121,10 @@
     <Content Include="BinarySerialization.concept.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Collections\zeroflag.Collections.csproj">
+      <Project>{C4B9F045-0005-4B33-B426-4134C161C9EE}</Project>
+      <Name>zeroflag.Collections</Name>
+    </ProjectReference>
     <ProjectReference Include="..\zeroflag.csproj">
       <Project>{22563556-8B26-42A2-A395-74A3452A49CA}</Project>
       <Name>zeroflag</Name>

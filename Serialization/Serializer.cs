@@ -105,7 +105,7 @@ namespace zeroflag.Serialization
 		/// </summary>
 		protected virtual Descriptors.Context ContextCreate
 		{
-			get { return new Descriptors.Context(); }
+			get { return new Descriptors.Context() { Exceptions = this.Exceptions }; }
 		}
 
 		#endregion Context
@@ -144,6 +144,13 @@ namespace zeroflag.Serialization
 		///// Creates a child-serializer.
 		///// </summary>
 		//protected abstract Serializer CreateChild();
+		ExceptionCollection _Exceptions = new ExceptionCollection();
+
+		public ExceptionCollection Exceptions
+		{
+			get { return _Exceptions; }
+			set { _Exceptions = value; }
+		}
 
 		public T Deserialize<T>()
 		{

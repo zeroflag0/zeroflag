@@ -251,23 +251,32 @@ namespace zeroflag.Serialization.Descriptors
 				info = owner.GetType().GetProperty(name);
 
 			if (info != null)
-				return this.Parse(info, owner);
+				return this.Parse(info, type, owner);
 			else
 				return this.Parse(name, type, null, outer.Value, null);
 		}
 
 		public Descriptor Parse(System.Reflection.PropertyInfo info, Descriptor outer)
 		{
+			return this.Parse(info, null, outer.Value);
+		}
+		public Descriptor Parse(System.Reflection.PropertyInfo info, Type type, Descriptor outer)
+		{
 			dbg.Assert(outer != null, "Outer is null! info='" + info + "'");
 
-			return this.Parse(info, outer.Value);
+			return this.Parse(info, type, outer.Value);
 		}
+
 		public Descriptor Parse(System.Reflection.PropertyInfo info, object owner)
+		{
+			return this.Parse(info, null, owner);
+		}
+		public Descriptor Parse(System.Reflection.PropertyInfo info, Type type, object owner)
 		{
 			dbg.Assert(info != null, "Info is null!");
 
 			string name = info.Name;
-			Type type = info.PropertyType;
+			type = type ?? info.PropertyType;
 			object instance = null;
 			if (owner != null && info.GetIndexParameters().Length == 0)
 			{
@@ -300,12 +309,32 @@ namespace zeroflag.Serialization.Descriptors
 			return true;
 		}
 
+		int _depth = 0;
 		public virtual Descriptor Parse(string name, Type type, object instance, object owner, System.Reflection.PropertyInfo info)
+		{
+			if (_depth > 500)
+			{
+				this.Exceptions.Add(new ExceptionTrace(new StackOverflowException("Descriptor Context reached a depth of " + _depth + ". Terminating..."), null, null, type, instance));
+				return null;
+			}
+			try
+			{
+				_depth++;
+				return this._Parse(name, type, instance, owner, info);
+			}
+			finally
+			{
+				_depth--;
+			}
+		}
+		Descriptor _Parse(string name, Type type, object instance, object owner, System.Reflection.PropertyInfo info)
 		{
 			if (type == null && instance != null)
 				type = instance.GetType();
 
-			System.Diagnostics.Debug.Assert(type != null, "Type and instance were null! type='" + type + "' instance='" + instance + "' owner='" + owner + "' " + name);
+			//System.Diagnostics.Debug.Assert(type != null, "Type and instance were null! type='" + type + "' instance='" + instance + "' owner='" + owner + "' " + name);
+			if (type == null)
+				return null; // throw new NullReferenceException("Type and instance were null! type='" + type + "' instance='" + instance + "' owner='" + owner + "' " + name);
 
 			//if (instance == null)
 			//    System.Diagnostics.Debug.Assert(instance == null || type.IsAssignableFrom(instance.GetType()), "Type and instance do not match! type='" + type + "' instance='" + instance + "' instancetype='" + (instance != null?instance.GetType():null) + "' " + name);
@@ -323,18 +352,21 @@ namespace zeroflag.Serialization.Descriptors
 				else
 				{
 					// there's no instance, so search for a type-descriptor...
-					if (owner == null && this.ParsedTypes.ContainsKey(type))
+					if (owner == null)
 					{
-						desc = this.ParsedTypes[type];
-						if (desc.Value != null)
+						while (this.ParsedTypes.ContainsKey(type))
 						{
-							while (this.ParsedTypes.Remove(type)) ;
-							instance = desc.Value;
-							if (!this.ParsedObjects.ContainsKey(instance))
-								this.ParsedObjects.Add(instance, desc);
+							desc = this.ParsedTypes[type];
+							if (desc.Value != null)
+							{
+								while (this.ParsedTypes.Remove(type)) ;
+								if (!this.ParsedObjects.ContainsKey(desc.Value))
+									this.ParsedObjects.Add(desc.Value, desc);
+								desc = null;
+							}
+							else
+								return desc;
 						}
-						else
-							return desc;
 					}
 				}
 
@@ -368,7 +400,22 @@ namespace zeroflag.Serialization.Descriptors
 				instance = info.GetValue(owner, null);
 			}
 
-			desc.Parse(name, type, instance);
+			try
+			{
+				desc.Parse(name, type, instance);
+			}
+			catch (Exception exc)
+			{
+				this.Exceptions.Add(new ExceptionTrace(exc, desc, type, name));
+			}
+
+			if (!type.IsValueType && type != typeof(string) && desc.Value != null)
+			{
+				while (this.ParsedTypes.Remove(type)) ;
+				instance = desc.Value;
+				if (!this.ParsedObjects.ContainsKey(instance))
+					this.ParsedObjects.Add(instance, desc);
+			}
 
 			return desc;
 		}
@@ -440,6 +487,30 @@ namespace zeroflag.Serialization.Descriptors
 			get { return _Instances ?? (_Instances = new Dictionary<int, Descriptor>()); }
 		}
 		#endregion
+
+		#region Exceptions
+		private ExceptionCollection _Exceptions;
+
+		/// <summary>
+		/// Any exceptions that occured while parsing...
+		/// </summary>
+		public ExceptionCollection Exceptions
+		{
+			get { return _Exceptions ?? (_Exceptions = this.ExceptionsCreate); }
+			set { _Exceptions = value; }
+		}
+
+		/// <summary>
+		/// Creates the default/initial value for Exceptions.
+		/// Any exceptions that occured while parsing...
+		/// </summary>
+		protected virtual ExceptionCollection ExceptionsCreate
+		{
+			get { return new ExceptionCollection(); }
+		}
+
+		#endregion Exceptions
+
 
 		[System.Diagnostics.Conditional("VERBOSE")]
 		static internal void CWL(object value)

@@ -6,6 +6,7 @@ namespace zeroflag.Collections
 {
 	[System.ComponentModel.ListBindable(false)]
 	[System.Serializable]
+	[System.ComponentModel.TypeConverter(typeof(System.ComponentModel.CollectionConverter))]
 	public class Collection<T>
 		: System.Collections.IList
 		, System.Collections.Generic.IList<T>

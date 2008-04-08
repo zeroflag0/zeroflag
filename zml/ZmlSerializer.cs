@@ -146,9 +146,9 @@ namespace zeroflag.Zml
 			Console.WriteLine("<Deserialized>");
 			Console.WriteLine(desc.ToStringTree().ToString());
 			Console.WriteLine("</Deserialized>");
-			Console.WriteLine("<Created>");
-			Console.WriteLine(this.Context.Parse(value).ToStringTree().ToString());
-			Console.WriteLine("</Created>");
+			//Console.WriteLine("<Created>");
+			//Console.WriteLine(this.Context.Parse(value).ToStringTree().ToString());
+			//Console.WriteLine("</Created>");
 
 			return value;
 		}
@@ -168,15 +168,20 @@ namespace zeroflag.Zml
 
 			if (explicitType != null)
 			{
-				var types = TypeFinder.Instance.SearchAll(explicitType, desc.Type);
-				if (types.Count > 0)
+				Type type = TypeFinder.Instance[explicitType, desc.Type];
+				if (type != null && type != desc.Type)
 				{
-					Type type = types.Find(t => t.Name != null && t.Name.ToLower() == explicitType.ToLower()) ?? desc.Type;
-					if (type != desc.Type)
-					{
-						desc = this.Context.Parse(desc.Name, type, outer);
-					}
+					desc = this.Context.Parse(desc.Name, type, outer);
 				}
+				//var types = TypeFinder.Instance.SearchAll(explicitType, desc.Type);
+				//if (types.Count > 0)
+				//{
+				//    Type type = types.Find(t => t.Name != null && t.Name.ToLower() == explicitType.ToLower()) ?? desc.Type;
+				//    if (type != desc.Type)
+				//    {
+				//        desc = this.Context.Parse(desc.Name, type, outer);
+				//    }
+				//}
 			}
 
 			desc.Value = value;
@@ -223,94 +228,135 @@ namespace zeroflag.Zml
 						nodes.Add(n);
 			foreach (XmlNode n in node.ChildNodes)
 				nodes.Add(n);
-
+#if DEBUG
+			if (desc.Type.Name == "Switch")
+				Console.WriteLine(desc); ;//<-- break here...
+#endif
 			foreach (XmlNode sub in nodes)
 			{
-				if (sub is XmlText)
+				if (sub is XmlComment)
 				{
-					string text = ((XmlText)sub).Value;
-					if (this.Converters.CanConvert<string>(desc.Type))
+				}
+				else if (sub is XmlText)
+				{
+					try
 					{
-						desc.Value = this.Converters.Parse<string>(desc.Type, text);
-					}
-					else
-					{
-						try
+						string text = ((XmlText)sub).Value;
+						if (this.Converters.CanConvert<string>(desc.Type))
+						{
+							desc.Value = this.Converters.Parse<string>(desc.Type, text);
+						}
+						else
 						{
 							Descriptor inner = desc.Inner.Find(i => i.Name != null && i.Name.ToLower() == "value");
 							if (inner != null)
 								inner.Value = this.Converters.Parse<string>(typeof(string), text);
 							else
 							{
-								try
-								{
-									var prop = desc.Property("Value") ?? desc.Property("Content");
+								var prop = desc.Property("Value") ?? desc.Property("Content");
+								if (prop != null)
 									prop.SetValue(desc.Value, this.Converters.Parse<string>(prop.PropertyType, text), null);
-								}
-								catch (Exception exc)
-								{
-									CWL(exc);
-								}
 
 							}
 							//desc.Property("Value").SetValue(desc.Value, this.Converters.Parse<string>(typeof(string), text), null);
 						}
-						catch
-						{
-						}
 					}
+#if CATCHALL
+					catch (Exception exc)
+					{
+						CWL(exc);
+						this.Exceptions.Add(new ExceptionTrace(exc, node, desc));
+					}
+#endif
+					finally { }
 				}
 				else //if (sub is XmlElement)
 				{
-					string subTypeName = this.GetAttribute(AttributeType, sub) ?? sub.Name;
-					string subName = this.GetAttribute(AttributeName, sub);
-					Type subType = null;
-					Descriptor inner = null;
-					inner = desc.Inner.Find(i => i.Name != null && i.Name.ToLower() == sub.Name.ToLower());
-					// try to find the property in the parent descriptor...
-					if (inner != null)
-						subType = inner.Type;
-					else
+					try
 					{
-						// try to find the property on the type...
-						//var info = new List<System.Reflection.PropertyInfo>(desc.Type.GetProperties()).Find(i => i.Name.ToLower() == sub.Name.ToLower());
-						var info = desc.Property(subTypeName);
-						if (info != null)
-						{
-							subType = info.PropertyType;
-							subName = info.Name;
-						}
+						string subTypeName = this.GetAttribute(AttributeType, sub) ?? sub.Name;
+						string subName = this.GetAttribute(AttributeName, sub);
+						Type subType = null;
+						Descriptor inner = null;
+						inner = desc.Inner.Find(i => i.Name != null && i.Name.ToLower() == sub.Name.ToLower());
+						// try to find the property in the parent descriptor...
+						if (inner != null)
+							subType = inner.Type;
 						else
 						{
-							info = desc.Property(subTypeName, true);
+							// try to find the property on the type...
+							//var info = new List<System.Reflection.PropertyInfo>(desc.Type.GetProperties()).Find(i => i.Name.ToLower() == sub.Name.ToLower());
+							var info = desc.Property(subTypeName);
 							if (info != null)
 							{
 								subType = info.PropertyType;
-								subType = TypeFinder.Instance[subTypeName, subType];
+								subName = info.Name;
 							}
 							else
 							{
-								// try to find the type...
-								subType = TypeFinder.Instance[subTypeName];
+								info = desc.Property(subTypeName, true);
+								if (info != null)
+								{
+									subType = info.PropertyType;
+									subType = TypeFinder.Instance[subTypeName, subType];
+								}
+								else
+								{
+									// try to find the type...
+									subType = TypeFinder.Instance[subTypeName];
+								}
+							}
+						}
+
+						if (subType == null)
+							continue;
+
+						if (inner == null)
+							inner = this.Context.Parse(subName, subType, desc);
+						if (inner != null && !desc.Inner.Contains(inner))
+							desc.Inner.Add(inner);
+						if (subName != null)
+							inner.Name = subName;
+						inner.Value = this.Deserialize(inner.Value, inner, desc, sub);
+						if (inner != null)
+						{
+							if (!desc.Inner.Contains(inner))
+							{
+								if (inner.Name != null)
+								{
+									desc.Inner.RemoveAll(i => i.Name == inner.Name);
+
+									desc.Inner.Add(inner);
+								}
 							}
 						}
 					}
-
-					if (subType == null)
-						continue;
-
-					if (inner == null)
-						inner = this.Context.Parse(subName, subType, desc);
-					if (inner != null && !desc.Inner.Contains(inner))
-						desc.Inner.Add(inner);
-					if (subName != null)
-						inner.Name = subName;
-					this.Deserialize(inner.Value, inner, desc, sub);
+#if CATCHALL
+					catch (Exception exc)
+					{
+						this.Exceptions.Add(new	ExceptionTrace(exc, node, desc));
+					}
+#endif
+					finally { }
 				}
 			}
 			depth--;
-
-			return desc.GenerateLink();
+#if DEBUG
+			if (desc.Type.Name == "Switch")
+				Console.WriteLine(desc); ;//<-- break here...
+#endif
+			try
+			{
+				 return desc.GenerateLink();
+			}
+#if CATCHALL
+			catch (Exception exc)
+			{
+				this.Exceptions.Add(new ExceptionTrace(exc, node, desc));
+				return null;
+			}
+#endif
+			finally { }
 			//return desc.Generate();
 		}
 

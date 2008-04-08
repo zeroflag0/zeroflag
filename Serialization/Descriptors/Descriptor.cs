@@ -160,11 +160,11 @@ namespace zeroflag.Serialization.Descriptors
 			get { return true; }
 		}
 
-		bool? _IsNull = true;
+		bool _IsNull = true;
 
 		public bool IsNull
 		{
-			get { return (bool)(_IsNull ?? (this.Value == null)); }
+			get { return _IsNull; }
 			set { _IsNull = value; }
 		}
 
@@ -323,19 +323,47 @@ namespace zeroflag.Serialization.Descriptors
 				return this.Value;
 			_IsLinked = true;
 
+			if (this.Value == null)
+			{
+				this.GenerateParse();
+				this.GenerateCreate();
+			}
+
 			//if (this.Value != null)
 			{
 				foreach (Descriptor sub in this.Inner)
 				{
-					System.Reflection.PropertyInfo prop = this.Type.GetProperty(sub.Name);//TODO: trace sub.Name = null;
+					if (sub.Name == null || sub.IsNull)
+					    continue;
+					System.Reflection.PropertyInfo prop = null;
+					try
+					{
+						prop = this.Type.GetProperty(sub.Name);
+					}
+					catch (System.Reflection.AmbiguousMatchException exc)
+					{
+						this.Context.Exceptions.Add(new ExceptionTrace(exc, this, this.Type, this.Value));
+						// manual search...
+						foreach (var pr in this.Type.GetProperties())
+						{
+							if (pr != null && pr.GetIndexParameters().Length == 0 && pr.Name == sub.Name && pr.PropertyType.IsAssignableFrom(sub.Type))
+								prop = pr;
+						}
+					}
+					finally
+					{ }
+
 					if (prop != null)
 					{
-						//sub.SetValue(this.Value, prop);
-						object instance = sub.GenerateLink();
-
-						if (prop.CanWrite && instance != null)
+						if (prop.CanWrite)
 						{
-							prop.SetValue(this.Value, instance, new object[] { });
+							//sub.SetValue(this.Value, prop);
+							object value = sub.GenerateLink();
+
+							if (value != null && this.Value != null)
+							{
+								prop.SetValue(this.Value, value, new object[] { });
+							}
 						}
 					}
 				}
@@ -470,6 +498,11 @@ namespace zeroflag.Serialization.Descriptors
 		static internal void CWL(object value)
 		{
 			Console.WriteLine(value);
+		}
+
+		public Type DescritorType
+		{
+			get { return this.GetType(); }
 		}
 	}
 }

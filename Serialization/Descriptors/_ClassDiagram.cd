@@ -22,29 +22,58 @@
       </Delegate>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AABiiEAAAgAAAhAEESEgoCQAAQBNAAAJAwAgAQgEBAA=</HashCode>
+      <HashCode>AABiiEAAAgAAAhAEESEgoCQAAQBFAAAJAwAgAQgEBAA=</HashCode>
       <FileName>Descriptors\Descriptor.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Serialization.Descriptors.Descriptor&lt;T&gt;">
     <Position X="3" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAiAAAAIAAAAgAAAAAAIAAAAABAAAAAAQAAAAAAAAA=</HashCode>
+      <HashCode>AAACAAAAIAAAAgAAAAAAIAAAAABAAAAAAQAAAAAAAAA=</HashCode>
       <FileName>Descriptors\Descriptor~1.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Serialization.Descriptors.DelegateDescriptor">
     <Position X="6.25" Y="1.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Descriptors\DelegateDescriptor.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Serialization.Descriptors.Context">
     <Position X="3.25" Y="3.5" Width="1.5" />
+    <Members>
+      <Field Name="_DescriptorTypes" Hidden="true" />
+      <Field Name="_Exceptions" Hidden="true" />
+      <Field Name="_Instances" Hidden="true" />
+      <Field Name="_ParsedObjects" Hidden="true" />
+      <Field Name="_ParsedTypes" Hidden="true" />
+      <Field Name="_StaticDescriptorTypes" Hidden="true" />
+    </Members>
     <TypeIdentifier>
-      <HashCode>AgAkCAAIEAAAAAAAAAAAAACAAAABJAABRAACAAACAAA=</HashCode>
+      <HashCode>AgAkSAAIEAAAAACAkAAAAACAAAQBJIABTAACAAAKAAA=</HashCode>
       <FileName>Descriptors\Context.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Descriptors.DateTimeDescriptor">
+    <Position X="7.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Descriptors\DateTimeDescriptor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Descriptors.ListDescriptor&lt;T&gt;" Collapsed="true">
+    <Position X="9.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAACgAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Descriptors\ListDescriptor~1.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Serialization.Descriptors.ObjectDescriptor">
+    <Position X="10.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Descriptors\ObjectDescriptor.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Tahoma" Size="8.25" />
