@@ -39,20 +39,43 @@ namespace Test
 			//set { _Inner = value; }
 		}
 
+		//public override string ToString()
+		//{
+		//    return this.GetType().Name + "[" + this.Name + "," + this.Int + "," + this.Real + "," + this.ToString(this.Inner) + "]";
+		//}
+		//string ToString(IEnumerable<Test> enu)
+		//{
+		//    if (enu == null) return null;
+		//    StringBuilder b = new StringBuilder("{");
+		//    foreach (Test t in enu)
+		//    {
+		//        b.Append(t).Append(",");
+		//    }
+		//    b.Append("}");
+		//    return b.ToString();
+		//}
+
 		public override string ToString()
 		{
-			return this.GetType().Name + "[" + this.Name + "," + this.Int + "," + this.Real + "," + this.ToString(this.Inner) + "]";
+			return this.ToString(new StringBuilder(), 0).ToString();
 		}
-		string ToString(IEnumerable<Test> enu)
+
+		public StringBuilder ToString(StringBuilder b, int depth)
 		{
-			if (enu == null) return null;
-			StringBuilder b = new StringBuilder("{");
-			foreach (Test t in enu)
+			b.AppendLine().Append(' ', depth).Append(this.GetType().Name).Append("[").Append(this.Name).Append(",").Append(this.Int).Append(",").Append(this.Real).Append(",").Append(this.GetHashCode());
+			if (this.Inner != null && depth < 20)
 			{
-				b.Append(t).Append(",");
+				depth++;
+				b.AppendLine().Append(' ', depth).Append("{");
+				foreach (Test inner in this.Inner)
+				{
+					inner.ToString(b, depth);
+				}
+				depth--;
+				b.AppendLine().Append(' ', depth).Append("}");
 			}
-			b.Append("}");
-			return b.ToString();
+			b.Append("]");
+			return b;
 		}
 
 		public Test()
