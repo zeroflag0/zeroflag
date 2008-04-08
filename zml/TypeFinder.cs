@@ -268,6 +268,14 @@ namespace zeroflag.Zml
 			}
 		}
 
+		public virtual Type this[string key, Type baseType]
+		{
+			get
+			{
+				return this.Search(key, baseType);
+			}
+		}
+
 
 		#region Finder
 
@@ -285,16 +293,27 @@ namespace zeroflag.Zml
 
 		protected Type Search(string key)
 		{
-			List<Type> stack = this.SearchAll(key);
-			if (stack != null && stack.Count > 0)
-				return stack[0];
-			else
-				return null;
+			return this.Search(key, null);
 		}
 
 		public List<Type> SearchAll(string key)
 		{
 			return this.SearchAll(key, null);
+		}
+
+		protected Type Search(string key, Type baseType)
+		{
+			List<Type> stack = this.SearchAll(key, baseType);
+			if (stack != null)
+			{
+				if (stack.Count == 1)
+					return stack[0];
+				else if (stack.Count > 1)
+				{
+					return stack.Find(i => i != null && i.Name.ToLower() == key.ToLower()) ?? stack[0];
+				}
+			}
+			return null;
 		}
 
 		public List<Type> SearchAll(string key, Type baseType)

@@ -66,6 +66,11 @@ namespace zeroflag
 			{
 				return trans.Value;
 			}
+
+			public override string ToString()
+			{
+				return "[" + this.Language + "]" + this.Value;
+			}
 		}
 
 		public static implicit operator string(Translated trans)
@@ -90,6 +95,8 @@ namespace zeroflag
 				{
 					if (this.Translations.ContainsKey(language))
 						return this.Translations[language];
+					else if (this.Translations.ContainsKey(""))
+						return this.Translations[""];
 					else
 						return this.Translations[this.Languages.Find(l => l != null && (l.ToLower().Contains(language.ToLower()) || language.ToLower().Contains(l.ToLower())))];
 				}
@@ -104,7 +111,9 @@ namespace zeroflag
 			{
 				try
 				{
-					if (this.Translations.ContainsKey(language))
+					if (language == null || language == "")
+						this.Translations[""] = value;
+					else if (this.Translations.ContainsKey(language))
 						this.Translations[language] = value;
 					else
 						this.Translations[this.Languages.Find(l => l != null && (l.ToLower().Contains(language.ToLower()) || language.ToLower().Contains(l.ToLower())))] = value;
@@ -223,6 +232,11 @@ namespace zeroflag
 		{
 			//if (item == null) System.Diagnostics.Debug.Assert(item != null, "Item is null...");
 			System.Diagnostics.Debug.Assert(item.Language != null && item.Value != null, "Item is not fully defined: language='" + item.Language + "' value='" + item.Value + "'");
+			if (item.Value == null && item.Language == null)
+				return;
+
+			if (item.Language == null)
+				item.Language = "";
 			this.Translations.Add(item.Language, item.Value);
 		}
 

@@ -240,6 +240,19 @@ namespace zeroflag.Zml
 							Descriptor inner = desc.Inner.Find(i => i.Name != null && i.Name.ToLower() == "value");
 							if (inner != null)
 								inner.Value = this.Converters.Parse<string>(typeof(string), text);
+							else
+							{
+								try
+								{
+									var prop = desc.Property("Value") ?? desc.Property("Content");
+									prop.SetValue(desc.Value, this.Converters.Parse<string>(prop.PropertyType, text), null);
+								}
+								catch (Exception exc)
+								{
+									CWL(exc);
+								}
+
+							}
 							//desc.Property("Value").SetValue(desc.Value, this.Converters.Parse<string>(typeof(string), text), null);
 						}
 						catch
@@ -269,8 +282,17 @@ namespace zeroflag.Zml
 						}
 						else
 						{
-							// try to find the type...
-							subType = TypeFinder.Instance[subTypeName];
+							info = desc.Property(subTypeName, true);
+							if (info != null)
+							{
+								subType = info.PropertyType;
+								subType = TypeFinder.Instance[subTypeName, subType];
+							}
+							else
+							{
+								// try to find the type...
+								subType = TypeFinder.Instance[subTypeName];
+							}
 						}
 					}
 
@@ -281,8 +303,8 @@ namespace zeroflag.Zml
 						inner = this.Context.Parse(subName, subType, desc);
 					if (inner != null && !desc.Inner.Contains(inner))
 						desc.Inner.Add(inner);
-					//if (subTypeName != null)
-					//    inner.Name = subTypeName;
+					if (subName != null)
+						inner.Name = subName;
 					this.Deserialize(inner.Value, inner, desc, sub);
 				}
 			}

@@ -273,9 +273,31 @@ namespace zeroflag.Serialization.Descriptors
 			{
 				instance = info.GetValue(owner, null);
 			}
-			dbg.Assert(info.CanRead && info.GetGetMethod() != null && info.GetGetMethod().IsPublic, "Property read inaccessible. type='" + type + "' instance='" + instance + "' owner='" + owner + "' " + name);
+			//dbg.Assert(info != null && owner != null && this.CanRead(info, owner), "Property read inaccessible. type='" + type + "' instance='" + instance + "' owner='" + owner + "' " + name);
 
 			return this.Parse(name, type, instance, owner, info);
+		}
+
+		protected bool CanRead(System.Reflection.PropertyInfo info, object owner)
+		{
+			if (owner == null || info == null || !info.CanRead || info.GetIndexParameters().Length != 0)
+				return false;
+
+			var method = info.GetGetMethod();
+			if (method == null || !method.IsPublic)
+				return false;
+			return true;
+		}
+
+		protected bool CanWrite(System.Reflection.PropertyInfo info, object owner)
+		{
+			if (owner == null || info == null || !info.CanWrite || info.GetIndexParameters().Length != 0)
+				return false;
+
+			var method = info.GetSetMethod();
+			if (method == null || !method.IsPublic)
+				return false;
+			return true;
 		}
 
 		public virtual Descriptor Parse(string name, Type type, object instance, object owner, System.Reflection.PropertyInfo info)
@@ -291,18 +313,30 @@ namespace zeroflag.Serialization.Descriptors
 
 			Descriptor desc = null;
 
-			if (instance != null)
-			{
-				// there's an instance to parse, so search for a value-descriptor...
-				if (this.ParsedObjects.ContainsKey(instance))
-					return this.ParsedObjects[instance];
-			}
-			else
-			{
-				// there's no instance, so search for a type-descriptor...
-				if (this.ParsedTypes.ContainsKey(type))
-					return this.ParsedTypes[type];
-			}
+			if (!type.IsValueType && type != typeof(string))
+				if (instance != null)
+				{
+					// there's an instance to parse, so search for a value-descriptor...
+					if (this.ParsedObjects.ContainsKey(instance))
+						return this.ParsedObjects[instance];
+				}
+				else
+				{
+					// there's no instance, so search for a type-descriptor...
+					if (owner == null && this.ParsedTypes.ContainsKey(type))
+					{
+						desc = this.ParsedTypes[type];
+						if (desc.Value != null)
+						{
+							while (this.ParsedTypes.Remove(type)) ;
+							instance = desc.Value;
+							if (!this.ParsedObjects.ContainsKey(instance))
+								this.ParsedObjects.Add(instance, desc);
+						}
+						else
+							return desc;
+					}
+				}
 
 			if (desc == null)
 			// we don't have a descriptor yet => find one...
@@ -311,24 +345,25 @@ namespace zeroflag.Serialization.Descriptors
 
 				System.Diagnostics.Debug.Assert(desc != null, "Cannot find descriptor for type='" + type + "' instance='" + instance + "' owner='" + owner + "' " + name);
 
-				if (instance != null)
-				{
-					// there's an instance to parse, so remember it as a value-descriptor...
-					this.ParsedObjects.Add(instance, desc);
-				}
-				else
-				{
-					// there's no instance, so remember it as a type-descriptor...
-					this.ParsedTypes.Add(type, desc);
-				}
+				if (!type.IsValueType && type != typeof(string))
+					if (instance != null)
+					{
+						// there's an instance to parse, so remember it as a value-descriptor...
+						this.ParsedObjects.Add(instance, desc);
+					}
+					else if (owner == null)
+					{
+						// there's no instance, so remember it as a type-descriptor...
+						this.ParsedTypes.Add(type, desc);
+					}
 			}
 
-			if (owner != null && info != null && !(info.CanWrite && info.GetSetMethod() != null && info.GetSetMethod().IsPublic) && desc.NeedsWriteAccess)
+			if (info != null && owner != null && desc.NeedsWriteAccess && !type.IsValueType && !this.CanWrite(info, owner))
 				return null;
-			System.Diagnostics.Debug.Assert(owner == null || info == null || (info.CanWrite || !desc.NeedsWriteAccess),
+			System.Diagnostics.Debug.Assert(owner == null || info == null || type.IsValueType || !desc.NeedsWriteAccess || this.CanWrite(info, owner),
 				"Property write inaccessible. type='" + type + "' instance='" + instance + "' owner='" + owner + "' " + name);
 
-			if (owner != null && info != null && info.CanRead && (info.CanWrite || !desc.NeedsWriteAccess) && info.GetIndexParameters().Length == 0)
+			if (this.CanRead(info, owner) && (desc.NeedsWriteAccess && !this.CanWrite(info, owner)))
 			{
 				instance = info.GetValue(owner, null);
 			}

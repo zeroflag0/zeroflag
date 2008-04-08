@@ -48,6 +48,22 @@ namespace zeroflag.Serialization.Descriptors
 			set { _Type = value; }
 		}
 
+		#region OwnerInstance
+
+		//private object _OwnerInstance = default(object);
+
+		//public object OwnerInstance
+		//{
+		//    get { return _OwnerInstance; }
+		//    set
+		//    {
+		//        if (_OwnerInstance != value)
+		//        {
+		//            _OwnerInstance = value;
+		//        }
+		//    }
+		//}
+		#endregion OwnerInstance
 
 		#region Owner
 #if OWNER
@@ -73,7 +89,7 @@ namespace zeroflag.Serialization.Descriptors
 				}
 			}
 		}
-
+#if ROOT
 		public Descriptor Root
 		{
 			get { return this.GetRoot(new List<Descriptor>()); }
@@ -101,6 +117,7 @@ namespace zeroflag.Serialization.Descriptors
 				return false;
 			return this._Owner.IsCircularReference(trace);
 		}
+#endif
 #endif
 		#endregion Owner
 
@@ -218,11 +235,20 @@ namespace zeroflag.Serialization.Descriptors
 
 		protected abstract void Parse();
 
-		public virtual Descriptor Parse(string name, Type type, object value)
+		public virtual Descriptor Parse(string name, Type type, object value
+			//, object ownerInstance
+#if OWNER
+			, Descriptor owner
+#endif
+)
 		{
 			this.Name = name;
 			this.Type = type;
 			this.Value = value;
+#if OWNER
+			this.Owner = owner;
+#endif
+			//this.OwnerInstance = ownerInstance;
 			this.Parse();
 			return this;
 		}
@@ -297,16 +323,20 @@ namespace zeroflag.Serialization.Descriptors
 				return this.Value;
 			_IsLinked = true;
 
-			if (this.Value != null)
+			//if (this.Value != null)
 			{
 				foreach (Descriptor sub in this.Inner)
 				{
 					System.Reflection.PropertyInfo prop = this.Type.GetProperty(sub.Name);//TODO: trace sub.Name = null;
-					if (prop != null && sub.GenerateLink() != null)
+					if (prop != null)
 					{
 						//sub.SetValue(this.Value, prop);
-						if (prop.CanWrite)
-							prop.SetValue(this.Value, sub.GenerateLink(), new object[] { });
+						object instance = sub.GenerateLink();
+
+						if (prop.CanWrite && instance != null)
+						{
+							prop.SetValue(this.Value, instance, new object[] { });
+						}
 					}
 				}
 			}
@@ -327,7 +357,23 @@ namespace zeroflag.Serialization.Descriptors
 		}
 		#endregion Generate
 
+		public System.Reflection.PropertyInfo Property(Type type)
+		{
+			var props = this.GetProperties(this.Type);
+			foreach (var prop in props)
+			{
+				if (prop != null && (prop.PropertyType == type || prop.PropertyType.IsAssignableFrom(type)))
+					return prop;
+			}
+			return null;
+		}
+
 		public System.Reflection.PropertyInfo Property(string property)
+		{
+			return this.Property(property, false);
+		}
+
+		public System.Reflection.PropertyInfo Property(string property, bool byType)
 		{
 			var props = this.GetPropertyNames(this.Type);
 			// search by name, case sensitive (fast)...
@@ -338,6 +384,9 @@ namespace zeroflag.Serialization.Descriptors
 			string key = names.Find(n => n.ToLower() == property.ToLower());
 			if (key != null)
 				return props[key];
+
+			if (!byType)
+				return null;
 
 			// get all property types...
 			Dictionary<Type, string> types = new Dictionary<Type, string>();
@@ -408,11 +457,12 @@ namespace zeroflag.Serialization.Descriptors
 		}
 		public StringBuilder ToStringTree(StringBuilder builder, int depth)
 		{
-			//if (depth > 20)
+			if (depth > 20)
 				return builder;
 			builder.Append(' ', depth * 2).Append(this.Name ?? "<noname>").Append(" (").Append(this.Type).Append(",").Append(this.Id).Append(") := ").Append(this.Value ?? (object)"<null>").AppendLine();
+			depth++;
 			foreach (Descriptor child in this.Inner)
-				child.ToStringTree(builder, depth + 1);
+				child.ToStringTree(builder, depth);
 			return builder;
 		}
 
