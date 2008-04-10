@@ -347,7 +347,10 @@ namespace zeroflag.Serialization.Descriptors
 				{
 					// there's an instance to parse, so search for a value-descriptor...
 					if (this.ParsedObjects.ContainsKey(instance))
+					{
+						this.ParsedObjects[instance].IsReferenced = true;
 						return this.ParsedObjects[instance];
+					}
 				}
 				else
 				{

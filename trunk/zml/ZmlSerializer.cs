@@ -19,87 +19,121 @@ namespace zeroflag.Zml
 		public override void Serialize(zeroflag.Serialization.Descriptors.Descriptor value)
 		{
 			XmlDocument doc = new XmlDocument();
-
 			doc.AppendChild(doc.CreateXmlDeclaration("1.0", null, null));
-			doc.AppendChild(doc.CreateComment(value.ToStringTree().ToString()));
+			//doc.AppendChild(doc.CreateComment(value.ToStringTree().ToString()));
 			//doc.AppendChild(doc.CreateElement("root"));
 
-			this.Serialize(value, doc, null, doc.DocumentElement);
+			this.Serialize(value, doc, null, doc.DocumentElement, new List<int>());
 			doc.Save(this.FileName);
 		}
 
-		protected virtual void Serialize(zeroflag.Serialization.Descriptors.Descriptor value, XmlDocument doc, zeroflag.Serialization.Descriptors.Descriptor valueParent, XmlElement xmlParent)
+		protected virtual void Serialize(zeroflag.Serialization.Descriptors.Descriptor desc, XmlDocument doc, zeroflag.Serialization.Descriptors.Descriptor valueParent, XmlElement xmlParent, List<int> ids)
 		{
-			if (value == null || value.IsNull ||
-				(typeof(System.Collections.ICollection).IsAssignableFrom(value.Type) && value.Inner.Count <= 0 && this.HideUnused)
-				)
+			if (desc == null || desc.IsNull)
 				return;
 
+			//desc.Inner.Clear();
+			//desc.Parse(desc.Name, desc.Type, desc.Value);
+			bool explicitType = false;
+			if (desc.Value != null && desc.Value.GetType() != desc.Type)
+			{
+				desc.Type = desc.Value.GetType();
+				//explicitType = true;
+			}
 
-			string name = value.Name ?? value.Type.Name.Split('`')[0];
-			CWL("Serialize(" + value + ")");
-			if (!this.Converters.CanConvert<string>(value.Value))// || value.Name == null)
+			string name = desc.Name ?? desc.Type.Name.Split('`')[0];
+			CWL("Serialize(" + desc + ")");
+			if (!this.Converters.CanConvert<string>(desc.Value))// || value.Name == null)
 			{
 				// complex type...
 				XmlElement node = doc.CreateElement(name);
 
-				bool explicitType = false;
-
-				if (valueParent != null && valueParent.Value != null && value.Name != null)
+				if (valueParent != null && valueParent.Value != null && desc.Name != null)
 				{
-					var info = valueParent.Type.GetProperty(value.Name);
+					var info = valueParent.Type.GetProperty(desc.Name);
 					if (info != null)
 					{
-						explicitType = info.PropertyType != value.Type;
+						explicitType = info.PropertyType != desc.Type;
 					}
 				}
 
-				if (explicitType)
-					this.WriteAttribute(AttributeType, value.Type.FullName, doc, node);
-				//if (value.IsNull)
-				//    this.WriteAttribute(AttributeNull, value.IsNull.ToString(), doc, node);
-				if (value.Id > -1 && value.IsReferenced)
-					this.WriteAttribute(AttributeId, value.Id.ToString(), doc, node);
-				//#if DEBUG
-				//            this.WriteAttribute("descriptor", value.ToString(), doc, node);
-				//#endif
-				if (!this.Converters.CanConvert<string>(value.Value))
-				{
+				//if (!this.Converters.CanConvert<string>(desc.Value))
+				//{
 
-					foreach (zeroflag.Serialization.Descriptors.Descriptor desc in value.Inner)
-					{
-						this.Serialize(desc, doc, value, node);
-					}
-				}
+				//    foreach (zeroflag.Serialization.Descriptors.Descriptor inner in desc.Inner)
+				//    {
+				//        this.Serialize(inner, doc, desc, node);
+				//    }
+				//}
 
-				if (!value.IsNull && this.HideUnused)
+				if (!desc.IsNull && this.HideUnused)
 				{
 					if (xmlParent != null)
 						xmlParent.AppendChild(node);
 					else
 						doc.AppendChild(node);
 				}
+
+				bool hasId = desc.Id > -1 && desc.IsReferenced;
+				bool isReference = false;
+				if (desc.Id > -1 && desc.IsReferenced)
+				{
+					this.WriteAttribute(AttributeId, desc.Id.ToString(), doc, node);
+					if (ids.Contains(desc.Id ?? -1))
+						isReference = true;
+					else
+						ids.Add(desc.Id ?? -1);
+				}
+
+				if (!isReference)
+				{
+					// serialize inner...
+					List<Descriptor> complex = new List<Descriptor>();
+					foreach (Descriptor inner in desc.Inner)
+					{
+						if (inner.Name == null || !this.Converters.CanConvert<string>(inner.Value))
+						{
+							// complex type...
+							complex.Add(inner);
+						}
+						else
+						{
+							// simple type (attribute)...
+							this.Serialize(inner, doc, desc, node, ids);
+						}
+					}
+					if (explicitType)
+						this.WriteAttribute(AttributeType, desc.Type.FullName, doc, node);
+					//if (value.IsNull)
+					//    this.WriteAttribute(AttributeNull, value.IsNull.ToString(), doc, node);
+
+					//#if DEBUG
+					//            this.WriteAttribute("descriptor", value.ToString(), doc, node);
+					//#endif
+
+					foreach (Descriptor inner in complex)
+						this.Serialize(inner, doc, desc, node, ids);
+				}
 			}
-			else if (value.Name == null)
+			else if (desc.Name == null)
 			{
 				XmlElement node = doc.CreateElement(name);
-				bool explicitType = false;
 
-				if (valueParent != null && valueParent.Value != null && value.Name != null)
+				if (valueParent != null && valueParent.Value != null && desc.Name != null)
 				{
-					var info = valueParent.Type.GetProperty(value.Name);
+					var info = valueParent.Type.GetProperty(desc.Name);
 					if (info != null)
 					{
-						explicitType = info.PropertyType != value.Type;
+						explicitType = info.PropertyType != desc.Type;
 					}
 				}
 
 				if (explicitType)
-					this.WriteAttribute(AttributeType, value.Type.FullName, doc, node);
+					this.WriteAttribute(AttributeType, desc.Type.FullName, doc, node);
 
-				node.InnerText = this.Converters.Generate<string>(value.Type, value.Value);
+				node.InnerText = this.Converters.Generate<string>(desc.Type, desc.Value);
 
-				if (!value.IsNull && this.HideUnused)
+				if (!desc.IsNull && this.HideUnused)
 				{
 					if (xmlParent != null)
 						xmlParent.AppendChild(node);
@@ -109,13 +143,13 @@ namespace zeroflag.Zml
 			}
 			else
 			{
-				XmlAttribute node = doc.CreateAttribute(value.Name);
+				XmlAttribute node = doc.CreateAttribute(desc.Name);
 				//Console.WriteLine("Convert(" + value + ")");
-				node.Value = this.Converters.Generate<string>(value.Type, value.Value);
+				node.Value = this.Converters.Generate<string>(desc.Type, desc.Value);
 
 				//this.WriteAttribute("value", StringConverters.Base.Write(value.Value), doc, node);
 
-				if (!value.IsNull && this.HideUnused)
+				if (!desc.IsNull && this.HideUnused)
 				{
 					if (xmlParent != null)
 						xmlParent.Attributes.Append(node);
@@ -123,6 +157,7 @@ namespace zeroflag.Zml
 						doc.Attributes.Append(node);
 				}
 			}
+
 		}
 
 		protected XmlElement WriteAttribute(string name, string value, XmlDocument doc, XmlElement parent)
@@ -347,7 +382,7 @@ namespace zeroflag.Zml
 #endif
 			try
 			{
-				 return desc.GenerateLink();
+				return desc.GenerateLink();
 			}
 #if CATCHALL
 			catch (Exception exc)
