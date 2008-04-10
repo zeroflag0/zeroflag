@@ -34,6 +34,31 @@ using zeroflag.Serialization.Descriptors;
 
 namespace zeroflag.Serialization
 {
+	public class XmlSerializer : ZmlSerializer
+	{
+		public XmlSerializer()
+		{
+		}
+
+		public XmlSerializer(string fileName)
+			: base(fileName)
+		{
+		}
+
+		public XmlSerializer(XmlSerializer parent)
+			: base(parent)
+		{
+		}
+
+		protected override bool HideUnusedCreate
+		{
+			get
+			{
+				return false;
+			}
+		}
+	}
+#if OBSOLETE
 	public class XmlSerializer : Serializer
 	{
 		//public override object Deserialize(ObjectDescription type)
@@ -386,4 +411,5 @@ namespace zeroflag.Serialization
 			Console.WriteLine(value);
 		}
 	}
+#endif
 }

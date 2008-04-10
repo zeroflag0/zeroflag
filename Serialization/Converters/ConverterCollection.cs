@@ -4,11 +4,12 @@ using System.Text;
 
 namespace zeroflag.Serialization.Converters
 {
-	public class ConverterCollection : ICloneable
+	public class ConverterCollection : ICollection<Converter>, ICloneable
 	{
+
 		public ConverterCollection()
 		{
-			_Converters = new Dictionary<Type, Dictionary<Type, IConverter>>();
+			_Converters = new Dictionary<Type, Dictionary<Type, Converter>>();
 
 			List<Type> types = TypeHelper.GetDerived(typeof(Converter<,>));
 
@@ -18,7 +19,7 @@ namespace zeroflag.Serialization.Converters
 				{
 					if (type.IsAbstract || type.IsInterface)
 						continue;
-					IConverter converter = (IConverter)TypeHelper.CreateInstance(type);
+					Converter converter = (Converter)TypeHelper.CreateInstance(type);
 					this.Add(converter);
 				}
 				catch { }
@@ -27,7 +28,7 @@ namespace zeroflag.Serialization.Converters
 
 		protected ConverterCollection(ConverterCollection from)
 		{
-			_Converters = new Dictionary<Type, Dictionary<Type, IConverter>>();
+			_Converters = new Dictionary<Type, Dictionary<Type, Converter>>();
 
 			foreach (var type in from._Converters.Values)
 			{
@@ -36,14 +37,14 @@ namespace zeroflag.Serialization.Converters
 			}
 		}
 
-		Dictionary<Type, Dictionary<Type, IConverter>> _Converters;
+		Dictionary<Type, Dictionary<Type, Converter>> _Converters;
 
-		public IConverter GetConverter<T>(Type t2)
+		public Converter GetConverter<T>(Type t2)
 		{
 			return this.GetConverter(typeof(T), t2);
 		}
 
-		public IConverter GetConverter(Type t1, Type t2)
+		public Converter GetConverter(Type t1, Type t2)
 		{
 			//if (!Converters.ContainsKey(t1))
 			//{
@@ -54,13 +55,16 @@ namespace zeroflag.Serialization.Converters
 				return null;
 			if (!_Converters[t1].ContainsKey(t2))
 			{
-				IConverter conv = GetConverter(t1, t2.BaseType);
+				Converter conv = GetConverter(t1, t2.BaseType);
 				if (conv != null)
+				{
+					_Items = null;
 					_Converters[t1].Add(t2, conv);
+				}
 				else
 					return null;
 			}
-			return (IConverter)_Converters[t1][t2];
+			return (Converter)_Converters[t1][t2];
 		}
 
 		public bool CanConvert<T>(object value)
@@ -80,7 +84,7 @@ namespace zeroflag.Serialization.Converters
 		{
 			if (value == null)
 				return default(T);
-			IConverter b = GetConverter(typeof(T), value.GetType());
+			Converter b = GetConverter(typeof(T), value.GetType());
 			return b != null ? (T)b.__Generate(type, value) : default(T);
 		}
 
@@ -88,7 +92,7 @@ namespace zeroflag.Serialization.Converters
 		{
 			try
 			{
-				IConverter b = this.GetConverter<T>(type);
+				Converter b = this.GetConverter<T>(type);
 				if (b != null)
 				{
 					return b.__Parse(type, source);
@@ -119,18 +123,28 @@ namespace zeroflag.Serialization.Converters
 		}
 
 		#region Collection
-		public virtual ConverterCollection Add(IConverter converter)
+		public virtual ConverterCollection Add(Converter converter)
 		{
+			_Items = null;
 			Type t1, t2;
 			t1 = converter.Type1;
 			t2 = converter.Type2;
 
 			if (!_Converters.ContainsKey(t1))
-				_Converters.Add(t1, new Dictionary<Type, IConverter>());
+				_Converters.Add(t1, new Dictionary<Type, Converter>());
 
 			_Converters[t1][t2] = converter;
 
 			return this;
+		}
+
+		public bool Contains(Converter converter)
+		{
+			Type t1, t2;
+			t1 = converter.Type1;
+			t2 = converter.Type2;
+
+			return _Converters.ContainsKey(t1) && _Converters[t1].ContainsKey(t2) && _Converters[t1][t2] == converter;
 		}
 
 		public virtual ConverterCollection Remove<T>(Type t2)
@@ -142,10 +156,11 @@ namespace zeroflag.Serialization.Converters
 			return this.Remove(this.GetConverter(t1, t2));
 		}
 
-		public virtual ConverterCollection Remove(IConverter converter)
+		public virtual ConverterCollection Remove(Converter converter)
 		{
 			if (converter != null)
 			{
+				_Items = null;
 				Type t1 = converter.Type1;
 				List<Type> removes = new List<Type>(this._Converters[t1].Count);
 				foreach (Type t2 in this._Converters[t1].Keys)
@@ -172,5 +187,98 @@ namespace zeroflag.Serialization.Converters
 		}
 
 		#endregion
+
+		#region ICollection<Converter> Members
+
+		void ICollection<Converter>.Add(Converter item)
+		{
+			this.Add(item);
+		}
+
+		public void Clear()
+		{
+			_Items = null;
+			this._Converters.Clear();
+		}
+
+
+		public void CopyTo(Converter[] array, int arrayIndex)
+		{
+
+		}
+
+		public int Count
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		public bool IsReadOnly
+		{
+			get { throw new NotImplementedException(); }
+		}
+
+		bool ICollection<Converter>.Remove(Converter item)
+		{
+			if (this.Contains(item))
+			{
+				while (this.Contains(item))
+					this.Remove(item);
+				return true;
+			}
+			else
+				return false;
+		}
+
+		#endregion
+
+		#region IEnumerable<Converter> Members
+
+		public IEnumerator<Converter> GetEnumerator()
+		{
+			foreach (var v1 in _Converters.Values)
+			{
+				foreach (var v2 in v1.Values)
+				{
+					yield return v2;
+				}
+			}
+		}
+
+		#endregion
+
+		#region IEnumerable Members
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return this.GetEnumerator();
+		}
+
+		#endregion
+
+		#region Items
+		private List<Converter> _Items;
+
+		/// <summary>
+		/// All converters in this collection, as a list.
+		/// </summary>
+		public List<Converter> Items
+		{
+			get
+			{
+				return _Items ?? (_Items = this.ItemsCreate);
+			}
+		}
+
+		/// <summary>
+		/// Creates the default/initial value for Items.
+		/// All converters in this collection, as a list.
+		/// </summary>
+		protected virtual List<Converter> ItemsCreate
+		{
+			get { return new List<Converter>(this); }
+		}
+
+		#endregion Items
+
 	}
 }

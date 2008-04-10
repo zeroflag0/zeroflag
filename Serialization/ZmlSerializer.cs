@@ -424,21 +424,27 @@ namespace zeroflag.Serialization
 
 
 		#region HideUnused
+		private bool? _HideUnused;
 
-		private bool _HideUnused = true;
-
+		/// <summary>
+		/// Hide unused items.
+		/// </summary>
 		public bool HideUnused
 		{
-			get { return _HideUnused; }
-			set
-			{
-				if (_HideUnused != value)
-				{
-					_HideUnused = value;
-				}
-			}
+			get { return (bool)(_HideUnused ?? (_HideUnused = this.HideUnusedCreate)); }
 		}
+
+		/// <summary>
+		/// Creates the default/initial value for HideUnused.
+		/// Hide unused items.
+		/// </summary>
+		protected virtual bool HideUnusedCreate
+		{
+			get { return true; }
+		}
+
 		#endregion HideUnused
+
 
 		public ZmlSerializer()
 		{

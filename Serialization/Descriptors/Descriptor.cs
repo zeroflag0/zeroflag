@@ -262,13 +262,13 @@ namespace zeroflag.Serialization.Descriptors
 				return;
 			_IsParsed = true;
 
-			if (this.Id != null && this.Context.Instances.ContainsKey(this.Id.Value))// && this != this.Generated[this.Id.Value])
+			if (this.Id != null && this.Context.CreatedInstances.ContainsKey(this.Id.Value))// && this != this.Generated[this.Id.Value])
 			{
-				if (this == this.Context.Instances[this.Id.Value])
+				if (this == this.Context.CreatedInstances[this.Id.Value])
 					CWL("Link self!");
 				CWL("Link(name='" + this.Name + "', type='" + this.Type + "', isnull='" + this.IsNull + "', id='" + this.Id + "', value='" + this.Value + "', children='" + this.Inner.Count + "')");
 
-				Descriptor other = this.Context.Instances[this.Id.Value];
+				Descriptor other = this.Context.CreatedInstances[this.Id.Value];
 				CWL("  To(name='" + other.Name + "', type='" + other.Type + "', isnull='" + other.IsNull + "', id='" + other.Id + "', value='" + other.Value + "', children='" + other.Inner.Count + "')");
 				this.Type = other.Type;
 				this.Value = other.Value;
@@ -284,10 +284,10 @@ namespace zeroflag.Serialization.Descriptors
 				}
 				if (this.Id != null)
 				{
-					if (!this.Context.Instances.ContainsKey(this.Id.Value))
+					if (!this.Context.CreatedInstances.ContainsKey(this.Id.Value))
 					{
 						CWL("Reference(name='" + this.Name + "', type='" + this.Type + "', isnull='" + this.IsNull + "', id='" + this.Id + "', value='" + this.Value + "', children='" + this.Inner.Count + "')");
-						this.Context.Instances.Add(this.Id.Value, this);
+						this.Context.CreatedInstances.Add(this.Id.Value, this);
 					}
 					else
 						CWL("Reference already exists for " + this.Id);
