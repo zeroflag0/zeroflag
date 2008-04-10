@@ -67,6 +67,8 @@ namespace zeroflag.Serialization.Descriptors
 					{
 						Descriptor item = this.Context.Parse(null, typeof(T), value, this.Value, null);
 						//item.Name = NameItem;
+						if (!this.Inner.Contains(item))
+							this.Inner.Add(item);
 					}
 				}
 			}

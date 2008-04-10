@@ -26,10 +26,10 @@ namespace Test
 					Test test = new zeroflag.Zml.ZmlSerializer("test.zml").Deserialize<Test>();
 					Console.WriteLine("2.1) " + test);
 					//new zeroflag.Serialization.XmlSerializer("test2.xml").Serialize(test);
-					//new zeroflag.Zml.ZmlSerializer("result2.zml").Serialize(test);
-					//Test result = new zeroflag.Zml.ZmlSerializer("result2.zml").Deserialize<Test>();
-					//Console.WriteLine("2.2) " + result);
-					//new zeroflag.Serialization.XmlSerializer("result2.xml").Serialize(result);
+					new zeroflag.Zml.ZmlSerializer("result2.zml").Serialize(test);
+					Test result = new zeroflag.Zml.ZmlSerializer("result2.zml").Deserialize<Test>();
+					Console.WriteLine("2.2) " + result);
+					new zeroflag.Zml.ZmlSerializer("result2.xml").Serialize(result);
 				}
 
 				//zeroflag.Zml.Manager reader = new zeroflag.Zml.Manager();
