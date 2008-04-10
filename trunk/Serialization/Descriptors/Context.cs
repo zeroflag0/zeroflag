@@ -483,11 +483,11 @@ namespace zeroflag.Serialization.Descriptors
 		#endregion ParsedTypes
 
 		#region Instances
-		Dictionary<int, Descriptor> _Instances;
+		Dictionary<int, Descriptor> _CreatedInstances;
 
-		public Dictionary<int, Descriptor> Instances
+		public Dictionary<int, Descriptor> CreatedInstances
 		{
-			get { return _Instances ?? (_Instances = new Dictionary<int, Descriptor>()); }
+			get { return _CreatedInstances ?? (_CreatedInstances = new Dictionary<int, Descriptor>()); }
 		}
 		#endregion
 
