@@ -57,22 +57,34 @@ namespace Test
 
 		public override string ToString()
 		{
-			return this.ToString(new StringBuilder(), 0).ToString();
+			return this.ToString(new StringBuilder(), new List<Test>(), 0).ToString();
 		}
 
-		public StringBuilder ToString(StringBuilder b, int depth)
+		public StringBuilder ToString(StringBuilder b, List<Test> done, int depth)
 		{
 			b.AppendLine().Append(' ', depth).Append(this.GetType().Name).Append("[").Append(this.Name).Append(",").Append(this.Int).Append(",").Append(this.Real).Append(",").Append(this.GetHashCode());
-			if (this.Inner != null && depth < 20)
+			if (this.Inner != null)
 			{
-				depth++;
-				b.AppendLine().Append(' ', depth).Append("{");
-				foreach (Test inner in this.Inner)
+				if (depth > 10)
 				{
-					inner.ToString(b, depth);
+					b.Append(",<...>");
 				}
-				depth--;
-				b.AppendLine().Append(' ', depth).Append("}");
+				else if (done.Contains(this))
+				{
+					b.Append(",<link>");
+				}
+				else
+				{
+					done.Add(this);
+					depth++;
+					b.AppendLine().Append(' ', depth).Append("{");
+					foreach (Test inner in this.Inner)
+					{
+						inner.ToString(b, done, depth);
+					}
+					depth--;
+					b.AppendLine().Append(' ', depth).Append("}");
+				}
 			}
 			b.Append("]");
 			return b;

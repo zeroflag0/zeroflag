@@ -10,26 +10,31 @@ namespace Test
 		{
 			try
 			{
-				//{
-				//    Test test = new Test("root", 1, 1.5f);
+				//if (false)
+				{
+					Test test = new Test("root", 1, 1.5f);
 
-				//    test.Add(
-				//        new Test("foo", 2, 51),
-				//        new Test2("bar", 3, 0.0005f));
+					test.Add(
+						new Test("foo", 2, 51),
+						new Test2("bar", 3, 0.0005f).Add(test));
 
-				//    new zeroflag.Serialization.XmlSerializer("test.xml").Serialize(test);
-				//    new zeroflag.Zml.ZmlSerializer("result.zml").Serialize(test);
-				//    Test result = new zeroflag.Zml.ZmlSerializer("result.zml").Deserialize<Test>();
-				//    new zeroflag.Serialization.XmlSerializer("result.xml").Serialize(result);
-				//}
+					Console.WriteLine("1.1) serialize:\n" + test);
+
+					new zeroflag.Zml.ZmlSerializer("result1.1.zml").Serialize(test);
+					test = new zeroflag.Zml.ZmlSerializer("result1.1.zml").Deserialize<Test>();
+					Console.WriteLine("1.2) deserialized:\n" + test);
+					Console.WriteLine("1.3) serialize:\n" + test);
+					new zeroflag.Serialization.XmlSerializer("result1.3.xml").Serialize(test);
+				}
+				if (false)
 				{
 					Test test = new zeroflag.Zml.ZmlSerializer("test.zml").Deserialize<Test>();
 					Console.WriteLine("2.1) " + test);
 					//new zeroflag.Serialization.XmlSerializer("test2.xml").Serialize(test);
-					new zeroflag.Zml.ZmlSerializer("result2.zml").Serialize(test);
-					Test result = new zeroflag.Zml.ZmlSerializer("result2.zml").Deserialize<Test>();
-					Console.WriteLine("2.2) " + result);
-					new zeroflag.Zml.ZmlSerializer("result2.xml").Serialize(result);
+					new zeroflag.Zml.ZmlSerializer("result2.1.zml").Serialize(test);
+					Test result = new zeroflag.Zml.ZmlSerializer("result2.1.zml").Deserialize<Test>();
+					Console.WriteLine("2.3) " + result);
+					new zeroflag.Zml.ZmlSerializer("result2.3.zml").Serialize(result);
 				}
 
 				//zeroflag.Zml.Manager reader = new zeroflag.Zml.Manager();

@@ -62,8 +62,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="bin\Debug\result.xml" />
-    <Content Include="bin\Debug\result2.xml" />
     <Content Include="Form.zml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -73,6 +71,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\Debug\result.zml" />
+    <None Include="bin\Debug\result1.1.zml" />
+    <None Include="bin\Debug\result2.1.zml" />
+    <None Include="bin\Debug\result2.2.zml" />
+    <None Include="bin\Debug\result2.3.zml" />
     <None Include="bin\Debug\result2.zml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
