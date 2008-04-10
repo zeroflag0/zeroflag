@@ -107,10 +107,13 @@
     <Compile Include="ExceptionCollection.cs" />
     <Compile Include="ExceptionTrace.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PropertyFinder.cs" />
     <Compile Include="SerializationAttribute.cs" />
     <Compile Include="Serializer.cs" />
+    <Compile Include="TypeFinder.cs" />
     <Compile Include="UpgradeAttribute.cs" />
     <Compile Include="XmlSerializer.cs" />
+    <Compile Include="ZmlSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Converters\_ClassDiagram.cd" />

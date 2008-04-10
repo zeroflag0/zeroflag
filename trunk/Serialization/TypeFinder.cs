@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace zeroflag.Zml
+namespace zeroflag.Serialization
 {
 	public class TypeFinder// : IDictionary<string, Type>, ICollection<Type>
 	{
