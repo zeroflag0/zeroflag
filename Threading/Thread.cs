@@ -51,7 +51,12 @@ namespace zeroflag.Threading
 		{
 			get
 			{
-				throw new System.NotImplementedException();
+				System.Threading.Thread current = System.Threading.Thread.CurrentThread;
+				Thread result = ThreadManager.Current.Threads.Find(t => t != null && t.Native == current);
+				if (result == null)
+					return -1;
+				else
+					return ThreadManager.Current.Threads[result];
 			}
 		}
 

@@ -9,7 +9,16 @@ namespace zeroflag.Threading
 	{
 		protected System.Collections.Generic.List<T> Items = new System.Collections.Generic.List<T>();
 
+		#region Constructors
+		public IDList()
+		{
+		}
 
+		public IDList(params T[] items)
+		{
+			this.AddRange(items);
+		}
+		#endregion
 
 
 		public virtual int this[T item]
@@ -24,30 +33,40 @@ namespace zeroflag.Threading
 
 		#region IList<T> Members
 
+		/// <summary>
+		/// Searches for an element that matches the conditions defined by the specified
+		/// predicate, and returns the first occurrence within the entire System.Collections.Generic.List<T>.		/// </summary>
+		/// <param name="match">The System.Predicate<T> delegate that defines the conditions of the element to search for.</param>
+		/// <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type T.</returns>
+		public T Find(Predicate<T> match)
+		{
+			return this.Items.Find(match);
+		}
+
 		public int IndexOf(T item)
 		{
-			throw new NotImplementedException();
+			return this.Items.IndexOf(item);
 		}
 
 		public void Insert(int index, T item)
 		{
-			throw new NotImplementedException();
+			this.Items.Insert(index, item);
 		}
 
 		public void RemoveAt(int index)
 		{
-			throw new NotImplementedException();
+			this.Items.RemoveAt(index);
 		}
 
 		public T this[int index]
 		{
 			get
 			{
-				throw new NotImplementedException();
+				return this.Items[index];
 			}
 			set
 			{
-				throw new NotImplementedException();
+				this.Items[index] = value;
 			}
 		}
 
@@ -57,37 +76,46 @@ namespace zeroflag.Threading
 
 		public void Add(T item)
 		{
-			throw new NotImplementedException();
+			this.Items.Add(item);
+		}
+
+		public void AddRange(params T[] items)
+		{
+			this.Items.AddRange(items);
+		}
+		public void AddRange(IEnumerable<T> items)
+		{
+			this.Items.AddRange(items);
 		}
 
 		public void Clear()
 		{
-			throw new NotImplementedException();
+			this.Items.Clear();
 		}
 
 		public bool Contains(T item)
 		{
-			throw new NotImplementedException();
+			return this.Items.Contains(item);
 		}
 
 		public void CopyTo(T[] array, int arrayIndex)
 		{
-			throw new NotImplementedException();
+			this.Items.CopyTo(array, arrayIndex);
 		}
 
 		public int Count
 		{
-			get { throw new NotImplementedException(); }
+			get { return this.Items.Count; }
 		}
 
 		public bool IsReadOnly
 		{
-			get { throw new NotImplementedException(); }
+			get { return false; }
 		}
 
 		public bool Remove(T item)
 		{
-			throw new NotImplementedException();
+			return this.Items.Remove(item);
 		}
 
 		#endregion
@@ -96,7 +124,7 @@ namespace zeroflag.Threading
 
 		public IEnumerator<T> GetEnumerator()
 		{
-			throw new NotImplementedException();
+			return this.Items.GetEnumerator();
 		}
 
 		#endregion
@@ -105,7 +133,7 @@ namespace zeroflag.Threading
 
 		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
 		{
-			throw new NotImplementedException();
+			return this.GetEnumerator();
 		}
 
 		#endregion
