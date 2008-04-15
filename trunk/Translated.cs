@@ -75,6 +75,8 @@ namespace zeroflag
 
 		public static implicit operator string(Translated trans)
 		{
+			if (trans == null)
+				return null;
 			var cult = System.Globalization.CultureInfo.CurrentUICulture;
 			return trans[cult.TwoLetterISOLanguageName];
 		}
@@ -93,12 +95,23 @@ namespace zeroflag
 			{
 				try
 				{
+					string result = null;
 					if (this.Translations.ContainsKey(language))
-						return this.Translations[language];
-					else if (this.Translations.ContainsKey(""))
-						return this.Translations[""];
-					else
-						return this.Translations[this.Languages.Find(l => l != null && (l.ToLower().Contains(language.ToLower()) || language.ToLower().Contains(l.ToLower())))];
+						result = this.Translations[language];
+					if (result == null)
+					{
+						if (this.Translations.ContainsKey(""))
+							result = this.Translations[""];
+						if (result == null)
+							result = this.Translations[this.Languages.Find(l => l != null && (l.ToLower().Contains(language.ToLower()) || language.ToLower().Contains(l.ToLower())))];
+					}
+					if (result == null)
+					{
+						foreach (string value in this.Translations.Values)
+							if (value != null)
+								result = value;
+					}
+					return result;
 				}
 				catch
 				{
