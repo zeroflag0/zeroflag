@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Reflection", "zeroflag.Reflection.csproj", "{59889B03-9DDA-4136-9856-4AA8AD33B58E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Reflection.Test", "..\Test\zeroflag.Reflection.Test.csproj", "{1A38894E-BAF3-4C7B-99B0-627E8B68F0E5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{59889B03-9DDA-4136-9856-4AA8AD33B58E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{59889B03-9DDA-4136-9856-4AA8AD33B58E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{59889B03-9DDA-4136-9856-4AA8AD33B58E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{59889B03-9DDA-4136-9856-4AA8AD33B58E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A38894E-BAF3-4C7B-99B0-627E8B68F0E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A38894E-BAF3-4C7B-99B0-627E8B68F0E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A38894E-BAF3-4C7B-99B0-627E8B68F0E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A38894E-BAF3-4C7B-99B0-627E8B68F0E5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

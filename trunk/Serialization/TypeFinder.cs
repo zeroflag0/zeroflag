@@ -36,12 +36,13 @@ namespace zeroflag.Serialization
 		#region Types
 		public void Scan()
 		{
-			this.ScanAssemblies();
-
+			//Benchmark.Instance.Trace();
+			//this.ScanAssemblies();
 			foreach (Type type in this.Types)
 			{
 				this.Add(type);
 			}
+			//Benchmark.Instance.Trace();
 		}
 
 		protected virtual void Add(Type type)
@@ -74,7 +75,7 @@ namespace zeroflag.Serialization
 				this.TypeNames[key] = type;
 			return key;
 		}
-
+#if SCAN
 		void ScanAssemblies()
 		{
 			if (available == null)
@@ -234,19 +235,19 @@ namespace zeroflag.Serialization
 				}
 			}
 		}
-
+#endif
 		protected virtual bool ValidateType(Type type)
 		{
 			return type.IsPublic && !type.IsAbstract && !type.IsInterface && type.GetConstructor(System.Type.EmptyTypes) != null;
 		}
 
-		List<Type> _Types = new List<Type>();
+		//List<Type> _Types = new List<Type>();
 
 		public List<Type> Types
 		{
-			get { return _Types; }
+			get { return TypeHelper.Types; }
 		}
-		List<System.Reflection.Assembly> Assemblies = new List<System.Reflection.Assembly>();
+		//List<System.Reflection.Assembly> Assemblies = new List<System.Reflection.Assembly>();
 		private System.Collections.Generic.Dictionary<string, Type> _TypeNames = new System.Collections.Generic.Dictionary<string, Type>();
 
 		protected System.Collections.Generic.Dictionary<string, Type> TypeNames
@@ -272,6 +273,7 @@ namespace zeroflag.Serialization
 		{
 			get
 			{
+				//Benchmark.Instance.Trace();
 				return this.Search(key, baseType);
 			}
 		}
@@ -296,28 +298,59 @@ namespace zeroflag.Serialization
 			return this.Search(key, null);
 		}
 
-		public List<Type> SearchAll(string key)
-		{
-			return this.SearchAll(key, null);
-		}
-
 		protected Type Search(string key, Type baseType)
 		{
-			List<Type> stack = this.SearchAll(key, baseType);
-			if (stack != null)
+			Type result = this.SearchOne(key, baseType);
+			if (result != null)
+				return result;
+
+			List<Type> results = this.SearchAll(key, baseType);
+			if (results != null)
 			{
-				if (stack.Count == 1)
-					return stack[0];
-				else if (stack.Count > 1)
+				if (results.Count == 1)
+					return results[0];
+				else if (results.Count > 1)
 				{
-					return stack.Find(i => i != null && i.Name.ToLower() == key.ToLower()) ?? stack[0];
+					return results.Find(i => i != null && i.Name.ToLower() == key.ToLower()) ?? results[0];
 				}
 			}
 			return null;
 		}
 
+		protected Type SearchOne(string key, Type baseType)
+		{
+			Type result = null;
+			if (this.TypeNames.ContainsKey(key))
+			{
+				result = this.TypeNames[key];
+				if (result != null)
+					if (baseType == null || baseType.IsAssignableFrom(result))
+						return result;
+			}
+			return null;
+		}
+
+		public List<Type> SearchAll(string key)
+		{
+			return this.SearchAll(key, null);
+		}
+
 		public List<Type> SearchAll(string key, Type baseType)
 		{
+			List<Type> results = new List<Type>();
+			Type type = this.SearchOne(key, baseType);
+			if (type != null)
+				results.Add(type);
+
+			List<Type> sources;
+			if (baseType != null)
+				sources = TypeHelper.GetDerived(baseType);
+			else
+				sources = TypeHelper.Types;
+
+			return results;
+#if OBSOLETE
+			//Benchmark.Instance.Trace();
 			if (tempKeys == null || tempKeys.Count != this.TypeNames.Count)
 				tempKeys = new List<string>(this.TypeNames.Keys);
 
@@ -399,6 +432,7 @@ namespace zeroflag.Serialization
 			//    else
 			//        results.Insert(0, result);
 			//}
+			//Benchmark.Instance.Trace();
 
 			return results;
 
@@ -425,32 +459,39 @@ namespace zeroflag.Serialization
 			//    tempKeys.Find(k => k.EndsWith(key)) ??
 			//    tempKeys.Find(k => k.ToLower().EndsWith(key.ToLower()))
 			//    ) ?? this.GetType(key);
+#endif
 		}
-		public Type GetType(string name)
-		{
-			Type type = null;
-			if (TypeNames.ContainsKey(name))
-				type = TypeNames[name];
-			else
-			{
-				foreach (System.Reflection.Assembly ass in AppDomain.CurrentDomain.GetAssemblies())
-				{
-					if ((type = ass.GetType(name)) != null)
-						break;
-				}
-			}
+		//public Type GetType(string name)
+		//{
+		//    Type type = null;
+		//    if (TypeNames.ContainsKey(name))
+		//        type = TypeNames[name];
+		//    else
+		//    {
+		//        foreach (System.Reflection.Assembly ass in AppDomain.CurrentDomain.GetAssemblies())
+		//        {
+		//            if ((type = ass.GetType(name)) != null)
+		//                break;
+		//        }
+		//    }
 
-			return type;
-		}
+		//    return type;
+		//}
 		protected Type TryGet(string key)
 		{
+			//Benchmark.Instance.Trace();
 			try
 			{
 				if (this.TypeNames.ContainsKey(key))
 					return this.TypeNames[key];
 			}
-			catch
+			catch (Exception exc)
 			{
+				//Benchmark.Instance.Trace(exc);
+			}
+			finally
+			{
+				//Benchmark.Instance.Trace();
 			}
 			return null;
 		}

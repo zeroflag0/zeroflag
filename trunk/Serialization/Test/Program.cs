@@ -26,7 +26,7 @@
 //*********************************************************************
 #endregion LGPL License
 
-#define TEST1 // class A
+//#define TEST1 // class A
 //#define TEST2 // dictionary
 //#define TEST3 // winforms <-- doesn't work and it's not because my serializer is too stupid...
 
@@ -109,6 +109,37 @@ namespace Test
 	{
 		static void Main(string[] args)
 		{
+			System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+			sw.Start();
+			Console.WriteLine(sw.ElapsedMilliseconds.ToString("000000") + " start");
+		
+			{
+				Test test = new Test("root", 1, 1.5f);
+
+				test.Add(
+					new Test("foo", 2, 51),
+					new Test2("bar", 3, 0.0005f).Add(test));
+
+				Console.WriteLine("1.1) serialize:\n" + test);
+
+				new XmlSerializer("result1.1.xml").Serialize(test);
+				test = new XmlSerializer("result1.1.xml").Deserialize<Test>();
+				Console.WriteLine("1.2) deserialized:\n" + test);
+				Console.WriteLine("1.3) serialize:\n" + test);
+				new zeroflag.Serialization.XmlSerializer("result1.3.xml").Serialize(test);
+			}
+			//if (false)
+			{
+				Test test = new ZmlSerializer("test.zml").Deserialize<Test>();
+				Console.WriteLine("2.1) " + test);
+				//new zeroflag.Serialization.XmlSerializer("test2.xml").Serialize(test);
+				new ZmlSerializer("result2.1.zml").Serialize(test);
+				Test result = new ZmlSerializer("result2.1.zml").Deserialize<Test>();
+				Console.WriteLine("2.3) " + result);
+				new ZmlSerializer("result2.3.zml").Serialize(result);
+			}
+
+
 			try
 			{
 #if TEST1
@@ -121,15 +152,22 @@ namespace Test
 				//zeroflag.Serialization.Descriptors.Descriptor desc = zeroflag.Serialization.Descriptors.Descriptor.DoParse(a);
 
 				//Console.WriteLine(desc);
+				//Console.WriteLine(sw.ElapsedMilliseconds.ToString("000000") + " Serialize(test1.xml) start");
 				seri.Serialize(a);
+				//Console.WriteLine(sw.ElapsedMilliseconds.ToString("000000") + " Serialize(test1.xml) end");
 				//seri.Serialize(desc);
 				//System.Windows.Forms.Application.Run(new DebugForm() { Target = a });
 
 				A b = null;
 				//b = (A)desc.Generate();
+				//Console.WriteLine(sw.ElapsedMilliseconds.ToString("000000") + " Deserialize(test1.xml) start");
 				b = seri.Deserialize<A>();
+				//Console.WriteLine(sw.ElapsedMilliseconds.ToString("000000") + " Deserialize(test1.xml) end");
 
+				//Console.WriteLine(sw.ElapsedMilliseconds.ToString("000000") + " Serialize(test1.result.xml) start");
 				new XmlSerializer("test1.result.xml").Serialize(b);
+				//Console.WriteLine(sw.ElapsedMilliseconds.ToString("000000") + " Serialize(test1.result.xml) end");
+
 
 				Console.WriteLine("a = " + a);
 				Console.WriteLine("b = " + b);
@@ -161,6 +199,7 @@ namespace Test
 			//    Console.WriteLine(exc);
 			//}
 			finally { }
+			Console.WriteLine(sw.ElapsedMilliseconds.ToString("000000") + " end");
 		}
 
 #if TEST2
@@ -182,6 +221,5 @@ namespace Test
 			Console.WriteLine("</TestDictResult>");
 		}
 #endif
-
 	}
 }

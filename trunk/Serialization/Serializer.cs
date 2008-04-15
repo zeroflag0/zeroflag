@@ -105,7 +105,7 @@ namespace zeroflag.Serialization
 		/// </summary>
 		protected virtual Descriptors.Context ContextCreate
 		{
-			get { return new Descriptors.Context() { Exceptions = this.Exceptions }; }
+			get { return new Descriptors.Context() { Exceptions = this.Exceptions, Serializer = this }; }
 		}
 
 		#endregion Context
@@ -160,6 +160,12 @@ namespace zeroflag.Serialization
 		public object Deserialize(Type type)
 		{
 			return this.Deserialize(null, type);
+		}
+
+
+		public T Deserialize<T>(T value)
+		{
+			return (T)this.Deserialize((object)value, typeof(T));
 		}
 
 		public object Deserialize(object value, Type type)

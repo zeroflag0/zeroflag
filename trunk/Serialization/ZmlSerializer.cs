@@ -66,7 +66,7 @@ namespace zeroflag.Serialization
 				//    }
 				//}
 
-				if (!desc.IsNull && this.HideUnused)
+				if (!(desc.IsNull && this.HideUnused))
 				{
 					if (xmlParent != null)
 						xmlParent.AppendChild(node);
@@ -133,7 +133,7 @@ namespace zeroflag.Serialization
 
 				node.InnerText = this.Converters.Generate<string>(desc.Type, desc.Value);
 
-				if (!desc.IsNull && this.HideUnused)
+				if (!(desc.IsNull && this.HideUnused))
 				{
 					if (xmlParent != null)
 						xmlParent.AppendChild(node);
@@ -149,7 +149,7 @@ namespace zeroflag.Serialization
 
 				//this.WriteAttribute("value", StringConverters.Base.Write(value.Value), doc, node);
 
-				if (!desc.IsNull && this.HideUnused)
+				if (!(desc.IsNull && this.HideUnused))
 				{
 					if (xmlParent != null)
 						xmlParent.Attributes.Append(node);
@@ -171,6 +171,7 @@ namespace zeroflag.Serialization
 		#endregion Serialize
 
 		#region Deserialize
+
 		public override object Deserialize(object value, zeroflag.Serialization.Descriptors.Descriptor desc)
 		{
 			XmlDocument doc = new XmlDocument();
@@ -178,9 +179,9 @@ namespace zeroflag.Serialization
 
 			value = this.Deserialize(value, desc, null, doc.DocumentElement);
 
-			Console.WriteLine("<Deserialized>");
-			Console.WriteLine(desc.ToStringTree().ToString());
-			Console.WriteLine("</Deserialized>");
+			//Console.WriteLine("<Deserialized>");
+			//Console.WriteLine(desc.ToStringTree().ToString());
+			//Console.WriteLine("</Deserialized>");
 			//Console.WriteLine("<Created>");
 			//Console.WriteLine(this.Context.Parse(value).ToStringTree().ToString());
 			//Console.WriteLine("</Created>");
@@ -191,7 +192,7 @@ namespace zeroflag.Serialization
 		protected virtual object Deserialize(object value, Descriptor desc, Descriptor outer, XmlNode node)
 		{
 			depth++;
-
+			//Benchmark.Instance.Trace("Deserialize", desc, node);
 			string explicitType = this.GetAttribute(AttributeType, node);
 			if (desc.Name == null)
 			{
@@ -203,7 +204,9 @@ namespace zeroflag.Serialization
 
 			if (explicitType != null)
 			{
+				//Benchmark.Instance.Trace("TypeFinder.Instance"); 
 				Type type = TypeFinder.Instance[explicitType, desc.Type];
+				//Benchmark.Instance.Trace("TypeFinder.Instance");
 				if (type != null && type != desc.Type)
 				{
 					desc = this.Context.Parse(desc.Name, type, outer);
@@ -218,7 +221,7 @@ namespace zeroflag.Serialization
 				//    }
 				//}
 			}
-
+			//Benchmark.Instance.Trace();
 			desc.Value = value;
 			if (desc.Value == null && desc.Name != null && outer != null && outer.Value != null)
 			{
@@ -244,13 +247,13 @@ namespace zeroflag.Serialization
 				int.TryParse(this.GetAttribute(AttributeId, node), out id);
 				desc.Id = id;
 			}
-
+			//Benchmark.Instance.Trace("Descriptor.Generate");
 
 			desc.Value = value;
-
 			desc.GenerateParse();
 			desc.GenerateCreate();
 
+			//Benchmark.Instance.Trace("Descriptor.Generate");
 
 			CWL(new StringBuilder().Append(' ', depth).Append("Deserialize(name='" + desc.Name + "', type='" + desc.Type + "', isnull='" + desc.IsNull + "', id='" + desc.Id + "', value='" + desc.Value + "', children='" + node.ChildNodes.Count + "')").ToString());
 			//foreach (Descriptor cr in desc.Generated.Values) Console.WriteLine("\tid=" + cr.Id + ", name=" + cr.Name + ", type=" + cr.Type + ", value=" + cr.Value);
@@ -465,6 +468,5 @@ namespace zeroflag.Serialization
 		{
 			Console.WriteLine(value);
 		}
-
 	}
 }

@@ -58,15 +58,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace zeroflag
+namespace zeroflag.Reflection
 {
-	public class TypeHelper : zeroflag.Reflection.TypeHelper
-	{
-	}
-#if OBSOLETE
 	public class TypeHelper
 	{
-
 		public static object CreateInstance(System.Type type)
 		{
 			return System.Activator.CreateInstance(type);
@@ -273,5 +268,4 @@ namespace zeroflag
 			return results;
 		}
 	}
-#endif
 }
