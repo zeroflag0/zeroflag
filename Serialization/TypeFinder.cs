@@ -236,7 +236,7 @@ namespace zeroflag.Serialization
 			}
 		}
 #endif
-		protected virtual bool ValidateType(Type type)
+		protected virtual bool IsValidType(Type type)
 		{
 			return type.IsPublic && !type.IsAbstract && !type.IsInterface && type.GetConstructor(System.Type.EmptyTypes) != null;
 		}
@@ -335,6 +335,31 @@ namespace zeroflag.Serialization
 			return this.SearchAll(key, null);
 		}
 
+		List<string> __SearchCacheNames;
+
+		protected List<string> _SearchCacheNames
+		{
+			get { return __SearchCacheNames ?? (__SearchCacheNames = new List<string>(_SearchCache.Keys)); }
+		}
+		Dictionary<string, Type> _SearchCache = new Dictionary<string, Type>();
+		int _SearchCacheTypeCount = 0;
+
+		protected Type CacheAdd(string name, Type type)
+		{
+			lock (_SearchCache)
+			{
+				_SearchCache[name] = type;
+				if (!_SearchCacheNames.Contains(name))
+					_SearchCacheNames.Add(name);
+			}
+
+			string lower = name.ToLower();
+			if (lower != name)
+				this.CacheAdd(lower, type);
+
+			return type;
+		}
+
 		public List<Type> SearchAll(string key, Type baseType)
 		{
 			List<Type> results = new List<Type>();
@@ -342,11 +367,45 @@ namespace zeroflag.Serialization
 			if (type != null)
 				results.Add(type);
 
-			List<Type> sources;
-			if (baseType != null)
-				sources = TypeHelper.GetDerived(baseType);
-			else
-				sources = TypeHelper.Types;
+			if (!_SearchCache.ContainsKey(key))
+			{
+				lock (_SearchCache)
+					if (_SearchCacheTypeCount < TypeHelper.Types.Count)
+					{
+						List<Type> sources;
+						bool count = false;
+						if (baseType != null)
+						{
+							sources = TypeHelper.GetDerived(baseType);
+							count = true;
+						}
+						else
+						{
+							sources = TypeHelper.Types;
+							_SearchCacheTypeCount = TypeHelper.Types.Count;
+						}
+						string name;
+						foreach (Type source in sources)
+						{
+							if (!this.IsValidType(source))
+								continue;
+							if (count && !_SearchCache.ContainsValue(source))
+								_SearchCacheTypeCount++;
+
+							name = source.Name;
+							this.CacheAdd(name, source);
+							name = name.ToLower();
+							this.CacheAdd(name, source);
+							if (name.Contains("."))
+							{
+								name = name.Substring(name.LastIndexOf('.')).Trim('.');
+							}
+							this.CacheAdd(name, source);
+						}
+					}
+
+
+			}
 
 			return results;
 #if OBSOLETE
@@ -461,6 +520,46 @@ namespace zeroflag.Serialization
 			//    ) ?? this.GetType(key);
 #endif
 		}
+
+		protected Type SearchCache(string key, Type baseType, List<Type> ignore)
+		{
+			if (key == null)
+				return null;
+
+			if (_SearchCache.ContainsKey(key))
+				return _SearchCache[key];
+
+			Type result = null;
+			List<string> names = _SearchCacheNames;
+
+			string name = null;
+			name = names.Find(n => n != null && n == key);
+			if (name != null)
+			{
+				result = _SearchCache[name];
+				if (ignore == null || !ignore.Contains(result))
+					return this.CacheAdd(key, result);
+			}
+
+			name = names.Find(n => n != null && n.EndsWith(key));
+			if (name != null)
+			{
+				result = _SearchCache[name];
+				if (ignore == null || !ignore.Contains(result))
+					return this.CacheAdd(key, result);
+			}
+
+			name = names.Find(n => n != null && n.Contains(key));
+			if (name != null)
+			{
+				result = _SearchCache[name];
+				if (ignore == null || !ignore.Contains(result))
+					return this.CacheAdd(key, result);
+			}
+
+			return null;
+		}
+
 		//public Type GetType(string name)
 		//{
 		//    Type type = null;

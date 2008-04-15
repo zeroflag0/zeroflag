@@ -535,9 +535,9 @@ namespace zeroflag.Serialization.Descriptors
 
 		public Context CopyStatics(Context target)
 		{
-			target.ParsedObjects = new Dictionary<object,Descriptor>(this.ParsedObjects);
+			//target.ParsedObjects = new Dictionary<object,Descriptor>(this.ParsedObjects);
 			target.ParsedTypes = new Dictionary<Type, Descriptor>(this.ParsedTypes);
-			target.CreatedInstances = new Dictionary<int, Descriptor>(this.CreatedInstances);
+			//target.CreatedInstances = new Dictionary<int, Descriptor>(this.CreatedInstances);
 			return target;
 		}
 
