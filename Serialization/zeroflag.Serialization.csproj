@@ -69,6 +69,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\IgnoreAttribute.cs" />
+    <None Include="Benchmark.cs" />
     <Compile Include="Converters\Converter.cs" />
     <Compile Include="Converters\ConverterCollection.cs" />
     <Compile Include="Converters\Converter~2.cs" />

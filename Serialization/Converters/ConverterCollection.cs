@@ -44,6 +44,12 @@ namespace zeroflag.Serialization.Converters
 			return this.GetConverter(typeof(T), t2);
 		}
 
+		public Converter this[Type t1, Type t2]
+		{
+			get { return this.GetConverter(t1, t2); }
+			set { this.Add(t1, t2, value); }
+		}
+
 		public Converter GetConverter(Type t1, Type t2)
 		{
 			//if (!Converters.ContainsKey(t1))
@@ -129,7 +135,11 @@ namespace zeroflag.Serialization.Converters
 			Type t1, t2;
 			t1 = converter.Type1;
 			t2 = converter.Type2;
+			return this.Add(t1, t2, converter);
+		}
 
+		public virtual ConverterCollection Add(Type t1, Type t2, Converter converter)
+		{
 			if (!_Converters.ContainsKey(t1))
 				_Converters.Add(t1, new Dictionary<Type, Converter>());
 

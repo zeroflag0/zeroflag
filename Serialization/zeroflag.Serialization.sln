@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Serialization", "zeroflag.Serialization.csproj", "{48823787-7042-494D-B250-A3E60085BB2B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{EF0349C3-2149-462A-AF1A-255D7635CF07}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Serialization.Test", "Test\zeroflag.Serialization.Test.csproj", "{EF0349C3-2149-462A-AF1A-255D7635CF07}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.zml", "..\zml\zeroflag.zml.csproj", "{1D342DD8-8157-47A3-9065-79F604ED50CE}"
 EndProject

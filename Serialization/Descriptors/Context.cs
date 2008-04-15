@@ -222,6 +222,22 @@ namespace zeroflag.Serialization.Descriptors
 #endif//OBSOLETE
 		#endregion Descriptors
 
+		#region Serializer
+
+		private Serializer _Serializer = default(Serializer);
+
+		public Serializer Serializer
+		{
+			get { return _Serializer; }
+			set
+			{
+				if (_Serializer != value)
+				{
+					_Serializer = value;
+				}
+			}
+		}
+		#endregion Serializer
 
 		#region  Parse
 
@@ -447,6 +463,7 @@ namespace zeroflag.Serialization.Descriptors
 		public Dictionary<object, Descriptor> ParsedObjects
 		{
 			get { return _ParsedObjects ?? (_ParsedObjects = this.ParsedObjectsCreate); }
+			protected set { _ParsedObjects = value; }
 		}
 
 		/// <summary>
@@ -469,6 +486,7 @@ namespace zeroflag.Serialization.Descriptors
 		public Dictionary<Type, Descriptor> ParsedTypes
 		{
 			get { return _ParsedTypes ?? (_ParsedTypes = this.ParsedTypesCreate); }
+			protected set { _ParsedTypes = value; }
 		}
 
 		/// <summary>
@@ -488,6 +506,7 @@ namespace zeroflag.Serialization.Descriptors
 		public Dictionary<int, Descriptor> CreatedInstances
 		{
 			get { return _CreatedInstances ?? (_CreatedInstances = new Dictionary<int, Descriptor>()); }
+			protected set { _CreatedInstances = value; }
 		}
 		#endregion
 
@@ -514,6 +533,13 @@ namespace zeroflag.Serialization.Descriptors
 
 		#endregion Exceptions
 
+		public Context CopyStatics(Context target)
+		{
+			target.ParsedObjects = new Dictionary<object,Descriptor>(this.ParsedObjects);
+			target.ParsedTypes = new Dictionary<Type, Descriptor>(this.ParsedTypes);
+			target.CreatedInstances = new Dictionary<int, Descriptor>(this.CreatedInstances);
+			return target;
+		}
 
 		[System.Diagnostics.Conditional("VERBOSE")]
 		static internal void CWL(object value)
