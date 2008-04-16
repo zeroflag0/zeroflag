@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 namespace Test
 {
 	[Serializable]
-	public class TestData : System.Runtime.Serialization.ISerializable
+	public class TestData //: System.Runtime.Serialization.ISerializable
 	{
 		#region Name
 
@@ -61,29 +61,109 @@ namespace Test
 
 		#region ISerializable Members
 
+		//public TestData()
+		//{
+		//}
+
+		//protected TestData(SerializationInfo info, StreamingContext context)
+		//{
+		//    if (info == null)
+		//        throw new System.ArgumentNullException("info");
+		//    this.Name = (string)info.GetValue("Name", typeof(string));
+		//    this.Int = (int)info.GetValue("Int", typeof(int));
+		//    this.Hidden = (bool)info.GetValue("Hidden", typeof(bool));
+		//}
+
+		//public virtual void GetObjectData(
+		//SerializationInfo info, StreamingContext context)
+		//{
+		//    if (info == null)
+		//        throw new System.ArgumentNullException("info");
+		//    info.AddValue("Name", this.Name);
+		//    info.AddValue("Int", this.Int);
+		//    info.AddValue("Hidden", this.Hidden);
+		//}
+
+		#endregion
+
+		double _Real;
+
+		public double Real
+		{
+			get { return _Real; }
+			set { _Real = value; }
+		}
+
+		List<TestData> _Inner = new List<TestData>();
+
+		[System.ComponentModel.Browsable(false)]
+		public List<TestData> Inner
+		{
+			get { return _Inner; }
+			//set { _Inner = value; }
+		}
+
+		public override string ToString()
+		{
+			return this.ToString(new StringBuilder(), new List<TestData>(), 0).ToString();
+		}
+
+		public StringBuilder ToString(StringBuilder b, List<TestData> done, int depth)
+		{
+			b.AppendLine().Append(' ', depth).Append(this.GetType().Name).Append("[").Append(this.Name).Append(",").Append(this.Int).Append(",").Append(this.Real).Append(",").Append(this.GetHashCode());
+			if (this.Inner != null)
+			{
+				if (depth > 10)
+				{
+					b.Append(",<...>");
+				}
+				else if (done.Contains(this))
+				{
+					b.Append(",<link>");
+				}
+				else
+				{
+					done.Add(this);
+					depth++;
+					b.AppendLine().Append(' ', depth).Append("{");
+					foreach (TestData inner in this.Inner)
+					{
+						inner.ToString(b, done, depth);
+					}
+					depth--;
+					b.AppendLine().Append(' ', depth).Append("}");
+				}
+			}
+			b.Append("]");
+			return b;
+		}
+
 		public TestData()
 		{
 		}
 
-		protected TestData(SerializationInfo info, StreamingContext context)
+		public TestData(string name, int integer, float real)
 		{
-			if (info == null)
-				throw new System.ArgumentNullException("info");
-			this.Name = (string)info.GetValue("Name", typeof(string));
-			this.Int = (int)info.GetValue("Int", typeof(int));
-			this.Hidden = (bool)info.GetValue("Hidden", typeof(bool));
+			this.Name = name;
+			this.Int = integer;
+			this.Real = real;
 		}
 
-		public virtual void GetObjectData(
-		SerializationInfo info, StreamingContext context)
+		public TestData Add(params TestData[] inner)
 		{
-			if (info == null)
-				throw new System.ArgumentNullException("info");
-			info.AddValue("Name", this.Name);
-			info.AddValue("Int", this.Int);
-			info.AddValue("Hidden", this.Hidden);
+			this.Inner.AddRange(inner);
+			return this;
+		}
+	}
+
+	public class TestData2 : TestData
+	{
+		public TestData2()
+		{
 		}
 
-		#endregion
+		public TestData2(string name, int integer, float real)
+			: base(name, integer, real)
+		{ }
 	}
 }

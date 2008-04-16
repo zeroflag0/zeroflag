@@ -14,5 +14,19 @@ namespace Test
 		{
 			InitializeComponent();
 		}
+
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
+
+			TestData root = new TestData("root", 1, 1.5f);
+
+			TestData foo = new TestData("foo", 2, 51);
+			TestData bar = new TestData2("bar", 3, 0.0005f);//.Add(root);
+			//root.Add(foo, bar);
+			this.testList1.Items.Add(root);
+			this.testList1.Items.Add(foo);
+			this.testList1.Items.Add(bar);
+		}
 	}
 }

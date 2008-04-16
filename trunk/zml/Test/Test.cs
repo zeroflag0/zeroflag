@@ -39,22 +39,6 @@ namespace Test
 			//set { _Inner = value; }
 		}
 
-		//public override string ToString()
-		//{
-		//    return this.GetType().Name + "[" + this.Name + "," + this.Int + "," + this.Real + "," + this.ToString(this.Inner) + "]";
-		//}
-		//string ToString(IEnumerable<Test> enu)
-		//{
-		//    if (enu == null) return null;
-		//    StringBuilder b = new StringBuilder("{");
-		//    foreach (Test t in enu)
-		//    {
-		//        b.Append(t).Append(",");
-		//    }
-		//    b.Append("}");
-		//    return b.ToString();
-		//}
-
 		public override string ToString()
 		{
 			return this.ToString(new StringBuilder(), new List<Test>(), 0).ToString();

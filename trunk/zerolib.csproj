@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>zerolib</RootNamespace>
+    <AssemblyName>zerolib</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Bindable.cs" />
+    <Compile Include="Collections\Child.cs" />
+    <Compile Include="Collections\Collection.cs" />
+    <Compile Include="Collections\Collection2.cs" />
+    <Compile Include="Collections\CollectionSynchronizer.cs" />
+    <Compile Include="Collections\Delegates.cs" />
+    <Compile Include="Collections\ITreeNode.cs" />
+    <Compile Include="Collections\List.cs" />
+    <Compile Include="Collections\Parent.cs" />
+    <Compile Include="Collections\TreeNode.cs" />
+    <Compile Include="Forms\DebugForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DebugForm.Designer.cs">
+      <DependentUpon>DebugForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Reflected\ListView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Reflected\ListView.Designer.cs">
+      <DependentUpon>ListView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Reflected\ListViewItem.cs" />
+    <Compile Include="Forms\Reflected\PropertyDescription.cs" />
+    <Compile Include="Forms\Reflected\TypeDescription.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reflection\InstanceProvider.cs" />
+    <Compile Include="Reflection\TypeHelper.cs" />
+    <Compile Include="Reflection\TypeProvider.cs" />
+    <Compile Include="Serialization\Attributes\IgnoreAttribute.cs" />
+    <Compile Include="Serialization\Benchmark.cs" />
+    <Compile Include="Serialization\Converters\Converter.cs" />
+    <Compile Include="Serialization\Converters\ConverterCollection.cs" />
+    <Compile Include="Serialization\Converters\Converter~2.cs" />
+    <Compile Include="Serialization\Converters\IConverter.cs" />
+    <Compile Include="Serialization\Converters\InvalidConversionException.cs" />
+    <Compile Include="Serialization\Converters\String\Boolean.cs" />
+    <Compile Include="Serialization\Converters\String\Byte.cs" />
+    <Compile Include="Serialization\Converters\String\Char.cs" />
+    <Compile Include="Serialization\Converters\String\Color.cs" />
+    <Compile Include="Serialization\Converters\String\Converter.cs" />
+    <Compile Include="Serialization\Converters\String\Converter~1.cs" />
+    <Compile Include="Serialization\Converters\String\Decimal.cs" />
+    <Compile Include="Serialization\Converters\String\Double.cs" />
+    <Compile Include="Serialization\Converters\String\Enum.cs" />
+    <Compile Include="Serialization\Converters\String\Int16.cs" />
+    <Compile Include="Serialization\Converters\String\Int32.cs" />
+    <Compile Include="Serialization\Converters\String\Int64.cs" />
+    <Compile Include="Serialization\Converters\String\Sbyte.cs" />
+    <Compile Include="Serialization\Converters\String\Single.cs" />
+    <Compile Include="Serialization\Converters\String\String.cs" />
+    <Compile Include="Serialization\Converters\String\Type.cs" />
+    <Compile Include="Serialization\Converters\String\UInt16.cs" />
+    <Compile Include="Serialization\Converters\String\UInt32.cs" />
+    <Compile Include="Serialization\Converters\String\UInt64.cs" />
+    <Compile Include="Serialization\Descriptors\Context.cs" />
+    <Compile Include="Serialization\Descriptors\DateTimeDescriptor.cs" />
+    <Compile Include="Serialization\Descriptors\DelegateDescriptor.cs" />
+    <Compile Include="Serialization\Descriptors\Descriptor.cs" />
+    <Compile Include="Serialization\Descriptors\Descriptor~1.cs" />
+    <Compile Include="Serialization\Descriptors\ListDescriptor~1.cs" />
+    <Compile Include="Serialization\Descriptors\ObjectDescriptor.cs" />
+    <Compile Include="Serialization\Descriptors\StringDescriptor.cs" />
+    <Compile Include="Serialization\Descriptors\TypeDescriptor.cs" />
+    <Compile Include="Serialization\ExceptionCollection.cs" />
+    <Compile Include="Serialization\ExceptionTrace.cs" />
+    <Compile Include="Serialization\PropertyFinder.cs" />
+    <Compile Include="Serialization\SerializationAttribute.cs" />
+    <Compile Include="Serialization\Serializer.cs" />
+    <Compile Include="Serialization\TypeFinder.cs" />
+    <Compile Include="Serialization\UpgradeAttribute.cs" />
+    <Compile Include="Serialization\XmlSerializer.cs" />
+    <Compile Include="Serialization\ZmlSerializer.cs" />
+    <Compile Include="Threading\Do.cs" />
+    <Compile Include="Threading\For.cs" />
+    <Compile Include="Threading\Foreach.cs" />
+    <Compile Include="Threading\IDList~1.cs" />
+    <Compile Include="Threading\LocklessQueue.cs" />
+    <Compile Include="Threading\Task.cs" />
+    <Compile Include="Threading\Task~1.cs" />
+    <Compile Include="Threading\Task~2.cs" />
+    <Compile Include="Threading\Thread.cs" />
+    <Compile Include="Threading\ThreadManager.cs" />
+    <Compile Include="Translated.cs" />
+    <Compile Include="TypeHelper.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Forms\Reflected\zeroflag.Forms.Reflected.csproj" />
+    <Content Include="Serialization\BinarySerialization.concept.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Collections\_ClassDiagram.cd" />
+    <None Include="Serialization\Converters\_ClassDiagram.cd" />
+    <None Include="Serialization\Descriptors\_ClassDiagram.cd" />
+    <None Include="Serialization\_ClassDiagram.cd" />
+    <None Include="Threading\_ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Forms\DebugForm.resx">
+      <DependentUpon>DebugForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Reflected\ListView.resx">
+      <DependentUpon>ListView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Reflection\Descriptors\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

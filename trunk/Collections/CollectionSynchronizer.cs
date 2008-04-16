@@ -75,7 +75,8 @@ namespace zeroflag.Collections
 				// create peer...
 				//Console.WriteLine("Creating peer for item " + item + "(" + item.GetHashCode() + ")");
 				peer = this.PeerCreator(item);
-
+				if (peer == null)
+					return;
 				this.ItemPeers.Add(item, peer);
 				this.PeerItems.Add(peer, item);
 				Console.WriteLine(this + " Created peer " + peer + "(" + peer.GetHashCode() + ")" + " for item " + item + "(" + item.GetHashCode() + ")");
