@@ -55,6 +55,30 @@ namespace zeroflag.Forms.Reflected
 		public void Synchronize()
 		{
 			TypeDescription desc = this.Owner.ItemDescription;
+
+			var subItems = this.SubItems;
+			if (subItems.Count > 0 &&
+				subItems[0] != null &&
+				(subItems[0].Name == null || subItems[0].Name == ""))
+				subItems.RemoveAt(0);
+
+
+			foreach (var prop in desc.Properties)
+			{
+				ListViewSubItem cell;
+				if (!subItems.ContainsKey(prop.Name))
+				{
+					cell = new ListViewSubItem(this, "");
+					cell.Name = prop.Name;
+					subItems.Add(cell);
+				}
+				cell = subItems[prop.Name];
+
+				object value = prop.PropertyInfo.GetValue(this.Value, null);
+
+				cell.Text = "" + value;
+			}
+
 		}
 	}
 }

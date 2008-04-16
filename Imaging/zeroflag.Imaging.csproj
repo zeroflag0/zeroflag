@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.50727</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{28EA3955-D22B-4929-A448-6CEB58631125}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -69,12 +69,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="_ClassDiagram.cd" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Collections\zeroflag.Collections.csproj">
-      <Project>{C4B9F045-0005-4B33-B426-4134C161C9EE}</Project>
-      <Name>zeroflag.Collections</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

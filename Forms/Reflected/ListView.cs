@@ -209,6 +209,7 @@ namespace zeroflag.Forms.Reflected
 					view => this.ListViewControl.Items.Remove(view),
 					(item, view) =>
 					{
+						view.Synchronize();
 					}
 					);
 			}
@@ -238,7 +239,14 @@ namespace zeroflag.Forms.Reflected
 			{
 				return new zeroflag.Collections.CollectionSynchronizer<PropertyDescription, ColumnHeader>
 					(this.ItemDescription.Properties,
-					prop => { ColumnHeader col = new ColumnHeader(prop.Name); this.ListViewControl.Columns.Add(col); return col; },
+					prop =>
+					{
+						ColumnHeader col = new ColumnHeader(prop.Name);
+						this.ListViewControl.Columns.Add(col);
+						if (!prop.Visible)
+							col.Width = 0;
+						return col;
+					},
 					col => this.ListViewControl.Columns.Remove(col),
 					(prop, col) =>
 					{
@@ -253,6 +261,10 @@ namespace zeroflag.Forms.Reflected
 		public void Synchronize()
 		{
 			this.ColumnSync.Synchronize();
+			if (this.ListViewControl.Columns.Count > 0 &&
+				this.ListViewControl.Columns[0] != null &&
+				this.ListViewControl.Columns[0].Name == null)
+				this.ListViewControl.Columns.RemoveAt(0);
 
 			this.ItemSync.Synchronize();
 
