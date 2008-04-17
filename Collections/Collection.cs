@@ -13,7 +13,12 @@ namespace zeroflag.Collections
 		, System.Collections.ICollection
 		, System.ICloneable
 	{
-		protected zeroflag.Collections.List<T> Items = new zeroflag.Collections.List<T>();
+		private zeroflag.Collections.List<T> _Items = new zeroflag.Collections.List<T>();
+
+		protected zeroflag.Collections.List<T> Items
+		{
+			get { return _Items; }
+		}
 
 		#region zeroflag.Collections.List`1
 
