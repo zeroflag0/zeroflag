@@ -48,6 +48,11 @@ namespace zeroflag.Collections
 			return this;
 		}
 
+		public T[] ToArray()
+		{
+			return this.Items.ToArray();
+		}
+
 		#endregion zeroflag.Collections.List`1
 
 		#region System.Collections.Generic.ICollection`1

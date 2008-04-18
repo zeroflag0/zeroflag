@@ -39,7 +39,7 @@ namespace zeroflag.Collections
 		{
 		}
 
-		public List(IList<T> list)
+		public List(System.Collections.Generic. List<T> list)
 			: this()
 		{
 			this._Values = list;
@@ -267,15 +267,20 @@ namespace zeroflag.Collections
 			}
 		}
 
+		public T[] ToArray()
+		{
+			return this.Values.ToArray();
+		}
+
 		#endregion System.Collections.Generic.IList`1
 
 		#region Values
-		private System.Collections.Generic.IList<T> _Values = new System.Collections.Generic.List<T>();
+		private System.Collections.Generic.List<T> _Values = new System.Collections.Generic.List<T>();
 
-		protected System.Collections.Generic.IList<T> Values
+		protected System.Collections.Generic.List<T> Values
 		{
 			get { return _Values; }
-			set { _Values = value; }
+			//set { _Values = value; }
 		}
 		#endregion Values
 

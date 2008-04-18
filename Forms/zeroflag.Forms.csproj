@@ -48,20 +48,16 @@
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Collections\zeroflag.Collections.csproj">
-      <Project>{C4B9F045-0005-4B33-B426-4134C161C9EE}</Project>
-      <Name>zeroflag.Collections</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Serialization\zeroflag.Serialization.csproj">
-      <Project>{48823787-7042-494D-B250-A3E60085BB2B}</Project>
-      <Name>zeroflag.Serialization</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="DebugForm.resx">
       <DependentUpon>DebugForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\zerolib.csproj">
+      <Project>{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}</Project>
+      <Name>zerolib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

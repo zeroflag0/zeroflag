@@ -53,21 +53,6 @@
     <Compile Include="Collections\List.cs" />
     <Compile Include="Collections\Parent.cs" />
     <Compile Include="Collections\TreeNode.cs" />
-    <Compile Include="Forms\DebugForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\DebugForm.Designer.cs">
-      <DependentUpon>DebugForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListView.Designer.cs">
-      <DependentUpon>ListView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListViewItem.cs" />
-    <Compile Include="Forms\Reflected\PropertyDescription.cs" />
-    <Compile Include="Forms\Reflected\TypeDescription.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\InstanceProvider.cs" />
     <Compile Include="Reflection\TypeHelper.cs" />
@@ -130,7 +115,6 @@
     <Compile Include="TypeHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Forms\Reflected\zeroflag.Forms.Reflected.csproj" />
     <Content Include="Serialization\BinarySerialization.concept.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -139,16 +123,6 @@
     <None Include="Serialization\Descriptors\_ClassDiagram.cd" />
     <None Include="Serialization\_ClassDiagram.cd" />
     <None Include="Threading\_ClassDiagram.cd" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Forms\DebugForm.resx">
-      <DependentUpon>DebugForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\ListView.resx">
-      <DependentUpon>ListView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Reflection\Descriptors\" />

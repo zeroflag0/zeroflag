@@ -60,13 +60,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Collections\zeroflag.Collections.csproj">
-      <Project>{C4B9F045-0005-4B33-B426-4134C161C9EE}</Project>
-      <Name>zeroflag.Collections</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Serialization\zeroflag.Serialization.csproj">
-      <Project>{48823787-7042-494D-B250-A3E60085BB2B}</Project>
-      <Name>zeroflag.Serialization</Name>
+    <ProjectReference Include="..\..\zerolib.csproj">
+      <Project>{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}</Project>
+      <Name>zerolib</Name>
     </ProjectReference>
     <ProjectReference Include="..\zeroflag.Forms.csproj">
       <Project>{D79807BB-FE94-410E-AE21-2171EC746FBC}</Project>
