@@ -13,6 +13,14 @@ namespace Test
 		public Form1()
 		{
 			InitializeComponent();
+
+			this.testList1.ItemSelected += testList1_ItemSelected;
+			this.testList1.ItemDeselected += testList1_ItemSelected;
+		}
+
+		void testList1_ItemSelected(TestData item)
+		{
+			this.propertyGrid1.SelectedObjects = this.testList1.SelectedItems.ToArray();
 		}
 
 		protected override void OnLoad(EventArgs e)

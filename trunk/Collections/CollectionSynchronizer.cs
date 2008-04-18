@@ -143,6 +143,28 @@ namespace zeroflag.Collections
 		}
 		#endregion PeerCreator
 
+		public PeerType this[ItemType item]
+		{
+			get
+			{
+				if (item != null && this.ItemPeers.ContainsKey(item))
+					return this.ItemPeers[item];
+				else
+					return default(PeerType);
+			}
+		}
+
+		public ItemType this[PeerType peer]
+		{
+			get
+			{
+				if (peer != null && this.PeerItems.ContainsKey(peer))
+					return this.PeerItems[peer];
+				else
+					return default(ItemType);
+			}
+		}
+
 		//#region ItemCreator
 		//public delegate ItemType ItemCreationHandler(ItemType item);
 
