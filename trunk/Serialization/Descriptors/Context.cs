@@ -34,27 +34,41 @@ namespace zeroflag.Serialization.Descriptors
 
 		static Context()
 		{
-			lock (typeof(Descriptor))
+			try
 			{
-				List<Type> types = TypeHelper.GetDerived(typeof(Descriptor<>));
-				Type valueType, descriptor;
-				foreach (Type descriptorType in types)
+				lock (typeof(Descriptor))
 				{
-					if (descriptorType.IsAbstract || descriptorType.IsInterface)
-						continue;
+					List<Type> types = TypeHelper.GetDerived(typeof(Descriptor<>));
+					Type valueType, descriptor;
+					foreach (Type descriptorType in types)
+					{
+						try
+						{
+							if (descriptorType.IsAbstract || descriptorType.IsInterface)
+								continue;
 
-					descriptor = descriptorType;
+							descriptor = descriptorType;
 
-					Type genericDescriptor = descriptor;
-					while (!genericDescriptor.IsGenericType || typeof(Descriptor<>) != genericDescriptor.GetGenericTypeDefinition())
-						genericDescriptor = genericDescriptor.BaseType;
+							Type genericDescriptor = descriptor;
+							while (!genericDescriptor.IsGenericType || typeof(Descriptor<>) != genericDescriptor.GetGenericTypeDefinition())
+								genericDescriptor = genericDescriptor.BaseType;
 
-					valueType = genericDescriptor.GetGenericArguments()[0];
-					if (valueType.IsGenericType)
-						valueType = valueType.GetGenericTypeDefinition();
+							valueType = genericDescriptor.GetGenericArguments()[0];
+							if (valueType.IsGenericType)
+								valueType = valueType.GetGenericTypeDefinition();
 
-					_StaticDescriptorTypes.Add(valueType, descriptor);
+							_StaticDescriptorTypes.Add(valueType, descriptor);
+						}
+						catch (Exception exc)
+						{
+							Console.WriteLine(exc);
+						}
+					}
 				}
+			}
+			catch (Exception exc)
+			{
+				Console.WriteLine(exc);
 			}
 		}
 

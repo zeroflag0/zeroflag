@@ -9,31 +9,48 @@ namespace zeroflag.Serialization.Converters
 
 		public ConverterCollection()
 		{
-			_Converters = new Dictionary<Type, Dictionary<Type, Converter>>();
-
-			List<Type> types = TypeHelper.GetDerived(typeof(Converter<,>));
-
-			foreach (Type type in types)
+			try
 			{
-				try
+				_Converters = new Dictionary<Type, Dictionary<Type, Converter>>();
+
+				List<Type> types = TypeHelper.GetDerived(typeof(Converter<,>));
+
+				foreach (Type type in types)
 				{
-					if (type.IsAbstract || type.IsInterface)
-						continue;
-					Converter converter = (Converter)TypeHelper.CreateInstance(type);
-					this.Add(converter);
+					try
+					{
+						if (type.IsAbstract || type.IsInterface)
+							continue;
+						Converter converter = (Converter)TypeHelper.CreateInstance(type);
+						this.Add(converter);
+					}
+					catch (Exception exc)
+					{
+						Console.WriteLine(exc);
+					}
 				}
-				catch { }
+			}
+			catch (Exception exc)
+			{
+				Console.WriteLine(exc);
 			}
 		}
 
 		protected ConverterCollection(ConverterCollection from)
 		{
-			_Converters = new Dictionary<Type, Dictionary<Type, Converter>>();
-
-			foreach (var type in from._Converters.Values)
+			try
 			{
-				foreach (var conv in type.Values)
-					this.Add(conv);
+				_Converters = new Dictionary<Type, Dictionary<Type, Converter>>();
+
+				foreach (var type in from._Converters.Values)
+				{
+					foreach (var conv in type.Values)
+						this.Add(conv);
+				}
+			}
+			catch (Exception exc)
+			{
+				Console.WriteLine(exc);
 			}
 		}
 
