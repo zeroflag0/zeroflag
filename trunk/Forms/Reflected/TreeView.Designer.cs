@@ -1,6 +1,6 @@
 ﻿namespace zeroflag.Forms.Reflected
 {
-	partial class ListView<T>
+	partial class TreeView
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -28,33 +28,30 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this._Control = new System.Windows.Forms.ListView();
+			this._Control = new System.Windows.Forms.TreeView();
 			this.SuspendLayout();
 			// 
 			// _Control
 			// 
-			this._Control.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this._Control.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._Control.FullRowSelect = true;
 			this._Control.Location = new System.Drawing.Point(0, 0);
 			this._Control.Name = "_Control";
-			this._Control.Size = new System.Drawing.Size(150, 150);
+			this._Control.Size = new System.Drawing.Size(300, 300);
 			this._Control.TabIndex = 0;
-			this._Control.UseCompatibleStateImageBehavior = false;
-			this._Control.View = System.Windows.Forms.View.Details;
 			// 
-			// ListView
+			// TreeView
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._Control);
-			this.Name = "ListView";
+			this.Name = "TreeView";
+			this.Size = new System.Drawing.Size(300, 300);
 			this.ResumeLayout(false);
 
 		}
 
 		#endregion
 
-		private System.Windows.Forms.ListView _Control;
+		private System.Windows.Forms.TreeView _Control;
 	}
 }

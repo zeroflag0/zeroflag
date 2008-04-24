@@ -16,12 +16,12 @@ namespace zeroflag.Forms.Reflected
 			this.Synchronize();
 
 			//new zeroflag.Forms.DebugForm(AppDomain.CurrentDomain.GetAssemblies());
-			this.ListViewControl.SelectedIndexChanged += new EventHandler(ListViewControl_SelectedIndexChanged);
+			this.Control.SelectedIndexChanged += new EventHandler(ListViewControl_SelectedIndexChanged);
 		}
 
 		void ListViewControl_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			foreach (ListViewItem<ListView<T>, T> view in this.ListViewControl.SelectedItems)
+			foreach (ListViewItem<ListView<T>, T> view in this.Control.SelectedItems)
 			{
 				T item = this.ItemSync[view];
 				if (!this.SelectedItems.Contains(item))
@@ -31,7 +31,7 @@ namespace zeroflag.Forms.Reflected
 			foreach (T item in selected)
 			{
 				var view = this.ItemSync[item];
-				if (!this.ListViewControl.SelectedItems.Contains(view))
+				if (!this.Control.SelectedItems.Contains(view))
 					this.SelectedItems.Remove(item);
 			}
 			//this.SelectedItemSync.Synchronize();
@@ -186,10 +186,9 @@ namespace zeroflag.Forms.Reflected
 		#endregion ItemChanged event
 
 		[Browsable(false)]
-		public System.Windows.Forms.ListView ListViewControl
+		public System.Windows.Forms.ListView Control
 		{
-			get { return _List; }
-			//set { _List = value; }
+			get { return _Control; }
 		}
 
 		//public System.Windows.Forms.ListView.ColumnHeaderCollection Columns
@@ -322,7 +321,7 @@ namespace zeroflag.Forms.Reflected
 				return new zeroflag.Collections.CollectionSynchronizer<T, ListViewItem<ListView<T>, T>>
 					(this.Items,
 					item => new ListViewItem<ListView<T>, T>(this, item),
-					view => this.ListViewControl.Items.Remove(view),
+					view => this.Control.Items.Remove(view),
 					(item, view) =>
 					{
 						view.Synchronize();
@@ -392,12 +391,12 @@ namespace zeroflag.Forms.Reflected
 					prop =>
 					{
 						ColumnHeader col = new ColumnHeader(prop.Name);
-						this.ListViewControl.Columns.Add(col);
+						this.Control.Columns.Add(col);
 						if (!prop.Visible)
 							col.Width = 0;
 						return col;
 					},
-					col => this.ListViewControl.Columns.Remove(col),
+					col => this.Control.Columns.Remove(col),
 					(prop, col) =>
 					{
 						col.Text = prop.Name;
@@ -416,12 +415,12 @@ namespace zeroflag.Forms.Reflected
 		{
 			get
 			{
-				return this.ListViewControl != null && this.ListViewControl.MultiSelect;
+				return this.Control != null && this.Control.MultiSelect;
 			}
 			set
 			{
-				if (this.ListViewControl != null)
-					this.ListViewControl.MultiSelect = value;
+				if (this.Control != null)
+					this.Control.MultiSelect = value;
 			}
 		}
 

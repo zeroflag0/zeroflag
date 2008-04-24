@@ -22,7 +22,7 @@ namespace zeroflag.Forms.Reflected
 				{
 					_Owner = value;
 					if (_Owner != null)
-						_Owner.ListViewControl.Items.Add(this);
+						_Owner.Control.Items.Add(this);
 				}
 			}
 		}
