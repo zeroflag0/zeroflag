@@ -44,6 +44,7 @@
 			// 
 			this.testList1.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.testList1.Location = new System.Drawing.Point(0, 0);
+			this.testList1.MultiSelect = true;
 			this.testList1.Name = "testList1";
 			this.testList1.Size = new System.Drawing.Size(570, 442);
 			this.testList1.TabIndex = 4;
