@@ -21,7 +21,20 @@ namespace zeroflag.Forms.Reflected
 
 		void ListViewControl_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			this.SelectedItemSync.Synchronize();
+			foreach (ListViewItem<ListView<T>, T> view in this.ListViewControl.SelectedItems)
+			{
+				T item = this.ItemSync[view];
+				if (!this.SelectedItems.Contains(item))
+					this.SelectedItems.Add(item);
+			}
+			List<T> selected = new List<T>(this.SelectedItems);
+			foreach (T item in selected)
+			{
+				var view = this.ItemSync[item];
+				if (!this.ListViewControl.SelectedItems.Contains(view))
+					this.SelectedItems.Remove(item);
+			}
+			//this.SelectedItemSync.Synchronize();
 		}
 
 		#region ItemDescription
@@ -283,7 +296,7 @@ namespace zeroflag.Forms.Reflected
 		#endregion event ItemDeselected
 
 		#endregion SelectedItems
-		
+
 		#region Synchronization
 
 		#region ItemSync
@@ -394,6 +407,23 @@ namespace zeroflag.Forms.Reflected
 		}
 
 		#endregion ColumnSync
+
+		/// <summary>
+		/// Gets or sets a value indicating whether multiple items can be selected.
+		/// </summary>
+		/// <value>true if multiple items in the control can be selected at one time; otherwise, false. The default is true.</value>
+		public virtual bool MultiSelect
+		{
+			get
+			{
+				return this.ListViewControl != null && this.ListViewControl.MultiSelect;
+			}
+			set
+			{
+				if (this.ListViewControl != null)
+					this.ListViewControl.MultiSelect = value;
+			}
+		}
 
 		public void Synchronize()
 		{

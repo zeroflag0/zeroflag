@@ -31,10 +31,12 @@ namespace Test
 
 			TestData foo = new TestData("foo", 2, 51);
 			TestData bar = new TestData2("bar", 3, 0.0005f);//.Add(root);
+			TestData bar2 = new TestData2("bar", 5, 0.0005f);
 			//root.Add(foo, bar);
 			this.testList1.Items.Add(root);
 			this.testList1.Items.Add(foo);
 			this.testList1.Items.Add(bar);
+			this.testList1.Items.Add(bar2);
 		}
 	}
 }
