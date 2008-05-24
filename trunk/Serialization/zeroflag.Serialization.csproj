@@ -68,6 +68,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Collections\Collection.cs">
+      <Link>Collection.cs</Link>
+    </Compile>
+    <Compile Include="..\Collections\List.cs">
+      <Link>List.cs</Link>
+    </Compile>
+    <Compile Include="..\Reflection\InstanceProvider.cs">
+      <Link>InstanceProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\Reflection\TypeHelper.cs">
+      <Link>TypeHelper.cs</Link>
+    </Compile>
+    <Compile Include="..\Reflection\TypeProvider.cs">
+      <Link>TypeProvider.cs</Link>
+    </Compile>
     <Compile Include="Attributes\IgnoreAttribute.cs" />
     <None Include="Benchmark.cs" />
     <Compile Include="Converters\Converter.cs" />

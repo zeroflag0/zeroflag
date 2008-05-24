@@ -58,243 +58,250 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace zeroflag.Reflection
+namespace zeroflag
 {
-	public class TypeHelper
+	public class TypeHelper : zeroflag.Reflection.TypeHelper
 	{
-		public static object CreateInstance(System.Type type)
-		{
-			return System.Activator.CreateInstance(type);
-		}
+	}
 
-		public static object CreateInstance(System.Type type, params System.Type[] generics)
+	namespace Reflection
+	{
+		public class TypeHelper
 		{
-			if (type == null)
-				return null;
-			//System.Activator.CreateInstance(type, null, 
-			return CreateInstance(SpecializeType(type, generics));
-		}
-
-		public static Type SpecializeType(System.Type type, params System.Type[] generics)
-		{
-			if (type == null)
-				return type;
-			if (type.IsGenericTypeDefinition)
+			public static object CreateInstance(System.Type type)
 			{
-				if (!type.IsGenericTypeDefinition)
-					type = type.GetGenericTypeDefinition();
-				type = type.MakeGenericType(generics);
+				return System.Activator.CreateInstance(type);
 			}
-			return type;
-		}
 
-		public static List<Type> ScanAssemblies()
-		{
-			return ScanAssemblies((System.Reflection.Assembly[])null);
-		}
-		public static List<Type> ScanAssemblies(params System.Reflection.Assembly[] assemblies)
-		{
-			try
+			public static object CreateInstance(System.Type type, params System.Type[] generics)
 			{
-				lock (Assemblies)
+				if (type == null)
+					return null;
+				//System.Activator.CreateInstance(type, null, 
+				return CreateInstance(SpecializeType(type, generics));
+			}
+
+			public static Type SpecializeType(System.Type type, params System.Type[] generics)
+			{
+				if (type == null)
+					return type;
+				if (type.IsGenericTypeDefinition)
 				{
-					lock (_Types)
-					{
-						//System.Reflection.Assembly[] available = AvailableAssemblies ?? (AvailableAssemblies = AppDomain.CurrentDomain.GetAssemblies());
-						System.Reflection.Assembly[] available = AppDomain.CurrentDomain.GetAssemblies();
-						assemblies = assemblies ?? available;
-
-						// check if all assemblies are already parsed...
-						foreach (System.Reflection.Assembly assembly in assemblies)// AppDomain.CurrentDomain.GetAssemblies())
-						{
-							if (!Assemblies.Contains(assembly))
-							{
-								Assemblies.Add(assembly);
-
-								foreach (var name in assembly.GetReferencedAssemblies())
-									ScanAssemblies(AppDomain.CurrentDomain.Load(name));
-
-								// assembly hasn't been parsed yet...
-								Type[] types = null;
-								try
-								{
-									types = assembly.GetTypes();
-								}
-								catch (System.Reflection.ReflectionTypeLoadException exc)
-								{
-									types = exc.Types;
-								}
-								// add all types...
-								foreach (System.Type type in types)
-								{
-									// avoid duplicates...
-									if (!_Types.Contains(type))
-									{
-										_Types.Add(type);
-										if (type.FullName != null && !TypeNames.ContainsKey(type.FullName))
-											TypeNames.Add(type.FullName, type);
-									}
-								}
-
-							}
-							// check if there are any assemblies depending on the current...
-							//if (assemblies != available)
-							//    foreach (var other in available)
-							//    {
-							//        foreach (var refe in other.GetReferencedAssemblies())
-							//        {
-							//            if (refe.FullName == assembly.GetName().FullName)
-							//                // if it depends, scan it...
-							//                ScanAssemblies(other);
-							//        }
-							//    }
-						}
-						return _Types;
-					}
+					if (!type.IsGenericTypeDefinition)
+						type = type.GetGenericTypeDefinition();
+					type = type.MakeGenericType(generics);
 				}
+				return type;
 			}
-			catch (Exception exc)
+
+			public static List<Type> ScanAssemblies()
 			{
-				System.Diagnostics.Debugger.Log(0, "zeroflag.Reflection.TypeHelper", exc.ToString());
-				Console.WriteLine(exc);
-				return _Types;
+				return ScanAssemblies((System.Reflection.Assembly[])null);
 			}
-		}
-
-		static List<Type> _Types = new List<Type>();
-
-		public static List<Type> Types
-		{
-			get
+			public static List<Type> ScanAssemblies(params System.Reflection.Assembly[] assemblies)
 			{
-				if (Assemblies.Count != AppDomain.CurrentDomain.GetAssemblies().Length)
-					ScanAssemblies();
-				return TypeHelper._Types;
-			}
-		}
-
-		static TypeHelper()
-		{
-			ScanAssemblies();
-		}
-
-		static Dictionary<string, Type> TypeNames = new Dictionary<string, Type>();
-		static Dictionary<Type, List<Type>> Derived = new Dictionary<Type, List<Type>>();
-		static List<System.Reflection.Assembly> Assemblies = new List<System.Reflection.Assembly>();
-		//static System.Reflection.Assembly[] AvailableAssemblies = null;
-		public static List<Type> GetDerived(System.Type baseType)
-		{
-			//if (baseType.IsGenericType)
-			//    baseType = baseType.GetGenericTypeDefinition();
-
-			if (!Derived.ContainsKey(baseType) || Derived[baseType] == null)
-				lock (Derived)
-					// check if the type was already parsed...
-					if (!Derived.ContainsKey(baseType) || Derived[baseType] == null)
+				try
+				{
+					lock (Assemblies)
 					{
-						Derived[baseType] = new List<Type>();
-
-						//TODO: ScanAssemblies(baseType.Assembly);
-						//ScanAssemblies(AppDomain.CurrentDomain.GetAssemblies());
-
-						// find all types directly derived from the type...
 						lock (_Types)
 						{
-							foreach (System.Type type in Types)
+							//System.Reflection.Assembly[] available = AvailableAssemblies ?? (AvailableAssemblies = AppDomain.CurrentDomain.GetAssemblies());
+							System.Reflection.Assembly[] available = AppDomain.CurrentDomain.GetAssemblies();
+							assemblies = assemblies ?? available;
+
+							// check if all assemblies are already parsed...
+							foreach (System.Reflection.Assembly assembly in assemblies)// AppDomain.CurrentDomain.GetAssemblies())
 							{
-								//if (type.IsGenericType)
-								//    type = type.GetGenericTypeDefinition();
-								if (type != null && (baseType.IsAssignableFrom(type) || type.IsSubclassOf(baseType) || IsDerived(baseType, type.BaseType)))
+								if (!Assemblies.Contains(assembly))
 								{
-									Derived[baseType].Add(type);
+									Assemblies.Add(assembly);
+
+									foreach (var name in assembly.GetReferencedAssemblies())
+										ScanAssemblies(AppDomain.CurrentDomain.Load(name));
+
+									// assembly hasn't been parsed yet...
+									Type[] types = null;
+									try
+									{
+										types = assembly.GetTypes();
+									}
+									catch (System.Reflection.ReflectionTypeLoadException exc)
+									{
+										types = exc.Types;
+									}
+									// add all types...
+									foreach (System.Type type in types)
+									{
+										// avoid duplicates...
+										if (!_Types.Contains(type))
+										{
+											_Types.Add(type);
+											if (type.FullName != null && !TypeNames.ContainsKey(type.FullName))
+												TypeNames.Add(type.FullName, type);
+										}
+									}
+
+								}
+								// check if there are any assemblies depending on the current...
+								//if (assemblies != available)
+								//    foreach (var other in available)
+								//    {
+								//        foreach (var refe in other.GetReferencedAssemblies())
+								//        {
+								//            if (refe.FullName == assembly.GetName().FullName)
+								//                // if it depends, scan it...
+								//                ScanAssemblies(other);
+								//        }
+								//    }
+							}
+							return _Types;
+						}
+					}
+				}
+				catch (Exception exc)
+				{
+					System.Diagnostics.Debugger.Log(0, "zeroflag.Reflection.TypeHelper", exc.ToString());
+					Console.WriteLine(exc);
+					return _Types;
+				}
+			}
+
+			static List<Type> _Types = new List<Type>();
+
+			public static List<Type> Types
+			{
+				get
+				{
+					if (Assemblies.Count != AppDomain.CurrentDomain.GetAssemblies().Length)
+						ScanAssemblies();
+					return TypeHelper._Types;
+				}
+			}
+
+			static TypeHelper()
+			{
+				ScanAssemblies();
+			}
+
+			static Dictionary<string, Type> TypeNames = new Dictionary<string, Type>();
+			static Dictionary<Type, List<Type>> Derived = new Dictionary<Type, List<Type>>();
+			static List<System.Reflection.Assembly> Assemblies = new List<System.Reflection.Assembly>();
+			//static System.Reflection.Assembly[] AvailableAssemblies = null;
+			public static List<Type> GetDerived(System.Type baseType)
+			{
+				//if (baseType.IsGenericType)
+				//    baseType = baseType.GetGenericTypeDefinition();
+
+				if (!Derived.ContainsKey(baseType) || Derived[baseType] == null)
+					lock (Derived)
+						// check if the type was already parsed...
+						if (!Derived.ContainsKey(baseType) || Derived[baseType] == null)
+						{
+							Derived[baseType] = new List<Type>();
+
+							//TODO: ScanAssemblies(baseType.Assembly);
+							//ScanAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+
+							// find all types directly derived from the type...
+							lock (_Types)
+							{
+								foreach (System.Type type in Types)
+								{
+									//if (type.IsGenericType)
+									//    type = type.GetGenericTypeDefinition();
+									if (type != null && (baseType.IsAssignableFrom(type) || type.IsSubclassOf(baseType) || IsDerived(baseType, type.BaseType)))
+									{
+										Derived[baseType].Add(type);
+									}
 								}
 							}
 						}
-					}
-			return Derived[baseType];
-		}
-
-		public static bool IsDerived(System.Type baseType, System.Type type)
-		{
-			if (object.ReferenceEquals(baseType, null) || baseType.Equals(typeof(object)) || object.ReferenceEquals(type, null) || type.Equals(typeof(object)))
-				return false;
-			if (type.IsGenericType)
-				type = type.GetGenericTypeDefinition();
-			if (baseType.IsInterface)
-			{
-				//TODO: implement interface checking...
-				//return new List<Type>(type.GetInterfaces()).Contains(baseType);
+				return Derived[baseType];
 			}
-			if (baseType.Equals(type))
-				return true;
-			else
-				return IsDerived(baseType, type.BaseType);
-		}
 
-		public static Type GetType(string name)
-		{
-			if (name == null)
-				return null;
-			Type type = null;
-			if (TypeNames.ContainsKey(name))
-				type = TypeNames[name];
-			else
+			public static bool IsDerived(System.Type baseType, System.Type type)
 			{
-				foreach (System.Reflection.Assembly ass in AppDomain.CurrentDomain.GetAssemblies())
+				if (object.ReferenceEquals(baseType, null) || baseType.Equals(typeof(object)) || object.ReferenceEquals(type, null) || type.Equals(typeof(object)))
+					return false;
+				if (type.IsGenericType)
+					type = type.GetGenericTypeDefinition();
+				if (baseType.IsInterface)
 				{
-					if ((type = ass.GetType(name)) != null)
-						break;
+					//TODO: implement interface checking...
+					//return new List<Type>(type.GetInterfaces()).Contains(baseType);
 				}
-				//foreach (Type t in Types)
-				//{
-				//    if (name.Contains(t.Name))
-				//        type = t;
-				//}
+				if (baseType.Equals(type))
+					return true;
+				else
+					return IsDerived(baseType, type.BaseType);
 			}
 
-			return type;
-		}
+			public static Type GetType(string name)
+			{
+				if (name == null)
+					return null;
+				Type type = null;
+				if (TypeNames.ContainsKey(name))
+					type = TypeNames[name];
+				else
+				{
+					foreach (System.Reflection.Assembly ass in AppDomain.CurrentDomain.GetAssemblies())
+					{
+						if ((type = ass.GetType(name)) != null)
+							break;
+					}
+					//foreach (Type t in Types)
+					//{
+					//    if (name.Contains(t.Name))
+					//        type = t;
+					//}
+				}
 
-		public static Type GetType(string name, Type baseType)
-		{
-			if (name == null)
+				return type;
+			}
+
+			public static Type GetType(string name, Type baseType)
+			{
+				if (name == null)
+					return null;
+
+				List<Type> types = GetDerived(baseType);
+				types.Add(baseType);
+
+				foreach (Type type in types)
+				{
+					if (type.Name == name)
+						return type;
+				}
+				foreach (Type type in types)
+				{
+					if (type.Name.StartsWith(name) || type.Name.EndsWith(name))
+						return type;
+				}
 				return null;
-
-			List<Type> types = GetDerived(baseType);
-			types.Add(baseType);
-
-			foreach (Type type in types)
-			{
-				if (type.Name == name)
-					return type;
-			}
-			foreach (Type type in types)
-			{
-				if (type.Name.StartsWith(name) || type.Name.EndsWith(name))
-					return type;
-			}
-			return null;
-		}
-
-		public static List<Type> GetAllBaseTypesAndInterfaces(Type type)
-		{
-			return GetAllBaseTypesAndInterfaces(type, new List<Type>());
-		}
-
-		public static List<Type> GetAllBaseTypesAndInterfaces(Type type, List<Type> results)
-		{
-			if (type != null && type != typeof(object))
-			{
-				if (!results.Contains(type))
-					results.Add(type);
-
-				GetAllBaseTypesAndInterfaces(type.BaseType);
-
-				foreach (Type interf in type.GetInterfaces())
-					GetAllBaseTypesAndInterfaces(interf, results);
 			}
 
-			return results;
+			public static List<Type> GetAllBaseTypesAndInterfaces(Type type)
+			{
+				return GetAllBaseTypesAndInterfaces(type, new List<Type>());
+			}
+
+			public static List<Type> GetAllBaseTypesAndInterfaces(Type type, List<Type> results)
+			{
+				if (type != null && type != typeof(object))
+				{
+					if (!results.Contains(type))
+						results.Add(type);
+
+					GetAllBaseTypesAndInterfaces(type.BaseType);
+
+					foreach (Type interf in type.GetInterfaces())
+						GetAllBaseTypesAndInterfaces(interf, results);
+				}
+
+				return results;
+			}
 		}
 	}
 }

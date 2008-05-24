@@ -42,7 +42,6 @@
     <Compile Include="Reflection\TypeHelper.cs" />
     <Compile Include="Reflection\TypeProvider.cs" />
     <Compile Include="Translated.cs" />
-    <Compile Include="TypeHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Reflection\Descriptors\" />
