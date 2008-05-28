@@ -112,7 +112,6 @@
     <Compile Include="Threading\Thread.cs" />
     <Compile Include="Threading\ThreadManager.cs" />
     <Compile Include="Translated.cs" />
-    <Compile Include="TypeHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Serialization\BinarySerialization.concept.txt" />
