@@ -222,6 +222,11 @@ namespace zeroflag.Windows
 			this.Active = active;
 		}
 
+		public void MsgKeyDown(key key)
+		{
+			WinAPI.SendMessage(this.Handle, WindowsMessages.WM_KEYDOWN, (IntPtr)((long)key), new IntPtr());
+		}
+
 		public void KeyUp(key key)
 		{
 			bool active = this.Active;
@@ -229,6 +234,11 @@ namespace zeroflag.Windows
 			WinAPI.KeyUp(key);
 			//WinAPI.SendMessage(this.Handle, WindowsMessages.WM_KEYUP, (IntPtr)((long)key), new IntPtr());
 			this.Active = active;
+		}
+
+		public void MsgKeyUp(key key)
+		{
+			WinAPI.SendMessage(this.Handle, WindowsMessages.WM_KEYUP, (IntPtr)((long)key), new IntPtr());
 		}
 
 		public void MouseClick(Point location, button button)
