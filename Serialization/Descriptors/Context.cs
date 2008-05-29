@@ -381,6 +381,8 @@ namespace zeroflag.Serialization.Descriptors
 						this.ParsedObjects[instance].IsReferenced = true;
 						return this.ParsedObjects[instance];
 					}
+					else if (type.IsAssignableFrom(instance.GetType()))
+						type = instance.GetType();
 				}
 				else
 				{
