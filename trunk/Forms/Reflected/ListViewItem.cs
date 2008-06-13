@@ -74,9 +74,17 @@ namespace zeroflag.Forms.Reflected
 				}
 				cell = subItems[prop.Name];
 
-				object value = prop.PropertyInfo.GetValue(this.Value, null);
+				try
+				{
+					object value = prop.PropertyInfo.GetValue( this.Value, null );
 
-				cell.Text = "" + value;
+					cell.Text = "" + value;
+
+				}
+				catch ( Exception exc )
+				{
+					cell.Text = exc.ToString();
+				}
 			}
 
 		}

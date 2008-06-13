@@ -12,7 +12,7 @@ namespace zeroflag.Collections
 			this.PeerCreator = create;
 			this.PeerRemover = remove;
 			this.PeerUpdater = update;
-			Console.WriteLine("CollectionSynchronizer<" + typeof(ItemType).Name + ", " + typeof(PeerType).Name + "> created:\n" + new System.Diagnostics.StackTrace());
+			//Console.WriteLine("CollectionSynchronizer<" + typeof(ItemType).Name + ", " + typeof(PeerType).Name + "> created:\n" + new System.Diagnostics.StackTrace());
 		}
 
 		#region Collections
@@ -63,7 +63,7 @@ namespace zeroflag.Collections
 				this.PeerItems.Remove(peer);
 				if (this.PeerRemover != null)
 					this.PeerRemover(peer);
-				Console.WriteLine(this + " Removed peer " + peer + "(" + peer.GetHashCode() + ")" + " for item " + item + "(" + item.GetHashCode() + ")");
+				//Console.WriteLine(this + " Removed peer " + peer + "(" + peer.GetHashCode() + ")" + " for item " + item + "(" + item.GetHashCode() + ")");
 			}
 		}
 
@@ -73,20 +73,20 @@ namespace zeroflag.Collections
 			if (!this.ItemPeers.ContainsKey(item))
 			{
 				// create peer...
-				//Console.WriteLine("Creating peer for item " + item + "(" + item.GetHashCode() + ")");
+				////Console.WriteLine("Creating peer for item " + item + "(" + item.GetHashCode() + ")");
 				peer = this.PeerCreator(item);
 				if (peer == null)
 					return;
 				this.ItemPeers.Add(item, peer);
 				this.PeerItems.Add(peer, item);
-				Console.WriteLine(this + " Created peer " + peer + "(" + peer.GetHashCode() + ")" + " for item " + item + "(" + item.GetHashCode() + ")");
+				//Console.WriteLine(this + " Created peer " + peer + "(" + peer.GetHashCode() + ")" + " for item " + item + "(" + item.GetHashCode() + ")");
 			}
 			else
 				peer = this.ItemPeers[item];
 
 			if (this.PeerUpdater != null)
 				this.PeerUpdater(item, peer);
-			Console.WriteLine(this + " Updated peer " + peer + "(" + peer.GetHashCode() + ")" + " for item " + item + "(" + item.GetHashCode() + ")");
+			//Console.WriteLine(this + " Updated peer " + peer + "(" + peer.GetHashCode() + ")" + " for item " + item + "(" + item.GetHashCode() + ")");
 		}
 
 		#region PeerUpdater

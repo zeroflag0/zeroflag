@@ -59,7 +59,7 @@
     <Compile Include="TreeViewItem.cs" />
     <Compile Include="TypeDescription.cs" />
     <Compile Include="TypeList.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="TypeList.Designer.cs">
       <DependentUpon>TypeList.cs</DependentUpon>
