@@ -1,6 +1,6 @@
 ﻿namespace zeroflag.Forms.Reflected
 {
-	partial class TreeView<T>
+	partial class TypeList<T>
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -28,30 +28,10 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this._Control = new System.Windows.Forms.TreeView();
-			this.SuspendLayout();
-			// 
-			// _Control
-			// 
-			this._Control.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._Control.Location = new System.Drawing.Point(0, 0);
-			this._Control.Name = "_Control";
-			this._Control.Size = new System.Drawing.Size(300, 300);
-			this._Control.TabIndex = 0;
-			// 
-			// TreeView
-			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			components = new System.ComponentModel.Container();
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._Control);
-			this.Name = "TreeView";
-			this.Size = new System.Drawing.Size(300, 300);
-			this.ResumeLayout(false);
-
 		}
 
 		#endregion
-
-		private System.Windows.Forms.TreeView _Control;
 	}
 }

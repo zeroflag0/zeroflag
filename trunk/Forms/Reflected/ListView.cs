@@ -424,7 +424,7 @@ namespace zeroflag.Forms.Reflected
 			}
 		}
 
-		public void Synchronize()
+		public virtual void Synchronize()
 		{
 			this.ColumnSync.Synchronize();
 
