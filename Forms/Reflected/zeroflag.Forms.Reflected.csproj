@@ -58,6 +58,12 @@
     </Compile>
     <Compile Include="TreeViewItem.cs" />
     <Compile Include="TypeDescription.cs" />
+    <Compile Include="TypeList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TypeList.Designer.cs">
+      <DependentUpon>TypeList.cs</DependentUpon>
+    </Compile>
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -74,10 +80,6 @@
     <ProjectReference Include="..\..\zerolib.csproj">
       <Project>{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}</Project>
       <Name>zerolib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\zeroflag.Forms.csproj">
-      <Project>{D79807BB-FE94-410E-AE21-2171EC746FBC}</Project>
-      <Name>zeroflag.Forms</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

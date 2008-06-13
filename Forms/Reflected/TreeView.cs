@@ -16,7 +16,7 @@ namespace zeroflag.Forms.Reflected
 		}
 
 		[Browsable(false)]
-		public System.Windows.Forms.ListView Control
+		public System.Windows.Forms.TreeView Control
 		{
 			get { return _Control; }
 		}
