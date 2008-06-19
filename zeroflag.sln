@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Serialization", "S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Imaging", "Imaging\zeroflag.Imaging.csproj", "{28EA3955-D22B-4929-A448-6CEB58631125}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Components", "Components\zeroflag.Components.csproj", "{68BA87AB-142D-43DE-8833-BDE736234E94}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,10 @@ Global
 		{28EA3955-D22B-4929-A448-6CEB58631125}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28EA3955-D22B-4929-A448-6CEB58631125}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28EA3955-D22B-4929-A448-6CEB58631125}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68BA87AB-142D-43DE-8833-BDE736234E94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68BA87AB-142D-43DE-8833-BDE736234E94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68BA87AB-142D-43DE-8833-BDE736234E94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68BA87AB-142D-43DE-8833-BDE736234E94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -97,6 +97,8 @@
 			// 
 			this.Name = "SplitContainer";
 			this.Size = new System.Drawing.Size( 300, 300 );
+			this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.BackColor = System.Drawing.SystemColors.AppWorkspace;
 			this.Implementation.Panel1.ResumeLayout( false );
 			this.Implementation.Panel2.ResumeLayout( false );
 			this.Implementation.ResumeLayout( false );

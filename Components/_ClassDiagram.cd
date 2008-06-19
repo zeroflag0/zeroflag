@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="zeroflag.Components.BasicComponent">
+    <Position X="4.75" Y="1.75" Width="1.5" />
+    <Members>
+      <Field Name="_IsDisposed" Hidden="true" />
+      <Field Name="Component" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAASAACAAwAAEgAAIABAAAAAAAIAAAABAAAACAAA=</HashCode>
+      <FileName>BasicComponent.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="zeroflag.Components.ContainerComponent">
+    <Position X="1.5" Y="1.75" Width="1.5" />
+    <Members>
+      <Field Name="_Container" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAIACAQAACAAAIAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ContainerComponent.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="zeroflag.Components.IBasicComponent">
+    <Position X="7.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IBasicComponent.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Lucida Sans Unicode" Size="9" />
+</ClassDiagram>

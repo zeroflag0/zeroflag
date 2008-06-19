@@ -64,6 +64,25 @@ namespace zeroflag.Forms
 		#endregion HideButtonSize
 
 
+		#region PrimaryPanel
+
+		private System.Windows.Forms.FixedPanel _PrimaryPanel;
+
+		public virtual System.Windows.Forms.FixedPanel PrimaryPanel
+		{
+			get { return _PrimaryPanel; }
+			set
+			{
+				if ( _PrimaryPanel != value )
+				{
+					_PrimaryPanel = value;
+					this.Setup();
+				}
+			}
+		}
+		#endregion PrimaryPanel
+
+
 		private void buttonHide1_Click( object sender, EventArgs e )
 		{
 			if ( this.Panel2Collapsed )
@@ -76,10 +95,7 @@ namespace zeroflag.Forms
 				this.Panel1Collapsed = true;
 				this.buttonHide2.Text = "+";
 			}
-			this.Focus();
-			this.Select();
-			this.Invalidate( true );
-			//this._Implementation_StyleChanged( sender, e );
+			this.Setup();
 		}
 
 		private void buttonHide2_Click( object sender, EventArgs e )
@@ -94,24 +110,44 @@ namespace zeroflag.Forms
 				this.Panel2Collapsed = true;
 				this.buttonHide1.Text = "+";
 			}
-			this.Focus();
-			this.Select();
-			this.Invalidate( true );
-			//this._Implementation_StyleChanged( sender, e );
+			this.Setup();
 		}
 
 		private void _Implementation_StyleChanged( object sender, EventArgs e )
+		{
+			this.Setup();
+		}
+		protected virtual void Setup()
 		{
 			//MessageBox.Show( this.Orientation.ToString() );
 			this.buttonHide2.Text = "-";
 			this.buttonHide1.Text = "-";
 
+			if ( this.PrimaryPanel == FixedPanel.Panel1 )
+			{
+				this.buttonHide1.Visible = this.buttonHide1.Enabled = false;
+				this.buttonHide2.Visible = this.buttonHide2.Enabled = true;
+			}
+			else if ( this.PrimaryPanel == FixedPanel.Panel2 )
+			{
+				this.buttonHide2.Visible = this.buttonHide2.Enabled = false;
+				this.buttonHide1.Visible = this.buttonHide1.Enabled = true;
+			}
+			else
+			{
+				this.buttonHide1.Visible = this.buttonHide1.Enabled = true;
+				this.buttonHide2.Visible = this.buttonHide2.Enabled = true;
+			}
+
+
 			if ( this.Panel1Collapsed )
 			{
+				this.buttonHide2.Visible = this.buttonHide2.Enabled = true;
 				this.buttonHide2.Text = "+";
 			}
 			if ( this.Panel2Collapsed )
 			{
+				this.buttonHide1.Visible = this.buttonHide1.Enabled = true;
 				this.buttonHide1.Text = "+";
 			}
 
@@ -130,6 +166,7 @@ namespace zeroflag.Forms
 				this.buttonHide2.Dock = DockStyle.Left;
 				this.buttonHide1.Width = this.buttonHide2.Width = this.HideButtonSize;
 			}
+
 			this.buttonHide1.SendToBack();
 			this.buttonHide2.SendToBack();
 		}

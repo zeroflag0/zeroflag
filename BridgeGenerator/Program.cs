@@ -8,7 +8,7 @@ namespace zeroflag.BridgeGenerator
 {
 	class Program
 	{
-		static void Main(string[] args)
+		static void Main( string[] args )
 		{
 			try
 			{
@@ -20,36 +20,32 @@ namespace zeroflag.BridgeGenerator
 				Implementor imp = new Implementor();
 
 				// the bridge should implement these interfaces'/classes' public properties and methods...
-				imp.Interfaces.Add(typeof(zeroflag.Collections.List<>));
-				imp.Interfaces.Add(typeof(System.Collections.Generic.IList<>));
-				imp.Interfaces.Add(typeof(IList));
-				imp.Interfaces.Add(typeof(ICollection));
-				imp.Interfaces.Add(typeof(IEnumerable));
-				imp.Interfaces.Add(typeof(ICloneable));
+				imp.Interfaces.Add( typeof( System.Windows.Forms.SplitContainer ) );
 				//imp.Interfaces.Add(typeof(System.Collections.ICollection));
 				//imp.Interfaces.Add(typeof(List<>));
 
-				//imp.IgnoreInterfaces.Add(typeof(System.Collections.Generic.List<>));
-				//imp.IgnoreInterfaceMembers = true;
+				imp.IgnoreInterfaces.Add( typeof( object ) );
+				imp.IgnoreInterfaces.Add( typeof( System.Windows.Forms.Control ) );
+				imp.IgnoreInterfaceMembers = true;
 
 				// the actual implementation/bridge-target should be stored in...
-				imp.Property = "Items";
+				imp.Property = "Implementation";
 				// and should be of type...
-				imp.Implementation = typeof(zeroflag.Collections.List<>);
-				//imp.BaseType = typeof(System.Windows.Forms.Control);
+				imp.Implementation = typeof( System.Windows.Forms.SplitContainer );
+				imp.BaseType = typeof( System.Windows.Forms.Control );
 				imp.ImplementOverrides = true;
 
 
 				// the name of the generated class is...
-				imp.ClassName = "Collection";
+				imp.ClassName = "SplitContainer";
 
 				// should we bridge constructors?
 				imp.BridgeConstructors = false;
 
 				string result = imp.Generate();
-				Console.WriteLine(result);
-				System.IO.File.WriteAllText(imp.ClassName + ".cs", result);
-				System.IO.File.WriteAllText("result.cs", result);
+				Console.WriteLine( result );
+				System.IO.File.WriteAllText( imp.ClassName + ".cs", result );
+				System.IO.File.WriteAllText( "result.cs", result );
 
 				//if (System.IO.File.Exists(imp.ClassName + ".meta.cs"))
 				//{
@@ -61,9 +57,9 @@ namespace zeroflag.BridgeGenerator
 				//    new zeroflag.Serialization.XmlSerializer(imp.ClassName + ".meta.xml").Serialize(meta);
 				//}
 			}
-			catch (Exception exc)
+			catch ( Exception exc )
 			{
-				Console.WriteLine(exc);
+				Console.WriteLine( exc );
 			}
 		}
 	}
