@@ -41,6 +41,7 @@
 			this._Control.Size = new System.Drawing.Size(150, 150);
 			this._Control.TabIndex = 0;
 			this._Control.UseCompatibleStateImageBehavior = false;
+			this._Control.HideSelection = false;
 			this._Control.View = System.Windows.Forms.View.Details;
 			// 
 			// ListView

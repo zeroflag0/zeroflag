@@ -32,6 +32,7 @@ using System.Text;
 
 namespace zeroflag.Collections
 {
+	[Serializable]
 	public class List<T> : IList<T>
 	{
 		#region Constructors

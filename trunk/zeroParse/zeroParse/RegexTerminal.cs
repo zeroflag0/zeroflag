@@ -11,7 +11,7 @@ namespace zeroflag.Parsing
 
 		public System.Text.RegularExpressions.Regex Regex
 		{
-			get { return _Regex ?? (this.Pattern != null ? (_Regex = new System.Text.RegularExpressions.Regex(this.Pattern)) : null); }
+			get { return _Regex ?? (this.Pattern != null ? (_Regex = new System.Text.RegularExpressions.Regex(this.Pattern, System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.Multiline | System.Text.RegularExpressions.RegexOptions.CultureInvariant)) : null); }
 			set { _Regex = value; }
 		}
 

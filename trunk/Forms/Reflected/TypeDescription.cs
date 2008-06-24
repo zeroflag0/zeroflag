@@ -4,7 +4,8 @@ using System.Reflection;
 
 namespace zeroflag.Forms.Reflected
 {
-	[System.ComponentModel.TypeConverter(typeof(System.ComponentModel.ExpandableObjectConverter))]
+	[Serializable]
+	[System.ComponentModel.TypeConverter( typeof( System.ComponentModel.ExpandableObjectConverter ) )]
 	public class TypeDescription
 	{
 		#region Type
@@ -32,35 +33,61 @@ namespace zeroflag.Forms.Reflected
 		public Collections.Collection<PropertyDescription> Properties
 		{
 			get { return _Properties ?? (_Properties = this.PropertiesCreate); }
-			//set
-			//{
-			//    if (_Properties != value)
-			//    {
-			//        _Properties = value;
-			//    }
-			//}
+			set
+			{
+				if ( _Properties != value )
+				{
+					if ( _Properties != null )
+					{
+						_Properties.ItemAdded -= new zeroflag.Collections.List<PropertyDescription>.ItemAddedHandler( props_ItemAdded );
+						_Properties.ItemRemoved -= new zeroflag.Collections.List<PropertyDescription>.ItemRemovedHandler( props_ItemRemoved );
+						_Properties.ItemChanged -= new zeroflag.Collections.List<PropertyDescription>.ItemChangedHandler( _Properties_ItemChanged );
+					}
+
+					_Properties = value;
+
+					if ( _Properties != null )
+					{
+						_Properties.ItemAdded += new zeroflag.Collections.List<PropertyDescription>.ItemAddedHandler( props_ItemAdded );
+						_Properties.ItemRemoved += new zeroflag.Collections.List<PropertyDescription>.ItemRemovedHandler( props_ItemRemoved );
+						_Properties.ItemChanged += new zeroflag.Collections.List<PropertyDescription>.ItemChangedHandler( _Properties_ItemChanged );
+						foreach ( var prop in _Properties )
+							props_ItemAdded( prop );
+					}
+				}
+			}
 		}
+
 		protected virtual Collections.Collection<PropertyDescription> PropertiesCreate
 		{
 			get
 			{
-				var props = new zeroflag.Collections.Collection<PropertyDescription>();
-
-				props.ItemAdded += new zeroflag.Collections.List<PropertyDescription>.ItemAddedHandler(props_ItemAdded);
-				props.ItemRemoved += new zeroflag.Collections.List<PropertyDescription>.ItemRemovedHandler(props_ItemRemoved);
-
-				return props;
+				return new zeroflag.Collections.Collection<PropertyDescription>();
 			}
+		}
+
+		void _Properties_ItemChanged( object sender, PropertyDescription oldvalue, PropertyDescription newvalue )
+		{
+			props_ItemRemoved( oldvalue );
+			props_ItemAdded( newvalue );
 		}
 
 		void props_ItemAdded(PropertyDescription item)
 		{
-			if (item != null) item.Changed += new PropertyDescription.ChangedHandler(item_Changed);
+			if ( item != null )
+			{
+				item.Owner = this;
+				item.Changed += new PropertyDescription.ChangedHandler( item_Changed );
+			}
 		}
 
 		void props_ItemRemoved(PropertyDescription item)
 		{
-			if (item != null) item.Changed -= new PropertyDescription.ChangedHandler(item_Changed);
+			if ( item != null )
+			{
+				item.Owner = null;
+				item.Changed -= new PropertyDescription.ChangedHandler( item_Changed );
+			}
 		}
 
 		void item_Changed(PropertyDescription property)
