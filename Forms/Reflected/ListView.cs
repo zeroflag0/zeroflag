@@ -8,31 +8,32 @@ using System.Windows.Forms;
 
 namespace zeroflag.Forms.Reflected
 {
+	[Serializable]
 	public partial class ListView<T> : UserControl
 	{
 		public ListView()
 		{
 			InitializeComponent();
-			this.Synchronize();
+			//this.Synchronize();
 
 			//new zeroflag.Forms.DebugForm(AppDomain.CurrentDomain.GetAssemblies());
-			this.Control.SelectedIndexChanged += new EventHandler(ListViewControl_SelectedIndexChanged);
+			this.Control.SelectedIndexChanged += new EventHandler( ListViewControl_SelectedIndexChanged );
 		}
 
-		void ListViewControl_SelectedIndexChanged(object sender, EventArgs e)
+		void ListViewControl_SelectedIndexChanged( object sender, EventArgs e )
 		{
-			foreach (ListViewItem<ListView<T>, T> view in this.Control.SelectedItems)
+			foreach ( ListViewItem<ListView<T>, T> view in this.Control.SelectedItems )
 			{
-				T item = this.ItemSync[view];
-				if (!this.SelectedItems.Contains(item))
-					this.SelectedItems.Add(item);
+				T item = this.ItemSync[ view ];
+				if ( !this.SelectedItems.Contains( item ) )
+					this.SelectedItems.Add( item );
 			}
-			List<T> selected = new List<T>(this.SelectedItems);
-			foreach (T item in selected)
+			List<T> selected = new List<T>( this.SelectedItems );
+			foreach ( T item in selected )
 			{
-				var view = this.ItemSync[item];
-				if (!this.Control.SelectedItems.Contains(view))
-					this.SelectedItems.Remove(item);
+				var view = this.ItemSync[ item ];
+				if ( !this.Control.SelectedItems.Contains( view ) )
+					this.SelectedItems.Remove( item );
 			}
 			//this.SelectedItemSync.Synchronize();
 		}
@@ -40,23 +41,33 @@ namespace zeroflag.Forms.Reflected
 		#region ItemDescription
 
 		private TypeDescription _ItemDescription = null;
-		[Browsable(true)]
+		[Browsable( true )]
 		public TypeDescription ItemDescription
 		{
-			get { return _ItemDescription ?? (_ItemDescription = this.ItemDescriptionCreate); }
+			get { return _ItemDescription ?? ( this.ItemDescription = this.ItemDescriptionCreate ); }
+			set
+			{
+				if ( value != _ItemDescription )
+				{
+					if ( _ItemDescription != null )
+						_ItemDescription.Changed -= new TypeDescription.ChangedHandler( TypeDescriptionChanged );
+					
+					_ItemDescription = value;
+					
+					if ( _ItemDescription != null )
+						_ItemDescription.Changed += new TypeDescription.ChangedHandler( TypeDescriptionChanged );
+				}
+			}
 		}
 		protected virtual TypeDescription ItemDescriptionCreate
 		{
 			get
 			{
-				var desc = new TypeDescription(typeof(T));
-				_ItemDescription = desc;
-				desc.Changed += new TypeDescription.ChangedHandler(TypeDescriptionChanged);
-				return desc;
+				return new TypeDescription( typeof( T ) );
 			}
 		}
 
-		void TypeDescriptionChanged(TypeDescription type)
+		void TypeDescriptionChanged( TypeDescription type )
 		{
 			this.Synchronize();
 		}
@@ -67,16 +78,41 @@ namespace zeroflag.Forms.Reflected
 
 		zeroflag.Collections.Collection<T> _Items;
 
-		[MergableProperty(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		[MergableProperty( false )]
+		[DesignerSerializationVisibility( DesignerSerializationVisibility.Content )]
 		//[Editor(typeof(System.Windows.Forms.Design.ListViewItemCollectionEditor)
 		//"System.Windows.Forms.Design.ListViewItemCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
 		//[Editor(typeof(zeroflag.Collections.Collection<>), typeof(System.Drawing.Design.UITypeEditor))]
-		[Editor("System.Windows.Forms.Design.ListViewItemCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(System.Drawing.Design.UITypeEditor))]
-		[Browsable(true)]
+		[Editor( "System.Windows.Forms.Design.ListViewItemCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof( System.Drawing.Design.UITypeEditor ) )]
+		[Browsable( true )]
 		public zeroflag.Collections.Collection<T> Items
 		{
-			get { return _Items ?? (this._Items = this.ItemsCreate); }
+			get { return _Items ?? ( this.Items = this.ItemsCreate ); }
+			set
+			{
+				if ( value != this._Items )
+				{
+					if ( this._Items != null )
+					{
+						this._Items.ItemAdded -= __ItemAdded;
+						this._Items.ItemRemoved -= __ItemRemoved;
+					}
+
+					this._Items = value;
+
+					this._Control.Items.Clear();
+					_ItemSync = null;
+					_SelectedItems = null;
+					_SelectedItemSync = null;
+
+					if ( this._Items != null )
+					{
+						this._Items.ItemAdded += __ItemAdded;
+						this._Items.ItemRemoved += __ItemRemoved;
+					}
+					this.Synchronize();
+				}
+			}
 		}
 
 		protected virtual zeroflag.Collections.Collection<T> ItemsCreate
@@ -85,33 +121,28 @@ namespace zeroflag.Forms.Reflected
 			{
 				zeroflag.Collections.Collection<T> items = new zeroflag.Collections.Collection<T>();
 
-				items.ItemAdded += __ItemAdded;
-				items.ItemRemoved += __ItemRemoved;
-
 				return items;
 			}
 		}
 
-		void __ItemRemoved(T item)
+		void __ItemRemoved( T item )
 		{
 			this.Synchronize();
-			this.OnItemRemoved(item);
+			this.OnItemRemoved( item );
 		}
 
-		void __ItemAdded(T item)
+		void __ItemAdded( T item )
 		{
 			this.Synchronize();
-			this.OnItemAdded(item);
+			this.OnItemAdded( item );
 		}
 
 		#region event ItemAdded
-		public delegate void ItemAddedHandler(T item);
-
-		private event ItemAddedHandler _ItemAdded;
+		private event Action<T> _ItemAdded;
 		/// <summary>
 		/// Item added
 		/// </summary>
-		public virtual event ItemAddedHandler ItemAdded
+		public virtual event Action<T> ItemAdded
 		{
 			add { this._ItemAdded += value; }
 			remove { this._ItemAdded -= value; }
@@ -120,25 +151,23 @@ namespace zeroflag.Forms.Reflected
 		/// Call to raise the ItemAdded event:
 		/// Item added
 		/// </summary>
-		protected virtual void OnItemAdded(T item)
+		protected virtual void OnItemAdded( T item )
 		{
 			// if there are event subscribers...
-			if (this._ItemAdded != null)
+			if ( this._ItemAdded != null )
 			{
 				// call them...
-				this._ItemAdded(item);
+				this._ItemAdded( item );
 			}
 		}
 		#endregion event ItemAdded
 
 		#region event ItemRemoved
-		public delegate void ItemRemovedHandler(T item);
-
-		private event ItemRemovedHandler _ItemRemoved;
+		private event Action<T> _ItemRemoved;
 		/// <summary>
 		/// Item removed.
 		/// </summary>
-		public virtual event ItemRemovedHandler ItemRemoved
+		public virtual event Action<T> ItemRemoved
 		{
 			add { this._ItemRemoved += value; }
 			remove { this._ItemRemoved -= value; }
@@ -147,13 +176,13 @@ namespace zeroflag.Forms.Reflected
 		/// Call to raise the ItemRemoved event:
 		/// Item removed.
 		/// </summary>
-		protected virtual void OnItemRemoved(T item)
+		protected virtual void OnItemRemoved( T item )
 		{
 			// if there are event subscribers...
-			if (this._ItemRemoved != null)
+			if ( this._ItemRemoved != null )
 			{
 				// call them...
-				this._ItemRemoved(item);
+				this._ItemRemoved( item );
 			}
 		}
 		#endregion event ItemRemoved
@@ -185,7 +214,7 @@ namespace zeroflag.Forms.Reflected
 		//}
 		#endregion ItemChanged event
 
-		[Browsable(false)]
+		[Browsable( false )]
 		public System.Windows.Forms.ListView Control
 		{
 			get { return _Control; }
@@ -203,16 +232,16 @@ namespace zeroflag.Forms.Reflected
 
 		zeroflag.Collections.Collection<T> _SelectedItems;
 
-		[MergableProperty(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+		[MergableProperty( false )]
+		[DesignerSerializationVisibility( DesignerSerializationVisibility.Content )]
 		//[Editor(typeof(System.Windows.Forms.Design.ListViewItemCollectionEditor)
 		//"System.Windows.Forms.Design.ListViewItemCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"
 		//[Editor(typeof(zeroflag.Collections.Collection<>), typeof(System.Drawing.Design.UITypeEditor))]
-		[Editor("System.Windows.Forms.Design.ListViewItemCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof(System.Drawing.Design.UITypeEditor))]
-		[Browsable(true)]
+		[Editor( "System.Windows.Forms.Design.ListViewItemCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof( System.Drawing.Design.UITypeEditor ) )]
+		[Browsable( true )]
 		public zeroflag.Collections.Collection<T> SelectedItems
 		{
-			get { return _SelectedItems ?? (this._SelectedItems = this.SelectedItemsCreate); }
+			get { return _SelectedItems ?? ( this._SelectedItems = this.SelectedItemsCreate ); }
 		}
 
 		protected virtual zeroflag.Collections.Collection<T> SelectedItemsCreate
@@ -228,26 +257,24 @@ namespace zeroflag.Forms.Reflected
 			}
 		}
 
-		void __ItemDeselected(T item)
+		void __ItemDeselected( T item )
 		{
 			this.Synchronize();
-			this.OnItemDeselected(item);
+			this.OnItemDeselected( item );
 		}
 
-		void __ItemSelected(T item)
+		void __ItemSelected( T item )
 		{
 			this.Synchronize();
-			this.OnItemSelected(item);
+			this.OnItemSelected( item );
 		}
 
 		#region event ItemSelected
-		public delegate void ItemSelectedHandler(T item);
-
-		private event ItemSelectedHandler _ItemSelected;
+		private event Action<T> _ItemSelected;
 		/// <summary>
 		/// Item selected
 		/// </summary>
-		public virtual event ItemSelectedHandler ItemSelected
+		public virtual event Action<T> ItemSelected
 		{
 			add { this._ItemSelected += value; }
 			remove { this._ItemSelected -= value; }
@@ -256,25 +283,23 @@ namespace zeroflag.Forms.Reflected
 		/// Call to raise the ItemSelected event:
 		/// Item selected
 		/// </summary>
-		protected virtual void OnItemSelected(T item)
+		protected virtual void OnItemSelected( T item )
 		{
 			// if there are event subscribers...
-			if (this._ItemSelected != null)
+			if ( this._ItemSelected != null )
 			{
 				// call them...
-				this._ItemSelected(item);
+				this._ItemSelected( item );
 			}
 		}
 		#endregion event ItemSelected
 
 		#region event ItemDeselected
-		public delegate void ItemDeselectedHandler(T item);
-
-		private event ItemDeselectedHandler _ItemDeselected;
+		private event Action<T> _ItemDeselected;
 		/// <summary>
 		/// Item deselected.
 		/// </summary>
-		public virtual event ItemDeselectedHandler ItemDeselected
+		public virtual event Action<T> ItemDeselected
 		{
 			add { this._ItemDeselected += value; }
 			remove { this._ItemDeselected -= value; }
@@ -283,13 +308,13 @@ namespace zeroflag.Forms.Reflected
 		/// Call to raise the ItemDeselected event:
 		/// Item deselected.
 		/// </summary>
-		protected virtual void OnItemDeselected(T item)
+		protected virtual void OnItemDeselected( T item )
 		{
 			// if there are event subscribers...
-			if (this._ItemDeselected != null)
+			if ( this._ItemDeselected != null )
 			{
 				// call them...
-				this._ItemDeselected(item);
+				this._ItemDeselected( item );
 			}
 		}
 		#endregion event ItemDeselected
@@ -304,10 +329,10 @@ namespace zeroflag.Forms.Reflected
 
 		public zeroflag.Collections.CollectionSynchronizer<T, ListViewItem<ListView<T>, T>> ItemSync
 		{
-			get { return _ItemSync ?? (_ItemSync = this.ItemSyncCreate); }
+			get { return _ItemSync ?? ( _ItemSync = this.ItemSyncCreate ); }
 			set
 			{
-				if (_ItemSync != value)
+				if ( _ItemSync != value )
 				{
 					_ItemSync = value;
 				}
@@ -319,10 +344,10 @@ namespace zeroflag.Forms.Reflected
 			get
 			{
 				return new zeroflag.Collections.CollectionSynchronizer<T, ListViewItem<ListView<T>, T>>
-					(this.Items,
-					item => new ListViewItem<ListView<T>, T>(this, item),
-					view => this.Control.Items.Remove(view),
-					(item, view) =>
+					( this.Items,
+					item => new ListViewItem<ListView<T>, T>( this, item ),
+					view => this.Control.Items.Remove( view ),
+					( item, view ) =>
 					{
 						view.Synchronize();
 					}
@@ -338,10 +363,10 @@ namespace zeroflag.Forms.Reflected
 
 		public zeroflag.Collections.CollectionSynchronizer<T, ListViewItem<ListView<T>, T>> SelectedItemSync
 		{
-			get { return _SelectedItemSync ?? (_SelectedItemSync = this.SelectedItemSyncCreate); }
+			get { return _SelectedItemSync ?? ( _SelectedItemSync = this.SelectedItemSyncCreate ); }
 			set
 			{
-				if (_SelectedItemSync != value)
+				if ( _SelectedItemSync != value )
 				{
 					_SelectedItemSync = value;
 				}
@@ -353,10 +378,10 @@ namespace zeroflag.Forms.Reflected
 			get
 			{
 				return new zeroflag.Collections.CollectionSynchronizer<T, ListViewItem<ListView<T>, T>>
-					(this.SelectedItems,
-					item => { var view = this.ItemSync[item]; view.Selected = true; return view; },
+					( this.SelectedItems,
+					item => { var view = this.ItemSync[ item ]; view.Selected = true; return view; },
 					view => view.Selected = false,
-					(item, view) =>
+					( item, view ) =>
 					{
 						view.Synchronize();
 					}
@@ -372,10 +397,10 @@ namespace zeroflag.Forms.Reflected
 
 		public zeroflag.Collections.CollectionSynchronizer<PropertyDescription, ColumnHeader> ColumnSync
 		{
-			get { return _ColumnSync ?? (_ColumnSync = this.ColumnSyncCreate); }
+			get { return _ColumnSync ?? ( _ColumnSync = this.ColumnSyncCreate ); }
 			set
 			{
-				if (_ColumnSync != value)
+				if ( _ColumnSync != value )
 				{
 					_ColumnSync = value;
 				}
@@ -387,17 +412,17 @@ namespace zeroflag.Forms.Reflected
 			get
 			{
 				return new zeroflag.Collections.CollectionSynchronizer<PropertyDescription, ColumnHeader>
-					(this.ItemDescription.Properties,
+					( this.ItemDescription.Properties,
 					prop =>
 					{
-						ColumnHeader col = new ColumnHeader(prop.Name);
-						this.Control.Columns.Add(col);
-						if (!prop.Visible)
+						ColumnHeader col = new ColumnHeader( prop.Name );
+						this.Control.Columns.Add( col );
+						if ( !prop.Visible )
 							col.Width = 0;
 						return col;
 					},
-					col => this.Control.Columns.Remove(col),
-					(prop, col) =>
+					col => this.Control.Columns.Remove( col ),
+					( prop, col ) =>
 					{
 						col.Text = prop.Name;
 					}
@@ -419,7 +444,7 @@ namespace zeroflag.Forms.Reflected
 			}
 			set
 			{
-				if (this.Control != null)
+				if ( this.Control != null )
 					this.Control.MultiSelect = value;
 			}
 		}
@@ -472,22 +497,22 @@ namespace zeroflag.Forms.Reflected
 
 		#endregion Synchronization
 
-		protected override void OnInvalidated(InvalidateEventArgs e)
+		protected override void OnInvalidated( InvalidateEventArgs e )
 		{
 			this.Synchronize();
-			base.OnInvalidated(e);
+			base.OnInvalidated( e );
 		}
 
-		protected override void OnVisibleChanged(EventArgs e)
+		protected override void OnVisibleChanged( EventArgs e )
 		{
-			base.OnVisibleChanged(e);
-			if (this.Visible)
+			base.OnVisibleChanged( e );
+			if ( this.Visible )
 				this.Synchronize();
 		}
 
-		protected override void OnLoad(EventArgs e)
+		protected override void OnLoad( EventArgs e )
 		{
-			base.OnLoad(e);
+			base.OnLoad( e );
 			this.Synchronize();
 		}
 	}

@@ -57,7 +57,8 @@ namespace zeroflag.Forms
 					_HideButtonSize = value;
 
 					this.buttonHide1.Width = this.buttonHide1.Height = this.buttonHide2.Width = this.buttonHide2.Height = value;
-					this.Font = this.buttonHide1.Font = this.buttonHide2.Font = new Font( this.buttonHide1.Font.FontFamily, Math.Max( 4f, value - 0f ), GraphicsUnit.Pixel );
+					//this.Font = 
+						this.buttonHide1.Font = this.buttonHide2.Font = new Font( this.buttonHide1.Font.FontFamily, Math.Max( 4f, value - 0f ), GraphicsUnit.Pixel );
 				}
 			}
 		}

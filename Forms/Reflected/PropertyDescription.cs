@@ -4,7 +4,8 @@ using System.Text;
 
 namespace zeroflag.Forms.Reflected
 {
-	[System.ComponentModel.TypeConverter(typeof(System.ComponentModel.ExpandableObjectConverter))]
+	[Serializable]
+	[System.ComponentModel.TypeConverter( typeof( System.ComponentModel.ExpandableObjectConverter ) )]
 	public class PropertyDescription
 	{
 		public PropertyDescription(System.Reflection.PropertyInfo info)
@@ -66,6 +67,43 @@ namespace zeroflag.Forms.Reflected
 		}
 
 		#endregion Visible
+
+		
+		#region Owner
+
+		private TypeDescription _Owner;
+
+		protected internal TypeDescription Owner
+		{
+			get { return _Owner; }
+			set
+			{
+				if ( _Owner != value )
+				{
+					_Owner = value;
+				}
+			}
+		}
+		#endregion Owner
+
+		
+		#region Index
+
+		private int _Index;
+
+		public int Index
+		{
+			get { return _Index; }
+			set
+			{
+				if ( _Index != value )
+				{
+					_Index = value;
+				}
+			}
+		}
+		#endregion Index
+
 
 		#region Type
 

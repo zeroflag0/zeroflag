@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
   <Class Name="zeroflag.Parsing.Terminal">
-    <Position X="4" Y="9.25" Width="1.5" />
+    <Position X="5.25" Y="12.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Terminal.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.Token">
-    <Position X="5.75" Y="4.5" Width="2.5" />
+    <Position X="7.25" Y="6" Width="2.5" />
     <Members>
       <Field Name="_Context" Hidden="true" />
       <Field Name="_Inner" Hidden="true" />
@@ -16,11 +16,10 @@
       <Field Name="_Name" Hidden="true" />
       <Field Name="_Outer" Hidden="true" />
       <Field Name="_Rule" Hidden="true" />
-      <Field Name="_Start" Hidden="true" />
       <Field Name="_Value" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AADAgEQAAmAAgBAEAAAAIiRAAQAAgQAAgAAgAAAAAAA=</HashCode>
+      <HashCode>AADggEQAAkAAgBAEAAAAIiRAAQAAAQAAgAEgAAAAAAA=</HashCode>
       <FileName>Token.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -33,7 +32,7 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="zeroflag.Parsing.RegexTerminal">
-    <Position X="0.5" Y="11" Width="2.5" />
+    <Position X="1.5" Y="14.5" Width="2.5" />
     <Members>
       <Field Name="_Pattern" Hidden="true" />
       <Field Name="_Regex" Hidden="true" />
@@ -44,7 +43,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.CharTerminal">
-    <Position X="3.75" Y="11" Width="2.25" />
+    <Position X="4.75" Y="14.5" Width="2.25" />
     <Members>
       <Field Name="_Char" Hidden="true" />
     </Members>
@@ -54,7 +53,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.StringTerminal">
-    <Position X="6.75" Y="11" Width="2.5" />
+    <Position X="7.75" Y="14.5" Width="2.5" />
     <Members>
       <Field Name="_String" Hidden="true" />
     </Members>
@@ -64,7 +63,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.Parser">
-    <Position X="16" Y="3.75" Width="2.25" />
+    <Position X="11" Y="1.25" Width="2.25" />
     <Members>
       <Field Name="_Letter" Hidden="true" />
       <Field Name="_Root" Hidden="true" />
@@ -83,7 +82,7 @@
     </ShowAsAssociation>
   </Class>
   <Class Name="zeroflag.Parsing.ParserContext">
-    <Position X="5.5" Y="0.5" Width="2.75" />
+    <Position X="7" Y="0.5" Width="2.75" />
     <Members>
       <Field Name="_Context" Hidden="true" />
       <Field Name="_Index" Hidden="true" />
@@ -96,8 +95,15 @@
       <Field Name="_Success" Hidden="true" />
       <Field Name="SnippetLength" Hidden="true" />
     </Members>
+    <NestedTypes>
+      <Delegate Name="zeroflag.Parsing.ParserContext.TrimmedHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>ParserContext.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AABgkFAAAkAAgKAEAAAAAgQAC0EAAACghIEAAAABKAM=</HashCode>
+      <HashCode>AABgkFAAJkAAgaAFQAAAAgQAA0EAAAAghIEAAAABKAM=</HashCode>
       <FileName>ParserContext.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -113,7 +119,7 @@
     </ShowAsCollectionAssociation>
   </Class>
   <Class Name="zeroflag.Parsing.Rule">
-    <Position X="9.75" Y="3.25" Width="4.25" />
+    <Position X="11.25" Y="4.25" Width="4.25" />
     <Members>
       <Field Name="_Ignore" Hidden="true" />
       <Field Name="_Inner" Hidden="true" />
@@ -121,7 +127,7 @@
       <Property Name="DefaultName" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>ACAAgkEACBAACBAEYBEDICQMAAIAA4ACEYAAAIEAgAA=</HashCode>
+      <HashCode>ACAAgkEACBAACBAEYBEDIDQMAAIAE4ACEYAAAIEAgAA=</HashCode>
       <FileName>Rule.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -130,7 +136,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="zeroflag.Parsing.Or">
-    <Position X="15.75" Y="9.25" Width="2.25" />
+    <Position X="16.75" Y="12.5" Width="2.25" />
     <Members>
       <Field Name="_Either" Hidden="true" />
       <Field Name="_Otherwise" Hidden="true" />
@@ -141,21 +147,21 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.Optional">
-    <Position X="18.75" Y="9.25" Width="2" />
+    <Position X="19.75" Y="12.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAgACAAAAAAAAAAA=</HashCode>
       <FileName>Optional.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.Repeat">
-    <Position X="21.5" Y="9.25" Width="2" />
+    <Position X="22.75" Y="12.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAgACAAAAAAAAAAA=</HashCode>
       <FileName>Repeat.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.Chain">
-    <Position X="12.75" Y="9.25" Width="2.25" />
+    <Position X="13.75" Y="12.5" Width="2.25" />
     <Members>
       <Field Name="_Next" Hidden="true" />
     </Members>
@@ -165,7 +171,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.Group">
-    <Position X="10" Y="9.25" Width="2" />
+    <Position X="11" Y="12.5" Width="2" />
     <Members>
       <Field Name="_Items" Hidden="true" />
       <Property Name="ItemsCreate" Hidden="true" />
@@ -176,21 +182,21 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.ParseFailedException">
-    <Position X="2.25" Y="4.25" Width="1.5" />
+    <Position X="1.25" Y="4.25" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AABBAAAAAkACAAAEAAAAQAAAAQAAAAAAAAAAAAABAAA=</HashCode>
       <FileName>ParseFailedException.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.EndOfFileException">
-    <Position X="0.5" Y="3.75" Width="1.5" />
+    <Position X="0.5" Y="8.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>EndOfFileException.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.DepthMaxException">
-    <Position X="0.5" Y="5.5" Width="1.5" />
+    <Position X="3" Y="8.75" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DepthMaxException.cs</FileName>

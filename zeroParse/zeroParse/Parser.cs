@@ -10,7 +10,7 @@ namespace zeroflag.Parsing
 
 		public Rule Root
 		{
-			get { return _Root ?? (_Root = this.CreateRules()); }
+			get { return _Root ?? ( _Root = this.CreateRules() ); }
 			set { _Root = value; }
 		}
 
@@ -22,7 +22,7 @@ namespace zeroflag.Parsing
 		/// </summary>
 		public Rule WhiteSpace
 		{
-			get { try { return (_WhiteSpace as Whitespace) ?? (this.WhiteSpace = new Whitespace(_WhiteSpace ?? this.WhiteSpaceCreate)); } finally { _WhiteSpace.Name = "space"; _WhiteSpace.Primitive = true; _WhiteSpace.Ignore = true; } }
+			get { try { return ( _WhiteSpace as Whitespace ) ?? ( this.WhiteSpace = new Whitespace( _WhiteSpace ?? this.WhiteSpaceCreate ) ); } finally { _WhiteSpace.Name = "space"; _WhiteSpace.Primitive = true; _WhiteSpace.Ignore = true; } }
 			set { _WhiteSpace = value; }
 		}
 
@@ -45,7 +45,7 @@ namespace zeroflag.Parsing
 		/// </summary>
 		public Rule Letter
 		{
-			get { try { return _Letter ?? (_Letter = this.LetterCreate); } finally { _Letter.Name = "letter"; _Letter.Primitive = true; } }
+			get { try { return _Letter ?? ( _Letter = this.LetterCreate ); } finally { _Letter.Name = "letter"; _Letter.Primitive = true; } }
 		}
 
 		/// <summary>
@@ -54,14 +54,14 @@ namespace zeroflag.Parsing
 		/// </summary>
 		protected virtual Rule LetterCreate
 		{
-			get { return (Rule)"abcdefghijklmnopqrstuvwxyz".ToCharArray() | "abcdefghijklmnopqrstuvwxyz".ToUpper().ToCharArray(); }
+			get { return new RegexTerminal( @"([a-zA-Z])" ) { Name = "letter" }; }// (Rule)"abcdefghijklmnopqrstuvwxyz".ToCharArray() | "abcdefghijklmnopqrstuvwxyz".ToUpper().ToCharArray(); }
 		}
 
 		#endregion Letter
 
-		protected virtual string Preprocess(string content)
+		protected virtual string Preprocess( string content )
 		{
-			content = content.Replace("\r\n", "\n");
+			content = content.Replace( "\r\n", "\n" );
 			return content;
 		}
 
@@ -70,66 +70,66 @@ namespace zeroflag.Parsing
 			return null;
 		}
 
-		public Token Parse(string fileName)
+		public Token Parse( string fileName )
 		{
-			return this.Parse(fileName, new System.IO.StreamReader(fileName));
+			return this.Parse( fileName, new System.IO.StreamReader( fileName ) );
 		}
 
-		public Token Parse(string fileName, System.IO.TextReader reader)
+		public Token Parse( string fileName, System.IO.TextReader reader )
 		{
-			return this.Parse(fileName, reader.ReadToEnd());
+			return this.Parse( fileName, reader.ReadToEnd() );
 		}
 
-		public Token Parse(string fileName, out ParserContext context)
+		public Token Parse( string fileName, out ParserContext context )
 		{
-			return this.Parse(fileName, new System.IO.StreamReader(fileName), out context);
+			return this.Parse( fileName, new System.IO.StreamReader( fileName ), out context );
 		}
 
-		public Token Parse(string fileName, System.IO.TextReader reader, out ParserContext context)
+		public Token Parse( string fileName, System.IO.TextReader reader, out ParserContext context )
 		{
-			return this.Parse(fileName, reader.ReadToEnd(), out context);
+			return this.Parse( fileName, reader.ReadToEnd(), out context );
 		}
 
-		public Token Parse(string fileName, string content)
+		public Token Parse( string fileName, string content )
 		{
 			ParserContext context;
-			return this.Parse(fileName, content, out context);
+			return this.Parse( fileName, content, out context );
 		}
 
-		public virtual Token Parse(string fileName, string content, out ParserContext context)
+		public virtual Token Parse( string fileName, string content, out ParserContext context )
 		{
-			if (this.Root != null)
+			if ( this.Root != null )
 			{
-				Console.Write("Preprocessing " + fileName + "... ");
-				content = this.Preprocess(content);
+				Console.Write( "Preprocessing " + fileName + "... " );
+				content = this.Preprocess( content );
 				//System.IO.File.WriteAllText(fileName + ".pp.cpp", content);
-				Console.WriteLine("done.");
-				context = new ParserContext(this, fileName, content);
-				Console.WriteLine("Processing " + fileName + "...");
+				Console.WriteLine( "done." );
+				context = new ParserContext( this, fileName, content );
+				Console.WriteLine( "Processing " + fileName + "..." );
 				Token result = null;
 				try
 				{
-					result = this.Root.Match(context);
+					result = this.Root.Match( context );
 				}
-				catch (EndOfFileException exc)
+				catch ( EndOfFileException exc )
 				{
-					Console.WriteLine(exc.ToString(false));
+					Console.WriteLine( exc.ToString( false ) );
 					return result ?? context.Result;
 				}
-				catch (ParseFailedException exc)
+				catch ( ParseFailedException exc )
 				{
-					Console.WriteLine(exc);
+					Console.WriteLine( exc );
 					return context.Result;
 				}
 				Console.WriteLine();
-				if (result == null || !context.Success)
+				if ( result == null || !context.Success )
 				{
-					Console.WriteLine("Processing " + fileName + " failed:");
+					Console.WriteLine( "Processing " + fileName + " failed:" );
 					//Console.WriteLine(context.LastError);
 				}
 				else
-					Console.WriteLine("Processing " + fileName + " succeeded.");
-				Console.WriteLine(context.LastError);
+					Console.WriteLine( "Processing " + fileName + " succeeded." );
+				Console.WriteLine( context.LastError );
 				return result;
 			}
 			else

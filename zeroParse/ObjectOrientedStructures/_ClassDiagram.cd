@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="zeroflag.Parsing.ObjectOriented.Context" Collapsed="true">
+    <Position X="25.75" Y="1" Width="1.5" />
+    <Members>
+      <Field Name="_AvailableItems" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Delegate Name="zeroflag.Parsing.ObjectOriented.Context.ParsedHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Context.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAIAAIAAAAAAAgAAAAAAAgAAAAAEAAA=</HashCode>
+      <FileName>Context.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.ObjectOriented.Namespace">
+    <Position X="14" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Namespace.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.ObjectOriented.Class">
+    <Position X="11.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Class.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.ObjectOriented.Function">
+    <Position X="8.5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Function.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.ObjectOriented.Method">
+    <Position X="8.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Method.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.ObjectOriented.Constructor">
+    <Position X="9.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Constructor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.ObjectOriented.Struct">
+    <Position X="11.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Struct.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.ObjectOriented.Root">
+    <Position X="5" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Root.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.ObjectOriented.Variable">
+    <Position X="23.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Variable.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.ObjectOriented.VariableDeclaration">
+    <Position X="20.75" Y="6" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>VariableDeclaration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.ObjectOriented.Expression">
+    <Position X="19.75" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Expression.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.ObjectOriented.Operation">
+    <Position X="16.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Operation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.ObjectOriented.Value">
+    <Position X="23.25" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Value.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.ObjectOriented.Type">
+    <Position X="13" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Type.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.ObjectOriented.FunctionCall">
+    <Position X="18.5" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>FunctionCall.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.ObjectOriented.Destructor">
+    <Position X="7.25" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Destructor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.ObjectOriented.Parameter">
+    <Position X="21" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Parameter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Lucida Sans Unicode" Size="9" />
+</ClassDiagram>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using zeroflag.Parsing;
 using System.Text;
+using zeroflag.Parsing.ObjectOriented;
 
 namespace Test
 {
@@ -10,7 +11,7 @@ namespace Test
 		public override zeroflag.Parsing.Rule CreateRules()
 		{
 			Rule newline = @"\n" %
-				((Rule)"\n" | "\0");//"\r\n" | 
+				( (Rule)"\n" | "\0" );//"\r\n" | 
 			newline.Ignore = true;
 			this.WhiteSpace = this.WhiteSpace.Inner | newline;// | (Rule)'\r';
 
@@ -24,8 +25,8 @@ namespace Test
 
 			// comments...
 			Rule comment = "comment" %
-				("/*" & ~+!(Rule)"*/" & "*/") |
-				("//" & ~+!newline ^ newline);
+				( "/*" & ~+!(Rule)"*/" & "*/" ) |
+				( "//" & ~+!newline ^ newline );
 
 			// preprocessor...
 			Rule preprocessor = "preprocessor" %
@@ -33,23 +34,23 @@ namespace Test
 				"#" & ~+!newline ^ newline
 				);
 
-			this.WhiteSpace = (preprocessor | comment | this.WhiteSpace.Inner);
+			this.WhiteSpace = ( preprocessor | comment | this.WhiteSpace.Inner );
 			space = this.WhiteSpace;
 			space.Ignore = true;
 
-			Rule expression = new Rule() { Name = "expression" };
-			Rule functionCall = new Rule() { Name = "call" };
-			Rule functionCallTail = new Rule("functionCallT");
-			Rule assign = new Rule("assign");
-			Rule root = new Rule("root");
-			Rule rootElement = new Rule("rootel");
-			Rule type = new Rule() { Name = "type" };
-			Rule classDefinition = new Rule("class");
-			Rule value = new Rule("value");
-			Rule structDefinition = new Rule("struct");
-			Rule statement = new Rule("statement");
+			Rule expression = new Rule() { Name = "expression", StructureType = typeof( Expression ) };
+			Rule functionCall = new Rule() { Name = "call", StructureType = typeof( FunctionCall ) };
+			Rule functionCallTail = new Rule( "functionCallT" );
+			Rule assign = new Rule( "assign" ) { StructureType = typeof( Operation ) };
+			Rule root = new Rule( "root" ) { StructureType = typeof( Root ) };
+			Rule rootElement = new Rule( "rootel" );
+			Rule type = new Rule() { Name = "type", StructureType = typeof( zeroflag.Parsing.ObjectOriented.Type ) };
+			Rule classDefinition = new Rule( "class" ) { StructureType = typeof( Class ) };
+			Rule value = new Rule( "value" ) { StructureType = typeof( Value ) };
+			Rule structDefinition = new Rule( "struct" ) { StructureType = typeof( Struct ) };
+			Rule statement = new Rule( "statement" ) { StructureType = typeof( Expression ) };
 			Rule functionParameterDecs = new Rule() { Name = "functionParameterDecs" };
-			Rule instance = new Rule("instance");
+			Rule instance = new Rule( "instance" ) { StructureType = typeof( Value ) };
 
 
 			#region Values
@@ -57,21 +58,21 @@ namespace Test
 			Rule esc = "\\";
 			Rule quote2 = "\"" % (Rule)'"';
 			Rule quote = "'" % (Rule)'\'';
-			Rule nonescapedQuote = (!esc & quote2);
+			Rule nonescapedQuote = ( !esc & quote2 );
 			//Rule stringValue = "string" %
 			//    (
 			//    quote2 & ~+!(nonescapedQuote | nl) & ~!(quote2 | nl) & quote2
 			//    );
 			Rule stringValue = "string" %
-				(quote2 & ~+((esc & !newline) | !(esc | quote2) | (quote2 & quote2)) & quote2);
+				( quote2 & ~+( ( esc & !newline ) | !( esc | quote2 ) | ( quote2 & quote2 ) ) & quote2 );
 			//new RegexTerminal(@"");
 
 			// char...
 			Rule charValue = "char" %
-				(quote & ((esc & any) | !quote) & quote);
+				( quote & ( ( esc & any ) | !quote ) & quote );
 
 			Rule digit = "digit" %
-				((Rule)"0123456789".ToCharArray());
+				( (Rule)"0123456789".ToCharArray() );
 
 			// int...
 			Rule intValue = "int" %
@@ -79,52 +80,52 @@ namespace Test
 
 			// real...
 			Rule realValue = "real" %
-				(+digit & "." & +digit & ~((Rule)"f" | "F"));
+				( +digit & "." & +digit & ~( (Rule)"f" | "F" ) );
 
 			Rule hexDigit = "hexdigit" %
-				(digit | "abcdef".ToCharArray() | "abcdef".ToUpper().ToCharArray());
+				( digit | "abcdef".ToCharArray() | "abcdef".ToUpper().ToCharArray() );
 
 			// hex...
 			Rule hexValue = "hex" %
-				("0x" & +hexDigit);
+				( "0x" & +hexDigit );
 
 			#endregion Values
 
 
 			#region Operators
 			Rule primaryOperators = "primaryOp" %
-				(((Rule)"++" | "--"));
+				( ( (Rule)"++" | "--" ) );
 
 			Rule indexer = "indexer" %
-				+(~space ^ (
-				("[" & +((value | instance) ^ ~(~space & "," & ~space)) & "]") |
-				("[" & +(expression ^ ~(~space & "," & ~space)) & "]")
-				));
+				+( ~space ^ (
+				( "[" & +( ( value | instance ) ^ ~( ~space & "," & ~space ) ) & "]" ) |
+				( "[" & +( expression ^ ~( ~space & "," & ~space ) ) & "]" )
+				) );
 
 			Rule newOp = "new" %
-				("new" & (functionCall | (type & indexer)));
+				( "new" & ( functionCall | ( type & indexer ) ) );
 			Rule deleteOp = "delete" %
-				("delete" & ~((Rule)"[" & "]") & instance);
+				( "delete" & ~( (Rule)"[" & "]" ) & instance );
 			Rule typeofOp = "typeof" %
-				((Rule)"typeof" & "(" & type & ")");
+				( (Rule)"typeof" & "(" & type & ")" );
 
 			Rule unaryOperators = "unaryOp" %
-				(((Rule)"!" | "~" | "++" | "--" | "+" | "-" | "*"));
+				( ( (Rule)"!" | "~" | "++" | "--" | "+" | "-" | "*" ) );
 
 			Rule mpyOperators = "mpyOp" %
-				((Rule)"*" | "/" | "%");
+				( (Rule)"*" | "/" | "%" );
 			Rule addOperators = "addOp" %
-				((Rule)"+" | "-");
+				( (Rule)"+" | "-" );
 			Rule shiftOperators = "shiftOp" %
-				((Rule)">>" | "<<");
+				( (Rule)">>" | "<<" );
 
 			Rule compareOperators = "compareOp" %
-				((Rule)">=" | ">" | "<=" | "<");
+				( (Rule)">=" | ">" | "<=" | "<" );
 			Rule equalOperators = "equalOp" %
-				((Rule)"==" | "!=");
+				( (Rule)"==" | "!=" );
 
 			Rule assignOperator = "assignOp" %
-				(((Rule)"=" | "+=" | "-=" | "*=" | "/=" | "^=" | "&=" | "|=" | ">>=" | "<<="));
+				( ( (Rule)"=" | "+=" | "-=" | "*=" | "/=" | "^=" | "&=" | "|=" | ">>=" | "<<=" ) );
 
 			#endregion Operators
 
@@ -133,116 +134,120 @@ namespace Test
 			Rule idTail = idHead | digit;
 
 			Rule id = "id" %
-				(idHead ^ ~+idTail);
+				new RegexTerminal( @"([a-zA-Z_][a-zA-Z0-9_]*)" );
+			//(idHead ^ ~+idTail);
 
 
 			Rule baseType = "typeB" %
 				(
 				//(Rule)"char" | "bool" | "short" | "int" | 
-				("__int" ^ ~+digit) |
-				("long" ^ ~(space & ((Rule)"long" | "double"))) |
-				("unsigned" ^ ~(space & ((Rule)"int" | "short" | "long" | "char"))) | "float" | "double" | "char" |
-				("signed" ^ ~(space & ((Rule)"char"))) |
-				("enum" ^ ~(space & type)) |
-				("struct" ^ ~(space & type)));
+				( "__int" ^ ~+digit ) |
+				( "long" ^ ~( space & ( (Rule)"long" | "double" ) ) ) |
+				( "unsigned" ^ ~( space & ( (Rule)"int" | "short" | "long" | "char" ) ) ) | "float" | "double" | "char" |
+				( "signed" ^ ~( space & ( (Rule)"char" ) ) ) |
+				( "enum" ^ ~( space & type ) ) |
+				( "struct" ^ ~( space & type ) ) );
 
 			Rule scopeType = "::";
 			Rule types = "typeList" %
-				(type & ~+("," & type));
+				( type & ~+( "," & type ) );
 			Rule pointers = "pointer" %
-				+((Rule)"*" | "[]" | "&");
+				+( (Rule)"*" | "[]" | "&" );
 			Rule typeTail = "typeTail" %
-				(pointers);
+				( pointers );
 
 			Rule functionPointerTail = "func*tail" %
-				((Rule)"(" & "*" & ")" & "(" & types & ")");
+				( (Rule)"(" & "*" & ")" & "(" & types & ")" );
 
 			Rule genericTypeName = "generic" %
-				(id & ~("<" & types & ">"));
+				( id & ~( "<" & types & ">" ) );
 
 			Rule typeCast = "cast" %
-				("(" & type & ")");
+				( "(" & type & ")" );
 			Rule typeSimple = "simpleType" %
-				(baseType | genericTypeName);
+				( baseType | genericTypeName );
 
 			Rule staticInstance = "static" %
-				(typeSimple & ~+(scopeType & typeSimple));
+				( typeSimple & ~+( scopeType & typeSimple ) );
 
-			type.Inner = ((~("const" ^ space) ^ ~(scopeType) & staticInstance ^ ~(~space ^ typeTail)) ^ ~(~space ^ functionPointerTail));
+			type.Inner = ( ( ~( "const" ^ space ) ^ ~( scopeType ) & staticInstance ^ ~( ~space ^ typeTail ) ) ^ ~( ~space ^ functionPointerTail ) );
 
 			Rule typedef = "typedef" %
-				("typedef" ^ space ^ ((classDefinition | type) ^ +(~(~space & ",") ^ space & type ^ ~(~space & type))) & ";");
+				( "typedef" ^ space ^ ( ( classDefinition | type ) ^ +( ~( ~space & "," ) ^ space & type ^ ~( ~space & type ) ) ) & ";" );
 			#endregion
 
 			#region Variables
+			Rule varialbePrototypeVar = new Rule() { StructureType = typeof( Variable ), Inner = id };
 			Rule variablePrototype = "variablePrototype" %
-				(type ^ ~space & id);
+				( type ^ ~space & varialbePrototypeVar );
 
 			Rule instancePart = "instancePart" %
-				((staticInstance | type | id) ^ ~+((~space ^ functionCallTail) | (~space ^ indexer)));
+				( ( staticInstance | type | id ) ^ ~+( ( ~space ^ functionCallTail ) | ( ~space ^ indexer ) ) );
 			Rule instances = "instances" %
-				(instancePart & ~+(~space & ((Rule)"." | "->") & instancePart));
+				( instancePart & ~+( ~space & ( (Rule)"." | "->" ) & instancePart ) );
 			instance.Inner = (
 				//(id & ~+(((Rule)"." | "->") & id)) |
-				(~(typeCast ^ ~space) ^
+				( ~( typeCast ^ ~space ) ^
 				(
 				instances |
 				staticInstance |
 				id
 				)
-				^ ~(~space ^ indexer)
-				));
+				^ ~( ~space ^ indexer )
+				) );
+			instance.StructureType = typeof( Expression );
 
 			Rule variableDeclaration = "variable" %
-				(type ^ ~space ^ +(~space & (assign | instance) & ~indexer & ~(functionCallTail) & ~(Rule)"," & ~space) & ";");
+				( type ^ ~space ^ +( ~space & ( assign | instance ) & ~indexer & ~( functionCallTail ) & ~(Rule)"," & ~space ) & ";" );
 
 			#endregion
 
 			#region Functions
 			//Rule functionParameterDecs = new Rule() { Name = "functionParameterDecs" };
-			functionParameterDecs.Inner = ((variablePrototype & ~+("," & variablePrototype)) | types);
+			Rule functionParameterPrototype = new Rule() { Name = "param", StructureType = typeof( Parameter ), Inner = variablePrototype };
+			functionParameterDecs.Inner = ( ( functionParameterPrototype & ~+( "," & functionParameterPrototype ) ) | types );
 
 			#region Operator Overloads
 			// bool operator() (const KeyFrame* kf, const KeyFrame* kf2) const
 
 			Rule operatorOverload = "operatorOl" %
-				("operator" & (
-				((Rule)"(" & ")") |
-				((Rule)"[" & "]") |
+				( "operator" & (
+				( (Rule)"(" & ")" ) |
+				( (Rule)"[" & "]" ) |
 				assignOperator | equalOperators | compareOperators | shiftOperators | addOperators | mpyOperators | unaryOperators | primaryOperators
-				));
+				) );
 			#endregion Operator Overloads
 
 			Rule constructorPrototype = "constructorPrototype" %
 				//(~(type & scopeType) & (id | type) & "(" & ~(functionParameterDecs) & ")");
-				((
-					(operatorOverload | (type & ~scopeType & operatorOverload)) |
-					(~type & (~scopeType & ~(Rule)"~" & id)) |
+				( (
+					( operatorOverload | ( type & ~scopeType & operatorOverload ) ) |
+					( ~type & ( ~scopeType & ~(Rule)"~" & id ) ) |
 					type
 				) &
-				"(" & ~(functionParameterDecs) & ")" ^ ~(~space & "const"));
+				"(" & ~( functionParameterDecs ) & ")" ^ ~( ~space & "const" ) );
 			Rule functionPrototype = "functionPrototype" %
-				(type ^ space ^ constructorPrototype);
+				( type ^ space ^ constructorPrototype );
 			Rule functionDeclaration = "functionDeclaration" %
-				(functionPrototype & ";");
+				( functionPrototype & ";" );
 
-			Rule functionBody = new Rule("functionBody");
+			Rule functionBody = new Rule( "functionBody" );
 			functionBody.Inner =
-				("{" &
-				~+(space |
+				( "{" &
+				~+( space |
 				statement |
 				variableDeclaration |
 				functionBody
 				)
-				& new FailedBefore("}"));
+				& new FailedBefore( "}" ) );
 
 			Rule functionCallParameters = "parameters" %
-				((expression | value) & ~+(',' & (expression | value)));
-			functionCallTail.Inner = ('(' & ~functionCallParameters & ')');
-			functionCall.Inner = ((instance & functionCallTail | (type & ~instance) & functionCallTail | id & functionCallTail));
+				( ( expression | value ) & ~+( ',' & ( expression | value ) ) );
+			functionCallTail.Inner = ( '(' & ~functionCallParameters & ')' );
+			functionCall.Inner = ( ( instance & functionCallTail | ( type & ~instance ) & functionCallTail | id & functionCallTail ) );
 
 			Rule functionDefinition = "functionDefinition" %
-				(functionPrototype & functionBody);
+				( functionPrototype & functionBody );
 			#endregion
 
 			#region Expressions
@@ -259,69 +264,74 @@ namespace Test
 			//               | Id
 			//               | '(' <Expr> ')'
 
-			value.Inner = (~(typeCast ^ ~space) ^ ~+(((Rule)"&" | "*") ^ ~space) ^ (hexValue | realValue | intValue | stringValue | charValue | instance | id | ("(" & expression & ")")) ^ ~(~space ^ indexer));
+			value.Inner = ( ~( typeCast ^ ~space ) ^ ~+( ( (Rule)"&" | "*" ) ^ ~space ) ^ ( hexValue | realValue | intValue | stringValue | charValue | instance | id | ( "(" & expression & ")" ) ) ^ ~( ~space ^ indexer ) );
 
-			Rule ops = new Rule("op");
+			Rule ops = new Rule( "op" );
 
 			Rule primary = "primary" %
-				~(typeCast & ~space) ^ (newOp | deleteOp | typeofOp | ("(" & expression & ")") | value);
+				~( typeCast & ~space ) ^ ( newOp | deleteOp | typeofOp | ( "(" & expression & ")" ) | value );
 			ops = primary;
 
 			Rule unary = "unary" %
-				(~unaryOperators & ops);
-			ops = ops | (unary);
+				( ~unaryOperators & ops );
+			ops = ops | ( unary );
 
 			Rule reference = "ref" %
-				(unary & ~+(~space ^ ((Rule)"." | "->") & unary));
-			ops = ops | (reference);
+				( unary & ~+( ~space ^ ( (Rule)"." | "->" ) & unary ) );
+			ops = ops | ( reference );
 
 			Rule mpy = "mpy" %
-				((reference & ~+(~space ^ mpyOperators & reference)));//| unary);
-			ops = ops | (mpy);
+				( ( reference & ~+( ~space ^ mpyOperators & reference ) ) );//| unary);
+			ops = ops | ( mpy );
 			Rule add = "add" %
-				((mpy & ~+(~space ^ addOperators & mpy)));//| mpy);
-			ops = ops | (add);
+				( ( mpy & ~+( ~space ^ addOperators & mpy ) ) );//| mpy);
+			ops = ops | ( add );
 
 			Rule shift = "shift" %
-				((add & ~+(~space ^ shiftOperators & add)));//| add);
-			ops = ops | (shift);
+				( ( add & ~+( ~space ^ shiftOperators & add ) ) );//| add);
+			ops = ops | ( shift );
 
 			Rule compare = "compare" %
-				((shift & ~+(~space ^ compareOperators & shift)));//| shift);
-			ops = ops | (compare);
+				( ( shift & ~+( ~space ^ compareOperators & shift ) ) );//| shift);
+			ops = ops | ( compare );
 
 			Rule equal = "equal" %
-				((compare & ~+(~space ^ equalOperators & compare)));//| compare);
-			ops = ops | (equal);
+				( ( compare & ~+( ~space ^ equalOperators & compare ) ) );//| compare);
+			ops = ops | ( equal );
 
 			Rule logicalAND = "logicAND" %
-				((equal & ~+(~space ^ ("&" ^ -!(Rule)"&") & equal)));//| equal);
-			ops = ops | (logicalAND);
+				( ( equal & ~+( ~space ^ ( "&" ^ -!(Rule)"&" ) & equal ) ) );//| equal);
+			ops = ops | ( logicalAND );
 			Rule logicalXOR = "logicXOR" %
-				((logicalAND & ~+(~space ^ "^" & logicalAND)));//| logicalAND);
-			ops = ops | (logicalXOR);
+				( ( logicalAND & ~+( ~space ^ "^" & logicalAND ) ) );//| logicalAND);
+			ops = ops | ( logicalXOR );
 			Rule logicalOR = "logicOR" %
-				((logicalXOR & ~+(~space ^ ("|" ^ -!(Rule)"|") & logicalXOR)));//| logicalXOR);
-			ops = ops | (logicalOR);
+				( ( logicalXOR & ~+( ~space ^ ( "|" ^ -!(Rule)"|" ) & logicalXOR ) ) );//| logicalXOR);
+			ops = ops | ( logicalOR );
 
 			Rule conditionalAND = "AND" %
-				((logicalOR & ~+(~space ^ "&&" & logicalOR)));// | logicalOR);
-			ops = ops | (conditionalAND);
+				( ( logicalOR & ~+( ~space ^ "&&" & logicalOR ) ) );// | logicalOR);
+			ops = ops | ( conditionalAND );
 			Rule conditionalOR = "OR" %
-				((conditionalAND & ~+(~space ^ "||" & conditionalAND)));// | conditionalAND);
-			ops = ops | (conditionalOR);
+				( ( conditionalAND & ~+( ~space ^ "||" & conditionalAND ) ) );// | conditionalAND);
+			ops = ops | ( conditionalOR );
 
 			Rule conditional = "?:" %
-				(conditionalAND & ~("?" & value & ":" & value));// | conditionalOR);
+				( conditionalAND & ~( "?" & value & ":" & value ) );// | conditionalOR);
 
 			ops = "ops" %
-				(conditional);
+				( conditional );
 
 			assign.Inner =
-				(value & assignOperator & expression);
+				( value & assignOperator & expression );
 
-			expression.Inner = (assign | ops | functionCall);
+			expression.Inner = ( assign | ops | functionCall );
 
+			//ops.StructureType = primary.StructureType = unary.StructureType = reference.StructureType = mpy.StructureType
+			//    = add.StructureType = shift.StructureType = compare.StructureType = equal.StructureType = logicalAND.StructureType = logicalOR.StructureType
+			//    = logicalXOR.StructureType = conditionalOR.StructureType = conditionalAND.StructureType = conditional.StructureType = assign.StructureType = typeof( Operation );
+
+			expression.StructureType = typeof( Expression );
 			#endregion
 
 
@@ -329,107 +339,120 @@ namespace Test
 			//Rule returnStatement = "return" %
 			//    ("return" ^ ~(+space & expression) & ";");
 			#region if/else
-			Rule ifStatement = new Rule("if");
+			Rule ifStatement = new Rule( "if" );
 
 			Rule elseStatement = "else" %
-				("else" & (ifStatement | functionBody | statement));
+				( "else" & ( ifStatement | functionBody | statement ) );
 
-			ifStatement.Inner = ((Rule)"if" & "(" & expression & ")" & (functionBody | statement) ^ ~(~space & elseStatement));
+			ifStatement.Inner = ( (Rule)"if" & "(" & expression & ")" & ( functionBody | statement ) ^ ~( ~space & elseStatement ) );
 			#endregion if/else
 
 			#region for
 			Rule forStatement = "for" %
-				((Rule)"for" & "(" & (variableDeclaration | (expression & ";") | ";") & expression & ";" & expression & ")" & (functionBody | statement));
+				( (Rule)"for" & "(" & ( variableDeclaration | ( expression & ";" ) | ";" ) & expression & ";" & expression & ")" & ( functionBody | statement ) );
 			#endregion for
 
 			#region while
 			Rule whileHeadStatement = "whileHead" %
-				((Rule)"while" & "(" & expression & ")");
+				( (Rule)"while" & "(" & expression & ")" );
 
 			Rule whileStatement = "while" %
-				(whileHeadStatement & (functionBody | statement));
+				( whileHeadStatement & ( functionBody | statement ) );
 
 			Rule dowhileStatement = "dowhile" %
-				("do" & (functionBody | statement) & whileHeadStatement & ";");
+				( "do" & ( functionBody | statement ) & whileHeadStatement & ";" );
 			#endregion while
 
-			statement.Inner = ((~((Rule)"return" ^ ~space) ^ expression & ";") | typedef | variableDeclaration | ifStatement | forStatement | whileStatement | dowhileStatement);
+			statement.Inner = ( ( ~( (Rule)"return" ^ ~space ) ^ expression & ";" ) | typedef | variableDeclaration | ifStatement | forStatement | whileStatement | dowhileStatement );
 
 			#endregion
 
 			#region Classes
 			#region Inheritance
 			Rule inheritItem = "inheritItem" %
-				(functionCall | (type & ~functionCall) | id);
+				( functionCall | ( type & ~functionCall ) | id );
 			Rule inherit = "inherit" %
-				(":" & inheritItem ^ ~+(~space & "," & inheritItem));
+				( ":" & inheritItem ^ ~+( ~space & "," & inheritItem ) );
 			#endregion
 
 			Rule classPrototype = "classProt" %
-				(((Rule)"class" | "struct") ^ ~(space & id));
+				( ( (Rule)"class" | "struct" ) ^ ~( space & id ) );
 
 
 			Rule classDeclaration = "classDec" %
-				(classPrototype & ~inherit & ";");
+				( classPrototype & ~inherit & ";" );
 
 			Rule classVisibility = "visiblity" %
-				(((Rule)"public" | "protected" | "private") & ":");
+				( ( (Rule)"public" | "protected" | "private" ) & ":" );
 
 			Rule declaration = "decl" %
-				~(((Rule)"virtual" | "explicit" | "implicit" | "static") ^ space);
+				~( ( (Rule)"virtual" | "explicit" | "implicit" | "static" ) ^ space );
+
+			classPrototype.StructureType = typeof( Class );
+			classDeclaration.StructureType = typeof( Class );
 
 			#region Constructor
 			Rule constructorDeclaration = "constructorDeclaration" %
-				(constructorPrototype & ~inherit & ";");
+				( constructorPrototype & ~inherit & ";" );
 			Rule constructorDefinition = "constructor" %
-				(constructorPrototype & ~inherit & functionBody);
+				( constructorPrototype & ~inherit & functionBody );
 			Rule constructorDefinitionExtern = "constructorExt" %
-				(constructorPrototype & ~inherit & functionBody);
+				( constructorPrototype & ~inherit & functionBody );
+
+
+			constructorDeclaration.StructureType = constructorDefinition.StructureType = constructorDefinitionExtern.StructureType = typeof( Constructor );
 			#endregion Constructor
 
 			#region Destructor
 			Rule destructorDeclaration = "destructorDeclaration" %
-				("~" & constructorDeclaration);
+				( "~" & constructorDeclaration );
 			Rule destructorDefinition = "destructorDefinition" %
-				("~" & constructorDefinition);
+				( "~" & constructorDefinition );
+
+			destructorDeclaration.StructureType = destructorDefinition.StructureType = typeof( Destructor );
 			#endregion Destructor
 
 			#region Class Body
 			Rule classBody = "classBody" %
-				(space |
-				(declaration & (
+				( space |
+				( declaration & (
 				functionDeclaration | functionDefinition |
 				constructorDeclaration | constructorDefinition |
-				destructorDeclaration | destructorDefinition)) |
-				variableDeclaration | classVisibility | root);
+				destructorDeclaration | destructorDefinition ) ) |
+				variableDeclaration | classVisibility | root );
 			#endregion Class Body
 
-			structDefinition.Inner = ((Rule)"struct" & "{" & +classBody & "}" ^ ~(~space & instance));
+			structDefinition.Inner = ( (Rule)"struct" & "{" & +classBody & "}" ^ ~( ~space & instance ) );
 
 			Rule structDef = "structdef" %
-				(structDefinition ^ ~(~space & ";"));
+				( structDefinition ^ ~( ~space & ";" ) );
 			classDefinition.Inner =
-				(structDefinition | (classPrototype & ~inherit & "{" & new FailedBefore(+classBody & "}")));// ^ ~(~space & instance)));
+				( structDefinition | ( classPrototype & ~inherit & "{" & new FailedBefore( +classBody & "}" ) ) );// ^ ~(~space & instance)));
 			Rule classDef = "class" %
-				(classDefinition ^ ~(Rule)";");
+				( classDefinition ^ ~(Rule)";" );
+
+			structDef.StructureType = typeof( Struct );
+			classDef.StructureType = typeof( Class );
+
 			#endregion
 
 			#region Enums
 			Rule enumHead = "enumHead" %
-				("enum" ^ ~(space & id));
+				( "enum" ^ ~( space & id ) );
 			Rule enumItem = "enumItem" %
-				((assign | id));
+				( ( assign | id ) );
 			Rule enumBody = "enumBody" %
-				(+(~space & enumItem & ~space & ~(Rule)"," & ~space));
+				( +( ~space & enumItem & ~space & ~(Rule)"," & ~space ) );
 			Rule enumDef = "enum" %
-				(enumHead & "{" & enumBody & "}" & ~(Rule)";");
+				( enumHead & "{" & enumBody & "}" & ~(Rule)";" );
 			#endregion Enums
 
 			#region Namespaces
 			Rule namespaceBody = "namespaceBody" %
-				(+(rootElement));
+				( +( rootElement ) );
 			Rule namespaceDefinition = "namespace" %
-				("namespace" ^ ~(space & id) & "{" & namespaceBody & "}" & ~(Rule)";");
+				( "namespace" ^ ~( space & id ) & "{" & namespaceBody & "}" & ~(Rule)";" );
+			namespaceDefinition.StructureType = typeof( Namespace );
 			#endregion Namespaces
 
 			#region Compiler Hacks
@@ -437,45 +460,45 @@ namespace Test
 
 			// it seems msvc has picked up [attributes]... just ignore them.
 			Rule attribute = "attribute" %
-				("[" & ((functionCall | type) ^ ~+(":" & (functionCall | type))) & "]");
+				( "[" & ( ( functionCall | type ) ^ ~+( ":" & ( functionCall | type ) ) ) & "]" );
 
 			// __declspec... whatever...
 			Rule declspec = "__declspec" %
-				((Rule)"__declspec" & "(" & value & ")");
+				( (Rule)"__declspec" & "(" & value & ")" );
 
 			Rule callspec = "__call" %
-				((Rule)"__thiscall" | "__cdecl" | "__clrcall" | "__stdcall" | "__fastcall");
+				( (Rule)"__thiscall" | "__cdecl" | "__clrcall" | "__stdcall" | "__fastcall" );
 
 			Rule hacks = "hacks" %
-				(callspec | attribute | declspec);
+				( callspec | attribute | declspec );
 			//hacks.Ignore = true;
 			//hacks.Primitive = true;
 
-			this.WhiteSpace = new Whitespace(hacks | this.WhiteSpace.Inner);
+			this.WhiteSpace = new Whitespace( hacks | this.WhiteSpace.Inner );
 
 			#endregion Compiler Hacks
 
 			#region Extern "C"
 			Rule externalC = "externC" %
-				("extern" & quote2 & ((Rule)"c" | "C") & quote2 & "{" & +(rootElement | space) & "}");
+				( "extern" & quote2 & ( (Rule)"c" | "C" ) & quote2 & "{" & +( rootElement | space ) & "}" );
 			#endregion Extern "C"
 
-			rootElement.Inner = (space |
+			rootElement.Inner = ( space |
 				namespaceDefinition | classDef | classDefinition | typedef | enumDef | functionDefinition |
 				classDeclaration | variableDeclaration | functionDeclaration | constructorDefinitionExtern |
-				externalC);
+				externalC );
 
 			Rule eof = "EOF" %
-				((Rule)"\0");
-			root.Inner = (+rootElement);// ^ eof;
-
+				( (Rule)"\0" );
+			root.Inner = ( +rootElement );// ^ eof;
+			root.StructureType = typeof( Root );
 
 			return root;
 		}
 
-		protected override string Preprocess(string content)
+		protected override string Preprocess( string content )
 		{
-			content = base.Preprocess(content);
+			content = base.Preprocess( content );
 			//Trigraph     Equivalent
 			//========     ==========
 			//  ??=            #
@@ -488,10 +511,10 @@ namespace Test
 			//  ??>            }
 			//  ??-            ~
 
-			content = content.Replace("??=", "#").Replace("??/", "\\").Replace("??'", "^").Replace("??(", "[").Replace("??)", "]")
-				.Replace("??!", "|").Replace("??<", "{").Replace("??>", "}").Replace("??-", "~");
+			content = content.Replace( "??=", "#" ).Replace( "??/", "\\" ).Replace( "??'", "^" ).Replace( "??(", "[" ).Replace( "??)", "]" )
+				.Replace( "??!", "|" ).Replace( "??<", "{" ).Replace( "??>", "}" ).Replace( "??-", "~" );
 
-			content = content.Replace("\\\n", "");
+			content = content.Replace( "\\\n", "" );
 			return content;
 		}
 	}

@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
   <Class Name="zeroflag.Parsing.Or">
-    <Position X="2.75" Y="7.5" Width="2.25" />
+    <Position X="5" Y="9.25" Width="2.25" />
     <Members>
       <Field Name="_Either" Hidden="true" />
       <Field Name="_Otherwise" Hidden="true" />
@@ -12,7 +12,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.Chain">
-    <Position X="26" Y="7.5" Width="1.75" />
+    <Position X="39" Y="9.25" Width="2.25" />
     <Members>
       <Field Name="_Next" Hidden="true" />
     </Members>
@@ -22,7 +22,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.CharTerminal">
-    <Position X="17.75" Y="9.25" Width="2.25" />
+    <Position X="30.5" Y="11" Width="2.25" />
     <Members>
       <Field Name="_Char" Hidden="true" />
     </Members>
@@ -32,14 +32,14 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.Optional">
-    <Position X="5.75" Y="7.5" Width="2" />
+    <Position X="11" Y="9.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAgACAAAAAAAAAAA=</HashCode>
       <FileName>Optional.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.RegexTerminal">
-    <Position X="14.5" Y="9.25" Width="2.5" />
+    <Position X="27.25" Y="11" Width="2.5" />
     <Members>
       <Field Name="_Pattern" Hidden="true" />
       <Field Name="_Regex" Hidden="true" />
@@ -50,14 +50,14 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.Repeat">
-    <Position X="20.75" Y="7.5" Width="2" />
+    <Position X="33.5" Y="9.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAgACAAAAAAAAAAA=</HashCode>
       <FileName>Repeat.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.Rule">
-    <Position X="13.75" Y="0.75" Width="3.25" />
+    <Position X="19.5" Y="0.75" Width="4.25" />
     <Members>
       <Field Name="_Ignore" Hidden="true" />
       <Field Name="_Inner" Hidden="true" />
@@ -65,13 +65,13 @@
       <Field Name="_Primitive" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>ACAAgkEACBAACBAEYBEDICQMAAIAA4ACEYAAAIEAgAA=</HashCode>
+      <HashCode>ACAAgkEACBAACBAEYBEDIDQMAAIAE4ACEYAAAIEAgAA=</HashCode>
       <FileName>Rule.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="zeroflag.Parsing.StringTerminal">
-    <Position X="11.25" Y="9.25" Width="2.5" />
+    <Position X="24" Y="11" Width="2.5" />
     <Members>
       <Field Name="_String" Hidden="true" />
     </Members>
@@ -81,49 +81,49 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.Terminal">
-    <Position X="15" Y="7.5" Width="1.5" />
+    <Position X="27.75" Y="9.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Terminal.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.Not">
-    <Position X="23.5" Y="7.5" Width="1.75" />
+    <Position X="36.5" Y="9.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Not.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.Debug">
-    <Position X="8.5" Y="7.5" Width="2" />
+    <Position X="16.5" Y="9.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAACAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>Debug.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.Nothing">
-    <Position X="10.25" Y="3.5" Width="1.5" />
+    <Position X="19" Y="9.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAIAAAAAAAAA=</HashCode>
       <FileName>Nothing.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.Anything">
-    <Position X="7.5" Y="3" Width="1.5" />
+    <Position X="14" Y="9.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAIAAAAAAAAA=</HashCode>
       <FileName>Anything.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.Whitespace">
-    <Position X="8.5" Y="0.75" Width="1.5" />
+    <Position X="33.5" Y="12" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAgAAAAAAAAAAEAAAAAAAAAAAAAgAAAIAAAAAAAAA=</HashCode>
       <FileName>Whitespace.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.And">
-    <Position X="2" Y="4" Width="1.5" />
+    <Position X="2" Y="9.25" Width="2.25" />
     <Members>
       <Field Name="_First" Hidden="true" />
       <Field Name="_Second" Hidden="true" />
@@ -134,17 +134,24 @@
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.Exists">
-    <Position X="4.5" Y="3.75" Width="1.5" />
+    <Position X="8" Y="9.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAgACAAAAAAAAAAA=</HashCode>
       <FileName>Exists.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="zeroflag.Parsing.FailedBefore">
-    <Position X="11.25" Y="7.75" Width="1.5" />
+    <Position X="21.5" Y="9.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
       <FileName>FailedBefore.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Parsing.StructureType">
+    <Position X="13" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAggEAAAAAAABAAAAAAIgQAAAAAAAAAgAEgAAAAEAA=</HashCode>
+      <FileName>ItemType.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />

@@ -18,7 +18,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;TRIM</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -45,6 +45,7 @@
     <Compile Include="EndOfFileException.cs" />
     <Compile Include="Exists.cs" />
     <Compile Include="FailedBefore.cs" />
+    <Compile Include="ItemType.cs" />
     <Compile Include="Structure\Builder.cs" />
     <Compile Include="Structure\ItemLeaf.cs" />
     <Compile Include="Structure\ItemNode.cs" />

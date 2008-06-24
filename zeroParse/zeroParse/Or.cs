@@ -11,11 +11,14 @@ namespace zeroflag.Parsing
 			Token match = this.Either.Match(context.Push());
 			if (match == null || match.Context == null || !match.Context.Success)
 				match = this.Otherwise.Match(context.Push());
-			if (match != null)
+			if ( match != null )
+			{
+				context.Success = true;
 				return match;//this.CreateToken(context, 0).Append(match);
+			}
 			else
 			{
-				context.Errors.Add(new ParseFailedException(this, context, this + " could not match.", null));
+				context.Errors.Add( new ParseFailedException( this, context, this + " could not match.", null ) );
 				return null;
 			}
 		}

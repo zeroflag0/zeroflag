@@ -132,6 +132,34 @@ namespace zeroflag.Serialization
 		}
 		public abstract void Serialize(Descriptors.Descriptor value);
 
+		
+		#region event ProgressItem
+		public delegate void ProgressItemHandler( object value );
+
+		private event ProgressItemHandler _ProgressItem;
+		/// <summary>
+		/// When a new item is being processed.
+		/// </summary>
+		public event ProgressItemHandler ProgressItem
+		{
+			add { this._ProgressItem += value; }
+			remove { this._ProgressItem -= value; }
+		}
+		/// <summary>
+		/// Call to raise the ProgressItem event:
+		/// When a new item is being processed.
+		/// </summary>
+		protected virtual void OnProgressItem( object value )
+		{
+			// if there are event subscribers...
+			if ( this._ProgressItem != null )
+			{
+				// call them...
+				this._ProgressItem( value );
+			}
+		}
+		#endregion event ProgressItem
+	
 		//public object Deserialize(Type type)
 		//{
 		//    return Deserialize(new ObjectDescription(type));

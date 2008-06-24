@@ -63,6 +63,29 @@ namespace zeroflag.Parsing
 			set { _Ignore = value; }
 		}
 
+		
+		#region StructureType
+
+		private Type _StructureType;
+
+		/// <summary>
+		/// What type of structural item this rule defines.
+		/// </summary>
+		public Type StructureType
+		{
+			get { return _StructureType; }
+			set
+			{
+				if ( _StructureType != value )
+				{
+					_StructureType = value;
+				}
+			}
+		}
+		#endregion StructureType
+
+
+
 		#region Primitive
 
 		private bool _Primitive = false;
