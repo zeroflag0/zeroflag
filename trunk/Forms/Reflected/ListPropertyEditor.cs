@@ -146,7 +146,7 @@ namespace zeroflag.Forms.Reflected
 		public TypeDescription ItemDescription
 		{
 			get { return this.listView.ItemDescription; }
-			set { this.listView.ItemDescription = value; }
+			//set { this.listView.ItemDescription = value; }
 		}
 	}
 }

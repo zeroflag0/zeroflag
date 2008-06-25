@@ -89,9 +89,9 @@ namespace zeroflag.Forms.Reflected
 		
 		#region Index
 
-		private int _Index;
+		private int? _Index;
 
-		public int Index
+		public int? Index
 		{
 			get { return _Index; }
 			set

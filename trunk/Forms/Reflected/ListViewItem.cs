@@ -11,18 +11,18 @@ namespace zeroflag.Forms.Reflected
 	{
 		#region Owner
 
-		private List _Owner = default(List);
+		private List _Owner = default( List );
 
 		public List Owner
 		{
 			get { return _Owner; }
 			set
 			{
-				if (_Owner != value)
+				if ( _Owner != value )
 				{
 					_Owner = value;
-					if (_Owner != null)
-						_Owner.Control.Items.Add(this);
+					if ( _Owner != null )
+						_Owner.Control.Items.Add( this );
 				}
 			}
 		}
@@ -30,15 +30,15 @@ namespace zeroflag.Forms.Reflected
 
 		#region Value
 
-		private T _Value = default(T);
+		private T _Value = default( T );
 
 		public T Value
 		{
 			get { return _Value; }
 			set
 			{
-				if (object.ReferenceEquals(_Value, null) ||
-					!object.ReferenceEquals(null, value) && !value.Equals(_Value))
+				if ( object.ReferenceEquals( _Value, null ) ||
+					!object.ReferenceEquals( null, value ) && !value.Equals( _Value ) )
 				{
 					_Value = value;
 				}
@@ -46,7 +46,7 @@ namespace zeroflag.Forms.Reflected
 		}
 		#endregion Value
 
-		public ListViewItem(List list, T value)
+		public ListViewItem( List list, T value )
 		{
 			this.Owner = list;
 			this.Value = value;
@@ -57,22 +57,24 @@ namespace zeroflag.Forms.Reflected
 			TypeDescription desc = this.Owner.ItemDescription;
 
 			var subItems = this.SubItems;
-			if (subItems.Count > 0 &&
-				subItems[0] != null &&
-				(subItems[0].Name == null || subItems[0].Name == ""))
-				subItems.RemoveAt(0);
+			//if ( subItems.Count > 0 &&
+			//    subItems[ 0 ] != null &&
+			//    ( subItems[ 0 ].Name == null || subItems[ 0 ].Name == "" ) )
+			//    subItems.RemoveAt( 0 );
 
 
-			foreach (var prop in desc.Properties)
+			foreach ( var prop in desc.Properties )
 			{
+				if ( !this.Owner.Control.Columns.ContainsKey( prop.Name ) )
+					continue;
 				ListViewSubItem cell;
-				if (!subItems.ContainsKey(prop.Name))
-				{
-					cell = new ListViewSubItem(this, "");
-					cell.Name = prop.Name;
-					subItems.Add(cell);
-				}
-				cell = subItems[prop.Name];
+				int index = this.Owner.Control.Columns.IndexOfKey( prop.Name );
+
+				while ( subItems.Count <= index )
+					subItems.Add( new ListViewSubItem( this, "" ) );
+				cell = subItems[ index ];
+
+				cell.Name = prop.Name;
 
 				try
 				{

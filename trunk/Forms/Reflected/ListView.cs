@@ -51,9 +51,9 @@ namespace zeroflag.Forms.Reflected
 				{
 					if ( _ItemDescription != null )
 						_ItemDescription.Changed -= new TypeDescription.ChangedHandler( TypeDescriptionChanged );
-					
+
 					_ItemDescription = value;
-					
+
 					if ( _ItemDescription != null )
 						_ItemDescription.Changed += new TypeDescription.ChangedHandler( TypeDescriptionChanged );
 				}
@@ -415,16 +415,35 @@ namespace zeroflag.Forms.Reflected
 					( this.ItemDescription.Properties,
 					prop =>
 					{
-						ColumnHeader col = new ColumnHeader( prop.Name );
-						this.Control.Columns.Add( col );
 						if ( !prop.Visible )
-							col.Width = 0;
+							return null;
+						ColumnHeader col = new ColumnHeader( prop.Name );
+						col.Name = prop.Name;
+						col.Text = prop.Name;
+						if ( prop.Index != null && prop.Index < this.Control.Columns.Count )
+							this.Control.Columns.Insert( prop.Index.Value, col );
+						else
+							this.Control.Columns.Add( col );
+						//col.Width = 0;
 						return col;
 					},
 					col => this.Control.Columns.Remove( col ),
 					( prop, col ) =>
 					{
 						col.Text = prop.Name;
+						int old = col.Width;
+						bool keep = true;
+						int width = 0;
+						col.AutoResize( ColumnHeaderAutoResizeStyle.ColumnContent );
+						width = Math.Max( width, col.Width );
+						if ( old == width )
+							keep = false;
+						col.AutoResize( ColumnHeaderAutoResizeStyle.HeaderSize );
+						width = Math.Max( width, col.Width );
+						if ( old == width )
+							keep = false;
+						if ( !keep )
+							col.Width = width;
 					}
 					);
 			}
