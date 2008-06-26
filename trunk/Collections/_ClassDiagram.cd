@@ -2,9 +2,6 @@
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="zeroflag.Collections.List&lt;T&gt;">
     <Position X="1" Y="0.75" Width="1.5" />
-    <Members>
-      <Field Name="_Values" Hidden="true" />
-    </Members>
     <Compartments>
       <Compartment Name="Nested Types" Collapsed="false" />
     </Compartments>
@@ -26,8 +23,8 @@
       </Delegate>
     </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AGIAAUAAABAAQBAQiQAABAwAAAAAgAAACAAgAABSIAE=</HashCode>
-      <FileName>List.cs</FileName>
+      <HashCode>AGIAIUAAABAASBAQiQAQBAwAAAAIgAAACAAAAABSIAE=</HashCode>
+      <FileName>Collections\List.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -49,7 +46,7 @@
     </NestedTypes>
     <TypeIdentifier>
       <HashCode>ACIAAAAAAAAAgBAAAEAURASAAAAAAAAAAAAgAABQgAA=</HashCode>
-      <FileName>TreeNode.cs</FileName>
+      <FileName>Collections\TreeNode.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -60,7 +57,7 @@
     </Members>
     <TypeIdentifier>
       <HashCode>ACAAAAAAAAAAgBAAAAAUAACAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Parent.cs</FileName>
+      <FileName>Collections\Parent.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -78,8 +75,16 @@
     </NestedTypes>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAgAABQgAA=</HashCode>
-      <FileName>Child.cs</FileName>
+      <FileName>Collections\Child.cs</FileName>
     </TypeIdentifier>
+  </Class>
+  <Class Name="zeroflag.Collections.Collection&lt;T&gt;" Collapsed="true">
+    <Position X="3.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AGIAIEAAABCASBAQCAAQFAwgAAAIgAAACAAAAABUIJA=</HashCode>
+      <FileName>Collections\Collection.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Font Name="Tahoma" Size="8.25" />
 </ClassDiagram>

@@ -179,10 +179,10 @@ namespace zeroflag.Forms.Reflected
 
 		#endregion SelectedItems
 
-		public TypeDescription ItemDescription
+		public TypeDescription TypeDescription
 		{
-			get { return this.listView.ItemDescription; }
-			//set { this.listView.ItemDescription = value; }
+			get { return this.listView.TypeDescription; }
+			set { this.listView.TypeDescription = value; }
 		}
 	}
 }

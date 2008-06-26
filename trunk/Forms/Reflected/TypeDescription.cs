@@ -5,7 +5,8 @@ using System.Reflection;
 namespace zeroflag.Forms.Reflected
 {
 	[Serializable]
-	[System.ComponentModel.TypeConverter( typeof( System.ComponentModel.ExpandableObjectConverter ) )]
+	//[System.ComponentModel.TypeConverter( typeof( System.ComponentModel.ExpandableObjectConverter ) )]
+	[System.ComponentModel.Editor( typeof( TypeDescriptionEditor ), typeof( System.Drawing.Design.UITypeEditor ) )]
 	public class TypeDescription
 	{
 		#region Type
