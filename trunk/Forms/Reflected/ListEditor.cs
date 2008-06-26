@@ -19,7 +19,13 @@ namespace zeroflag.Forms.Reflected
 		}
 		private void buttonRemove_Click( object sender, EventArgs e )
 		{
-
+			List<T> remove = new List<T>( this.SelectedItems );
+			this.SelectedItems.Clear();
+			foreach ( T item in remove )
+			{
+				this.Items.Remove( item );
+			}
+			this.listView.Synchronize();
 		}
 
 		private void buttonAdd_Click( object sender, EventArgs e )
