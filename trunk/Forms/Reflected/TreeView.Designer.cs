@@ -28,30 +28,43 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			this.components = new System.ComponentModel.Container();
 			this._Control = new System.Windows.Forms.TreeView();
+			this.taskProcessor = new zeroflag.Forms.TaskProcessor( this.components );
+			this.timer = new System.Windows.Forms.Timer( this.components );
 			this.SuspendLayout();
 			// 
 			// _Control
 			// 
 			this._Control.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._Control.Location = new System.Drawing.Point(0, 0);
+			this._Control.Location = new System.Drawing.Point( 0, 0 );
 			this._Control.Name = "_Control";
-			this._Control.Size = new System.Drawing.Size(300, 300);
+			this._Control.Size = new System.Drawing.Size( 300, 300 );
 			this._Control.TabIndex = 0;
+			// 
+			// taskProcessor
+			// 
+			this.taskProcessor.Cancel = false;
+			// 
+			// timer
+			// 
+			this.timer.Interval = 2000;
 			// 
 			// TreeView
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF( 6F, 13F );
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._Control);
+			this.Controls.Add( this._Control );
 			this.Name = "TreeView";
-			this.Size = new System.Drawing.Size(300, 300);
-			this.ResumeLayout(false);
+			this.Size = new System.Drawing.Size( 300, 300 );
+			this.ResumeLayout( false );
 
 		}
 
 		#endregion
 
 		private System.Windows.Forms.TreeView _Control;
+		private TaskProcessor taskProcessor;
+		private System.Windows.Forms.Timer timer;
 	}
 }
