@@ -8,37 +8,38 @@ namespace zeroflag.Collections
 	[System.Serializable]
 	[System.ComponentModel.TypeConverter( typeof( System.ComponentModel.CollectionConverter ) )]
 	public class Collection<T>
-		: System.Collections.IList
+		: List<T>
+		, System.Collections.IList
 		, System.Collections.Generic.IList<T>
 		, System.Collections.ICollection
 		, System.ICloneable
 	{
-		private zeroflag.Collections.List<T> _Items = new zeroflag.Collections.List<T>();
+		//private zeroflag.Collections.List<T> _Items = new zeroflag.Collections.List<T>();
 
-		protected zeroflag.Collections.List<T> Items
-		{
-			get { return _Items; }
-		}
+		//protected zeroflag.Collections.List<T> Items
+		//{
+		//    get { return _Items; }
+		//}
 
 		#region zeroflag.Collections.List`1
 
-		public event zeroflag.Collections.List<T>.ItemAddedHandler ItemAdded
-		{
-			add { this.Items.ItemAdded += value; }
-			remove { this.Items.ItemAdded -= value; }
-		}
+		//public event zeroflag.Collections.List<T>.ItemAddedHandler ItemAdded
+		//{
+		//    add { base.ItemAdded += value; }
+		//    remove { base.ItemAdded -= value; }
+		//}
 
-		public event zeroflag.Collections.List<T>.ItemRemovedHandler ItemRemoved
-		{
-			add { this.Items.ItemRemoved += value; }
-			remove { this.Items.ItemRemoved -= value; }
-		}
+		//public event zeroflag.Collections.List<T>.ItemRemovedHandler ItemRemoved
+		//{
+		//    add { base.ItemRemoved += value; }
+		//    remove { base.ItemRemoved -= value; }
+		//}
 
-		public event zeroflag.Collections.List<T>.ItemChangedHandler ItemChanged
-		{
-			add { this.Items.ItemChanged += value; }
-			remove { this.Items.ItemChanged -= value; }
-		}
+		//public event zeroflag.Collections.List<T>.ItemChangedHandler ItemChanged
+		//{
+		//    add { base.ItemChanged += value; }
+		//    remove { base.ItemChanged -= value; }
+		//}
 
 		public Collection<T> Modify( System.Action<Collection<T>> modifier )
 		{
@@ -48,10 +49,10 @@ namespace zeroflag.Collections
 			return this;
 		}
 
-		public T[] ToArray()
-		{
-			return this.Items.ToArray();
-		}
+		//public T[] ToArray()
+		//{
+		//    return base.ToArray();
+		//}
 
 		#endregion zeroflag.Collections.List`1
 
@@ -59,17 +60,17 @@ namespace zeroflag.Collections
 
 		public virtual int Count
 		{
-			get { return this.Items.Count; }
+			get { return base.Count; }
 		}
 
 		public virtual bool IsReadOnly
 		{
-			get { return this.Items.IsReadOnly; }
+			get { return base.IsReadOnly; }
 		}
 
 		public virtual void Add( T item )
 		{
-			this.Items.Add( item );
+			base.Add( item );
 		}
 
 		public virtual void AddRange( T[] items )
@@ -80,22 +81,22 @@ namespace zeroflag.Collections
 
 		public virtual void Clear()
 		{
-			this.Items.Clear();
+			base.Clear();
 		}
 
 		public virtual bool Contains( T item )
 		{
-			return this.Items.Contains( item );
+			return base.Contains( item );
 		}
 
 		public virtual void CopyTo( T[] array, int arrayIndex )
 		{
-			this.Items.CopyTo( array, arrayIndex );
+			base.CopyTo( array, arrayIndex );
 		}
 
 		public virtual bool Remove( T item )
 		{
-			return this.Items.Remove( item );
+			return base.Remove( item );
 		}
 
 		#endregion System.Collections.Generic.ICollection`1
@@ -105,23 +106,23 @@ namespace zeroflag.Collections
 
 		public virtual T this[ int index ]
 		{
-			get { return this.Items[ index ]; }
-			set { this.Items[ index ] = value; }
+			get { return base[ index ]; }
+			set { base[ index ] = value; }
 		}
 
 		public virtual int IndexOf( T item )
 		{
-			return this.Items.IndexOf( item );
+			return base.IndexOf( item );
 		}
 
 		public virtual void Insert( int index, T item )
 		{
-			this.Items.Insert( index, item );
+			base.Insert( index, item );
 		}
 
 		public virtual void RemoveAt( int index )
 		{
-			this.Items.RemoveAt( index );
+			base.RemoveAt( index );
 		}
 
 		#endregion System.Collections.Generic.IList`1
@@ -186,7 +187,7 @@ namespace zeroflag.Collections
 		/// <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type T.</returns>
 		public T Find( Predicate<T> match )
 		{
-			return this.Items.Find( match );
+			return base.Find( match );
 		}
 
 		/// <summary>
@@ -196,7 +197,7 @@ namespace zeroflag.Collections
 		/// <returns>A System.Collections.Generic.List<T> containing all the elements that match the conditions defined by the specified predicate, if found; otherwise, an empty System.Collections.Generic.List<T>.</returns>
 		public List<T> FindAll( Predicate<T> match )
 		{
-			return this.Items.FindAll( match );
+			return base.FindAll( match );
 		}
 
 		#endregion
@@ -258,7 +259,7 @@ namespace zeroflag.Collections
 
 		public IEnumerator<T> GetEnumerator()
 		{
-			return this.Items.GetEnumerator();
+			return base.GetEnumerator();
 		}
 
 		#endregion
@@ -273,19 +274,18 @@ namespace zeroflag.Collections
 		#endregion
 
 		public Collection()
+			: base()
 		{
 		}
 
 		public Collection( System.Collections.Generic.List<T> list )
-			: this()
+			: base(list)
 		{
-			this._Items = new List<T>(list);
 		}
 
 		public Collection( IEnumerable<T> list )
-			: this()
+			: base(list)
 		{
-			this._Items = new List<T>( list );
 		}
 	}
 }

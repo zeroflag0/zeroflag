@@ -15,7 +15,6 @@ namespace zeroflag.Forms.Reflected
 			InitializeComponent();
 		}
 
-
 		public SplitContainer SplitContainer
 		{
 			get { return splitContainer; }

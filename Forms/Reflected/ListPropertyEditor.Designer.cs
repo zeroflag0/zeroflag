@@ -93,7 +93,7 @@
 
 		#endregion
 
-		private SplitContainer splitContainer;
+		private zeroflag.Forms.SplitContainer splitContainer;
 		private System.Windows.Forms.PropertyGrid propertyGrid;
 		private ListEditor<T> listView;
 	}
