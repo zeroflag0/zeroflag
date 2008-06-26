@@ -11,13 +11,13 @@
 		/// Clean up any resources being used.
 		/// </summary>
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-		protected override void Dispose(bool disposing)
+		protected override void Dispose( bool disposing )
 		{
-			if (disposing && (components != null))
+			if ( disposing && ( components != null ) )
 			{
 				components.Dispose();
 			}
-			base.Dispose(disposing);
+			base.Dispose( disposing );
 		}
 
 		#region Windows Form Designer generated code
@@ -28,45 +28,31 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.propertyGrid1 = new System.Windows.Forms.PropertyGrid();
-			this.testList1 = new Test.TestList();
+			this.testTree1 = new Test.TestTree();
 			this.SuspendLayout();
 			// 
-			// propertyGrid1
+			// testTree1
 			// 
-			this.propertyGrid1.Dock = System.Windows.Forms.DockStyle.Right;
-			this.propertyGrid1.Location = new System.Drawing.Point(570, 0);
-			this.propertyGrid1.Name = "propertyGrid1";
-			this.propertyGrid1.Size = new System.Drawing.Size(339, 442);
-			this.propertyGrid1.TabIndex = 5;
-			// 
-			// testList1
-			// 
-			this.testList1.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.testList1.Location = new System.Drawing.Point(0, 0);
-			this.testList1.MultiSelect = true;
-			this.testList1.Name = "testList1";
-			this.testList1.Size = new System.Drawing.Size(570, 442);
-			this.testList1.TabIndex = 4;
+			this.testTree1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.testTree1.Location = new System.Drawing.Point( 0, 0 );
+			this.testTree1.Name = "testTree1";
+			this.testTree1.Size = new System.Drawing.Size( 292, 273 );
+			this.testTree1.TabIndex = 0;
 			// 
 			// Form1
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF( 6F, 13F );
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(909, 442);
-			this.Controls.Add(this.testList1);
-			this.Controls.Add(this.propertyGrid1);
+			this.ClientSize = new System.Drawing.Size( 292, 273 );
+			this.Controls.Add( this.testTree1 );
 			this.Name = "Form1";
 			this.Text = "Form1";
-			this.ResumeLayout(false);
+			this.ResumeLayout( false );
 
 		}
 
 		#endregion
 
-		private TestList testList1;
-		private System.Windows.Forms.PropertyGrid propertyGrid1;
-
+		private TestTree testTree1;
 	}
 }
-

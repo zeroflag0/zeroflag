@@ -59,10 +59,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="TestList2.resx">
-      <DependentUpon>TestList2.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
@@ -77,17 +73,11 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="TestData.cs" />
-    <Compile Include="TestList.cs">
+    <Compile Include="TestTree.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TestList.Designer.cs">
-      <DependentUpon>TestList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="TestList2.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="TestList2.Designer.cs">
-      <DependentUpon>TestList2.cs</DependentUpon>
+    <Compile Include="TestTree.Designer.cs">
+      <DependentUpon>TestTree.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

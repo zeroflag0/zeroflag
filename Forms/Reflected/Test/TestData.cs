@@ -94,10 +94,10 @@ namespace Test
 			set { _Real = value; }
 		}
 
-		List<TestData> _Inner = new List<TestData>();
+		zeroflag.Collections.Collection<TestData> _Inner = new zeroflag.Collections.Collection<TestData>();
 
-		[System.ComponentModel.Browsable(false)]
-		public List<TestData> Inner
+		//[System.ComponentModel.Browsable(false)]
+		public zeroflag.Collections.Collection<TestData> Inner
 		{
 			get { return _Inner; }
 			//set { _Inner = value; }
