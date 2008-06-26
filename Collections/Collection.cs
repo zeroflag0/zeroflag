@@ -4,9 +4,9 @@ using System.Text;
 
 namespace zeroflag.Collections
 {
-	[System.ComponentModel.ListBindable(false)]
+	[System.ComponentModel.ListBindable( false )]
 	[System.Serializable]
-	[System.ComponentModel.TypeConverter(typeof(System.ComponentModel.CollectionConverter))]
+	[System.ComponentModel.TypeConverter( typeof( System.ComponentModel.CollectionConverter ) )]
 	public class Collection<T>
 		: System.Collections.IList
 		, System.Collections.Generic.IList<T>
@@ -40,10 +40,10 @@ namespace zeroflag.Collections
 			remove { this.Items.ItemChanged -= value; }
 		}
 
-		public Collection<T> Modify(System.Action<Collection<T>> modifier)
+		public Collection<T> Modify( System.Action<Collection<T>> modifier )
 		{
-			if (modifier != null)
-				modifier(this);
+			if ( modifier != null )
+				modifier( this );
 
 			return this;
 		}
@@ -67,15 +67,15 @@ namespace zeroflag.Collections
 			get { return this.Items.IsReadOnly; }
 		}
 
-		public virtual void Add(T item)
+		public virtual void Add( T item )
 		{
-			this.Items.Add(item);
+			this.Items.Add( item );
 		}
 
-		public virtual void AddRange(T[] items)
+		public virtual void AddRange( T[] items )
 		{
-			foreach (T item in items)
-				this.Add(item);
+			foreach ( T item in items )
+				this.Add( item );
 		}
 
 		public virtual void Clear()
@@ -83,19 +83,19 @@ namespace zeroflag.Collections
 			this.Items.Clear();
 		}
 
-		public virtual bool Contains(T item)
+		public virtual bool Contains( T item )
 		{
-			return this.Items.Contains(item);
+			return this.Items.Contains( item );
 		}
 
-		public virtual void CopyTo(T[] array, int arrayIndex)
+		public virtual void CopyTo( T[] array, int arrayIndex )
 		{
-			this.Items.CopyTo(array, arrayIndex);
+			this.Items.CopyTo( array, arrayIndex );
 		}
 
-		public virtual bool Remove(T item)
+		public virtual bool Remove( T item )
 		{
-			return this.Items.Remove(item);
+			return this.Items.Remove( item );
 		}
 
 		#endregion System.Collections.Generic.ICollection`1
@@ -103,25 +103,25 @@ namespace zeroflag.Collections
 
 		#region System.Collections.Generic.IList`1
 
-		public virtual T this[int index]
+		public virtual T this[ int index ]
 		{
-			get { return this.Items[index]; }
-			set { this.Items[index] = value; }
+			get { return this.Items[ index ]; }
+			set { this.Items[ index ] = value; }
 		}
 
-		public virtual int IndexOf(T item)
+		public virtual int IndexOf( T item )
 		{
-			return this.Items.IndexOf(item);
+			return this.Items.IndexOf( item );
 		}
 
-		public virtual void Insert(int index, T item)
+		public virtual void Insert( int index, T item )
 		{
-			this.Items.Insert(index, item);
+			this.Items.Insert( index, item );
 		}
 
-		public virtual void RemoveAt(int index)
+		public virtual void RemoveAt( int index )
 		{
-			this.Items.RemoveAt(index);
+			this.Items.RemoveAt( index );
 		}
 
 		#endregion System.Collections.Generic.IList`1
@@ -157,18 +157,18 @@ namespace zeroflag.Collections
 		public virtual System.Object Clone()
 		{
 			Collection<T> clone = new Collection<T>();
-			foreach (T item in this)
+			foreach ( T item in this )
 			{
 				try
 				{
-					if (item is ICloneable)
+					if ( item is ICloneable )
 					{
-						clone.Add((T)((ICloneable)item).Clone());
+						clone.Add( (T)( (ICloneable)item ).Clone() );
 						continue;
 					}
 				}
 				catch { }
-				clone.Add(item);
+				clone.Add( item );
 			}
 
 			return clone;
@@ -176,47 +176,70 @@ namespace zeroflag.Collections
 
 		#endregion System.ICloneable
 
+		#region Searching
 
+		/// <summary>
+		/// Searches for an element that matches the conditions defined by the specified
+		/// predicate, and returns the first occurrence within the entire System.Collections.Generic.List<T>.
+		/// </summary>
+		/// <param name="match">The System.Predicate<T> delegate that defines the conditions of the element to search for.</param>
+		/// <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type T.</returns>
+		public T Find( Predicate<T> match )
+		{
+			return this.Items.Find( match );
+		}
+
+		/// <summary>
+		/// Retrieves all the elements that match the conditions defined by the specified predicate.
+		/// </summary>
+		/// <param name="match">The System.Predicate<T> delegate that defines the conditions of the elements to search for.</param>
+		/// <returns>A System.Collections.Generic.List<T> containing all the elements that match the conditions defined by the specified predicate, if found; otherwise, an empty System.Collections.Generic.List<T>.</returns>
+		public List<T> FindAll( Predicate<T> match )
+		{
+			return this.Items.FindAll( match );
+		}
+
+		#endregion
 
 
 		#region IList Members
 
-		public int Add(object value)
+		public int Add( object value )
 		{
 			T item = (T)value;
-			this.Add(item);
-			return this.IndexOf(item);
+			this.Add( item );
+			return this.IndexOf( item );
 		}
 
-		public bool Contains(object value)
+		public bool Contains( object value )
 		{
-			return this.Contains((T)value);
+			return this.Contains( (T)value );
 		}
 
-		public int IndexOf(object value)
+		public int IndexOf( object value )
 		{
-			return this.IndexOf((T)value);
+			return this.IndexOf( (T)value );
 		}
 
-		public void Insert(int index, object value)
+		public void Insert( int index, object value )
 		{
-			this.Insert(index, (T)value);
+			this.Insert( index, (T)value );
 		}
 
-		public void Remove(object value)
+		public void Remove( object value )
 		{
-			this.Remove((T)value);
+			this.Remove( (T)value );
 		}
 
-		object System.Collections.IList.this[int index]
+		object System.Collections.IList.this[ int index ]
 		{
 			get
 			{
-				return this[index];
+				return this[ index ];
 			}
 			set
 			{
-				this[index] = (T)value;
+				this[ index ] = (T)value;
 			}
 		}
 
@@ -224,9 +247,9 @@ namespace zeroflag.Collections
 
 		#region ICollection Members
 
-		public void CopyTo(Array array, int index)
+		public void CopyTo( Array array, int index )
 		{
-			this.CopyTo((T[])array, index);
+			this.CopyTo( (T[])array, index );
 		}
 
 		#endregion
@@ -248,5 +271,21 @@ namespace zeroflag.Collections
 		}
 
 		#endregion
+
+		public Collection()
+		{
+		}
+
+		public Collection( System.Collections.Generic.List<T> list )
+			: this()
+		{
+			this._Items = new List<T>(list);
+		}
+
+		public Collection( IEnumerable<T> list )
+			: this()
+		{
+			this._Items = new List<T>( list );
+		}
 	}
 }

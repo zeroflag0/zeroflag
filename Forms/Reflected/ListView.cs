@@ -38,24 +38,25 @@ namespace zeroflag.Forms.Reflected
 			//this.SelectedItemSync.Synchronize();
 		}
 
-		#region ItemDescription
+		#region TypeDescription
 
-		private TypeDescription _ItemDescription = null;
+		private TypeDescription _TypeDescription = null;
 		[Browsable( true )]
-		public TypeDescription ItemDescription
+		[System.ComponentModel.Editor( typeof( TypeDescriptionEditor ), typeof( System.Drawing.Design.UITypeEditor ) )]
+		public TypeDescription TypeDescription
 		{
-			get { return _ItemDescription ?? ( this.ItemDescription = this.ItemDescriptionCreate ); }
+			get { return _TypeDescription ?? ( this.TypeDescription = this.ItemDescriptionCreate ); }
 			set
 			{
-				if ( value != _ItemDescription )
+				if ( value != _TypeDescription )
 				{
-					if ( _ItemDescription != null )
-						_ItemDescription.Changed -= new TypeDescription.ChangedHandler( TypeDescriptionChanged );
+					if ( _TypeDescription != null )
+						_TypeDescription.Changed -= new TypeDescription.ChangedHandler( TypeDescriptionChanged );
 
-					_ItemDescription = value;
+					_TypeDescription = value;
 
-					if ( _ItemDescription != null )
-						_ItemDescription.Changed += new TypeDescription.ChangedHandler( TypeDescriptionChanged );
+					if ( _TypeDescription != null )
+						_TypeDescription.Changed += new TypeDescription.ChangedHandler( TypeDescriptionChanged );
 				}
 			}
 		}
@@ -412,7 +413,7 @@ namespace zeroflag.Forms.Reflected
 			get
 			{
 				return new zeroflag.Collections.CollectionSynchronizer<PropertyDescription, ColumnHeader>
-					( this.ItemDescription.Properties,
+					( this.TypeDescription.Properties,
 					prop =>
 					{
 						if ( !prop.Visible )

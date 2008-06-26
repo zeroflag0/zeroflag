@@ -77,6 +77,13 @@
     </Compile>
     <Compile Include="TreeViewItem.cs" />
     <Compile Include="TypeDescription.cs" />
+    <Compile Include="TypeDescriptionEditor.cs" />
+    <Compile Include="TypeDescriptionEditorControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TypeDescriptionEditorControl.Designer.cs">
+      <DependentUpon>TypeDescriptionEditorControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="TypeList.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -100,6 +107,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TreeView.resx">
       <DependentUpon>TreeView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TypeDescriptionEditorControl.resx">
+      <DependentUpon>TypeDescriptionEditorControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

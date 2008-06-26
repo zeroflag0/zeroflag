@@ -54,7 +54,7 @@ namespace zeroflag.Forms.Reflected
 
 		public void Synchronize()
 		{
-			TypeDescription desc = this.Owner.ItemDescription;
+			TypeDescription desc = this.Owner.TypeDescription;
 
 			var subItems = this.SubItems;
 			//if ( subItems.Count > 0 &&

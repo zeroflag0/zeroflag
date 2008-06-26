@@ -37,8 +37,8 @@ namespace zeroflag.Windows
 	public class HotkeyForm : Form
 	{
 		private IContainer components;
-		private Dictionary<Keys, Hotkey> m_Hotkeys = new Dictionary<Keys, Hotkey>();
-		private zeroflag.Windows.Window m_Window;
+		private Dictionary<Keys, Hotkey> _Hotkeys = new Dictionary<Keys, Hotkey>();
+		//private zeroflag.Windows.Window _Window;
 
 		public HotkeyForm()
 		{
@@ -47,19 +47,19 @@ namespace zeroflag.Windows
 
 		protected override void CreateHandle()
 		{
-			base.CreateHandle();
-			this.m_Window = new zeroflag.Windows.Window(base.Handle);
-			this.RegisterHotkeys();
+			//base.CreateHandle();
+			//this._Window = new zeroflag.Windows.Window(base.Handle);
+			//this.RegisterHotkeys();
 		}
 
-		protected override void Dispose(bool disposing)
+		protected override void Dispose( bool disposing )
 		{
 			this.UnregisterHotkeys();
-			if (disposing && (this.components != null))
+			if ( disposing && ( this.components != null ) )
 			{
 				this.components.Dispose();
 			}
-			base.Dispose(disposing);
+			base.Dispose( disposing );
 		}
 
 		~HotkeyForm()
@@ -74,105 +74,143 @@ namespace zeroflag.Windows
 			this.Text = "HotkeyForm";
 		}
 
-		protected override void OnClosed(EventArgs e)
+		protected override void OnClosed( EventArgs e )
 		{
 			this.UnregisterHotkeys();
-			base.OnClosed(e);
+			base.OnClosed( e );
 		}
 
-		protected void RegisterHotkeys()
+		public void RegisterHotkeys()
 		{
-			foreach (Hotkey key in this.Hotkeys.Values)
+			foreach ( Hotkey key in this.Hotkeys.Values )
 			{
-				if (key.Registered)
-				{
-					continue;
-				}
-				Keys code = key.Key;
-				ModKeys mod = ModKeys.None;
-				if ((code & Keys.Control) != 0)
-				{
-					code ^= Keys.Control;
-					mod |= ModKeys.MOD_CONTROL;
-				}
-				if ((code & Keys.Alt) != 0)
-				{
-					code ^= Keys.Alt;
-					mod |= ModKeys.MOD_ALT;
-				}
-				if ((code & Keys.Shift) != 0)
-				{
-					code ^= Keys.Shift;
-					mod |= ModKeys.MOD_SHIFT;
-				}
-
-				if (!WinAPI.RegisterHotKey(base.Handle, key.ID, mod, code))
-				{
-					MessageBox.Show("Failed to register hotkey.");
-				}
-				key.Registered = true;
+				this.RegisterHotkey( key );
 			}
 		}
 
-		protected void UnregisterHotkeys()
+		public Hotkey RegisterHotkey( Keys key )
 		{
-			foreach (Hotkey key in this.Hotkeys.Values)
+			return this.RegisterHotkey( new Hotkey( key ) );
+		}
+		public Hotkey RegisterHotkey( Keys key, KeyEventHandler callback )
+		{
+			return this.RegisterHotkey( new Hotkey( key, callback ) );
+		}
+
+		public Hotkey RegisterHotkey( Hotkey key )
+		{
+			if ( key == null )
+				return key;
+			if ( !this.Hotkeys.ContainsValue( key ) )
 			{
-				if (key.Registered)
+				if ( this.Hotkeys.ContainsKey( key.Key ) )
 				{
-					WinAPI.UnregisterHotKey(base.Handle, key.ID);
-					key.Registered = false;
+					this.UnregisterHotkey( key.Key );
+					this.Hotkeys.Remove( key.Key );
 				}
+				this.Hotkeys[ key.Key ] = key;
+			}
+			bool failSilently = false;
+			if ( key.Registered )
+			{
+				failSilently = true;
+			}
+			Keys code = key.Key;
+			ModKeys mod = ModKeys.None;
+			if ( ( code & Keys.Control ) != 0 )
+			{
+				code ^= Keys.Control;
+				mod |= ModKeys.MOD_CONTROL;
+			}
+			if ( ( code & Keys.Alt ) != 0 )
+			{
+				code ^= Keys.Alt;
+				mod |= ModKeys.MOD_ALT;
+			}
+			if ( ( code & Keys.Shift ) != 0 )
+			{
+				code ^= Keys.Shift;
+				mod |= ModKeys.MOD_SHIFT;
+			}
+
+			if ( !WinAPI.RegisterHotKey( base.Handle, key.ID, mod, code ) )
+			{
+				if ( !failSilently )
+					MessageBox.Show( "Failed to register hotkey." );
+			}
+			key.Registered = true;
+			return key;
+		}
+
+		public void UnregisterHotkeys()
+		{
+			foreach ( Hotkey key in this.Hotkeys.Values )
+			{
+				this.UnregisterHotkey( key );
 			}
 		}
 
-		protected override void WndProc(ref Message m)
+		public void UnregisterHotkey( Hotkey key )
 		{
-			if (m.Msg == (int)WindowsMessages.WM_HOTKEY)
+			if ( key.Registered )
 			{
-				uint param = (uint)((int)m.LParam);
+				WinAPI.UnregisterHotKey( base.Handle, key.ID );
+				key.Registered = false;
+			}
+		}
+
+		public void UnregisterHotkey( Keys key )
+		{
+			this.UnregisterHotkey( this.Hotkeys[ key ] );
+		}
+
+		protected override void WndProc( ref Message m )
+		{
+			if ( m.Msg == (int)WindowsMessages.WM_HOTKEY )
+			{
+				uint param = (uint)( (int)m.LParam );
 				uint mod = param;
 				mod = (ushort)mod;
 				param = param >> 0x10;
 				Keys key = (Keys)param;
 				ModKeys mkey = (ModKeys)mod;
 
-				if ((mkey & ModKeys.MOD_CONTROL) != 0)
+				if ( ( mkey & ModKeys.MOD_CONTROL ) != 0 )
 				{
 					key |= Keys.Control;
 				}
-				if ((mkey & ModKeys.MOD_ALT) != 0)
+				if ( ( mkey & ModKeys.MOD_ALT ) != 0 )
 				{
 					key |= Keys.Alt;
 				}
-				if ((mkey & ModKeys.MOD_SHIFT) != 0)
+				if ( ( mkey & ModKeys.MOD_SHIFT ) != 0 )
 				{
 					key |= Keys.Shift;
 				}
 
-				if (this.Hotkeys.ContainsKey(key))
+				if ( this.Hotkeys.ContainsKey( key ) )
 				{
-					this.Hotkeys[key].OnHotkeyPressed(new KeyEventArgs(key));
+					this.Hotkeys[ key ].OnHotkeyPressed( new KeyEventArgs( key ) );
 				}
 			}
-			base.WndProc(ref m);
+			base.WndProc( ref m );
 		}
 
-		protected Dictionary<Keys, Hotkey> Hotkeys
+		public Dictionary<Keys, Hotkey> Hotkeys
 		{
 			get
 			{
-				return this.m_Hotkeys;
+				return this._Hotkeys;
 			}
 		}
 
-		public zeroflag.Windows.Window Window
-		{
-			get
-			{
-				return this.m_Window;
-			}
-		}
+		//public zeroflag.Windows.Window Window
+		//{
+		//    get
+		//    {
+		//        return this._Window;
+		//    }
+		//}
 
 		public class Hotkey
 		{
@@ -208,25 +246,26 @@ namespace zeroflag.Windows
 				this.ID = Counter++;
 			}
 
-			public Hotkey(Keys key)
+			public Hotkey( Keys key )
 				: this()
 			{
 				this.Key = key;
 			}
 
-			public Hotkey(Keys key, KeyEventHandler callback)
-				: this(key)
+			public Hotkey( Keys key, KeyEventHandler callback )
+				: this( key )
 			{
 				this.HotkeyPressed += callback;
 			}
 
-			public void OnHotkeyPressed(KeyEventArgs e)
+			public void OnHotkeyPressed( KeyEventArgs e )
 			{
-				if (this.m_HotkeyPressed != null)
+				if ( this.m_HotkeyPressed != null )
 				{
-					this.m_HotkeyPressed(this, e);
+					this.m_HotkeyPressed( this, e );
 				}
 			}
 		}
+
 	}
 }
