@@ -70,10 +70,11 @@ namespace zeroflag.Forms.Reflected
 
 		public void Update()
 		{
-			this.TreeView.Invoke( new Action( () =>
-					{
-						this.Text = ( (object)this.Value ?? "<null>" ).ToString();
-					} ) );
+			if ( this.TreeView != null )
+				this.TreeView.Invoke( new Action( () =>
+						{
+							this.Text = ( (object)this.Value ?? "<null>" ).ToString();
+						} ) );
 		}
 	}
 }
