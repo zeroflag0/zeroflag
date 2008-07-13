@@ -68,6 +68,73 @@ namespace zeroflag.Forms.Reflected
 		#endregion ValueChanged event
 		#endregion Value
 
+		
+		#region Owner
+
+		private TreeView<T> _Owner;
+
+		/// <summary>
+		/// This item's owner TreeView~T.
+		/// </summary>
+		public TreeView<T> Owner
+		{
+			get { return _Owner; }
+			set
+			{
+				if ( _Owner != value )
+				{
+					this.OnOwnerChanged( _Owner, _Owner = value );
+				}
+			}
+		}
+
+		#region OwnerChanged event
+		public delegate void OwnerChangedHandler( object sender, TreeView<T> oldvalue, TreeView<T> newvalue );
+
+		private event OwnerChangedHandler _OwnerChanged;
+		/// <summary>
+		/// Occurs when Owner changes.
+		/// </summary>
+		public event OwnerChangedHandler OwnerChanged
+		{
+			add { this._OwnerChanged += value; }
+			remove { this._OwnerChanged -= value; }
+		}
+
+		/// <summary>
+		/// Raises the OwnerChanged event.
+		/// </summary>
+		protected virtual void OnOwnerChanged( TreeView<T> oldvalue, TreeView<T> newvalue )
+		{
+			// if there are event subscribers...
+			if ( this._OwnerChanged != null )
+			{
+				// call them...
+				this._OwnerChanged( this, oldvalue, newvalue );
+			}
+		}
+		#endregion OwnerChanged event
+		#endregion Owner
+	 
+
+		public void Add( T child )
+		{
+			if ( this.Owner != null )
+				this.TreeView.Invoke( new Action( () =>
+				{
+					this.Owner.AddChildCallback( this.Value, child );
+				} ) );
+		}
+
+		public void Remove( T child )
+		{
+			if ( this.Owner != null )
+				this.TreeView.Invoke( new Action( () =>
+				{
+					this.Owner.RemoveChildCallback( this.Value, child );
+				} ) );
+		}
+
 		public void Update()
 		{
 			if ( this.TreeView != null )

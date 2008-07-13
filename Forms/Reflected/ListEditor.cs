@@ -17,6 +17,48 @@ namespace zeroflag.Forms.Reflected
 			this.backgroundWorker.DoWork += new DoWorkEventHandler( backgroundWorker_DoWork );
 			this.backgroundWorker.WorkerSupportsCancellation = true;
 		}
+
+		#region FilterAvailableTypes
+		private FilterTypeHandler _FilterAvailableTypes;
+
+		/// <summary>
+		/// A filter that can be used to limit available types for adding.
+		/// </summary>
+		public FilterTypeHandler FilterAvailableTypes
+		{
+			get { return _FilterAvailableTypes ?? ( _FilterAvailableTypes = this.FilterAvailableTypesCreate ); }
+			set { _FilterAvailableTypes = value; }
+		}
+
+		/// <summary>
+		/// Creates the default/initial value for FilterAvailableTypes.
+		/// A filter that can be used to limit available types for adding.
+		/// </summary>
+		protected virtual FilterTypeHandler FilterAvailableTypesCreate
+		{
+			get { return type => FilterVisibility.Enabled; }
+		}
+
+		#endregion FilterAvailableTypes
+
+
+		#region HideFilteredTypesCompletely
+
+		private bool _HideFilteredTypesCompletely = false;
+
+		public bool HideFilteredTypesCompletely
+		{
+			get { return _HideFilteredTypesCompletely; }
+			set
+			{
+				if ( _HideFilteredTypesCompletely != value )
+				{
+					_HideFilteredTypesCompletely = value;
+				}
+			}
+		}
+		#endregion HideFilteredTypesCompletely
+
 		private void buttonRemove_Click( object sender, EventArgs e )
 		{
 			List<T> remove = new List<T>( this.SelectedItems );
@@ -46,6 +88,20 @@ namespace zeroflag.Forms.Reflected
 						this.BeginInvoke( new Action<Type>( t =>
 							{
 								ToolStripMenuItem item = new ToolStripMenuItem();
+								switch ( this.FilterAvailableTypes( t ) )
+								{
+									case FilterVisibility.HiddenCompletely:
+										item.Visible = false;
+										item.Enabled = false;
+										break;
+									case FilterVisibility.Disabled:
+										item.Enabled = false;
+										if ( this.HideFilteredTypesCompletely )
+											item.Visible = false;
+										break;
+									default:
+										break;
+								}
 								item.Text = t.Name ?? t.FullName;
 								item.Tag = t;
 								item.Click += new EventHandler( AddItemClick );
