@@ -150,9 +150,9 @@ namespace zeroflag.Forms.Reflected
 			set { this.Control.SelectedImageKey = value; }
 		}
 
-		public System.Windows.Forms.TreeNode SelectedNode
+		public TreeViewItem<T> SelectedNode
 		{
-			get { return this.Control.SelectedNode; }
+			get { return this.Control.SelectedNode as TreeViewItem<T>; }
 			set { this.Control.SelectedNode = value; }
 		}
 
@@ -640,18 +640,20 @@ namespace zeroflag.Forms.Reflected
 		{
 			if ( item == null )
 				return null;
+			//Console.WriteLine( "Synchronize(" + item + ", " + ( ( (object)parent ) ?? "<null>" ) + ")" );
 			TreeViewItem<T> outer = null;
 			TreeViewItem<T> view;
 
 			if ( parent != null )
 			{
-				outer = this.Synchronize( parent, null );
+				outer = this.ItemPeers[ parent ];
+				//outer = this.Synchronize( parent, null );
 			}
 
 			if ( !this.ItemPeers.ContainsKey( item ) )
 			{
 				// create peer...
-				view = new TreeViewItem<T>( item );
+				view = new TreeViewItem<T>( item ) { Owner = this };
 
 				this.ItemPeers.Add( item, view );
 				this.PeerItems.Add( view, item );
@@ -666,10 +668,25 @@ namespace zeroflag.Forms.Reflected
 
 			view.Update();
 
-			//foreach ( var child in this.GetChildEnumeratorCallback( item ) )
-			//{
-			//    this.Synchronize( child, item );
-			//}
+			List<T> children = new List<T>();
+			foreach ( T child in this.GetChildEnumeratorCallback( item ) )
+			{
+				this.Synchronize( child, item );
+				children.Add( child );
+			}
+
+			if ( view.Nodes.Count != children.Count )
+			{
+				List<TreeViewItem<T>> views = new List<TreeViewItem<T>>();
+				foreach ( TreeViewItem<T> child in view.Nodes )
+					views.Add( child );
+
+				foreach ( TreeViewItem<T> child in views )
+				{
+					if ( !children.Contains( child.Value ) )
+						view.Nodes.Remove( child );
+				}
+			}
 
 			return view;
 		}
@@ -679,6 +696,7 @@ namespace zeroflag.Forms.Reflected
 			if ( this.SelectedNode != null )
 			{
 				this.SelectedItem = this.PeerItems[ this.SelectedNode as TreeViewItem<T> ];
+				this.SelectedNode.Expand();
 			}
 			else
 			{
