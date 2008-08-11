@@ -44,7 +44,7 @@ namespace zeroflag.Serialization
 				//explicitType = true;
 			}
 
-			string name = desc.Name ?? desc.Type.Name.Split( '`' )[0];
+			string name = desc.Name ?? desc.Type.Name.Split( '`' )[ 0 ];
 			CWL( "Serialize(" + desc + ")" );
 			if ( !this.Converters.CanConvert<string>( desc.Value ) )// || value.Name == null)
 			{
@@ -191,11 +191,18 @@ namespace zeroflag.Serialization
 
 			return value;
 		}
+#if DEBUG
+		const string BreakOnType = "State";
+#endif
 		int depth = 0;
 		protected virtual object Deserialize( object value, Descriptor desc, Descriptor outer, XmlNode node )
 		{
 			depth++;
 			//Benchmark.Instance.Trace("Deserialize", desc, node);
+#if DEBUG
+			if ( desc.Type.Name == BreakOnType )
+				Console.WriteLine( desc ); ;//<-- break here...
+#endif
 			string explicitType = this.GetAttribute( AttributeType, node );
 			if ( desc.Name == null )
 			{
@@ -208,7 +215,7 @@ namespace zeroflag.Serialization
 			if ( explicitType != null )
 			{
 				//Benchmark.Instance.Trace("TypeFinder.Instance"); 
-				Type type = TypeFinder.Instance[explicitType, desc.Type];
+				Type type = TypeFinder.Instance[ explicitType, desc.Type ];
 				//Benchmark.Instance.Trace("TypeFinder.Instance");
 				if ( type != null && type != desc.Type )
 				{
@@ -230,7 +237,9 @@ namespace zeroflag.Serialization
 			{
 				var info = outer.Property( desc.Name );
 				if ( info != null && info.GetIndexParameters().Length == 0 )
+				{
 					value = desc.Value = info.GetValue( outer.Value, null );
+				}
 			}
 			if ( value != null && value.GetType() != desc.Type && !desc.Type.IsAssignableFrom( value.GetType() ) )
 				value = null;
@@ -269,10 +278,7 @@ namespace zeroflag.Serialization
 						nodes.Add( n );
 			foreach ( XmlNode n in node.ChildNodes )
 				nodes.Add( n );
-#if DEBUG
-			if ( desc.Type.Name == "Switch" )
-				Console.WriteLine( desc ); ;//<-- break here...
-#endif
+
 			foreach ( XmlNode sub in nodes )
 			{
 				if ( sub is XmlComment )
@@ -297,7 +303,18 @@ namespace zeroflag.Serialization
 								var prop = desc.Property( "Value" ) ?? desc.Property( "Content" );
 								if ( prop != null )
 									prop.SetValue( desc.Value, this.Converters.Parse<string>( prop.PropertyType, text ), null );
-
+								else
+								{
+									var meth = desc.Type.GetMethod( "Parse", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod );
+									if ( meth != null )
+									{
+										desc.Value = meth.Invoke( null, new object[] { text } );
+									}
+									else
+									{
+										desc.Value = text;
+									}
+								}
 							}
 							//desc.Property("Value").SetValue(desc.Value, this.Converters.Parse<string>(typeof(string), text), null);
 						}
@@ -339,12 +356,12 @@ namespace zeroflag.Serialization
 								if ( info != null )
 								{
 									subType = info.PropertyType;
-									subType = TypeFinder.Instance[subTypeName, subType];
+									subType = TypeFinder.Instance[ subTypeName, subType ];
 								}
 								else
 								{
 									// try to find the type...
-									subType = TypeFinder.Instance[subTypeName];
+									subType = TypeFinder.Instance[ subTypeName ];
 								}
 							}
 						}
@@ -383,7 +400,7 @@ namespace zeroflag.Serialization
 			}
 			depth--;
 #if DEBUG
-			if ( desc.Type.Name == "Switch" )
+			if ( desc.Type.Name == BreakOnType )
 				Console.WriteLine( desc ); ;//<-- break here...
 #endif
 			try
@@ -405,7 +422,7 @@ namespace zeroflag.Serialization
 		{
 			try
 			{
-				return node.Attributes[name].Value;
+				return node.Attributes[ name ].Value;
 			}
 			catch ( Exception exc1 )
 			{

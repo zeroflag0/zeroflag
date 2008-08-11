@@ -362,7 +362,14 @@ namespace zeroflag.Serialization.Descriptors
 
 							if (value != null && this.Value != null)
 							{
-								prop.SetValue(this.Value, value, new object[] { });
+								try
+								{
+									prop.SetValue( this.Value, value, new object[] { } );
+								}
+								catch ( Exception exc )
+								{
+									Console.WriteLine( exc );
+								}
 							}
 						}
 					}

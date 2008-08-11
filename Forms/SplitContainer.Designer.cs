@@ -70,7 +70,7 @@
 			this.buttonHide1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.buttonHide1.Location = new System.Drawing.Point( 132, 0 );
 			this.buttonHide1.Name = "buttonHide1";
-			this.buttonHide1.Size = new System.Drawing.Size( 16, 300 );
+			this.buttonHide1.Size = new System.Drawing.Size( 8, 300 );
 			this.buttonHide1.TabIndex = 0;
 			this.buttonHide1.TabStop = false;
 			this.buttonHide1.Text = ">";
@@ -86,7 +86,7 @@
 			this.buttonHide2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
 			this.buttonHide2.Location = new System.Drawing.Point( 0, 0 );
 			this.buttonHide2.Name = "buttonHide2";
-			this.buttonHide2.Size = new System.Drawing.Size( 16, 300 );
+			this.buttonHide2.Size = new System.Drawing.Size( 8, 300 );
 			this.buttonHide2.TabIndex = 0;
 			this.buttonHide2.TabStop = false;
 			this.buttonHide2.Text = "<";

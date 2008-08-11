@@ -45,7 +45,7 @@ namespace zeroflag.Forms
 
 		#region HideButtonSize
 
-		private int _HideButtonSize = 16;
+		private int _HideButtonSize = 8;
 
 		public virtual int HideButtonSize
 		{
