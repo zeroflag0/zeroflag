@@ -149,6 +149,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TreeEditor.resx">
       <DependentUpon>TreeEditor.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="TreeView.resx">
       <DependentUpon>TreeView.cs</DependentUpon>

@@ -92,7 +92,8 @@ namespace zeroflag.Forms
 				var list = new zeroflag.Collections.List<Action>() { };
 				list.ItemAdded += item =>
 				{
-					this.backgroundWorker.RunWorkerAsync();
+					if ( !this.backgroundWorker.IsBusy )
+						this.backgroundWorker.RunWorkerAsync();
 				};
 				return list;
 			}
