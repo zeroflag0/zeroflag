@@ -16,10 +16,35 @@ namespace zeroflag.Serialization
 		const string AttributeId = "_id";
 
 		#region Serialize
+
+		#region XslStyleSheet
+
+		private string _XslStyleSheet;
+
+		/// <summary>
+		/// Path to a file that should be refered to from the generated xml files.
+		/// </summary>
+		public string XslStyleSheet
+		{
+			get { return _XslStyleSheet; }
+			set
+			{
+				if ( _XslStyleSheet != value )
+				{
+					_XslStyleSheet = value;
+				}
+			}
+		}
+
+		#endregion XslStyleSheet
+
+
 		public override void Serialize( zeroflag.Serialization.Descriptors.Descriptor value )
 		{
 			XmlDocument doc = new XmlDocument();
 			doc.AppendChild( doc.CreateXmlDeclaration( "1.0", null, null ) );
+			if ( this.XslStyleSheet != null )
+				doc.AppendChild( doc.CreateProcessingInstruction( "xml-stylesheet", "type=\"text/xsl\" href=\"" + this.XslStyleSheet + "\"" ) );
 			//doc.AppendChild(doc.CreateComment(value.ToStringTree().ToString()));
 			//doc.AppendChild(doc.CreateElement("root"));
 
@@ -192,7 +217,7 @@ namespace zeroflag.Serialization
 			return value;
 		}
 #if DEBUG
-		const string BreakOnType = "State";
+		const string BreakOnType = "Firmware3TK2845";
 #endif
 		int depth = 0;
 		protected virtual object Deserialize( object value, Descriptor desc, Descriptor outer, XmlNode node )
@@ -221,6 +246,8 @@ namespace zeroflag.Serialization
 				{
 					desc = this.Context.Parse( desc.Name, type, outer );
 				}
+				else
+					desc.Type = type;
 				//var types = TypeFinder.Instance.SearchAll(explicitType, desc.Type);
 				//if (types.Count > 0)
 				//{
@@ -401,7 +428,7 @@ namespace zeroflag.Serialization
 			depth--;
 #if DEBUG
 			if ( desc.Type.Name == BreakOnType )
-				Console.WriteLine( desc ); ;//<-- break here...
+				Console.WriteLine( desc );//<-- break here...
 #endif
 			try
 			{
