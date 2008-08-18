@@ -13,11 +13,11 @@ namespace zeroflag.Serialization
 		{
 			get
 			{
-				if (TypeFinder._Instance == null)
+				if ( TypeFinder._Instance == null )
 				{
-					lock (typeof(TypeFinder))
+					lock ( typeof( TypeFinder ) )
 					{
-						if (TypeFinder._Instance == null)
+						if ( TypeFinder._Instance == null )
 						{
 							TypeFinder._Instance = new TypeFinder();
 						}
@@ -38,41 +38,41 @@ namespace zeroflag.Serialization
 		{
 			//Benchmark.Instance.Trace();
 			//this.ScanAssemblies();
-			foreach (Type type in this.Types)
+			foreach ( Type type in this.Types )
 			{
-				this.Add(type);
+				this.Add( type );
 			}
 			//Benchmark.Instance.Trace();
 		}
 
-		protected virtual void Add(Type type)
+		protected virtual void Add( Type type )
 		{
-			this.TypeNames[type.FullName] = type;
+			this.TypeNames[ type.FullName ] = type;
 
 			string key = type.Name;
-			if (key == null)
-				key = type.FullName.Substring(type.FullName.LastIndexOf('.') + 1);
-			this.TypeNames[key] = type;
+			if ( key == null )
+				key = type.FullName.Substring( type.FullName.LastIndexOf( '.' ) + 1 );
+			this.TypeNames[ key ] = type;
 
 			try
 			{
-				int i = key.IndexOfAny(new char[] { '`', '~', '<', '>' });
-				if (i > 0)
+				int i = key.IndexOfAny( new char[] { '`', '~', '<', '>' } );
+				if ( i > 0 )
 				{
-					string temp = this.TryAdd(key.Substring(0, i), type);
+					string temp = this.TryAdd( key.Substring( 0, i ), type );
 					temp = temp.ToLower();
-					this.TryAdd(temp, type);
+					this.TryAdd( temp, type );
 				}
 			}
 			catch { }
 
-			this.TryAdd(key.ToLower(), type);
+			this.TryAdd( key.ToLower(), type );
 		}
 
-		string TryAdd(string key, Type type)
+		string TryAdd( string key, Type type )
 		{
-			if (key.Length > 0 && !this.TypeNames.ContainsKey(key))
-				this.TypeNames[key] = type;
+			if ( key.Length > 0 && !this.TypeNames.ContainsKey( key ) )
+				this.TypeNames[ key ] = type;
 			return key;
 		}
 #if SCAN
@@ -236,9 +236,9 @@ namespace zeroflag.Serialization
 			}
 		}
 #endif
-		protected virtual bool IsValidType(Type type)
+		protected virtual bool IsValidType( Type type )
 		{
-			return type.IsPublic && !type.IsAbstract && !type.IsInterface && type.GetConstructor(System.Type.EmptyTypes) != null;
+			return type.IsPublic && !type.IsAbstract && !type.IsInterface && type.GetConstructor( System.Type.EmptyTypes ) != null;
 		}
 
 		//List<Type> _Types = new List<Type>();
@@ -256,127 +256,140 @@ namespace zeroflag.Serialization
 		}
 		#endregion Types
 
-		public virtual Type this[string key]
+		public virtual Type this[ string key ]
 		{
 			get
 			{
-				return this.Find(key);
+				return this.Find( key );
 			}
 			set
 			{
-				this.Add(value);
-				this.TypeNames[key] = value;
+				this.Add( value );
+				this.TypeNames[ key ] = value;
 			}
 		}
 
-		public virtual Type this[string key, Type baseType]
+		public virtual Type this[ string key, Type baseType ]
 		{
 			get
 			{
 				//Benchmark.Instance.Trace();
-				return this.Search(key, baseType);
+				return this.Search( key, baseType );
 			}
 		}
 
 
 		#region Finder
 
-		protected delegate Type FindHandler(string key);
-		protected delegate string SearchHandler(string key);
+		protected delegate Type FindHandler( string key );
+		protected delegate string SearchHandler( string key );
 
-		protected Type Find(string key)
+		protected Type Find( string key )
 		{
-			return this.TryGet(key)
-				?? this.TryGet(key.ToLower())
-				?? this.Search(key);
+			return this.TryGet( key )
+				?? this.TryGet( key.ToLower() )
+				?? this.Search( key );
 		}
 
 		List<string> tempKeys;
 
-		protected Type Search(string key)
+		protected Type Search( string key )
 		{
-			return this.Search(key, null);
+			return this.Search( key, null );
 		}
 
-		protected Type Search(string key, Type baseType)
+		protected Type Search( string key, Type baseType )
 		{
-			Type result = this.SearchOne(key, baseType);
-			if (result != null)
+			Type result = this.SearchOne( key, baseType );
+			if ( result != null )
 				return result;
 
-			List<Type> results = this.SearchAll(key, baseType);
-			if (results != null)
+			List<Type> results = this.SearchAll( key, baseType );
+			if ( results != null )
 			{
-				if (results.Count == 1)
-					return results[0];
-				else if (results.Count > 1)
+				if ( results.Count == 1 )
+					return results[ 0 ];
+				else if ( results.Count > 1 )
 				{
-					return results.Find(i => i != null && i.Name.ToLower() == key.ToLower()) ?? results[0];
+					return results.Find( i => i != null && i.Name.ToLower() == key.ToLower() ) ?? results[ 0 ];
 				}
 			}
+
 			return null;
 		}
 
-		protected Type SearchOne(string key, Type baseType)
+		protected Type SearchOne( string key, Type baseType )
 		{
 			Type result = null;
-			if (this.TypeNames.ContainsKey(key))
+			if ( this.TypeNames.ContainsKey( key ) )
 			{
-				result = this.TypeNames[key];
-				if (result != null)
-					if (baseType == null || baseType.IsAssignableFrom(result))
+				result = this.TypeNames[ key ];
+				if ( result != null )
+					if ( baseType == null || baseType.IsAssignableFrom( result ) )
 						return result;
 			}
-			return null;
+			// completely manual search for derived types...
+			if ( baseType != null )
+			{
+				List<Type> candidates = TypeHelper.GetDerived( baseType );
+
+				result = candidates.Find( i =>
+					i != null && !i.IsAbstract && !i.IsInterface &&
+					i.Name != null && i.Name == key )
+					??
+					candidates.Find( i => i != null && !i.IsAbstract && !i.IsInterface &&
+					i.Name != null && i.Name.ToLower() == key.ToLower() );
+			}
+			return result;
 		}
 
-		public List<Type> SearchAll(string key)
+		public List<Type> SearchAll( string key )
 		{
-			return this.SearchAll(key, null);
+			return this.SearchAll( key, null );
 		}
 
 		List<string> __SearchCacheNames;
 
 		protected List<string> _SearchCacheNames
 		{
-			get { return __SearchCacheNames ?? (__SearchCacheNames = new List<string>(_SearchCache.Keys)); }
+			get { return __SearchCacheNames ?? ( __SearchCacheNames = new List<string>( _SearchCache.Keys ) ); }
 		}
 		Dictionary<string, Type> _SearchCache = new Dictionary<string, Type>();
 		int _SearchCacheTypeCount = 0;
 
-		protected Type CacheAdd(string name, Type type)
+		protected Type CacheAdd( string name, Type type )
 		{
-			lock (_SearchCache)
+			lock ( _SearchCache )
 			{
-				_SearchCache[name] = type;
-				if (!_SearchCacheNames.Contains(name))
-					_SearchCacheNames.Add(name);
+				_SearchCache[ name ] = type;
+				if ( !_SearchCacheNames.Contains( name ) )
+					_SearchCacheNames.Add( name );
 			}
 
 			string lower = name.ToLower();
-			if (lower != name)
-				this.CacheAdd(lower, type);
+			if ( lower != name )
+				this.CacheAdd( lower, type );
 
 			return type;
 		}
 
-		public List<Type> SearchAll(string key, Type baseType)
+		public List<Type> SearchAll( string key, Type baseType )
 		{
 			List<Type> results = new List<Type>();
-			Type type = this.SearchOne(key, baseType);
-			if (type != null)
-				results.Add(type);
+			Type type = this.SearchOne( key, baseType );
+			if ( type != null )
+				results.Add( type );
 
-			if (!_SearchCache.ContainsKey(key))
+			if ( !_SearchCache.ContainsKey( key ) )
 			{
-				lock (_SearchCache)
-					if (_SearchCacheTypeCount < TypeHelper.Types.Count)
+				lock ( _SearchCache )
+					if ( _SearchCacheTypeCount < TypeHelper.Types.Count )
 					{
 						List<Type> sources;
 						bool count = false;
-						if (baseType != null)
+						if ( baseType != null )
 						{
-							sources = TypeHelper.GetDerived(baseType);
+							sources = TypeHelper.GetDerived( baseType );
 							count = true;
 						}
 						else
@@ -385,22 +398,22 @@ namespace zeroflag.Serialization
 							_SearchCacheTypeCount = TypeHelper.Types.Count;
 						}
 						string name;
-						foreach (Type source in sources)
+						foreach ( Type source in sources )
 						{
-							if (!this.IsValidType(source))
+							if ( !this.IsValidType( source ) )
 								continue;
-							if (count && !_SearchCache.ContainsValue(source))
+							if ( count && !_SearchCache.ContainsValue( source ) )
 								_SearchCacheTypeCount++;
 
 							name = source.Name;
-							this.CacheAdd(name, source);
+							this.CacheAdd( name, source );
 							name = name.ToLower();
-							this.CacheAdd(name, source);
-							if (name.Contains("."))
+							this.CacheAdd( name, source );
+							if ( name.Contains( "." ) )
 							{
-								name = name.Substring(name.LastIndexOf('.')).Trim('.');
+								name = name.Substring( name.LastIndexOf( '.' ) ).Trim( '.' );
 							}
-							this.CacheAdd(name, source);
+							this.CacheAdd( name, source );
 						}
 					}
 
@@ -521,40 +534,40 @@ namespace zeroflag.Serialization
 #endif
 		}
 
-		protected Type SearchCache(string key, Type baseType, List<Type> ignore)
+		protected Type SearchCache( string key, Type baseType, List<Type> ignore )
 		{
-			if (key == null)
+			if ( key == null )
 				return null;
 
-			if (_SearchCache.ContainsKey(key))
-				return _SearchCache[key];
+			if ( _SearchCache.ContainsKey( key ) )
+				return _SearchCache[ key ];
 
 			Type result = null;
 			List<string> names = _SearchCacheNames;
 
 			string name = null;
-			name = names.Find(n => n != null && n == key);
-			if (name != null)
+			name = names.Find( n => n != null && n == key );
+			if ( name != null )
 			{
-				result = _SearchCache[name];
-				if (ignore == null || !ignore.Contains(result))
-					return this.CacheAdd(key, result);
+				result = _SearchCache[ name ];
+				if ( ignore == null || !ignore.Contains( result ) )
+					return this.CacheAdd( key, result );
 			}
 
-			name = names.Find(n => n != null && n.EndsWith(key));
-			if (name != null)
+			name = names.Find( n => n != null && n.EndsWith( key ) );
+			if ( name != null )
 			{
-				result = _SearchCache[name];
-				if (ignore == null || !ignore.Contains(result))
-					return this.CacheAdd(key, result);
+				result = _SearchCache[ name ];
+				if ( ignore == null || !ignore.Contains( result ) )
+					return this.CacheAdd( key, result );
 			}
 
-			name = names.Find(n => n != null && n.Contains(key));
-			if (name != null)
+			name = names.Find( n => n != null && n.Contains( key ) );
+			if ( name != null )
 			{
-				result = _SearchCache[name];
-				if (ignore == null || !ignore.Contains(result))
-					return this.CacheAdd(key, result);
+				result = _SearchCache[ name ];
+				if ( ignore == null || !ignore.Contains( result ) )
+					return this.CacheAdd( key, result );
 			}
 
 			return null;
@@ -576,15 +589,15 @@ namespace zeroflag.Serialization
 
 		//    return type;
 		//}
-		protected Type TryGet(string key)
+		protected Type TryGet( string key )
 		{
 			//Benchmark.Instance.Trace();
 			try
 			{
-				if (this.TypeNames.ContainsKey(key))
-					return this.TypeNames[key];
+				if ( this.TypeNames.ContainsKey( key ) )
+					return this.TypeNames[ key ];
 			}
-			catch (Exception exc)
+			catch ( Exception exc )
 			{
 				//Benchmark.Instance.Trace(exc);
 			}

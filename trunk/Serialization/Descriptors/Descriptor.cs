@@ -140,13 +140,13 @@ namespace zeroflag.Serialization.Descriptors
 
 		public object Value
 		{
-			get { return _Value ?? (_Value = DefaultValue); }
+			get { return _Value ?? ( _Value = DefaultValue ); }
 			set
 			{
-				if (_Value != value)
+				if ( _Value != value )
 				{
 					_Value = value;
-					if (value != null)
+					if ( value != null )
 						this.IsNull = false;
 				}
 			}
@@ -235,7 +235,7 @@ namespace zeroflag.Serialization.Descriptors
 
 		protected abstract void Parse();
 
-		public virtual Descriptor Parse(string name, Type type, object value
+		public virtual Descriptor Parse( string name, Type type, object value
 			//, object ownerInstance
 #if OWNER
 			, Descriptor owner
@@ -258,39 +258,39 @@ namespace zeroflag.Serialization.Descriptors
 		bool _IsParsed = false;
 		public void GenerateParse()
 		{
-			if (_IsParsed)
+			if ( _IsParsed )
 				return;
 			_IsParsed = true;
 
-			if (this.Id != null && this.Context.CreatedInstances.ContainsKey(this.Id.Value))// && this != this.Generated[this.Id.Value])
+			if ( this.Id != null && this.Context.CreatedInstances.ContainsKey( this.Id.Value ) )// && this != this.Generated[this.Id.Value])
 			{
-				if (this == this.Context.CreatedInstances[this.Id.Value])
-					CWL("Link self!");
-				CWL("Link(name='" + this.Name + "', type='" + this.Type + "', isnull='" + this.IsNull + "', id='" + this.Id + "', value='" + this.Value + "', children='" + this.Inner.Count + "')");
+				if ( this == this.Context.CreatedInstances[ this.Id.Value ] )
+					CWL( "Link self!" );
+				CWL( "Link(name='" + this.Name + "', type='" + this.Type + "', isnull='" + this.IsNull + "', id='" + this.Id + "', value='" + this.Value + "', children='" + this.Inner.Count + "')" );
 
-				Descriptor other = this.Context.CreatedInstances[this.Id.Value];
-				CWL("  To(name='" + other.Name + "', type='" + other.Type + "', isnull='" + other.IsNull + "', id='" + other.Id + "', value='" + other.Value + "', children='" + other.Inner.Count + "')");
+				Descriptor other = this.Context.CreatedInstances[ this.Id.Value ];
+				CWL( "  To(name='" + other.Name + "', type='" + other.Type + "', isnull='" + other.IsNull + "', id='" + other.Id + "', value='" + other.Value + "', children='" + other.Inner.Count + "')" );
 				this.Type = other.Type;
 				this.Value = other.Value;
 				this.IsNull = other.IsNull;
-				this.Inner.AddRange(other.Inner);
-				CWL("Result(name='" + this.Name + "', type='" + this.Type + "', isnull='" + this.IsNull + "', id='" + this.Id + "', value='" + this.Value + "', children='" + this.Inner.Count + "')");
+				this.Inner.AddRange( other.Inner );
+				CWL( "Result(name='" + this.Name + "', type='" + this.Type + "', isnull='" + this.IsNull + "', id='" + this.Id + "', value='" + this.Value + "', children='" + this.Inner.Count + "')" );
 			}
 			else
 			{
-				if (this.Value == null && !this.IsNull)
+				if ( this.Value == null && !this.IsNull )
 				{
 					this.DoCreateInstance();
 				}
-				if (this.Id != null)
+				if ( this.Id != null )
 				{
-					if (!this.Context.CreatedInstances.ContainsKey(this.Id.Value))
+					if ( !this.Context.CreatedInstances.ContainsKey( this.Id.Value ) )
 					{
-						CWL("Reference(name='" + this.Name + "', type='" + this.Type + "', isnull='" + this.IsNull + "', id='" + this.Id + "', value='" + this.Value + "', children='" + this.Inner.Count + "')");
-						this.Context.CreatedInstances.Add(this.Id.Value, this);
+						CWL( "Reference(name='" + this.Name + "', type='" + this.Type + "', isnull='" + this.IsNull + "', id='" + this.Id + "', value='" + this.Value + "', children='" + this.Inner.Count + "')" );
+						this.Context.CreatedInstances.Add( this.Id.Value, this );
 					}
 					else
-						CWL("Reference already exists for " + this.Id);
+						CWL( "Reference already exists for " + this.Id );
 				}
 			}
 			this.ApplyAttributes();
@@ -304,12 +304,12 @@ namespace zeroflag.Serialization.Descriptors
 		bool _IsGenerated = false;
 		public void GenerateCreate()
 		{
-			if (_IsGenerated)
+			if ( _IsGenerated )
 				return;
 			_IsGenerated = true;
-			if (this.Value == null)
+			if ( this.Value == null )
 			{
-				if (!this.IsNull)
+				if ( !this.IsNull )
 					this.Value = this.DoCreateInstance();
 				else
 					this.Value = null;
@@ -319,11 +319,11 @@ namespace zeroflag.Serialization.Descriptors
 		bool _IsLinked = false;
 		public virtual object GenerateLink()
 		{
-			if (_IsLinked)
+			if ( _IsLinked )
 				return this.Value;
 			_IsLinked = true;
 
-			if (this.Value == null)
+			if ( this.Value == null )
 			{
 				this.GenerateParse();
 				this.GenerateCreate();
@@ -331,36 +331,41 @@ namespace zeroflag.Serialization.Descriptors
 
 			//if (this.Value != null)
 			{
-				foreach (Descriptor sub in this.Inner)
+				foreach ( Descriptor sub in this.Inner )
 				{
-					if (sub.Name == null || sub.IsNull)
-					    continue;
+					//if ( sub.Name == null || ( sub.IsNull && sub.Value == null ) )
+					//	continue;
+					if ( sub.Name == null )
+						continue;
+					if ( sub.IsNull )
+						continue;
+
 					System.Reflection.PropertyInfo prop = null;
 					try
 					{
-						prop = this.Type.GetProperty(sub.Name);
+						prop = this.Type.GetProperty( sub.Name );
 					}
-					catch (System.Reflection.AmbiguousMatchException exc)
+					catch ( System.Reflection.AmbiguousMatchException exc )
 					{
-						this.Context.Exceptions.Add(new ExceptionTrace(exc, this, this.Type, this.Value));
+						this.Context.Exceptions.Add( new ExceptionTrace( exc, this, this.Type, this.Value ) );
 						// manual search...
-						foreach (var pr in this.Type.GetProperties())
+						foreach ( var pr in this.Type.GetProperties() )
 						{
-							if (pr != null && pr.GetIndexParameters().Length == 0 && pr.Name == sub.Name && pr.PropertyType.IsAssignableFrom(sub.Type))
+							if ( pr != null && pr.GetIndexParameters().Length == 0 && pr.Name == sub.Name && pr.PropertyType.IsAssignableFrom( sub.Type ) )
 								prop = pr;
 						}
 					}
 					finally
 					{ }
 
-					if (prop != null)
+					if ( prop != null )
 					{
-						if (prop.CanWrite)
+						if ( prop.CanWrite )
 						{
 							//sub.SetValue(this.Value, prop);
 							object value = sub.GenerateLink();
 
-							if (value != null && this.Value != null)
+							if ( value != null && this.Value != null )
 							{
 								try
 								{
@@ -382,69 +387,69 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			try
 			{
-				return this.Value = (this.IsNull ? null : (this.Value ?? (this.Value = (this.IsNull ? null : TypeHelper.CreateInstance(this.Type)))));
+				return this.Value = ( this.IsNull ? null : ( this.Value ?? ( this.Value = ( this.IsNull ? null : TypeHelper.CreateInstance( this.Type ) ) ) ) );
 			}
-			catch (Exception exc)
+			catch ( Exception exc )
 			{
-				CWL(this + ".DoCreateInstance() failed:\n" + exc);
+				CWL( this + ".DoCreateInstance() failed:\n" + exc );
 				return this.Value;
 			}
 		}
 		#endregion Generate
 
-		public System.Reflection.PropertyInfo Property(Type type)
+		public System.Reflection.PropertyInfo Property( Type type )
 		{
-			var props = this.GetProperties(this.Type);
-			foreach (var prop in props)
+			var props = this.GetProperties( this.Type );
+			foreach ( var prop in props )
 			{
-				if (prop != null && (prop.PropertyType == type || prop.PropertyType.IsAssignableFrom(type)))
+				if ( prop != null && ( prop.PropertyType == type || prop.PropertyType.IsAssignableFrom( type ) ) )
 					return prop;
 			}
 			return null;
 		}
 
-		public System.Reflection.PropertyInfo Property(string property)
+		public System.Reflection.PropertyInfo Property( string property )
 		{
-			return this.Property(property, false);
+			return this.Property( property, false );
 		}
 
-		public System.Reflection.PropertyInfo Property(string property, bool byType)
+		public System.Reflection.PropertyInfo Property( string property, bool byType )
 		{
-			var props = this.GetPropertyNames(this.Type);
+			var props = this.GetPropertyNames( this.Type );
 			// search by name, case sensitive (fast)...
-			if (props.ContainsKey(property))
-				return props[property];
-			var names = new List<string>(props.Keys);
+			if ( props.ContainsKey( property ) )
+				return props[ property ];
+			var names = new List<string>( props.Keys );
 			// search by name, case insensitive...
-			string key = names.Find(n => n.ToLower() == property.ToLower());
-			if (key != null)
-				return props[key];
+			string key = names.Find( n => n.ToLower() == property.ToLower() );
+			if ( key != null )
+				return props[ key ];
 
-			if (!byType)
+			if ( !byType )
 				return null;
 
 			// get all property types...
 			Dictionary<Type, string> types = new Dictionary<Type, string>();
-			foreach (string name in props.Keys)
+			foreach ( string name in props.Keys )
 			{
-				if (!types.ContainsKey(props[name].PropertyType))
-					types.Add(props[name].PropertyType, name);
+				if ( !types.ContainsKey( props[ name ].PropertyType ) )
+					types.Add( props[ name ].PropertyType, name );
 			}
 
 			// search types, case insensitive...
-			List<Type> typeSearch = new List<Type>(types.Keys);
-			Type type = typeSearch.Find(t => t.Name != null && t.Name.ToLower() == property.ToLower());
-			if (type != null && types.ContainsKey(type) && props.ContainsKey(types[type]))
-				return props[types[type]];
+			List<Type> typeSearch = new List<Type>( types.Keys );
+			Type type = typeSearch.Find( t => t.Name != null && t.Name.ToLower() == property.ToLower() );
+			if ( type != null && types.ContainsKey( type ) && props.ContainsKey( types[ type ] ) )
+				return props[ types[ type ] ];
 
-			type = typeSearch.Find(t => t.Name != null && (t.Name.ToLower().Contains(property.ToLower()) || property.ToLower().Contains(t.Name.ToLower())));
-			if (type != null && types.ContainsKey(type) && props.ContainsKey(types[type]))
-				return props[types[type]];
+			type = typeSearch.Find( t => t.Name != null && ( t.Name.ToLower().Contains( property.ToLower() ) || property.ToLower().Contains( t.Name.ToLower() ) ) );
+			if ( type != null && types.ContainsKey( type ) && props.ContainsKey( types[ type ] ) )
+				return props[ types[ type ] ];
 
 			return null;
 		}
 
-		public Dictionary<string, System.Reflection.PropertyInfo> GetPropertyNames(Type type)
+		public Dictionary<string, System.Reflection.PropertyInfo> GetPropertyNames( Type type )
 		{
 			//List<System.Reflection.PropertyInfo> props = new List<System.Reflection.PropertyInfo>();
 			Dictionary<string, System.Reflection.PropertyInfo> props = new Dictionary<string, System.Reflection.PropertyInfo>();
@@ -452,14 +457,14 @@ namespace zeroflag.Serialization.Descriptors
 			{
 				//break;
 				//props.AddRange(type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.));
-				foreach (var prop in type.GetProperties())
-					if (!props.ContainsKey(prop.Name))
-						props.Add(prop.Name, prop);
+				foreach ( var prop in type.GetProperties() )
+					if ( !props.ContainsKey( prop.Name ) )
+						props.Add( prop.Name, prop );
 			}
-			while ((type = type.BaseType) != null);
+			while ( ( type = type.BaseType ) != null );
 			return props;
 		}
-		public List<System.Reflection.PropertyInfo> GetProperties(Type type)
+		public List<System.Reflection.PropertyInfo> GetProperties( Type type )
 		{
 			//List<System.Reflection.PropertyInfo> props = new List<System.Reflection.PropertyInfo>();
 			Dictionary<string, System.Reflection.PropertyInfo> props = new Dictionary<string, System.Reflection.PropertyInfo>();
@@ -467,44 +472,44 @@ namespace zeroflag.Serialization.Descriptors
 			{
 				//break;
 				//props.AddRange(type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.));
-				foreach (var prop in type.GetProperties())
-					if (!props.ContainsKey(prop.Name))
-						props.Add(prop.Name, prop);
+				foreach ( var prop in type.GetProperties() )
+					if ( !props.ContainsKey( prop.Name ) )
+						props.Add( prop.Name, prop );
 			}
-			while ((type = type.BaseType) != null);
-			return new List<System.Reflection.PropertyInfo>(props.Values);
+			while ( ( type = type.BaseType ) != null );
+			return new List<System.Reflection.PropertyInfo>( props.Values );
 		}
 
 		public override string ToString()
 		{
 			//return this.GetType().Name + "[" + this.Name + ", " + this.Type + ", " + this.Id + "] -> " + this.Owner;
-			return this.ToString(new StringBuilder()).ToString();
+			return this.ToString( new StringBuilder() ).ToString();
 		}
 
-		public StringBuilder ToString(StringBuilder builder)
+		public StringBuilder ToString( StringBuilder builder )
 		{
-			return builder.Append(this.GetType().Name).Append("[").Append(this.Name).Append(", ").Append(this.Type).Append(", ").Append(this.Id).Append("]");// -> { ");
+			return builder.Append( this.GetType().Name ).Append( "[" ).Append( this.Name ).Append( ", " ).Append( this.Type ).Append( ", " ).Append( this.Id ).Append( this.IsNull ? "<null>" : "" ).Append( "]" );// -> { ");
 		}
 
 		public StringBuilder ToStringTree()
 		{
-			return this.ToStringTree(new StringBuilder("\n"), 0).AppendLine();
+			return this.ToStringTree( new StringBuilder( "\n" ), 0 ).AppendLine();
 		}
-		public StringBuilder ToStringTree(StringBuilder builder, int depth)
+		public StringBuilder ToStringTree( StringBuilder builder, int depth )
 		{
-			if (depth > 20)
+			if ( depth > 20 )
 				return builder;
-			builder.Append(' ', depth * 2).Append(this.Name ?? "<noname>").Append(" (").Append(this.Type).Append(",").Append(this.Id).Append(") := ").Append(this.Value ?? (object)"<null>").AppendLine();
+			builder.Append( ' ', depth * 2 ).Append( this.Name ?? "<noname>" ).Append( " (" ).Append( this.Type ).Append( "," ).Append( this.Id ).Append( ") := " ).Append( this.Value ?? (object)"<null>" ).AppendLine();
 			depth++;
-			foreach (Descriptor child in this.Inner)
-				child.ToStringTree(builder, depth);
+			foreach ( Descriptor child in this.Inner )
+				child.ToStringTree( builder, depth );
 			return builder;
 		}
 
-		[System.Diagnostics.Conditional("VERBOSE")]
-		static internal void CWL(object value)
+		[System.Diagnostics.Conditional( "VERBOSE" )]
+		static internal void CWL( object value )
 		{
-			Console.WriteLine(value);
+			Console.WriteLine( value );
 		}
 
 		public Type DescritorType
