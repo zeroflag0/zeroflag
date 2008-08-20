@@ -32,7 +32,7 @@ using System.Text;
 
 namespace zeroflag.Serialization.Descriptors
 {
-	public class ListDescriptor<T> : Descriptor<System.Collections.Generic.ICollection<T>>
+	public class ListDescriptor<T> : Descriptor<System.Collections.Generic.ICollection<T>>, IListDescriptor
 	{
 		//public override Type Type
 		//{
@@ -146,4 +146,6 @@ namespace zeroflag.Serialization.Descriptors
 			}
 		}
 	}
+	public interface IListDescriptor
+	{ }
 }

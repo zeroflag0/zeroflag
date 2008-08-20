@@ -57,6 +57,14 @@ namespace zeroflag.Serialization
 				return false;
 			}
 		}
+
+		protected override bool SimplifyOutputCreate
+		{
+			get
+			{
+				return false;
+			}
+		}
 	}
 #if OBSOLETE
 	public class XmlSerializer : Serializer

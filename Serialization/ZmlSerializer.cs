@@ -69,9 +69,70 @@ namespace zeroflag.Serialization
 				//explicitType = true;
 			}
 
+			//if ( this.IgnoreList.Find( i => i != null && i( desc ) ) != null )
+			//    return;
+
 			string name = desc.Name ?? desc.Type.Name.Split( '`' )[ 0 ];
 			CWL( "Serialize(" + desc + ")" );
-			if ( !this.Converters.CanConvert<string>( desc.Value ) )// || value.Name == null)
+			if ( this.Converters.CanConvert<string>( desc.Value ) )
+			{
+				if ( desc.Name == null )
+				{
+					XmlElement node = doc.CreateElement( name );
+
+					if ( valueParent != null && valueParent.Value != null && desc.Name != null )
+					{
+						var info = valueParent.Type.GetProperty( desc.Name );
+						if ( info != null )
+						{
+							explicitType = info.PropertyType != desc.Type;
+						}
+					}
+
+					if ( explicitType )
+						this.WriteAttribute( AttributeType, desc.Type.FullName, doc, node );
+
+					node.InnerText = this.Converters.Generate<string>( desc.Type, desc.Value );
+
+					if ( !( desc.IsNull && this.HideUnused ) )
+					{
+						if ( xmlParent != null )
+							xmlParent.AppendChild( node );
+						else
+							doc.AppendChild( node );
+					}
+				}
+				else
+				{
+					XmlAttribute node = doc.CreateAttribute( desc.Name );
+					//Console.WriteLine("Convert(" + value + ")");
+					node.Value = this.Converters.Generate<string>( desc.Type, desc.Value );
+
+					//this.WriteAttribute("value", StringConverters.Base.Write(value.Value), doc, node);
+
+					if ( !( desc.IsNull && this.HideUnused ) )
+					{
+						if ( xmlParent != null )
+							xmlParent.Attributes.Append( node );
+						else
+							doc.Attributes.Append( node );
+					}
+				}
+			}
+			else if ( this.SimplifyOutput && desc.Value != null && ( desc.Type.GetMethod( "Parse", System.Reflection.BindingFlags.FlattenHierarchy | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod ) != null ) )
+			{
+				XmlAttribute node = doc.CreateAttribute( name );
+				node.Value = desc.Value.ToString();
+
+				if ( !( desc.IsNull && this.HideUnused ) )
+				{
+					if ( xmlParent != null )
+						xmlParent.Attributes.Append( node );
+					else
+						doc.Attributes.Append( node );
+				}
+			}
+			else // || value.Name == null)
 			{
 				// complex type...
 				XmlElement node = doc.CreateElement( name );
@@ -102,6 +163,7 @@ namespace zeroflag.Serialization
 						doc.AppendChild( node );
 				}
 
+
 				bool hasId = desc.Id > -1 && desc.IsReferenced;
 				bool isReference = false;
 				if ( desc.Id > -1 && desc.IsReferenced )
@@ -119,7 +181,19 @@ namespace zeroflag.Serialization
 					List<Descriptor> complex = new List<Descriptor>();
 					foreach ( Descriptor inner in desc.Inner )
 					{
-						if ( inner.Name == null || !this.Converters.CanConvert<string>( inner.Value ) )
+						if ( this.HideUnused && inner.Name != null )
+						{
+							if ( !desc.Property( inner.Name ).CanWrite && inner.NeedsWriteAccess )
+								continue;
+							if ( inner is IListDescriptor && inner.Value != null &&
+								( ( inner.Value is System.Collections.ICollection && ( (System.Collections.ICollection)inner.Value ).Count <= 0 )
+								) )
+								continue;
+						}
+						if ( this.IgnoreList.Find( i => i != null && i( inner ) ) != null )
+							continue;
+						if ( !( this.SimplifyOutput && inner.Value != null && ( inner.Type.GetMethod( "Parse", System.Reflection.BindingFlags.FlattenHierarchy | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod ) != null ) ) &&
+							( inner.Name == null || !this.Converters.CanConvert<string>( inner.Value ) ) )
 						{
 							// complex type...
 							complex.Add( inner );
@@ -143,49 +217,6 @@ namespace zeroflag.Serialization
 						this.Serialize( inner, doc, desc, node, ids );
 				}
 			}
-			else if ( desc.Name == null )
-			{
-				XmlElement node = doc.CreateElement( name );
-
-				if ( valueParent != null && valueParent.Value != null && desc.Name != null )
-				{
-					var info = valueParent.Type.GetProperty( desc.Name );
-					if ( info != null )
-					{
-						explicitType = info.PropertyType != desc.Type;
-					}
-				}
-
-				if ( explicitType )
-					this.WriteAttribute( AttributeType, desc.Type.FullName, doc, node );
-
-				node.InnerText = this.Converters.Generate<string>( desc.Type, desc.Value );
-
-				if ( !( desc.IsNull && this.HideUnused ) )
-				{
-					if ( xmlParent != null )
-						xmlParent.AppendChild( node );
-					else
-						doc.AppendChild( node );
-				}
-			}
-			else
-			{
-				XmlAttribute node = doc.CreateAttribute( desc.Name );
-				//Console.WriteLine("Convert(" + value + ")");
-				node.Value = this.Converters.Generate<string>( desc.Type, desc.Value );
-
-				//this.WriteAttribute("value", StringConverters.Base.Write(value.Value), doc, node);
-
-				if ( !( desc.IsNull && this.HideUnused ) )
-				{
-					if ( xmlParent != null )
-						xmlParent.Attributes.Append( node );
-					else
-						doc.Attributes.Append( node );
-				}
-			}
-
 		}
 
 		protected XmlElement WriteAttribute( string name, string value, XmlDocument doc, XmlElement parent )
@@ -217,7 +248,7 @@ namespace zeroflag.Serialization
 			return value;
 		}
 #if DEBUG
-		const string BreakOnType = "Firmware3TK2845";
+		const string BreakOnType = "State";
 #endif
 		int depth = 0;
 		protected virtual object Deserialize( object value, Descriptor desc, Descriptor outer, XmlNode node )
@@ -473,6 +504,56 @@ namespace zeroflag.Serialization
 		#endregion Deserialize
 
 
+
+		#region IgnoreList
+		private zeroflag.Collections.List<Predicate<Descriptor>> _IgnoreList;
+
+		/// <summary>
+		/// A list of rules to ignore certain items during serialization...
+		/// </summary>
+		public zeroflag.Collections.List<Predicate<Descriptor>> IgnoreList
+		{
+			get { return _IgnoreList ?? ( _IgnoreList = this.IgnoreListCreate ); }
+			//set { _IgnoreList = value; }
+		}
+
+		/// <summary>
+		/// Creates the default/initial value for IgnoreList.
+		/// A list of rules to ignore certain items during serialization...
+		/// </summary>
+		protected virtual zeroflag.Collections.List<Predicate<Descriptor>> IgnoreListCreate
+		{
+			get { return new zeroflag.Collections.List<Predicate<Descriptor>>(); }
+		}
+
+		#endregion IgnoreList
+
+
+
+		#region SimplifyOutput
+		private bool? _SimplifyOutput;
+
+		/// <summary>
+		/// Simplify output? (may cause problems)
+		/// </summary>
+		public bool SimplifyOutput
+		{
+			get { return (bool)( _SimplifyOutput ?? ( _SimplifyOutput = this.SimplifyOutputCreate ) ); }
+			set { _SimplifyOutput = value; }
+		}
+
+		/// <summary>
+		/// Creates the default/initial value for SimplifyOutput.
+		/// Simplify output? (may cause problems)
+		/// </summary>
+		protected virtual bool SimplifyOutputCreate
+		{
+			get { return true; }
+		}
+
+		#endregion SimplifyOutput
+
+
 		#region HideUnused
 		private bool? _HideUnused;
 
@@ -482,6 +563,7 @@ namespace zeroflag.Serialization
 		public bool HideUnused
 		{
 			get { return (bool)( _HideUnused ?? ( _HideUnused = this.HideUnusedCreate ) ); }
+			set { _HideUnused = value; }
 		}
 
 		/// <summary>
