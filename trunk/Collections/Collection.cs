@@ -79,6 +79,18 @@ namespace zeroflag.Collections
 				this.Add( item );
 		}
 
+		public virtual void AddRange( IEnumerable<T> items )
+		{
+			foreach ( T item in items )
+				this.Add( item );
+		}
+
+		public virtual void AddRange( System.Collections.IEnumerable items )
+		{
+			foreach ( T item in items )
+				this.Add( item );
+		}
+
 		public virtual void Clear()
 		{
 			base.Clear();
@@ -279,12 +291,12 @@ namespace zeroflag.Collections
 		}
 
 		public Collection( System.Collections.Generic.List<T> list )
-			: base(list)
+			: base( list )
 		{
 		}
 
 		public Collection( IEnumerable<T> list )
-			: base(list)
+			: base( list )
 		{
 		}
 	}
