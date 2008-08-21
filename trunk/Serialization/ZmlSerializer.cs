@@ -49,7 +49,10 @@ namespace zeroflag.Serialization
 			//doc.AppendChild(doc.CreateElement("root"));
 
 			this.Serialize( value, doc, null, doc.DocumentElement, new List<int>() );
-			doc.Save( this.FileName );
+			if ( this.FileName != null )
+				doc.Save( this.FileName );
+			else if ( this.Stream != null )
+				doc.Save( this.Stream );
 		}
 
 		protected virtual void Serialize( zeroflag.Serialization.Descriptors.Descriptor desc, XmlDocument doc, zeroflag.Serialization.Descriptors.Descriptor valueParent, XmlElement xmlParent, List<int> ids )

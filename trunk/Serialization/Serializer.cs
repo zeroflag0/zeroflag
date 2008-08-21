@@ -49,8 +49,36 @@ namespace zeroflag.Serialization
 		public string FileName
 		{
 			get { return _FileName ?? this.Parent.FileName; }
-			set { _FileName = value; }
+			set
+			{
+				if ( _FileName != value )
+				{
+					_FileName = value;
+				}
+			}
 		}
+
+		#region Stream
+
+		private System.IO.Stream _Stream;
+
+		/// <summary>
+		/// Stream...
+		/// </summary>
+		public System.IO.Stream Stream
+		{
+			get { return _Stream; }
+			set
+			{
+				if ( _Stream != value )
+				{
+					_Stream = value;
+				}
+			}
+		}
+
+		#endregion Stream
+
 
 		/// <summary>
 		/// This serializer's root serializer.
