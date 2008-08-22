@@ -250,7 +250,7 @@ namespace zeroflag.Serialization
 
 			return value;
 		}
-#if DEBUG
+#if DEBUGTYPE
 		const string BreakOnType = "State";
 #endif
 		int depth = 0;
@@ -258,7 +258,7 @@ namespace zeroflag.Serialization
 		{
 			depth++;
 			//Benchmark.Instance.Trace("Deserialize", desc, node);
-#if DEBUG
+#if DEBUGTYPE
 			if ( desc.Type.Name == BreakOnType )
 				Console.WriteLine( desc ); ;//<-- break here...
 #endif
@@ -460,7 +460,7 @@ namespace zeroflag.Serialization
 				}
 			}
 			depth--;
-#if DEBUG
+#if DEBUGTYPE
 			if ( desc.Type.Name == BreakOnType )
 				Console.WriteLine( desc );//<-- break here...
 #endif
