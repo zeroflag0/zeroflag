@@ -34,36 +34,39 @@ namespace zeroflag.Imaging.Strategies
 {
 	public class Change : Strategy
 	{
-		public override Color Apply(int x, int y, Color value)
+		public override Color Apply( int x, int y, Color value )
 		{
-			Color prev = this.Previous[x, y];
-			this.Previous[x, y] = value;
-			if (prev != null)
+			Color prev = this.Previous[ x, y ];
+			this.Previous[ x, y ] = value;
+			if ( prev != null )
 			{
-				value = (value - prev) * 10f;
+				value = ( value - prev ) * 10f;
 			}
 			else
-				value = new Color(0f, 0f, 0f, 0f);
+				value = new Color( 0f, 0f, 0f, 0f );
 			return value;
 		}
 
-		private Color[,] _Previous = null;
+		private Color[ , ] _Previous = null;
 
-		protected Color[,] Previous
+		protected Color[ , ] Previous
 		{
-			get { return _Previous ?? (_Previous = this.CreatePrevious()); }
+			get { return _Previous ?? ( _Previous = this.CreatePrevious() ); }
 			set
 			{
-				if (_Previous != value)
+				if ( _Previous != value )
 				{
 					_Previous = value;
 				}
 			}
 		}
 
-		protected virtual Color[,] CreatePrevious()
+		protected virtual Color[ , ] CreatePrevious()
 		{
-			return new Color[this.PixelSource.Width, this.PixelSource.Height];
+			if ( this.PixelSource != null )
+				return new Color[ this.PixelSource.Width, this.PixelSource.Height ];
+			else
+				return null;
 		}
 
 	}
