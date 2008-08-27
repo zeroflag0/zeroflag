@@ -70,6 +70,16 @@
   <ItemGroup>
     <None Include="_ClassDiagram.cd" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Windows\zeroflag.Windows.csproj">
+      <Project>{10587B43-7514-4463-B621-A97595D3EC0C}</Project>
+      <Name>zeroflag.Windows</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\zerolib.csproj">
+      <Project>{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}</Project>
+      <Name>zerolib</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

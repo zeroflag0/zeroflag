@@ -94,6 +94,7 @@ namespace zeroflag.Forms
 				{
 					if ( !this.backgroundWorker.IsBusy )
 						this.backgroundWorker.RunWorkerAsync();
+					_wait.Set();
 				};
 				return list;
 			}
@@ -101,15 +102,24 @@ namespace zeroflag.Forms
 
 		#endregion Tasks
 
-
+		System.Threading.AutoResetEvent _wait = new System.Threading.AutoResetEvent( false );
 		void backgroundWorker_DoWork( object sender, DoWorkEventArgs e )
 		{
-			while ( this.Tasks.Count > 0 && !this.Cancel )
+			Console.WriteLine( "TaskProcessor started..." );
+			while ( /*this.Tasks.Count > 0 && */!this.Cancel )
 			{
-				if ( this.Tasks[ 0 ] != null )
-					this.Tasks[ 0 ]();
-				this.Tasks.RemoveAt( 0 );
+				if ( this.Tasks.Count > 0 )
+				{
+					if ( this.Tasks[ 0 ] != null )
+						this.Tasks[ 0 ]();
+					this.Tasks.RemoveAt( 0 );
+				}
+				else
+				{
+					this._wait.WaitOne( 200, true );
+				}
 			}
+			Console.WriteLine( "TaskProcessor halted." );
 		}
 
 	}

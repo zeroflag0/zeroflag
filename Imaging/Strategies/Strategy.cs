@@ -112,6 +112,7 @@ namespace zeroflag.Imaging.Strategies
 		{
 			//this.Next.Add(next);
 			this.Next = next;
+			next.PixelSource = this.PixelSource;
 			return next;
 		}
 
