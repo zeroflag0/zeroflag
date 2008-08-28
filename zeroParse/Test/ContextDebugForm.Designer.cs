@@ -42,8 +42,13 @@
 			this.trimNodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.trimEverythingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
+			this.splitContainer1 = new zeroflag.Forms.SplitContainer();
+			this.propertyGrid = new System.Windows.Forms.PropertyGrid();
 			this.statusStrip.SuspendLayout();
 			this.menuStrip.SuspendLayout();
+			this.splitContainer1.Panel1.SuspendLayout();
+			this.splitContainer1.Panel2.SuspendLayout();
+			this.splitContainer1.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// treeView
@@ -52,10 +57,10 @@
 			this.treeView.Font = new System.Drawing.Font( "Lucida Console", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ( (byte)( 0 ) ) );
 			this.treeView.FullRowSelect = true;
 			this.treeView.HideSelection = false;
-			this.treeView.Location = new System.Drawing.Point( 0, 24 );
+			this.treeView.Location = new System.Drawing.Point( 0, 0 );
 			this.treeView.Name = "treeView";
 			this.treeView.PathSeparator = ".";
-			this.treeView.Size = new System.Drawing.Size( 902, 793 );
+			this.treeView.Size = new System.Drawing.Size( 599, 791 );
 			this.treeView.TabIndex = 0;
 			this.treeView.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler( this.treeView_MouseDoubleClick );
 			this.treeView.MouseClick += new System.Windows.Forms.MouseEventHandler( this.treeView_MouseClick );
@@ -93,14 +98,14 @@
 			this.fileToolStripMenuItem.DropDownItems.AddRange( new System.Windows.Forms.ToolStripItem[] {
             this.saveToolStripMenuItem} );
 			this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-			this.fileToolStripMenuItem.Size = new System.Drawing.Size( 39, 20 );
+			this.fileToolStripMenuItem.Size = new System.Drawing.Size( 37, 20 );
 			this.fileToolStripMenuItem.Text = "File";
 			// 
 			// saveToolStripMenuItem
 			// 
 			this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
 			this.saveToolStripMenuItem.ShortcutKeys = ( (System.Windows.Forms.Keys)( ( System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.S ) ) );
-			this.saveToolStripMenuItem.Size = new System.Drawing.Size( 146, 22 );
+			this.saveToolStripMenuItem.Size = new System.Drawing.Size( 138, 22 );
 			this.saveToolStripMenuItem.Text = "Save";
 			this.saveToolStripMenuItem.Click += new System.EventHandler( this.saveToolStripMenuItem_Click );
 			// 
@@ -114,14 +119,14 @@
             this.trimNodeToolStripMenuItem,
             this.trimEverythingToolStripMenuItem} );
 			this.nodeToolStripMenuItem.Name = "nodeToolStripMenuItem";
-			this.nodeToolStripMenuItem.Size = new System.Drawing.Size( 51, 20 );
+			this.nodeToolStripMenuItem.Size = new System.Drawing.Size( 48, 20 );
 			this.nodeToolStripMenuItem.Text = "Node";
 			// 
 			// printToolStripMenuItem
 			// 
 			this.printToolStripMenuItem.Name = "printToolStripMenuItem";
 			this.printToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-			this.printToolStripMenuItem.Size = new System.Drawing.Size( 190, 22 );
+			this.printToolStripMenuItem.Size = new System.Drawing.Size( 177, 22 );
 			this.printToolStripMenuItem.Text = "Print";
 			this.printToolStripMenuItem.Click += new System.EventHandler( this.printToolStripMenuItem_Click );
 			// 
@@ -129,7 +134,7 @@
 			// 
 			this.flattenPeersToolStripMenuItem.Name = "flattenPeersToolStripMenuItem";
 			this.flattenPeersToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-			this.flattenPeersToolStripMenuItem.Size = new System.Drawing.Size( 190, 22 );
+			this.flattenPeersToolStripMenuItem.Size = new System.Drawing.Size( 177, 22 );
 			this.flattenPeersToolStripMenuItem.Text = "Flatten Peers";
 			this.flattenPeersToolStripMenuItem.Click += new System.EventHandler( this.flattenPeersToolStripMenuItem_Click );
 			// 
@@ -137,7 +142,7 @@
 			// 
 			this.expandSuccessToolStripMenuItem.Name = "expandSuccessToolStripMenuItem";
 			this.expandSuccessToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F4;
-			this.expandSuccessToolStripMenuItem.Size = new System.Drawing.Size( 190, 22 );
+			this.expandSuccessToolStripMenuItem.Size = new System.Drawing.Size( 177, 22 );
 			this.expandSuccessToolStripMenuItem.Text = "Expand Success";
 			this.expandSuccessToolStripMenuItem.Click += new System.EventHandler( this.expandSuccessToolStripMenuItem_Click );
 			// 
@@ -145,7 +150,7 @@
 			// 
 			this.rebuildToolStripMenuItem.Name = "rebuildToolStripMenuItem";
 			this.rebuildToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F5;
-			this.rebuildToolStripMenuItem.Size = new System.Drawing.Size( 190, 22 );
+			this.rebuildToolStripMenuItem.Size = new System.Drawing.Size( 177, 22 );
 			this.rebuildToolStripMenuItem.Text = "Rebuild";
 			this.rebuildToolStripMenuItem.Click += new System.EventHandler( this.rebuildToolStripMenuItem_Click );
 			// 
@@ -153,7 +158,7 @@
 			// 
 			this.trimNodeToolStripMenuItem.Name = "trimNodeToolStripMenuItem";
 			this.trimNodeToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F8;
-			this.trimNodeToolStripMenuItem.Size = new System.Drawing.Size( 190, 22 );
+			this.trimNodeToolStripMenuItem.Size = new System.Drawing.Size( 177, 22 );
 			this.trimNodeToolStripMenuItem.Text = "Trim Node";
 			this.trimNodeToolStripMenuItem.Click += new System.EventHandler( this.trimNodeToolStripMenuItem_Click );
 			// 
@@ -161,7 +166,7 @@
 			// 
 			this.trimEverythingToolStripMenuItem.Name = "trimEverythingToolStripMenuItem";
 			this.trimEverythingToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F9;
-			this.trimEverythingToolStripMenuItem.Size = new System.Drawing.Size( 190, 22 );
+			this.trimEverythingToolStripMenuItem.Size = new System.Drawing.Size( 177, 22 );
 			this.trimEverythingToolStripMenuItem.Text = "Trim Everything";
 			this.trimEverythingToolStripMenuItem.Click += new System.EventHandler( this.trimEverythingToolStripMenuItem_Click );
 			// 
@@ -172,12 +177,41 @@
 			this.saveFileDialog.RestoreDirectory = true;
 			this.saveFileDialog.SupportMultiDottedExtensions = true;
 			// 
+			// splitContainer1
+			// 
+			this.splitContainer1.BackColor = System.Drawing.SystemColors.AppWorkspace;
+			this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.splitContainer1.HideButtonSize = 8;
+			this.splitContainer1.Location = new System.Drawing.Point( 0, 24 );
+			this.splitContainer1.Name = "splitContainer1";
+			// 
+			// splitContainer1.Panel1
+			// 
+			this.splitContainer1.Panel1.Controls.Add( this.treeView );
+			// 
+			// splitContainer1.Panel2
+			// 
+			this.splitContainer1.Panel2.Controls.Add( this.propertyGrid );
+			this.splitContainer1.PrimaryPanel = System.Windows.Forms.FixedPanel.None;
+			this.splitContainer1.Size = new System.Drawing.Size( 902, 793 );
+			this.splitContainer1.SplitterDistance = 609;
+			this.splitContainer1.TabIndex = 0;
+			// 
+			// propertyGrid
+			// 
+			this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.propertyGrid.Location = new System.Drawing.Point( 8, 0 );
+			this.propertyGrid.Name = "propertyGrid";
+			this.propertyGrid.Size = new System.Drawing.Size( 279, 791 );
+			this.propertyGrid.TabIndex = 1;
+			// 
 			// ContextDebugForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF( 6F, 13F );
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size( 902, 839 );
-			this.Controls.Add( this.treeView );
+			this.Controls.Add( this.splitContainer1 );
 			this.Controls.Add( this.statusStrip );
 			this.Controls.Add( this.menuStrip );
 			this.MainMenuStrip = this.menuStrip;
@@ -187,6 +221,9 @@
 			this.statusStrip.PerformLayout();
 			this.menuStrip.ResumeLayout( false );
 			this.menuStrip.PerformLayout();
+			this.splitContainer1.Panel1.ResumeLayout( false );
+			this.splitContainer1.Panel2.ResumeLayout( false );
+			this.splitContainer1.ResumeLayout( false );
 			this.ResumeLayout( false );
 			this.PerformLayout();
 
@@ -208,5 +245,7 @@
 		private System.Windows.Forms.ToolStripMenuItem trimNodeToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem trimEverythingToolStripMenuItem;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog;
+		private zeroflag.Forms.SplitContainer splitContainer1;
+		private System.Windows.Forms.PropertyGrid propertyGrid;
 	}
 }

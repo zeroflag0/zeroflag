@@ -16,6 +16,12 @@ namespace zeroflag.Forms.Reflected
 			InitializeComponent();
 
 			this.Control.NodeMouseClick += new TreeNodeMouseClickEventHandler( Control_NodeMouseClick );
+			this.Control.AfterSelect += new TreeViewEventHandler( Control_AfterSelect );
+		}
+
+		void Control_AfterSelect( object sender, TreeViewEventArgs e )
+		{
+			this.SynchronizeSelected();
 		}
 
 		void Control_NodeMouseClick( object sender, TreeNodeMouseClickEventArgs e )

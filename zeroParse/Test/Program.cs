@@ -117,6 +117,8 @@ namespace Test
 				Console.WriteLine("Finished file " + file + ".");
 			}
 			System.Windows.Forms.Application.Run(debugForm);
+
+			Console.WriteLine();
 		}
 	}
 }

@@ -9,8 +9,8 @@ using System.Windows.Forms;
 namespace Test
 {
 	public partial class TestTree
-		: UserControl
-		// : zeroflag.Forms.Reflected.TreeView<TestData>
+		//: UserControl
+		 : zeroflag.Forms.Reflected.TreeView<TestData>
 	{
 		public TestTree()
 		{
