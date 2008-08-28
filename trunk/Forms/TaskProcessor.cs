@@ -105,7 +105,7 @@ namespace zeroflag.Forms
 		System.Threading.AutoResetEvent _wait = new System.Threading.AutoResetEvent( false );
 		void backgroundWorker_DoWork( object sender, DoWorkEventArgs e )
 		{
-			Console.WriteLine( "TaskProcessor started..." );
+			//Console.WriteLine( "TaskProcessor started..." );
 			while ( /*this.Tasks.Count > 0 && */!this.Cancel )
 			{
 				if ( this.Tasks.Count > 0 )
@@ -119,7 +119,7 @@ namespace zeroflag.Forms
 					this._wait.WaitOne( 200, true );
 				}
 			}
-			Console.WriteLine( "TaskProcessor halted." );
+			//Console.WriteLine( "TaskProcessor halted." );
 		}
 
 	}

@@ -638,46 +638,54 @@ namespace zeroflag.Forms.Reflected
 
 		public virtual void Synchronize()
 		{
-			this.Synchronize( this.Node, null );
+			this.Synchronize( this.Node, null, null );
 			this.SynchronizeSelected();
 		}
 
-		public virtual TreeViewItem<T> Synchronize( T item, T parent )
+		public virtual TreeViewItem<T> Synchronize( T item, T parent, List<T> processed )
 		{
+			processed = processed ?? new List<T>();
 			if ( item == null )
 				return null;
 			//Console.WriteLine( "Synchronize(" + item + ", " + ( ( (object)parent ) ?? "<null>" ) + ")" );
-			TreeViewItem<T> outer = null;
-			TreeViewItem<T> view;
+			TreeViewItem<T> outer = ProvideViewOuter( parent );
+			TreeViewItem<T> view = null;
 
-			if ( parent != null )
+
+			if ( processed.Find( p => item.Equals( p ) ) != null )
 			{
-				outer = this.ItemPeers[ parent ];
-				//outer = this.Synchronize( parent, null );
-			}
-
-			if ( !this.ItemPeers.ContainsKey( item ) )
-			{
-				// create peer...
-				view = new TreeViewItem<T>( item ) { Owner = this };
-
-				this.ItemPeers.Add( item, view );
-				this.PeerItems.Add( view, item );
-
 				if ( outer != null )
-					outer.Nodes.Add( view );
-				else
-					this.Nodes.Add( view );
+				{
+					foreach ( var otn in outer.Nodes )
+						if ( otn is TreeViewItem<T> && item.Equals( ( (TreeViewItem<T>)otn ).Value ) )
+						{
+							view = otn as TreeViewItem<T>;
+							break;
+						}
+				}
+				if ( view == null )
+				{
+					view = this.CreateViewItem( item );
+					view.Owner = this;
+					view.CyclicReference = true;
+					if ( outer != null )
+						outer.Nodes.Add( view );
+					this.PeerItems.Add( view, item );
+				}
+				view.Update();
+				//Console.WriteLine( "Cyclic reference..." );
+				return view;
 			}
-			else
-				view = this.ItemPeers[ item ];
+			processed.Add( item );
+
+			view = this.ProvideViewItem( item, outer );
 
 			view.Update();
 
 			List<T> children = new List<T>();
 			foreach ( T child in this.GetChildEnumeratorCallback( item ) )
 			{
-				this.Synchronize( child, item );
+				this.Synchronize( child, item, processed );
 				children.Add( child );
 			}
 
@@ -697,11 +705,52 @@ namespace zeroflag.Forms.Reflected
 			return view;
 		}
 
-		public void SynchronizeSelected()
+		protected virtual TreeViewItem<T> ProvideViewOuter( T parent )
+		{
+			TreeViewItem<T> outer = null;
+			if ( parent != null )
+			{
+				if ( this.ItemPeers.ContainsKey( parent ) )
+					outer = this.ItemPeers[ parent ];
+				//outer = this.Synchronize( parent, null );
+			}
+			return outer;
+		}
+		protected virtual TreeViewItem<T> ProvideViewItem( T item, TreeViewItem<T> outer )
+		{
+			TreeViewItem<T> view;
+			if ( !this.ItemPeers.ContainsKey( item ) )
+			{
+				// create peer...
+				view = this.InitializeViewItem( this.CreateViewItem( item ), item, outer );
+			}
+			else
+				view = this.ItemPeers[ item ];
+			return view;
+		}
+		protected virtual TreeViewItem<T> CreateViewItem( T item )
+		{
+			return new TreeViewItem<T>( item );
+		}
+		protected virtual TreeViewItem<T> InitializeViewItem( TreeViewItem<T> view, T item, TreeViewItem<T> outer )
+		{
+			view.Owner = this;
+
+			this.ItemPeers.Add( item, view );
+			this.PeerItems.Add( view, item );
+
+			if ( outer != null )
+				outer.Nodes.Add( view );
+			else
+				this.Nodes.Add( view );
+			return view;
+		}
+
+		public virtual void SynchronizeSelected()
 		{
 			if ( this.SelectedNode != null )
 			{
-				this.SelectedItem = this.PeerItems[ this.SelectedNode as TreeViewItem<T> ];
+				this.SelectedItem = ( this.SelectedNode as TreeViewItem<T> ).Value;
 				this.SelectedNode.Expand();
 			}
 			else
@@ -742,6 +791,74 @@ namespace zeroflag.Forms.Reflected
 		#endregion AutoSynchronize
 
 
+
+		#region DefaultValueDecorator
+		private ValueDecorationHandler<T> _DefaultValueDecorator;
+
+		/// <summary>
+		/// The decorator used if no specialized decorator is provided by ValueDecorators.
+		/// </summary>
+		public ValueDecorationHandler<T> DefaultValueDecorator
+		{
+			get { return _DefaultValueDecorator ?? ( _DefaultValueDecorator = this.DefaultValueDecoratorCreate ); }
+			set { _DefaultValueDecorator = value; }
+		}
+
+		/// <summary>
+		/// Creates the default/initial value for DefaultValueDecorator.
+		/// The decorator used if no specialized decorator is provided by ValueDecorators.
+		/// </summary>
+		protected virtual ValueDecorationHandler<T> DefaultValueDecoratorCreate
+		{
+			get { return value => ( value ?? (object)"<null>" ).ToString(); }
+		}
+
+		#endregion DefaultValueDecorator
+
+
+		#region ValueDecorators
+		private Dictionary<Type, ValueDecorationHandler<T>> _ValueDecorators;
+
+		/// <summary>
+		/// Decorators that can be used to override the DefaultValueDecorator for specific types.
+		/// </summary>
+		public Dictionary<Type, ValueDecorationHandler<T>> ValueDecorators
+		{
+			get { return _ValueDecorators ?? ( _ValueDecorators = this.ValueDecoratorsCreate ); }
+			//set { _ValueDecorators = value; }
+		}
+
+		/// <summary>
+		/// Creates the default/initial value for ValueDecorators.
+		/// Decorators that can be used to override the DefaultValueDecorator for specific types.
+		/// </summary>
+		protected virtual Dictionary<Type, ValueDecorationHandler<T>> ValueDecoratorsCreate
+		{
+			get { return new Dictionary<Type, ValueDecorationHandler<T>>(); }
+		}
+
+		#endregion ValueDecorators
+
+		public virtual string Decorate( T value )
+		{
+			if ( value == null )
+				return "<null>";
+			return this.FindDecorator( value.GetType() )( value );
+		}
+
+		protected ValueDecorationHandler<T> FindDecorator( Type type )
+		{
+			if ( type == null )
+				return this.DefaultValueDecorator ?? ( item => ( item ?? (object)"<null>" ).ToString() );
+			if ( this.ValueDecorators.ContainsKey( type ) )
+				return this.ValueDecorators[ type ];
+			var deco = this.FindDecorator( type.BaseType );
+			if ( deco != null ) return deco;
+			foreach ( var interf in type.GetInterfaces() )
+				if ( ( deco = this.FindDecorator( interf ) ) != null ) return deco;
+			return this.DefaultValueDecorator ?? ( item => ( item ?? (object)"<null>" ).ToString() );
+		}
+
 		protected override void OnInvalidated( InvalidateEventArgs e )
 		{
 			this.Synchronize();
@@ -762,4 +879,5 @@ namespace zeroflag.Forms.Reflected
 		}
 
 	}
+	public delegate string ValueDecorationHandler<T>( T item );
 }
