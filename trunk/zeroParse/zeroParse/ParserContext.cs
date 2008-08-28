@@ -53,6 +53,7 @@ namespace zeroflag.Parsing
 			set { _Parser = value; }
 		}
 
+		[System.ComponentModel.ReadOnly( true )]
 		public Rule Rule
 		{
 			get { return _Rule ?? ( this.Result != null ? this.Result.Rule : null ); }
@@ -129,7 +130,7 @@ namespace zeroflag.Parsing
 
 		public ParseFailedException LastError
 		{
-			get { try { return this.Errors[this.Errors.Count - 1]; } catch { return null; } }
+			get { try { return this.Errors[ this.Errors.Count - 1 ]; } catch { return null; } }
 		}
 		#endregion Errors
 
@@ -179,9 +180,9 @@ namespace zeroflag.Parsing
 			List<ParserContext> inners = new List<ParserContext>( this.Inner );
 			foreach ( ParserContext inner in inners )
 			{
-				if ( !inner.Success )
+				if ( inner.AllowTrim )
 				{
-					//Console.Write( ( "Trimmed context " + inner.Rule + " " + inner.ToString().Replace( "\r\n", "" ).Replace( "\n", "" ) + "..." ).PadRight( Console.WindowWidth - 2 ) + "\r" );
+					Console.Write( ( "Removed(trimmed) context " + inner.Rule + " " + inner.ToString().Replace( "\r\n", "" ).Replace( "\n", "" ) + "..." ).PadRight( Console.WindowWidth - 2 ) + "\r" );
 					this.Inner.Remove( inner );
 				}
 				else
@@ -194,6 +195,29 @@ namespace zeroflag.Parsing
 #endif
 			this.OnTrimmed( this );
 			return this;
+		}
+
+		public bool AllowTrim
+		{
+			get
+			{
+				//if ( this.Rule is Or )
+				//    return false;
+				if ( !this.Success )
+					return true;
+				if ( this.Inner.Count <= 0 && this.Result == null || this.Rule.Primitive || this.Rule.Ignore || ( this.Rule.Inner != null && ( this.Rule.Inner.Ignore || this.Rule.Inner.Primitive ) ) )
+					return true;
+				//if ( this.Inner.Count == 1 && this.Inner[ 0 ].AllowTrim )
+				//    return true;
+				if ( this.Inner.Count > 0 )
+				{
+					bool alltrim = true;
+					foreach ( var inner in this.Inner )
+						alltrim &= inner.AllowTrim;
+					return alltrim;
+				}
+				return false;
+			}
 		}
 
 		#region event Trimmed

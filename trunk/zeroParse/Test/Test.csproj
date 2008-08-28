@@ -58,6 +58,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Forms\Reflected\zeroflag.Forms.Reflected.csproj">
+      <Project>{9C703A4F-09FE-47EA-8019-F4A130851080}</Project>
+      <Name>zeroflag.Forms.Reflected</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\zerolib.csproj">
       <Project>{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}</Project>
       <Name>zerolib</Name>

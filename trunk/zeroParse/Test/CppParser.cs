@@ -138,7 +138,7 @@ namespace Test
 			//(idHead ^ ~+idTail);
 
 
-			Rule baseType = "typeB" %
+			Rule baseType = "typeBasic" %
 				(
 				//(Rule)"char" | "bool" | "short" | "int" | 
 				( "__int" ^ ~+digit ) |
@@ -153,18 +153,18 @@ namespace Test
 				( type & ~+( "," & type ) );
 			Rule pointers = "pointer" %
 				+( (Rule)"*" | "[]" | "&" );
-			Rule typeTail = "typeTail" %
-				( pointers );
+			Rule typeTail = pointers;
+			//"typeTail" % ( pointers );
 
-			Rule functionPointerTail = "func*tail" %
+			Rule functionPointerTail = "funcPtrTail" %
 				( (Rule)"(" & "*" & ")" & "(" & types & ")" );
 
-			Rule genericTypeName = "generic" %
+			Rule genericTypeName = "typeGeneric" %
 				( id & ~( "<" & types & ">" ) );
 
 			Rule typeCast = "cast" %
 				( "(" & type & ")" );
-			Rule typeSimple = "simpleType" %
+			Rule typeSimple = "typeSimple" %
 				( baseType | genericTypeName );
 
 			Rule staticInstance = "static" %
@@ -221,7 +221,7 @@ namespace Test
 			Rule constructorPrototype = "constructorPrototype" %
 				//(~(type & scopeType) & (id | type) & "(" & ~(functionParameterDecs) & ")");
 				( (
-					( operatorOverload | ( type & ~scopeType & operatorOverload ) ) |
+					( operatorOverload | ( ( instance | type ) & ~scopeType & operatorOverload ) ) |
 					( ~type & ( ~scopeType & ~(Rule)"~" & id ) ) |
 					type
 				) &
@@ -471,10 +471,10 @@ namespace Test
 
 			Rule hacks = "hacks" %
 				( callspec | attribute | declspec );
-			//hacks.Ignore = true;
-			//hacks.Primitive = true;
+			hacks.Ignore = true;
+			hacks.Primitive = true;
 
-			this.WhiteSpace = new Whitespace( hacks | this.WhiteSpace.Inner );
+			this.WhiteSpace = new Whitespace( hacks | this.WhiteSpace.Inner ) { Primitive = false };
 
 			#endregion Compiler Hacks
 

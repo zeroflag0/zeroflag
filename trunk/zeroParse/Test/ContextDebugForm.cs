@@ -193,7 +193,7 @@ namespace Test
 							//        node.Nodes.Add(namedNode);
 							//}
 						}
-						node.Nodes.Insert( 0, "line=" + context.Line + ", source=" + context.ToString() );
+						node.Nodes.Insert( 0, "line=" + context.Line + ", source=" + context.ToString() + ", trim=" + context.AllowTrim );
 						{
 							TreeNode resultNode = new TreeNode( "result=" + ( context.Result ?? (object)"<null>" ) );
 							resultNode.Tag = context.Result;
@@ -207,6 +207,7 @@ namespace Test
 							TreeNode rulenode = new TreeNode( "rule=" + context.Rule.GetType().Name + ( context.Rule.Name != null ? "['" + context.Rule.Name + "']" : "" ) + ":=" + structure );
 							rulenode.Nodes.Insert( 0, this.Parse( context.Rule, 0 ) );
 							node.Nodes.Insert( 0, rulenode );
+							rulenode.Tag = context.Rule;
 
 						}
 					}
@@ -219,7 +220,7 @@ namespace Test
 					}
 					node.Text = text;
 				}
-				if ( !( context.Rule is zeroflag.Parsing.Whitespace ) && depth < MaxDepth || node == parent )
+				if ( /*!( context.Rule is zeroflag.Parsing.Whitespace ) && */depth < MaxDepth || node == parent )
 				{
 					foreach ( zeroflag.Parsing.ParserContext inner in context.Inner )
 					{
@@ -470,10 +471,18 @@ namespace Test
 					//Console.WriteLine( "Trimming " + node + "(try)" );
 					zeroflag.Parsing.ParserContext context = node.Tag as zeroflag.Parsing.ParserContext;
 					contexts.Add( context );
+					int lastindex = -1;
+					int indexchangecount = 0;
 					zeroflag.Parsing.ParserContext.TrimmedHandler evnt = ctx =>
 						{
 							Console.Write( ctx.Index + "> " + ctx.ToString().Replace( "\r\n", "" ).Replace( "\n", "" ) + "\r" );
-							this.BeginInvoke( new MethodInvoker( () => { this.progress.Value = ctx.Index; } ) );
+							if ( lastindex == ctx.Index )
+								indexchangecount--;
+							else
+								indexchangecount++;
+							lastindex = ctx.Index;
+							if ( indexchangecount < -10000 )
+								this.ParserThread.Abort();
 						};
 					context.Trimmed += evnt;
 					this.ParserThread = new System.Threading.Thread( new System.Threading.ThreadStart( () =>
@@ -487,6 +496,7 @@ namespace Test
 						{
 							this.ParserThread.Join( 200 );
 							Application.DoEvents();
+							this.progress.Value = context.Index;
 						}
 					}
 					catch { }
@@ -502,7 +512,7 @@ namespace Test
 		private void treeView_AfterExpand( object sender, TreeViewEventArgs e )
 		{
 			TreeNode selected = e.Node;
-			if ( selected == null )
+			if ( selected == null || selected.Tag == null || !( selected.Tag is zeroflag.Parsing.ParserContext ) )
 				return;
 			TreeNode last = null;
 			if ( ( ( selected.Tag + "" ) == "load" || selected.Text == "..." ) && selected.Parent != null )
@@ -529,7 +539,9 @@ namespace Test
 
 		private void treeView_AfterSelect( object sender, TreeViewEventArgs e )
 		{
-			this.treeView.SelectedNode.Expand();
+			if ( !this.treeView.SelectedNode.IsExpanded )
+				this.treeView.SelectedNode.Expand();
+			this.propertyGrid.SelectedObject = this.treeView.SelectedNode.Tag;
 		}
 
 		//private void treeView_KeyDown( object sender, KeyEventArgs e )
@@ -630,6 +642,8 @@ namespace Test
 
 		private void trimEverythingToolStripMenuItem_Click( object sender, EventArgs e )
 		{
+			if ( this.ParserThread != null && this.ParserThread.IsAlive )
+				this.ParserThread.Abort();
 			this.TrimEverything();
 		}
 
@@ -707,8 +721,7 @@ namespace Test
 					zeroflag.Parsing.ObjectOriented.Context oop = new zeroflag.Parsing.ObjectOriented.Context();
 
 					string filename = context.Context + ".xml";
-					Console.WriteLine( "Creating ZML serializer..." );
-					zeroflag.Serialization.ZmlSerializer seri = new zeroflag.Serialization.ZmlSerializer( filename );
+					string filenameOop = context.Context + ".oop.xml";
 
 					this.progress.Maximum = context.Source.Length;
 
@@ -716,7 +729,8 @@ namespace Test
 						{
 							this.BeginInvoke( new MethodInvoker( () => { this.progress.Value = item.Index; } ) );
 						};
-					seri.ProgressItem += o =>
+
+					zeroflag.Serialization.Serializer.ProgressItemHandler prog = o =>
 						{
 							var current = o as zeroflag.Parsing.ItemType;
 							if ( current != null )
@@ -724,17 +738,43 @@ namespace Test
 								this.BeginInvoke( new MethodInvoker( () => { this.progress.Value = current.Index ?? this.progress.Value; } ) );
 							}
 						};
-					Console.WriteLine( "Saving to file " + filename + ": " + context );
 
 					this.ParserThread = new System.Threading.Thread( new System.Threading.ThreadStart( () =>
 					{
-						this.BeginInvoke( new MethodInvoker( () => { this.progress.Value = 0; } ) );
-						var item = oop.Parse( context );
-						this.BeginInvoke( new MethodInvoker( () => { this.progress.Value = 0; } ) );
-						seri.Serialize( item );
-						this.BeginInvoke( new MethodInvoker( () => { this.progress.Value = this.progress.Maximum; } ) );
-						Console.WriteLine( "Finished saving to file " + filename );
+						try
+						{
+							zeroflag.Serialization.ZmlSerializer seri;
+
+							//Console.WriteLine( "Creating ZML serializer..." );
+							//seri = new zeroflag.Serialization.ZmlSerializer();
+							//Console.WriteLine( "Saving to file " + filename + ": " + context );
+							//seri.FileName = filename;
+							//seri.ProgressItem += prog;
+							//this.BeginInvoke( new MethodInvoker( () => { this.progress.Value = 0; } ) );
+							//seri.Serialize( context );
+							//this.BeginInvoke( new MethodInvoker( () => { this.progress.Value = this.progress.Maximum; } ) );
+							//Console.WriteLine( "Finished saving to file " + filename );
+
+
+
+							Console.WriteLine( "Creating ZML serializer..." );
+							seri = new zeroflag.Serialization.ZmlSerializer();
+							Console.WriteLine( "Saving to file " + filenameOop + ": " + context );
+							this.BeginInvoke( new MethodInvoker( () => { this.progress.Value = 0; } ) );
+							var item = oop.Parse( context );
+							seri.FileName = filenameOop;
+							seri.ProgressItem += prog;
+
+							seri.Serialize( item );
+							this.BeginInvoke( new MethodInvoker( () => { this.progress.Value = this.progress.Maximum; } ) );
+							Console.WriteLine( "Finished saving to file " + filenameOop );
+						}
+						catch ( Exception exc )
+						{
+							Console.WriteLine( exc );
+						}
 					} ) );
+					Console.WriteLine( "Starting worker..." );
 					this.ParserThread.Start();
 					try
 					{
@@ -745,6 +785,7 @@ namespace Test
 						}
 					}
 					catch { }
+					Console.WriteLine( "Worker returned." );
 					this.progress.Value = 0;
 					this.progress.Maximum = 100;
 				}

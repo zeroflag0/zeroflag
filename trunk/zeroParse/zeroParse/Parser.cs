@@ -22,7 +22,7 @@ namespace zeroflag.Parsing
 		/// </summary>
 		public Rule WhiteSpace
 		{
-			get { try { return ( _WhiteSpace as Whitespace ) ?? ( this.WhiteSpace = new Whitespace( _WhiteSpace ?? this.WhiteSpaceCreate ) ); } finally { _WhiteSpace.Name = "space"; _WhiteSpace.Primitive = true; _WhiteSpace.Ignore = true; } }
+			get { try { return ( _WhiteSpace as Whitespace ) ?? ( this.WhiteSpace = new Whitespace( _WhiteSpace ?? this.WhiteSpaceCreate ) ); } finally { _WhiteSpace.Name = "space"; /*_WhiteSpace.Primitive = true; _WhiteSpace.Ignore = true;*/ } }
 			set { _WhiteSpace = value; }
 		}
 

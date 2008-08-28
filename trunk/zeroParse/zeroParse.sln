@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zerolib", "..\zerolib.cspro
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Parsing.ObjectOriented", "ObjectOrientedStructures\zeroflag.Parsing.ObjectOriented.csproj", "{E7805E05-D33D-4C4A-B685-196B7AE5709F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Forms.Reflected", "..\Forms\Reflected\zeroflag.Forms.Reflected.csproj", "{9C703A4F-09FE-47EA-8019-F4A130851080}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroParse2", "..\zeroParse2\zeroParse2.csproj", "{3F1009D6-AA91-44AB-80D0-2111CB751744}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +35,14 @@ Global
 		{E7805E05-D33D-4C4A-B685-196B7AE5709F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E7805E05-D33D-4C4A-B685-196B7AE5709F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E7805E05-D33D-4C4A-B685-196B7AE5709F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C703A4F-09FE-47EA-8019-F4A130851080}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C703A4F-09FE-47EA-8019-F4A130851080}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C703A4F-09FE-47EA-8019-F4A130851080}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C703A4F-09FE-47EA-8019-F4A130851080}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3F1009D6-AA91-44AB-80D0-2111CB751744}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3F1009D6-AA91-44AB-80D0-2111CB751744}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3F1009D6-AA91-44AB-80D0-2111CB751744}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3F1009D6-AA91-44AB-80D0-2111CB751744}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
