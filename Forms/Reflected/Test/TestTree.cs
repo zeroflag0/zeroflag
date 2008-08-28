@@ -10,7 +10,8 @@ namespace Test
 {
 	public partial class TestTree
 		//: UserControl
-		 : zeroflag.Forms.Reflected.TreeView<TestData>
+		//: zeroflag.Forms.Reflected.TreeView<TestData>
+		: zeroflag.Forms.Reflected.PropertyTreeView
 	{
 		public TestTree()
 		{

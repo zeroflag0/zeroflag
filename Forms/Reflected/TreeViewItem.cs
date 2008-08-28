@@ -20,6 +20,28 @@ namespace zeroflag.Forms.Reflected
 			this.Value = value;
 		}
 
+		#region CyclicReference
+
+		private bool _CyclicReference;
+
+		/// <summary>
+		/// Whether the value creates a cyclic reference with a parent-object.
+		/// </summary>
+		public bool CyclicReference
+		{
+			get { return _CyclicReference; }
+			set
+			{
+				if ( _CyclicReference != value )
+				{
+					_CyclicReference = value;
+				}
+			}
+		}
+
+		#endregion CyclicReference
+
+
 		#region Value
 
 		private T _Value;
@@ -27,7 +49,7 @@ namespace zeroflag.Forms.Reflected
 		/// <summary>
 		/// The node's value.
 		/// </summary>
-		public T Value
+		public virtual T Value
 		{
 			get { return _Value; }
 			set
@@ -68,7 +90,6 @@ namespace zeroflag.Forms.Reflected
 		#endregion ValueChanged event
 		#endregion Value
 
-		
 		#region Owner
 
 		private TreeView<T> _Owner;
@@ -115,9 +136,9 @@ namespace zeroflag.Forms.Reflected
 		}
 		#endregion OwnerChanged event
 		#endregion Owner
-	 
 
-		public void Add( T child )
+
+		public virtual void Add( T child )
 		{
 			if ( this.Owner != null )
 				this.TreeView.Invoke( new Action( () =>
@@ -126,7 +147,7 @@ namespace zeroflag.Forms.Reflected
 				} ) );
 		}
 
-		public void Remove( T child )
+		public virtual void Remove( T child )
 		{
 			if ( this.Owner != null )
 				this.TreeView.Invoke( new Action( () =>
@@ -135,12 +156,12 @@ namespace zeroflag.Forms.Reflected
 				} ) );
 		}
 
-		public void Update()
+		public virtual void Update()
 		{
 			if ( this.TreeView != null )
 				this.TreeView.Invoke( new Action( () =>
 						{
-							this.Text = ( (object)this.Value ?? "<null>" ).ToString();
+								this.Text = this.Owner.Decorate( this.Value ) + ( this.CyclicReference ? " [CYCLIC REFERENCE]" : "" );
 						} ) );
 		}
 	}
