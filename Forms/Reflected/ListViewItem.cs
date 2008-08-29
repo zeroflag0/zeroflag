@@ -54,41 +54,47 @@ namespace zeroflag.Forms.Reflected
 
 		public void Synchronize()
 		{
-			TypeDescription desc = this.Owner.TypeDescription;
-
-			var subItems = this.SubItems;
-			//if ( subItems.Count > 0 &&
-			//    subItems[ 0 ] != null &&
-			//    ( subItems[ 0 ].Name == null || subItems[ 0 ].Name == "" ) )
-			//    subItems.RemoveAt( 0 );
-
-
-			foreach ( var prop in desc.Properties )
+			if ( typeof( T ) != typeof( string ) )
 			{
-				if ( !this.Owner.Control.Columns.ContainsKey( prop.Name ) )
-					continue;
-				ListViewSubItem cell;
-				int index = this.Owner.Control.Columns.IndexOfKey( prop.Name );
+				TypeDescription desc = this.Owner.TypeDescription;
 
-				while ( subItems.Count <= index )
-					subItems.Add( new ListViewSubItem( this, "" ) );
-				cell = subItems[ index ];
+				var subItems = this.SubItems;
+				//if ( subItems.Count > 0 &&
+				//    subItems[ 0 ] != null &&
+				//    ( subItems[ 0 ].Name == null || subItems[ 0 ].Name == "" ) )
+				//    subItems.RemoveAt( 0 );
 
-				cell.Name = prop.Name;
 
-				try
+				foreach ( var prop in desc.Properties )
 				{
-					object value = prop.PropertyInfo.GetValue( this.Value, null );
+					if ( !this.Owner.Control.Columns.ContainsKey( prop.Name ) )
+						continue;
+					ListViewSubItem cell;
+					int index = this.Owner.Control.Columns.IndexOfKey( prop.Name );
 
-					cell.Text = "" + value;
+					while ( subItems.Count <= index )
+						subItems.Add( new ListViewSubItem( this, "" ) );
+					cell = subItems[ index ];
 
-				}
-				catch ( Exception exc )
-				{
-					cell.Text = exc.ToString();
+					cell.Name = prop.Name;
+
+					try
+					{
+						object value = prop.PropertyInfo.GetValue( this.Value, null );
+
+						cell.Text = "" + value;
+
+					}
+					catch ( Exception exc )
+					{
+						cell.Text = exc.ToString();
+					}
 				}
 			}
-
+			else
+			{
+				base.Text = this.Value + "";
+			}
 		}
 	}
 }
