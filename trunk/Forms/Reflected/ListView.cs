@@ -412,42 +412,73 @@ namespace zeroflag.Forms.Reflected
 		{
 			get
 			{
-				return new zeroflag.Collections.CollectionSynchronizer<PropertyDescription, ColumnHeader>
-					( this.TypeDescription.Properties,
-					prop =>
-					{
-						if ( !prop.Visible )
-							return null;
-						ColumnHeader col = new ColumnHeader( prop.Name );
-						col.Name = prop.Name;
-						col.Text = prop.Name;
-						if ( prop.Index != null && prop.Index < this.Control.Columns.Count )
-							this.Control.Columns.Insert( prop.Index.Value, col );
-						else
-							this.Control.Columns.Add( col );
-						//col.Width = 0;
-						return col;
-					},
-					col => this.Control.Columns.Remove( col ),
-					( prop, col ) =>
-					{
-						col.Text = prop.Name;
-						int old = col.Width;
-						bool keep = true;
-						int width = 0;
-						col.AutoResize( ColumnHeaderAutoResizeStyle.ColumnContent );
-						width = Math.Max( width, col.Width );
-						if ( old == width )
-							keep = false;
-						col.AutoResize( ColumnHeaderAutoResizeStyle.HeaderSize );
-						width = Math.Max( width, col.Width );
-						if ( old == width )
-							keep = false;
-						if ( !keep )
-							col.Width = width;
-					}
-					);
+				if ( typeof( T ) != typeof( string ) )
+					return new zeroflag.Collections.CollectionSynchronizer<PropertyDescription, ColumnHeader>
+						( this.TypeDescription.Properties,
+						prop =>
+						{
+							if ( !prop.Visible )
+								return null;
+							ColumnHeader col = new ColumnHeader( prop.Name );
+							col.Name = prop.Name;
+							col.Text = prop.Name;
+							if ( prop.Index != null && prop.Index < this.Control.Columns.Count )
+								this.Control.Columns.Insert( prop.Index.Value, col );
+							else
+								this.Control.Columns.Add( col );
+							//col.Width = 0;
+							return col;
+						},
+						col => this.Control.Columns.Remove( col ),
+						( prop, col ) =>
+						{
+							col.Text = prop.Name;
+							int old = col.Width;
+							bool keep = true;
+							int width = 0;
+							col.AutoResize( ColumnHeaderAutoResizeStyle.ColumnContent );
+							width = Math.Max( width, col.Width );
+							if ( old == width )
+								keep = false;
+							col.AutoResize( ColumnHeaderAutoResizeStyle.HeaderSize );
+							width = Math.Max( width, col.Width );
+							if ( old == width )
+								keep = false;
+							if ( !keep )
+								col.Width = width;
+						}
+						);
+				else
+					return new zeroflag.Collections.CollectionSynchronizer<PropertyDescription, ColumnHeader>( new PropertyDescription[] { new PropertyDescription( this.GetType().GetProperty( "Dummy" ) ) },
+						prop =>
+						{
+							ColumnHeader col = new ColumnHeader();
+							col.Name = col.Text = "<value>";
+							this.Control.Columns.Insert( 0, col );
+							return col;
+						},
+						col => this.Control.Columns.Remove( col ),
+						( prop, col ) =>
+						{
+							int old = col.Width;
+							bool keep = true;
+							int width = 0;
+							col.AutoResize( ColumnHeaderAutoResizeStyle.ColumnContent );
+							width = Math.Max( width, col.Width );
+							if ( old == width )
+								keep = false;
+							col.AutoResize( ColumnHeaderAutoResizeStyle.HeaderSize );
+							width = Math.Max( width, col.Width );
+							if ( old == width )
+								keep = false;
+							if ( !keep )
+								col.Width = width;
+						} );
 			}
+		}
+		protected T Dummy
+		{
+			get { return default( T ); }
 		}
 
 		#endregion ColumnSync
