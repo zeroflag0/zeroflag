@@ -58,14 +58,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace zerolib.Threading
+namespace zeroflag.Threading
 {
 	/// <summary>
 	/// A single-reader single-writer message-queue without locking.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	public class MultiWriterQueue<T>
-		where T : class
 	{
 		#region First
 
@@ -76,7 +75,19 @@ namespace zerolib.Threading
 		/// </summary>
 		public Node First
 		{
-			get { return _First ?? _Last; }
+			get
+			{
+				// if there's nothing in First, doesn't mean there's nothing at all...
+				if ( _First == null )
+					if ( _ReadLast != null )
+					{
+						if ( _ReadLast.Next != null )
+						{
+							_First = _ReadLast.Next;
+						}
+					}
+				return _First;
+			}
 			set
 			{
 				if ( _First != value )
@@ -98,7 +109,7 @@ namespace zerolib.Threading
 		/// <remarks>This value is not guaranteed to always represent THE last node, but it should always contain one of the later nodes, except when the Queue is empty...</remarks>
 		public Node Last
 		{
-			get { return _Last ?? _First; }
+			get { return _Last; }
 			set
 			{
 				if ( _Last != value )
@@ -117,7 +128,7 @@ namespace zerolib.Threading
 		/// </summary>
 		public bool IsEmpty
 		{
-			get { return this.First != null; }
+			get { return object.ReferenceEquals( this.First, null ); }
 		}
 
 		#endregion IsEmpty
@@ -130,25 +141,20 @@ namespace zerolib.Threading
 		public virtual void Write( T value )
 		{
 			Node node = new Node() { Value = value };
-			Node first, last;
-
-			// try to set the node as First...
-			if ( ( first = Interlocked.CompareExchange<Node>( ref _First, node, null ) ) != null )
-			// if First was already set...
+			Node last;
+			// remember the new node as last node...
+			if ( ( last = Interlocked.Exchange<Node>( ref _Last, node ) ) != null )
+			// if there was a last node before...
 			{
-				// get the last node...
-				last = this.Last;
-				// if there's only one node, use first as last node (which it is, at the same time)...
-
-				// use the last node and try to set it's Next node to the new node...
-				// if the node already has a Next node (cross-thread change), keep looking until the REAL last node is found...
-				while ( ( last = Interlocked.CompareExchange<Node>( ref last.Next, node, null ) ) != null ) ;
-
-				// set the last node...
-				Interlocked.Exchange<Node>( ref _Last, node );
+				// link the new last node behind the previous last node...
+				Interlocked.Exchange<Node>( ref last.Next, node );
 			}
+			else
+				// if there wasn't a last node before, the new node is also the first node...
+				Interlocked.Exchange<Node>( ref _First, node );
 		}
 
+		Node _ReadLast;
 		/// <summary>
 		/// Read one value from the queue. This method removes the first item.
 		/// NOTE: This method may only be used from a single thread!
@@ -156,13 +162,10 @@ namespace zerolib.Threading
 		/// <returns></returns>
 		public virtual T Read()
 		{
-			Node node = this.First;
-			if ( node != null )
-			{
-				Interlocked.Exchange<Node>( ref _First, _First.Next );
-				return node.Value;
-			}
-			return null;
+			if ( First != null )	// <-- this check is crucial as First{get;} also corrects race-conditions in _First
+				return _ReadLast = Interlocked.Exchange<Node>( ref _First, _First.Next );
+			else
+				return default( T );
 		}
 
 		#region Node
@@ -186,9 +189,14 @@ namespace zerolib.Threading
 
 			#endregion Next
 
-			public static implicit operator Node( T value )
+			//public static implicit operator Node( T value )
+			//{
+			//    return new Node() { Value = value };
+			//}
+
+			public override string ToString()
 			{
-				return new Node() { Value = value };
+				return this.Value.ToString() + " > " + ( (object)this.Next ?? "<null>" );
 			}
 		}
 		#endregion Node
