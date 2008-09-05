@@ -163,7 +163,7 @@ namespace zeroflag.Threading
 		public virtual T Read()
 		{
 			if ( First != null )	// <-- this check is crucial as First{get;} also corrects race-conditions in _First
-				return _ReadLast = Interlocked.Exchange<Node>( ref _First, _First.Next );
+				return ( _ReadLast = Interlocked.Exchange<Node>( ref _First, _First.Next ) ).Value;
 			else
 				return default( T );
 		}
