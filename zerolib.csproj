@@ -8,9 +8,9 @@
     <ProjectGuid>{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>zerolib</RootNamespace>
-    <AssemblyName>zerolib</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <RootNamespace>zeroflag</RootNamespace>
+    <AssemblyName>zeroflag</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -32,6 +32,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
@@ -46,10 +49,12 @@
     <Compile Include="Collections\Collection2.cs" />
     <Compile Include="Collections\CollectionSynchronizer.cs" />
     <Compile Include="Collections\Delegates.cs" />
+    <Compile Include="Collections\Dictionary.cs" />
     <Compile Include="Collections\ITreeNode.cs" />
     <Compile Include="Collections\List.cs" />
     <Compile Include="Collections\Parent.cs" />
     <Compile Include="Collections\TreeNode.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\InstanceProvider.cs" />
     <Compile Include="Reflection\TypeHelper.cs" />
