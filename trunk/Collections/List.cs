@@ -153,7 +153,13 @@ namespace zeroflag.Collections
 			this.OnItemChanged( default( T ), item );
 		}
 
-		public virtual void Add( params T[] items )
+		public virtual void AddRange( params T[] items )
+		{
+			foreach ( T item in items )
+				this.Add( item );
+		}
+
+		public virtual void AddRange( IEnumerable<T> items )
 		{
 			foreach ( T item in items )
 				this.Add( item );
