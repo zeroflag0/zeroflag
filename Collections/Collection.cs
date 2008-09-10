@@ -299,5 +299,45 @@ namespace zeroflag.Collections
 			: base( list )
 		{
 		}
+
+		#region Sort
+		/// <summary>
+		/// Sorts the elements in the entire System.Collections.Generic.List<T> using the default comparer.
+		/// </summary>
+		public virtual void Sort()
+		{
+			this.Items.Sort();
+		}
+
+		/// <summary>
+		/// Sorts the elements in the entire System.Collections.Generic.List<T> using the specified System.Comparison<T>.
+		/// </summary>
+		/// <param name="comparison">The System.Comparison<T> to use when comparing elements.</param>
+		public void Sort( Comparison<T> comparison )
+		{
+			this.Items.Sort( comparison );
+		}
+
+		/// <summary>
+		/// Sorts the elements in the entire System.Collections.Generic.List<T> using the specified comparer.
+		/// </summary>
+		/// <param name="comparer">The System.Collections.Generic.IComparer<T> implementation to use when comparing elements, or null to use the default comparer System.Collections.Generic.Comparer<T>.Default.</param>
+		public void Sort( IComparer<T> comparer )
+		{
+			this.Items.Sort( comparer );
+		}
+
+
+		/// <summary>
+		/// Sorts the elements in a range of elements in System.Collections.Generic.List<T> using the specified comparer.
+		/// </summary>
+		/// <param name="index">The zero-based starting index of the range to sort.</param>
+		/// <param name="count">The length of the range to sort.</param>
+		/// <param name="comparer">The System.Collections.Generic.IComparer<T> implementation to use when comparing elements, or null to use the default comparer System.Collections.Generic.Comparer<T>.Default.</param>
+		public void Sort( int index, int count, IComparer<T> comparer )
+		{
+			this.Items.Sort( index, count, comparer );
+		}
+		#endregion Sort
 	}
 }
