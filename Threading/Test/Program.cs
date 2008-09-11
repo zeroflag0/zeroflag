@@ -176,7 +176,7 @@ namespace Test
 			Console.WriteLine( "Testing MultiWriterQueue..." );
 			Console.WriteLine( "\tConfiguration: " + BuildType + ", Threads=" + ThreadCount + ", Items=" + ItemCount );
 			Console.WriteLine( "\tSystem: " + Environment.OSVersion + ", CPUs=" + Environment.ProcessorCount );
-			zeroflag.Threading.MultiWriterQueue<Box<KeyValuePair<int, int>>> queue = new MultiWriterQueue<Box<KeyValuePair<int, int>>>();
+			zeroflag.Threading.LocklessQueue<Box<KeyValuePair<int, int>>> queue = new LocklessQueue<Box<KeyValuePair<int, int>>>();
 			List<System.Threading.Thread> threads = new List<System.Threading.Thread>();
 			int threadsFinished = 0;
 			for ( int t = 0; t < ThreadCount; t++ )
@@ -294,7 +294,7 @@ namespace Test
 			Console.WriteLine( "\tConfiguration: " + BuildType + ", Threads=" + ThreadCount + ", Items=" + ItemCount + ", performance test" );
 #endif
 			Console.WriteLine( "\tSystem: " + Environment.OSVersion + ", CPUs=" + Environment.ProcessorCount );
-			zeroflag.Threading.LocklessQueue<Box<KeyValuePair<int, int>>> queue = new LocklessQueue<Box<KeyValuePair<int, int>>>();
+			zeroflag.Threading.LocklessQueueOld<Box<KeyValuePair<int, int>>> queue = new LocklessQueueOld<Box<KeyValuePair<int, int>>>();
 			List<System.Threading.Thread> threads = new List<System.Threading.Thread>();
 			int threadsFinished = 0;
 			for ( int t = 0; t < ThreadCount; t++ )
