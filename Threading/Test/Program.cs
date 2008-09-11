@@ -99,11 +99,11 @@ namespace Test
 			TestMultiWriterQueue( 2000, 4 );
 #else
 			TestMultiWriterQueue( 20, 1 );
-			TestMultiWriterQueue( 800000, 20 );
+			TestMultiWriterQueue( 2000000, 20 );
 			TestMultiWriterQueue( 2000000, 10 );
 			TestMultiWriterQueue( 2000000, 8 );
-			TestMultiWriterQueue( 4000000, 4 );
-			TestMultiWriterQueue( 8000000, 2 );
+			TestMultiWriterQueue( 2000000, 4 );
+			TestMultiWriterQueue( 2000000, 2 );
 #endif
 #endif
 #endif//TEST_MULTIWRITERQUEUE
