@@ -7,7 +7,7 @@ namespace zeroflag.Threading
 	public class Thread
 	{
 		private ThreadManager _Manager;
-		private System.Threading.AutoResetEvent _WaitHandler = new System.Threading.AutoResetEvent(false);
+		private System.Threading.AutoResetEvent _WaitHandler = new System.Threading.AutoResetEvent( false );
 		private Task _CurrentTask;
 		private Task _NextTask;
 		private System.Threading.Thread _Native;
@@ -38,12 +38,12 @@ namespace zeroflag.Threading
 		{
 			get { return _Manager; }
 		}
-	
+
 		public int InternalId
 		{
 			get
 			{
-				return this.Manager.GetInternalId(this);
+				return this.Manager.GetInternalId( this );
 			}
 		}
 
@@ -52,11 +52,11 @@ namespace zeroflag.Threading
 			get
 			{
 				System.Threading.Thread current = System.Threading.Thread.CurrentThread;
-				Thread result = ThreadManager.Current.Threads.Find(t => t != null && t.Native == current);
-				if (result == null)
+				Thread result = ThreadManager.Current.Threads.Find( delegate( Thread t ) { return t != null && t.Native == current; } );
+				if ( result == null )
 					return -1;
 				else
-					return ThreadManager.Current.Threads[result];
+					return ThreadManager.Current.Threads[ result ];
 			}
 		}
 
@@ -103,10 +103,10 @@ namespace zeroflag.Threading
 			this.WaitHandler.WaitOne();
 		}
 
-		protected internal Thread(ThreadManager manager)
+		protected internal Thread( ThreadManager manager )
 		{
 			this._Manager = manager;
-			this._Native = new System.Threading.Thread(this.Run);
+			this._Native = new System.Threading.Thread( this.Run );
 		}
 	}
 }

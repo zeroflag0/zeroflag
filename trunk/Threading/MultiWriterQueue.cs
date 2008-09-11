@@ -140,7 +140,8 @@ namespace zeroflag.Threading
 		/// <param name="value"></param>
 		public virtual void Write( T value )
 		{
-			Node node = new Node() { Value = value };
+			Node node = new Node();
+			node.Value = value;
 			Node last;
 			// remember the new node as last node...
 			if ( ( last = Interlocked.Exchange<Node>( ref _Last, node ) ) != null )
