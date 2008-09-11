@@ -64,7 +64,7 @@ namespace zeroflag.Threading
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
 	/// <remarks>Update must be called by the writer when lots (= more than the buffer size, 2048 by default) of messages were sent before but nothing is added.</remarks>
-	public class LocklessQueue<T>// : Sage.Threading.IMessageQueue<T>
+	public class LocklessQueueOld<T>// : Sage.Threading.IMessageQueue<T>
 		where T : class // <-- must be a reference type or an atomic type to be threadsafe
 	{
 		Queue<T> m_WriteQueue = new Queue<T>();
@@ -93,7 +93,7 @@ namespace zeroflag.Threading
 				get
 				{
 					T value = m_Value;
-					if (value != null)
+					if ( value != null )
 					{
 						this.m_Value = null;
 					}
@@ -111,7 +111,7 @@ namespace zeroflag.Threading
 			{
 				get
 				{
-					if (m_Value != null)
+					if ( m_Value != null )
 						return true;
 					else
 						return false;
@@ -120,25 +120,25 @@ namespace zeroflag.Threading
 		}
 		#endregion MessageContainer
 
-		public LocklessQueue(int bufferSize)
+		public LocklessQueueOld( int bufferSize )
 		{
-			this.m_Buffer = new MessageContainer[bufferSize];
+			this.m_Buffer = new MessageContainer[ bufferSize ];
 			this.Clear();
 		}
 
 		/// <summary>
 		/// Creates a new message queue and initializes it's buffer.
 		/// </summary>
-		public LocklessQueue()
+		public LocklessQueueOld()
 		{
 			this.Clear();
 		}
 
-		~LocklessQueue()
+		~LocklessQueueOld()
 		{
-			for (int i = 0; i < this.Buffer.Length; i++)
+			for ( int i = 0; i < this.Buffer.Length; i++ )
 			{
-				this.Buffer[i] = null;
+				this.Buffer[ i ] = null;
 			}
 			this.m_Buffer = null;
 		}
@@ -152,19 +152,19 @@ namespace zeroflag.Threading
 			this.WriteIndex = 0;
 			this.WriteQueue.Clear();
 
-			for (int i = 0; i < this.Buffer.Length; i++)
+			for ( int i = 0; i < this.Buffer.Length; i++ )
 			{
-				if (this.Buffer[i] == null)
-					this.Buffer[i] = new MessageContainer();
+				if ( this.Buffer[ i ] == null )
+					this.Buffer[ i ] = new MessageContainer();
 				else
-					this.Buffer[i].Value = null;
+					this.Buffer[ i ].Value = null;
 			}
 		}
 
 		private int ReadIndex = 0;
 		private int WriteIndex = 0;
 
-		MessageContainer[] m_Buffer = new MessageContainer[2048];
+		MessageContainer[] m_Buffer = new MessageContainer[ 2048 ];
 		/// <summary>
 		/// The queue's ring buffer.
 		/// Default size is 2048 entries.
@@ -181,7 +181,7 @@ namespace zeroflag.Threading
 		/// </summary>
 		public bool IsEmpty
 		{
-			get { return !this.Buffer[this.ReadIndex].HasValue; }
+			get { return !this.Buffer[ this.ReadIndex ].HasValue; }
 		}
 		/// <summary>
 		/// Pops a value from the queue.
@@ -190,14 +190,14 @@ namespace zeroflag.Threading
 		/// <returns></returns>
 		public T Pop()
 		{
-			if (this.Buffer[this.ReadIndex].HasValue)
+			if ( this.Buffer[ this.ReadIndex ].HasValue )
 			// value waiting?
 			{
 				// grab the current value...
-				T value = this.Buffer[this.ReadIndex].Value;
+				T value = this.Buffer[ this.ReadIndex ].Value;
 
 				// continue to the next...
-				this.ReadIndex = (this.ReadIndex + 1) % this.Buffer.Length;
+				this.ReadIndex = ( this.ReadIndex + 1 ) % this.Buffer.Length;
 
 				return value;
 			}
@@ -212,10 +212,10 @@ namespace zeroflag.Threading
 		/// *** WRITER THREAD ***
 		/// </summary>
 		/// <param name="msg"></param>
-		public void Push(T msg)
+		public void Push( T msg )
 		{
 			// push the message to the write queue...
-			this.WriteQueue.Enqueue(msg);
+			this.WriteQueue.Enqueue( msg );
 			// try to push some more to the buffer...
 			this.Update();
 		}
@@ -228,7 +228,7 @@ namespace zeroflag.Threading
 		public void Update()
 		{
 			// feed the buffer...
-			while (this.PushToBuffer()) ;
+			while ( this.PushToBuffer() ) ;
 		}
 
 		#endregion
@@ -238,17 +238,17 @@ namespace zeroflag.Threading
 		/// <returns>True if a value was pushed, false if it wasn't (like no items in queue or no free cell in buffer).</returns>
 		protected bool PushToBuffer()
 		{
-			if (!this.Buffer[this.WriteIndex].HasValue && this.WriteQueue.Count > 0)
+			if ( !this.Buffer[ this.WriteIndex ].HasValue && this.WriteQueue.Count > 0 )
 			// buffer cell free?
 			{
 				// get the message...
 				T value = this.WriteQueue.Dequeue();
 
 				// store the message...
-				this.Buffer[this.WriteIndex].Value = value;
+				this.Buffer[ this.WriteIndex ].Value = value;
 
 				// move the index to the next cell...
-				this.WriteIndex = (this.WriteIndex + 1) % this.Buffer.Length;
+				this.WriteIndex = ( this.WriteIndex + 1 ) % this.Buffer.Length;
 
 				// yes, we pushed a new message from the write-queue to the buffer...
 				return true;

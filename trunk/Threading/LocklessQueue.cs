@@ -61,10 +61,10 @@ using System.Threading;
 namespace zeroflag.Threading
 {
 	/// <summary>
-	/// A single-reader single-writer message-queue without locking.
+	/// A single-reader multi-writer message-queue without locking.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public class MultiWriterQueue<T>
+	public class LocklessQueue<T>
 	{
 		#region First
 
@@ -136,6 +136,7 @@ namespace zeroflag.Threading
 
 		/// <summary>
 		/// Write one value to the queue. This method may be used simultaneously by multiple threads.
+		/// NOTE: This method is safe to be used from multiple threads simultaniously, no guarantees though.
 		/// </summary>
 		/// <param name="value"></param>
 		public virtual void Write( T value )
