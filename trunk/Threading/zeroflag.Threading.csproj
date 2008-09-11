@@ -57,7 +57,7 @@
     <Compile Include="For.cs" />
     <Compile Include="Foreach.cs" />
     <Compile Include="IDList~1.cs" />
-    <Compile Include="LocklessQueue.cs" />
+    <Compile Include="LocklessQueueOld.cs" />
     <Compile Include="MultiWriterQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Task.cs" />
