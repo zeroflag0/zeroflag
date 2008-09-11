@@ -107,7 +107,7 @@
     <Compile Include="Threading\For.cs" />
     <Compile Include="Threading\Foreach.cs" />
     <Compile Include="Threading\IDList~1.cs" />
-    <Compile Include="Threading\MultiWriterQueue.cs" />
+    <Compile Include="Threading\LocklessQueue.cs" />
     <Compile Include="Threading\Task.cs" />
     <Compile Include="Threading\Task~1.cs" />
     <Compile Include="Threading\Task~2.cs" />
