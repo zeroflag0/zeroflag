@@ -48,7 +48,7 @@ namespace zeroflag.Forms
 
 		public void Add( params Action[] tasks )
 		{
-			this.Tasks.Add( tasks );
+			this.Tasks.AddRange( tasks );
 		}
 
 		public void Add<T1>( Action<T1> task, T1 p1 )
