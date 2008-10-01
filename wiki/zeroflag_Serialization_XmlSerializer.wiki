@@ -24,8 +24,13 @@ They will not output any XML or binary data, they will simply scan the (public) 
 
 *Why not just use [http://en.wikipedia.org/wiki/Reflection_(computer_science) reflection] instead?*
 Well, descriptors DO use reflection, but reflection is (mostly) a collection of static methods. It is not implemented with Object Orientation in mind and it certainly isn't a very nice tool to work with.
-Besides, reflection can directly only work on types, but objects do not always _entirely_ follow the type-profile. Just think inheritance. If you have
+Besides, reflection can directly only work on types, but objects do not always _entirely_ follow the type-profile. Just think inheritance.
+For example if you have
 {{{
 class Foo { public Foo Parent; }
 class Bar : Foo { public List<Foo> Children; }
 }}}
+the Parent could actually contain an instance of type Foo, but it could also contain an instance of type Bar.
+Basic reflection on the type will only tell you what was *defined* in the *type*, not what the *runtime instance* actually *contains*.
+
+So long story short, zerolib will, if passed an instance, reflect on the *instance* and not the *type*, which is what is actually necessary to serialize an object.
