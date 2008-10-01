@@ -1,0 +1,38 @@
+#summary zeroflag.Serialization.XmlSerializer
+
+= What is a serializer? =
+There's a nice [http://en.wikipedia.org/wiki/Serialization wikipedia article] about this, so I can't really be bothered to explain everything allover again.
+What I will explain is...
+
+= Why not the .NET XmlSerializer? =
+Because it sucks. Seriously.
+Have you ever tried to serialize any piece of meaningful data with it?
+It will break on every simple construct, doesn't support cyclic references, is not very type-safe, has immense amounts of overhead and, did I mention that it will BREAK all the time?
+
+= So what is different in zerolib's XmlSerializer? =
+== Serialization Abstraction ==
+=== What's wrong with the one in .NET? ===
+First off, serialization isn't something that has to be done allover again from scratch for every type of data.
+You do not need a completely different and incompatible serializer for XML data, and another, completely different and incompatible, serializer for Binary data. Why microsoft has implemented it like this anyway can only be blamed on... well, them being microsoft.
+
+=== What's different in zerolib? ===
+zerolib has something I call a "Descriptor". And you can provide more specialized Descriptors as required.
+
+*What do Descriptors do?*
+Simple, they describe an object.
+They will not output any XML or binary data, they will simply scan the (public) properties on your objects, scan the values behind those properties and recursively scan and describe the Type/Object.
+
+*Why not just use [http://en.wikipedia.org/wiki/Reflection_(computer_science) reflection] instead?*
+Well, descriptors DO use reflection, but reflection is (mostly) a collection of static methods. It is not implemented with Object Orientation in mind and it certainly isn't a very nice tool to work with.
+Besides, reflection can directly only work on types, but objects do not always _entirely_ follow the type-profile. Just think inheritance. If you have
+{{{
+class Foo { public Foo Parent; }
+class Bar : Foo { public List<Foo> Children; }
+}}}
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
