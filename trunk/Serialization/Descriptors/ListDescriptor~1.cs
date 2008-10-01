@@ -55,20 +55,20 @@ namespace zeroflag.Serialization.Descriptors
 		//}
 		public const string NameItem = null;
 
-		protected override void Parse()
+		public override void Parse()
 		{
 			//if (this.Value != null)
 			{
-				CWL(this + " parsing " + (this.Value ?? this.Type ?? (object)"<null>"));
+				CWL( this + " parsing " + ( this.Value ?? this.Type ?? (object)"<null>" ) );
 				System.Collections.Generic.ICollection<T> collection = this.GetValue();
-				if (collection != null)
+				if ( collection != null )
 				{
-					foreach (T value in collection)
+					foreach ( T value in collection )
 					{
-						Descriptor item = this.Context.Parse(null, typeof(T), value, this.Value, null);
+						Descriptor item = this.Context.Parse( null, typeof( T ), value, this.Value, null );
 						//item.Name = NameItem;
-						if (!this.Inner.Contains(item))
-							this.Inner.Add(item);
+						if ( !this.Inner.Contains( item ) )
+							this.Inner.Add( item );
 					}
 				}
 			}
@@ -99,16 +99,16 @@ namespace zeroflag.Serialization.Descriptors
 			//return base.GenerateLink();
 			ICollection<T> value = this.GetValue();
 
-			if (value != null && this.Inner.Count > 0)
+			if ( value != null && this.Inner.Count > 0 )
 			{
 				value.Clear();
-				foreach (Descriptor sub in this.Inner)
+				foreach ( Descriptor sub in this.Inner )
 				{
 					//if (sub.Name == NameItem)
 					//{
 					T item = (T)sub.GenerateLink();
-					if (item != null)
-						value.Add(item);
+					if ( item != null )
+						value.Add( item );
 					//}
 				}
 			}
@@ -145,7 +145,25 @@ namespace zeroflag.Serialization.Descriptors
 				return false;
 			}
 		}
+
+		#region IListDescriptor Members
+
+		public Type ItemType
+		{
+			get
+			{
+				return typeof( T );
+			}
+		}
+
+		#endregion
 	}
 	public interface IListDescriptor
-	{ }
+	{
+		/// <summary>
+		/// The type of items in this collection...
+		/// </summary>
+		Type ItemType { get; }
+
+	}
 }

@@ -85,6 +85,9 @@
     <Content Include="bin\Debug\test.xml" />
     <Content Include="bin\Debug\test1.result.xml" />
     <Content Include="bin\Debug\test1.xml" />
+    <Content Include="test_form.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">

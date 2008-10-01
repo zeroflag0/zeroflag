@@ -34,20 +34,20 @@ namespace zeroflag.Serialization.Descriptors
 {
 	public class ObjectDescriptor : Descriptor<object>
 	{
-		protected override void Parse()
+		public override void Parse()
 		{
-			//if (this.Value == null)
+			//if ( this.Value == null )
 			//    return;
 
 			Type type = this.Type;
 
-			System.Reflection.PropertyInfo[] properties = this.GetProperties(type).ToArray();
+			System.Reflection.PropertyInfo[] properties = this.GetProperties( type ).ToArray();
 
-			foreach (System.Reflection.PropertyInfo property in properties)
+			foreach ( System.Reflection.PropertyInfo property in properties )
 			{
-				Descriptor desc = this.Context.Parse(property, this.Value);
-				if (desc != null && !this.Inner.Contains(desc))
-					this.Inner.Add(desc);
+				Descriptor desc = this.Context.Parse( property, this.Value );
+				if ( desc != null && !this.Inner.Contains( desc ) )
+					this.Inner.Add( desc );
 			}
 		}
 	}

@@ -28,7 +28,7 @@
 
 //#define TEST1 // class A
 //#define TEST2 // dictionary
-//#define TEST3 // winforms <-- doesn't work and it's not because my serializer is too stupid...
+#define TEST3 // winforms <-- doesn't work and it's not because my serializer is too stupid...
 
 using System;
 using System.Collections.Generic;
@@ -107,36 +107,36 @@ namespace Test
 #endif
 	class Program
 	{
-		static void Main(string[] args)
+		static void Main( string[] args )
 		{
 			System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 			sw.Start();
-			Console.WriteLine(sw.ElapsedMilliseconds.ToString("000000") + " start");
-		
+			Console.WriteLine( sw.ElapsedMilliseconds.ToString( "000000" ) + " start" );
+
 			{
-				Test test = new Test("root", 1, 1.5f);
+				Test test = new Test( "root", 1, 1.5f );
 
 				test.Add(
-					new Test("foo", 2, 51),
-					new Test2("bar", 3, 0.0005f).Add(test));
+					new Test( "foo", 2, 51 ),
+					new Test2( "bar", 3, 0.0005f ).Add( test ) );
 
-				Console.WriteLine("1.1) serialize:\n" + test);
+				Console.WriteLine( "1.1) serialize:\n" + test );
 
-				new XmlSerializer("result1.1.xml").Serialize(test);
-				test = new XmlSerializer("result1.1.xml").Deserialize<Test>();
-				Console.WriteLine("1.2) deserialized:\n" + test);
-				Console.WriteLine("1.3) serialize:\n" + test);
-				new zeroflag.Serialization.XmlSerializer("result1.3.xml").Serialize(test);
+				new XmlSerializer( "result1.1.xml" ).Serialize( test );
+				test = new XmlSerializer( "result1.1.xml" ).Deserialize<Test>();
+				Console.WriteLine( "1.2) deserialized:\n" + test );
+				Console.WriteLine( "1.3) serialize:\n" + test );
+				new zeroflag.Serialization.XmlSerializer( "result1.3.xml" ).Serialize( test );
 			}
 			//if (false)
 			{
-				Test test = new ZmlSerializer("test.zml").Deserialize<Test>();
-				Console.WriteLine("2.1) " + test);
+				Test test = new ZmlSerializer( "test.zml" ).Deserialize<Test>();
+				Console.WriteLine( "2.1) " + test );
 				//new zeroflag.Serialization.XmlSerializer("test2.xml").Serialize(test);
-				new ZmlSerializer("result2.1.zml").Serialize(test);
-				Test result = new ZmlSerializer("result2.1.zml").Deserialize<Test>();
-				Console.WriteLine("2.3) " + result);
-				new ZmlSerializer("result2.3.zml").Serialize(result);
+				new ZmlSerializer( "result2.1.zml" ).Serialize( test );
+				Test result = new ZmlSerializer( "result2.1.zml" ).Deserialize<Test>();
+				Console.WriteLine( "2.3) " + result );
+				new ZmlSerializer( "result2.3.zml" ).Serialize( result );
 			}
 
 
@@ -188,10 +188,10 @@ namespace Test
 				TestDict<string, A>("foo", foo, "bar", bar, "bla", bla);
 #endif
 #if TEST3
-				System.Windows.Forms.Application.Run(new TestForm());
+				//System.Windows.Forms.Application.Run( new TestForm() );
 
-				TestForm restore = new zeroflag.Serialization.XmlSerializer("test_form.xml").Deserialize<TestForm>();
-				System.Windows.Forms.Application.Run(restore);
+				System.Windows.Forms.Form form = new zeroflag.Serialization.ZmlSerializer( "test_form.xml" ).Deserialize<System.Windows.Forms.Form>();
+				System.Windows.Forms.Application.Run( form );
 #endif
 			}
 			//catch (Exception exc)
@@ -199,7 +199,7 @@ namespace Test
 			//    Console.WriteLine(exc);
 			//}
 			finally { }
-			Console.WriteLine(sw.ElapsedMilliseconds.ToString("000000") + " end");
+			Console.WriteLine( sw.ElapsedMilliseconds.ToString( "000000" ) + " end" );
 		}
 
 #if TEST2

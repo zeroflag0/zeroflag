@@ -195,7 +195,7 @@ namespace zeroflag.Serialization
 						}
 						if ( this.IgnoreList.Find( i => i != null && i( inner ) ) != null )
 							continue;
-						if ( !( this.SimplifyOutput && inner.Value != null && ( inner.Type.GetMethod( "Parse", System.Reflection.BindingFlags.FlattenHierarchy | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod ) != null ) ) &&
+						if ( !( this.SimplifyOutput && inner.Value != null && ( inner.Type.GetMethod( "Parse", System.Reflection.BindingFlags.FlattenHierarchy | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod, null, System.Reflection.CallingConventions.Any, new Type[] { typeof( string ) }, new System.Reflection.ParameterModifier[ 0 ] ) != null ) ) &&
 							( inner.Name == null || !this.Converters.CanConvert<string>( inner.Value ) ) )
 						{
 							// complex type...
@@ -411,6 +411,12 @@ namespace zeroflag.Serialization
 								subType = info.PropertyType;
 								subName = info.Name;
 							}
+							else if ( desc is IListDescriptor )
+							{
+								subType = ( (IListDescriptor)desc ).ItemType;
+								if ( subTypeName != null )
+									subType = TypeFinder.Instance[ subTypeName, subType ] ?? subType;
+							}
 							else
 							{
 								info = desc.Property( subTypeName, true );
@@ -430,10 +436,19 @@ namespace zeroflag.Serialization
 						if ( subType == null )
 							continue;
 
+						if ( !desc.Parsed )
+						{
+							CWL( "Parse was previously suspended on " + desc + "..." );
+							//this.Context.Parse( desc );
+						}
+
 						if ( inner == null )
 							inner = this.Context.Parse( subName, subType, desc );
 						if ( inner != null && !desc.Inner.Contains( inner ) )
 							desc.Inner.Add( inner );
+						if ( inner == null )
+							Console.WriteLine( "inner is null" );
+
 						if ( subName != null )
 							inner.Name = subName;
 						inner.Value = this.Deserialize( inner.Value, inner, desc, sub );

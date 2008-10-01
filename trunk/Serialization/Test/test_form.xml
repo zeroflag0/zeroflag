@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<form text="Hello World!">
+	<controls>
+		<Button left="50" top="100" width="150" height="50" text="Hello!"/>
+	</controls>
+</form>

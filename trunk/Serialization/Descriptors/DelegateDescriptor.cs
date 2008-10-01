@@ -6,9 +6,9 @@ namespace zeroflag.Serialization.Descriptors
 {
 	public class DelegateDescriptor : Descriptor<Delegate>
 	{
-		protected override void Parse()
+		public override void Parse()
 		{
-			if (this.Value == null)
+			if ( this.Value == null )
 				return;
 
 			Type type = this.Type;

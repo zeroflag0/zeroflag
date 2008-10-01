@@ -191,6 +191,14 @@ namespace zeroflag.Serialization.Descriptors
 			set { _IsReferenced = value; }
 		}
 
+		bool _Parsed = false;
+
+		public bool Parsed
+		{
+			get { return _Parsed; }
+			set { _Parsed = value; }
+		}
+
 		//public abstract object GetValue();
 		//public abstract void SetValue(object value);
 
@@ -233,7 +241,7 @@ namespace zeroflag.Serialization.Descriptors
 		//    return this;
 		//}
 
-		protected abstract void Parse();
+		public abstract void Parse();
 
 		public virtual Descriptor Parse( string name, Type type, object value
 			//, object ownerInstance
