@@ -34,7 +34,7 @@ namespace zeroflag.Serialization.Descriptors
 {
 	public class TypeDescriptor : Descriptor<Type>
 	{
-		protected override void Parse()
+		public override void Parse()
 		{
 			//if (this.Value == null)
 			//    return;

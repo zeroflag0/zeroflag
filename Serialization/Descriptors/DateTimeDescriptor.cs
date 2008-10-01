@@ -9,17 +9,17 @@ namespace zeroflag.Serialization.Descriptors
 		public override object GenerateLink()
 		{
 			//return base.GenerateLink();
-			if (this.Inner.Count == 1)
+			if ( this.Inner.Count == 1 )
 			{
-				return System.DateTime.FromBinary((long)this.Inner[0].GenerateLink());
+				return System.DateTime.FromBinary( (long)this.Inner[ 0 ].GenerateLink() );
 			}
 			else
 				return DateTime.Now;
 		}
 
-		protected override void Parse()
+		public override void Parse()
 		{
-			this.Inner.Add(this.Context.Parse("timestamp", typeof(long), this.GetValue().ToBinary(), this.Value, null));
+			this.Inner.Add( this.Context.Parse( "timestamp", typeof( long ), this.GetValue().ToBinary(), this.Value, null ) );
 		}
 	}
 }

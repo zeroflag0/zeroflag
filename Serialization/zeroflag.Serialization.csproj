@@ -115,6 +115,7 @@
     <Compile Include="Descriptors\Descriptor.cs" />
     <Compile Include="Descriptors\Descriptor~1.cs" />
     <None Include="Descriptors\DictionaryDescriptor~2.cs" />
+    <Compile Include="Descriptors\ListDescriptor.cs" />
     <Compile Include="Descriptors\ObjectDescriptor.cs" />
     <Compile Include="Descriptors\ListDescriptor~1.cs" />
     <Compile Include="Descriptors\StringDescriptor.cs" />
