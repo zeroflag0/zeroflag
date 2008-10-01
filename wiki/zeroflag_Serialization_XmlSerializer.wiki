@@ -1,10 +1,10 @@
 #summary zeroflag.Serialization.XmlSerializer
 
 = What is a serializer? =
-There's a nice [http://en.wikipedia.org/wiki/Serialization wikipedia article] about this, so I can't really be bothered to explain everything allover again.
+There's a nice [http://en.wikipedia.org/wiki/Serialization wikipedia article] about this, so I can't really be bothered to explain everything all over again.
 What I will explain is...
 
-= Why not the .NET [zeroflag_Serialization_XmlSerializer XmlSerializer]? =
+= Why not use the .NET XmlSerializer? =
 Because it sucks. Seriously.
 Have you ever tried to serialize any piece of meaningful data with it?
 It will break on every simple construct, doesn't support cyclic references, is not very type-safe, has immense amounts of overhead and, did I mention that it will BREAK all the time?
@@ -52,3 +52,23 @@ There are also descriptors for Delegates and Types, which would, if serialized w
 
 The descriptors can be further specialized to describe certain structs that would be problematic otherwise, like {{{System.Drawing.Color}}} or {{{DateTime}}} (both also provided by zerolib).
 
+
+== Xml Specialization ==
+=== How is the Xml Serialization different in zerolib? ===
+I'll admit, the XmlSerializer is a mess of code. That's mostly because there are so many things that could possibly go wrong when deserializing an XmlFile... especially when you consider...
+
+==== Hand-Written Xml => ZML ====
+This mostly includes case-insensitive property *and* type lookup and partial name resolution. 
+
+A very "forgiving" parser specially built for hand-written Xml files is implemented in the *ZmlSerializer*.
+
+The ZmlSerializer serves also as the base-class for the XmlSerializer, however the Xml version disables quite some "optimizations" that Zml would apply.
+
+This results in the XmlSerializer producing more overhead when serializing, and being less forgiving when deserializng. However, it also means that the XmlSerializer is less likely to fail on ambiguous types and properties, and there will not be any data missing if your properties are pre-initialized.
+
+== Error Handling ==
+One of the most annoying properties of the .NET XmlSerializer is that it will throw exceptions, all over the place.
+
+zerolib's serializers will try to catch any Syntax or Serialization error/exception, push them to the reporting system, and then try to continue.
+
+This allows the programmer to either not care about any errors at all, write parsing-errors as "warnings" but still continue, or check the error report and gracefully exit - instead of being left with *NOTHING* if *ANYTHING* goes wrong.
