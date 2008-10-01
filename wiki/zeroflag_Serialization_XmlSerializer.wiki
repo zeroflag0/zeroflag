@@ -4,12 +4,12 @@
 There's a nice [http://en.wikipedia.org/wiki/Serialization wikipedia article] about this, so I can't really be bothered to explain everything allover again.
 What I will explain is...
 
-= Why not the .NET XmlSerializer? =
+= Why not the .NET [zeroflag_Serialization_XmlSerializer XmlSerializer]? =
 Because it sucks. Seriously.
 Have you ever tried to serialize any piece of meaningful data with it?
 It will break on every simple construct, doesn't support cyclic references, is not very type-safe, has immense amounts of overhead and, did I mention that it will BREAK all the time?
 
-= So what is different in zerolib's XmlSerializer? =
+= So what is different in zerolib's [zeroflag_Serialization_XmlSerializer XmlSerializer]? =
 == Serialization Abstraction ==
 === What's wrong with the one in .NET? ===
 First off, serialization isn't something that has to be done allover again from scratch for every type of data.
