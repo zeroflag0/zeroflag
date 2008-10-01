@@ -34,3 +34,21 @@ the Parent could actually contain an instance of type Foo, but it could also con
 Basic reflection on the type will only tell you what was *defined* in the *type*, not what the *runtime instance* actually *contains*.
 
 So long story short, zerolib will, if passed an instance, reflect on the *instance* and not the *type*, which is what is actually necessary to serialize an object.
+
+=== So, what's the big deal about these Descriptors? ===
+==== They are format independent. ====
+You can throw them at any kind of data, and they will describe it. They will *not* produce any output.
+Hence you can use the same bunch of descriptors for XML, Binary and whatever else you fancy.
+
+==== They are extensible. ====
+Descriptor is a baseclass.
+
+zerolib implements a couple of commonly needed specializations.
+e.g. there is a {{{ObjectDescriptor}}}, which will serve as a fallback-default if there's nothing better available...
+
+there also is a {{{ListDescriptor}}}, which is actually not named quite correctly, as it actually can describe most Collection types ({{{ICollection<>}}} and (usually) also {{{ICollection}}}). This ListDescriptor is "smart" enough to be able to fill read-only properties, not serialize irrelevant data about the Collection (like Count), and, usually, succeed serializing Dictionaries (which implement a {{{ICollection<KeyValuePair<Key,Value>>}}})
+
+There are also descriptors for Delegates and Types, which would, if serialized with the ObjectDescriptor, give the Descriptor-System access to the entire AppDomain... and serializing that is just a bit... too much.
+
+The descriptors can be further specialized to describe certain structs that would be problematic otherwise, like {{{System.Drawing.Color}}} or {{{DateTime}}} (both also provided by zerolib).
+
