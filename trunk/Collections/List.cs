@@ -304,6 +304,24 @@ namespace zeroflag.Collections
 			return new List<T>( this.Items.FindAll( match ) );
 		}
 
+		/// <summary>
+		/// Searches for an element that matches the type specified.
+		/// </summary>
+		/// <typeparam name="S">The type of element to be found.</typeparam>
+		/// <returns>The first element that matches the conditions defined by the specified type, if found; otherwise, the default value for type T.</returns>
+		public S Find<S>()
+			where S : T
+		{
+			try
+			{
+				return (S)this.Find( m => m != null && typeof( S ).IsAssignableFrom( m.GetType() ) );
+			}
+			catch ( InvalidCastException )
+			{
+				return default( S );
+			}
+		}
+
 		#endregion
 
 		#region Sort
