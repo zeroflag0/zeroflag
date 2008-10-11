@@ -9,7 +9,7 @@ using System.Windows.Forms;
 namespace zeroflag.Forms.Reflected
 {
 	[Serializable]
-	public partial class ListView<T> : UserControl
+	public partial class ListView<T> : ListViewControlBase, zeroflag.Forms.Reflected.IListView
 	{
 		public ListView()
 		{
@@ -77,7 +77,7 @@ namespace zeroflag.Forms.Reflected
 
 		#region Items
 
-		zeroflag.Collections.Collection<T> _Items;
+		zeroflag.Collections.List<T> _Items;
 
 		[MergableProperty( false )]
 		[DesignerSerializationVisibility( DesignerSerializationVisibility.Content )]
@@ -86,7 +86,7 @@ namespace zeroflag.Forms.Reflected
 		//[Editor(typeof(zeroflag.Collections.Collection<>), typeof(System.Drawing.Design.UITypeEditor))]
 		[Editor( "System.Windows.Forms.Design.ListViewItemCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof( System.Drawing.Design.UITypeEditor ) )]
 		[Browsable( true )]
-		public zeroflag.Collections.Collection<T> Items
+		public zeroflag.Collections.List<T> Items
 		{
 			get { return _Items ?? ( this.Items = this.ItemsCreate ); }
 			set
@@ -116,11 +116,11 @@ namespace zeroflag.Forms.Reflected
 			}
 		}
 
-		protected virtual zeroflag.Collections.Collection<T> ItemsCreate
+		protected virtual zeroflag.Collections.List<T> ItemsCreate
 		{
 			get
 			{
-				zeroflag.Collections.Collection<T> items = new zeroflag.Collections.Collection<T>();
+				zeroflag.Collections.List<T> items = new zeroflag.Collections.Collection<T>();
 
 				return items;
 			}
@@ -566,5 +566,53 @@ namespace zeroflag.Forms.Reflected
 			base.OnLoad( e );
 			this.Synchronize();
 		}
+
+		#region IListView Members
+
+		event Action<object> IListView.ItemAdded
+		{
+			add { this.ItemAdded += item => value( item ); }
+			remove { this.ItemAdded -= item => value( item ); }
+		}
+
+		event Action<object> IListView.ItemRemoved
+		{
+			add { this.ItemRemoved += item => value( item ); }
+			remove { this.ItemRemoved -= item => value( item ); }
+		}
+
+		event Action<object> IListView.ItemDeselected
+		{
+			add { this.ItemDeselected += item => value( item ); }
+			remove { this.ItemDeselected -= item => value( item ); }
+		}
+
+		event Action<object> IListView.ItemSelected
+		{
+			add { this.ItemSelected += item => value( item ); }
+			remove { this.ItemSelected -= item => value( item ); }
+		}
+
+		System.Collections.ICollection IListView.Items
+		{
+			get
+			{
+				return (System.Collections.ICollection)this.Items;
+			}
+			set
+			{
+				this.Items = (zeroflag.Collections.List<T>)value;
+			}
+		}
+
+		System.Collections.ICollection IListView.SelectedItems
+		{
+			get
+			{
+				return (System.Collections.ICollection)this.SelectedItems;
+			}
+		}
+
+		#endregion
 	}
 }

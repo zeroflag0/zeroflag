@@ -80,7 +80,7 @@ namespace zeroflag.Forms.Reflected
 		//[Editor(typeof(zeroflag.Collections.Collection<>), typeof(System.Drawing.Design.UITypeEditor))]
 		[Editor( "System.Windows.Forms.Design.ListViewItemCollectionEditor, System.Design, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a", typeof( System.Drawing.Design.UITypeEditor ) )]
 		[Browsable( true )]
-		public zeroflag.Collections.Collection<T> Items
+		public zeroflag.Collections.List<T> Items
 		{
 			get { return this.listView.Items; }
 			set { this.listView.Items = value; }

@@ -447,7 +447,10 @@ namespace zeroflag.Serialization
 						if ( inner != null && !desc.Inner.Contains( inner ) )
 							desc.Inner.Add( inner );
 						if ( inner == null )
-							Console.WriteLine( "inner is null" );
+						{
+							CWL( "Cannot find property: " + subName + ", " + subType + ", " + subTypeName );
+							continue;
+						}
 
 						if ( subName != null )
 							inner.Name = subName;

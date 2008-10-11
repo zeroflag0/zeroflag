@@ -82,6 +82,9 @@
       <DependentUpon>DebugForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Reflected\Filtering.cs" />
+    <Compile Include="Forms\Reflected\IListView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="Forms\Reflected\ListEditor.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -99,6 +102,12 @@
     </Compile>
     <Compile Include="Forms\Reflected\ListView.Designer.cs">
       <DependentUpon>ListView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Reflected\ListView0.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Reflected\ListView0.Designer.cs">
+      <DependentUpon>ListView0.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Reflected\ListViewItem.cs" />
     <Compile Include="Forms\Reflected\PropertyDescription.cs" />
