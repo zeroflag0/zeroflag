@@ -1,7 +1,7 @@
 ﻿using System;
 namespace zeroflag.Forms.Reflected
 {
-	interface IListView
+	public interface IListView
 	{
 		System.Windows.Forms.ListView Control { get; }
 		event Action<object> ItemAdded;
@@ -14,41 +14,41 @@ namespace zeroflag.Forms.Reflected
 		TypeDescription TypeDescription { get; set; }
 	}
 
-	public abstract class ListViewControlBase : System.Windows.Forms.UserControl, IListView
+	public abstract class ListViewControlBase : System.Windows.Forms.UserControl//, IListView
 	{
 		#region IListView Members
 
-		public abstract System.Windows.Forms.ListView Control
-		{
-			get;
-		}
+		//public abstract System.Windows.Forms.ListView Control
+		//{
+		//    get;
+		//}
 
-		public abstract event Action<object> ItemAdded;
+		//public abstract event Action<object> ItemAdded;
 
-		public abstract event Action<object> ItemDeselected;
+		//public abstract event Action<object> ItemDeselected;
 
-		public abstract event Action<object> ItemSelected;
+		//public abstract event Action<object> ItemSelected;
 
-		public abstract event Action<object> ItemRemoved;
+		//public abstract event Action<object> ItemRemoved;
 
-		public abstract System.Collections.ICollection Items
-		{
-			get;
-			set;
-		}
+		//public abstract System.Collections.ICollection Items
+		//{
+		//    get;
+		//    set;
+		//}
 
-		public abstract System.Collections.ICollection SelectedItems
-		{
-			get;
-		}
+		//public abstract System.Collections.ICollection SelectedItems
+		//{
+		//    get;
+		//}
 
-		public abstract void Synchronize();
+		//public abstract void Synchronize();
 
-		public abstract TypeDescription TypeDescription
-		{
-			get;
-			set;
-		}
+		//public abstract TypeDescription TypeDescription
+		//{
+		//    get;
+		//    set;
+		//}
 
 		#endregion
 	}
