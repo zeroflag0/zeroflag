@@ -17,6 +17,7 @@ namespace zeroflag.Forms.Reflected
 			//this.Synchronize();
 
 			//new zeroflag.Forms.DebugForm(AppDomain.CurrentDomain.GetAssemblies());
+			this.Control.Sorting = SortOrder.Ascending;
 			this.Control.SelectedIndexChanged += new EventHandler( ListViewControl_SelectedIndexChanged );
 		}
 
@@ -610,6 +611,18 @@ namespace zeroflag.Forms.Reflected
 			get
 			{
 				return (System.Collections.ICollection)this.SelectedItems;
+			}
+		}
+
+		public SortOrder Sorting
+		{
+			get
+			{
+				return this.Control.Sorting;
+			}
+			set
+			{
+				this.Control.Sorting = value;
 			}
 		}
 

@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace zeroflag.Forms.Reflected
 {
-	public partial class ListViewMagic : UserControl
+	public partial class ListViewMagic : UserControl, IListView
 	{
 		public ListViewMagic()
 		{
@@ -84,20 +84,27 @@ namespace zeroflag.Forms.Reflected
 				{
 					if ( value != null )
 					{
-						if ( !typeof( ICollection<> ).IsAssignableFrom( value.GetType() ) )
+						Type type = value.GetType();
+						Type generic = type.GetGenericTypeDefinition();
+						bool isCollection = false;
+						foreach ( var intf in generic.GetInterfaces() )
+						{
+							if ( intf.Name.Contains( "ICollection" ) && intf.IsGenericType )
+								isCollection = true;
+						}
+						if ( !isCollection )
 						{
 							throw new ArgumentException( "The collection passed to this ListView does not implement ICollection<> (" + value.GetType() + ")" );
 						}
 						else
 						{
 							Type itemtype = null;
-							Type type = value.GetType();
 							foreach ( var prop in type.GetProperties() )
 							{
 								var paras = prop.GetIndexParameters();
 								if ( paras != null && paras.Length == 1 )
 								{
-									itemtype = paras[ 0 ].ParameterType;
+									itemtype = prop.PropertyType;
 								}
 							}
 							if ( itemtype == null )
@@ -107,6 +114,8 @@ namespace zeroflag.Forms.Reflected
 						}
 					}
 					_Items = value;
+					if ( this.SpecializedView != null )
+						( (IListView)this.SpecializedView ).Items = (System.Collections.ICollection)this.Items;
 				}
 			}
 		}
@@ -137,8 +146,13 @@ namespace zeroflag.Forms.Reflected
 			{
 				if ( this.ItemType == null )
 					return null;
-				ListViewControlBase view = (ListViewControlBase)zeroflag.Reflection.TypeHelper.CreateInstance( typeof( ListView<> ), this.ItemType );
-
+				ListViewControlBase view = _SpecializedView = (ListViewControlBase)zeroflag.Reflection.TypeHelper.CreateInstance( typeof( ListView<> ), this.ItemType );
+				var list = ( (IListView)this.SpecializedView );
+				list.ItemAdded += new Action<object>( SpecializedViewItemAdded );
+				list.ItemRemoved += new Action<object>( SpecializedViewItemRemoved );
+				list.ItemSelected += new Action<object>( SpecializedViewItemSelected );
+				list.ItemDeselected += new Action<object>( SpecializedViewItemDeselected );
+				list.Sorting = this.Sorting;
 				try
 				{
 					this.SuspendLayout();
@@ -150,12 +164,146 @@ namespace zeroflag.Forms.Reflected
 				{
 					this.ResumeLayout();
 				}
+				( (IListView)this.SpecializedView ).Items = (System.Collections.ICollection)this.Items;
 
 				return view;
 			}
 		}
 
+		void SpecializedViewItemDeselected( object obj )
+		{
+			if ( this._ItemDeselected != null )
+				this._ItemDeselected( obj );
+		}
+
+		void SpecializedViewItemSelected( object obj )
+		{
+			if ( this._ItemSelected != null )
+				this._ItemSelected( obj );
+		}
+
+		void SpecializedViewItemRemoved( object obj )
+		{
+			if ( this._ItemRemoved != null )
+				this._ItemRemoved( obj );
+		}
+
+		void SpecializedViewItemAdded( object obj )
+		{
+			if ( this._ItemAdded != null )
+				this._ItemAdded( obj );
+		}
+
 		#endregion SpecializedView
 
+
+		public void Synchronize()
+		{
+			( (IListView)this.SpecializedView ).Synchronize();
+		}
+
+		#region IListView Members
+
+		//public ListView Control
+		//{
+		//    get { return ( (IListView)this.SpecializedView ).Control; }
+		//}
+
+		event Action<object> _ItemAdded;
+
+		public event Action<object> ItemAdded
+		{
+			add { _ItemAdded += value; }
+			remove { _ItemAdded -= value; }
+		}
+
+		event Action<object> _ItemRemoved;
+
+		public event Action<object> ItemRemoved
+		{
+			add { _ItemRemoved += value; }
+			remove { _ItemRemoved -= value; }
+		}
+
+		event Action<object> _ItemDeselected;
+
+		public event Action<object> ItemDeselected
+		{
+			add { _ItemDeselected += value; }
+			remove { _ItemDeselected -= value; }
+		}
+
+		event Action<object> _ItemSelected;
+
+		public event Action<object> ItemSelected
+		{
+			add { _ItemSelected += value; }
+			remove { _ItemSelected -= value; }
+		}
+
+		public System.Collections.ICollection SelectedItems
+		{
+			get { return ( (IListView)this.SpecializedView ).SelectedItems; }
+		}
+
+		//public TypeDescription TypeDescription
+		//{
+		//    get
+		//    {
+		//        return ( (IListView)this.SpecializedView ).TypeDescription;
+		//    }
+		//    set
+		//    {
+		//        ( (IListView)this.SpecializedView ).TypeDescription = value;
+		//    }
+		//}
+
+		#endregion
+
+		#region IListView Members
+
+
+		System.Collections.ICollection IListView.Items
+		{
+			get
+			{
+				return this.Items as System.Collections.ICollection;
+			}
+			set
+			{
+				this.Items = value;
+			}
+		}
+
+		#endregion
+
+		#region IListView Members
+
+		SortOrder _Sorting;
+		public SortOrder Sorting
+		{
+			get
+			{
+				try
+				{
+					return _Sorting = ( (IListView)this.SpecializedView ).Sorting;
+				}
+				catch
+				{
+					return _Sorting;
+				}
+			}
+			set
+			{
+				_Sorting = value;
+				try
+				{
+					( (IListView)this.SpecializedView ).Sorting = _Sorting;
+				}
+				catch { }
+			}
+		}
+
+		#endregion
 	}
 }

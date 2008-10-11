@@ -3,7 +3,12 @@ namespace zeroflag.Forms.Reflected
 {
 	public interface IListView
 	{
-		System.Windows.Forms.ListView Control { get; }
+		//System.Windows.Forms.ListView Control { get; }
+
+		/// <summary>
+		/// Gets or sets the sort order for items in the control.
+		/// </summary>
+		System.Windows.Forms.SortOrder Sorting { get; set; }
 		event Action<object> ItemAdded;
 		event Action<object> ItemDeselected;
 		event Action<object> ItemSelected;
@@ -11,7 +16,7 @@ namespace zeroflag.Forms.Reflected
 		System.Collections.ICollection Items { get; set; }
 		System.Collections.ICollection SelectedItems { get; }
 		void Synchronize();
-		TypeDescription TypeDescription { get; set; }
+		//TypeDescription TypeDescription { get; set; }
 	}
 
 	public abstract class ListViewControlBase : System.Windows.Forms.UserControl//, IListView
