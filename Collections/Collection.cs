@@ -9,9 +9,7 @@ namespace zeroflag.Collections
 	[System.ComponentModel.TypeConverter( typeof( System.ComponentModel.CollectionConverter ) )]
 	public class Collection<T>
 		: List<T>
-		, System.Collections.IList
 		, System.Collections.Generic.IList<T>
-		, System.Collections.ICollection
 		, System.ICloneable
 	{
 		//private zeroflag.Collections.List<T> _Items = new zeroflag.Collections.List<T>();
@@ -139,32 +137,6 @@ namespace zeroflag.Collections
 
 		#endregion System.Collections.Generic.IList`1
 
-
-		#region System.Collections.ICollection
-
-		public virtual System.Object SyncRoot
-		{
-			get { return null; }
-		}
-
-		public virtual bool IsSynchronized
-		{
-			get { return false; }
-		}
-
-		#endregion System.Collections.ICollection
-
-
-		#region System.Collections.IList
-
-		public virtual bool IsFixedSize
-		{
-			get { return false; }
-		}
-
-		#endregion System.Collections.IList
-
-
 		#region System.ICloneable
 
 		public virtual System.Object Clone()
@@ -188,84 +160,6 @@ namespace zeroflag.Collections
 		}
 
 		#endregion System.ICloneable
-
-		#region Searching
-
-		/// <summary>
-		/// Searches for an element that matches the conditions defined by the specified
-		/// predicate, and returns the first occurrence within the entire System.Collections.Generic.List<T>.
-		/// </summary>
-		/// <param name="match">The System.Predicate<T> delegate that defines the conditions of the element to search for.</param>
-		/// <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type T.</returns>
-		public T Find( Predicate<T> match )
-		{
-			return base.Find( match );
-		}
-
-		/// <summary>
-		/// Retrieves all the elements that match the conditions defined by the specified predicate.
-		/// </summary>
-		/// <param name="match">The System.Predicate<T> delegate that defines the conditions of the elements to search for.</param>
-		/// <returns>A System.Collections.Generic.List<T> containing all the elements that match the conditions defined by the specified predicate, if found; otherwise, an empty System.Collections.Generic.List<T>.</returns>
-		public List<T> FindAll( Predicate<T> match )
-		{
-			return base.FindAll( match );
-		}
-
-		#endregion
-
-
-		#region IList Members
-
-		public int Add( object value )
-		{
-			T item = (T)value;
-			this.Add( item );
-			return this.IndexOf( item );
-		}
-
-		public bool Contains( object value )
-		{
-			return this.Contains( (T)value );
-		}
-
-		public int IndexOf( object value )
-		{
-			return this.IndexOf( (T)value );
-		}
-
-		public void Insert( int index, object value )
-		{
-			this.Insert( index, (T)value );
-		}
-
-		public void Remove( object value )
-		{
-			this.Remove( (T)value );
-		}
-
-		object System.Collections.IList.this[ int index ]
-		{
-			get
-			{
-				return this[ index ];
-			}
-			set
-			{
-				this[ index ] = (T)value;
-			}
-		}
-
-		#endregion
-
-		#region ICollection Members
-
-		public void CopyTo( Array array, int index )
-		{
-			this.CopyTo( (T[])array, index );
-		}
-
-		#endregion
 
 		#region IEnumerable<T> Members
 
@@ -299,45 +193,5 @@ namespace zeroflag.Collections
 			: base( list )
 		{
 		}
-
-		#region Sort
-		/// <summary>
-		/// Sorts the elements in the entire System.Collections.Generic.List<T> using the default comparer.
-		/// </summary>
-		public virtual void Sort()
-		{
-			this.Items.Sort();
-		}
-
-		/// <summary>
-		/// Sorts the elements in the entire System.Collections.Generic.List<T> using the specified System.Comparison<T>.
-		/// </summary>
-		/// <param name="comparison">The System.Comparison<T> to use when comparing elements.</param>
-		public void Sort( Comparison<T> comparison )
-		{
-			this.Items.Sort( comparison );
-		}
-
-		/// <summary>
-		/// Sorts the elements in the entire System.Collections.Generic.List<T> using the specified comparer.
-		/// </summary>
-		/// <param name="comparer">The System.Collections.Generic.IComparer<T> implementation to use when comparing elements, or null to use the default comparer System.Collections.Generic.Comparer<T>.Default.</param>
-		public void Sort( IComparer<T> comparer )
-		{
-			this.Items.Sort( comparer );
-		}
-
-
-		/// <summary>
-		/// Sorts the elements in a range of elements in System.Collections.Generic.List<T> using the specified comparer.
-		/// </summary>
-		/// <param name="index">The zero-based starting index of the range to sort.</param>
-		/// <param name="count">The length of the range to sort.</param>
-		/// <param name="comparer">The System.Collections.Generic.IComparer<T> implementation to use when comparing elements, or null to use the default comparer System.Collections.Generic.Comparer<T>.Default.</param>
-		public void Sort( int index, int count, IComparer<T> comparer )
-		{
-			this.Items.Sort( index, count, comparer );
-		}
-		#endregion Sort
 	}
 }

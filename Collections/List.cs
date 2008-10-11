@@ -33,7 +33,10 @@ using System.Text;
 namespace zeroflag.Collections
 {
 	[Serializable]
-	public class List<T> : IList<T>
+	public class List<T>
+		: IList<T>,
+		System.Collections.ICollection,
+		System.Collections.IList
 	{
 		#region Constructors
 		public List()
@@ -393,6 +396,73 @@ namespace zeroflag.Collections
 
 		#endregion System.Collections.Generic.IEnumerable`1
 
+
+		#region ICollection Members
+
+		void System.Collections.ICollection.CopyTo( Array array, int index )
+		{
+			this.CopyTo( (T[])array, index );
+		}
+
+		bool System.Collections.ICollection.IsSynchronized
+		{
+			get { return false; }
+		}
+
+		object System.Collections.ICollection.SyncRoot
+		{
+			get { return null; }
+		}
+
+		#endregion
+
+		#region IList Members
+
+		int System.Collections.IList.Add( object value )
+		{
+			T item = (T)value;
+			this.Add( item );
+			return this.IndexOf( item );
+		}
+
+		bool System.Collections.IList.Contains( object value )
+		{
+			return this.Contains( (T)value );
+		}
+
+		int System.Collections.IList.IndexOf( object value )
+		{
+			return this.IndexOf( (T)value );
+		}
+
+		void System.Collections.IList.Insert( int index, object value )
+		{
+			this.Insert( index, (T)value );
+		}
+
+		void System.Collections.IList.Remove( object value )
+		{
+			this.Remove( (T)value );
+		}
+
+		object System.Collections.IList.this[ int index ]
+		{
+			get
+			{
+				return this[ index ];
+			}
+			set
+			{
+				this[ index ] = (T)value;
+			}
+		}
+
+		bool System.Collections.IList.IsFixedSize
+		{
+			get { return false; }
+		}
+
+		#endregion
 	}
 
 }
