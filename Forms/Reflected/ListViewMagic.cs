@@ -9,9 +9,9 @@ using System.Windows.Forms;
 
 namespace zeroflag.Forms.Reflected
 {
-	public partial class ListView : UserControl
+	public partial class ListViewMagic : UserControl
 	{
-		public ListView()
+		public ListViewMagic()
 		{
 			InitializeComponent();
 		}
@@ -70,12 +70,12 @@ namespace zeroflag.Forms.Reflected
 
 		#region Items
 
-		private System.Collections.ICollection _Items;
+		private object _Items;
 
 		/// <summary>
-		/// The item-collection for this view.
+		/// The item-collection for this view. (must be derived from zeroflag.Collections.List)
 		/// </summary>
-		public System.Collections.ICollection Items
+		public object Items
 		{
 			get { return _Items; }
 			set
