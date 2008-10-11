@@ -137,7 +137,7 @@ namespace zeroflag.Forms.Reflected
 			{
 				if ( this.ItemType == null )
 					return null;
-				ListViewControlBase view = zeroflag.Reflection.TypeHelper.CreateInstance( typeof( ListView<> ), this.ItemType );
+				ListViewControlBase view = (ListViewControlBase)zeroflag.Reflection.TypeHelper.CreateInstance( typeof( ListView<> ), this.ItemType );
 
 				try
 				{
