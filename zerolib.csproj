@@ -103,13 +103,13 @@
     <Compile Include="Forms\Reflected\ListView.Designer.cs">
       <DependentUpon>ListView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Reflected\ListView0.cs">
+    <Compile Include="Forms\Reflected\ListViewItem.cs" />
+    <Compile Include="Forms\Reflected\ListViewMagic.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Forms\Reflected\ListView0.Designer.cs">
-      <DependentUpon>ListView0.cs</DependentUpon>
+    <Compile Include="Forms\Reflected\ListViewMagic.designer.cs">
+      <DependentUpon>ListViewMagic.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\Reflected\ListViewItem.cs" />
     <Compile Include="Forms\Reflected\PropertyDescription.cs" />
     <Compile Include="Forms\Reflected\PropertyTreeView.cs">
       <SubType>UserControl</SubType>
@@ -242,6 +242,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Reflected\ListView.resx">
       <DependentUpon>ListView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Reflected\ListViewMagic.resx">
+      <DependentUpon>ListViewMagic.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Reflected\PropertyTreeView.resx">
