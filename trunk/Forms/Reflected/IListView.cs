@@ -16,5 +16,40 @@ namespace zeroflag.Forms.Reflected
 
 	public abstract class ListViewControlBase : System.Windows.Forms.UserControl, IListView
 	{
+		#region IListView Members
+
+		public abstract System.Windows.Forms.ListView Control
+		{
+			get;
+		}
+
+		public abstract event Action<object> ItemAdded;
+
+		public abstract event Action<object> ItemDeselected;
+
+		public abstract event Action<object> ItemSelected;
+
+		public abstract event Action<object> ItemRemoved;
+
+		public abstract System.Collections.ICollection Items
+		{
+			get;
+			set;
+		}
+
+		public abstract System.Collections.ICollection SelectedItems
+		{
+			get;
+		}
+
+		public abstract void Synchronize();
+
+		public abstract TypeDescription TypeDescription
+		{
+			get;
+			set;
+		}
+
+		#endregion
 	}
 }

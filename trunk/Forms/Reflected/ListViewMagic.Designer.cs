@@ -1,6 +1,6 @@
 ﻿namespace zeroflag.Forms.Reflected
 {
-	partial class ListView
+	partial class ListViewMagic
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -28,8 +28,16 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			components = new System.ComponentModel.Container();
+			this.SuspendLayout();
+			// 
+			// ListView
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF( 6F, 13F );
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.BackColor = System.Drawing.SystemColors.Window;
+			this.Name = "ListView";
+			this.ResumeLayout( false );
+
 		}
 
 		#endregion
