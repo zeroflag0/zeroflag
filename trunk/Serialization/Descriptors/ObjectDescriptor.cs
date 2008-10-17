@@ -34,6 +34,13 @@ namespace zeroflag.Serialization.Descriptors
 {
 	public class ObjectDescriptor : Descriptor<object>
 	{
+		public override bool NeedsWriteAccess
+		{
+			get
+			{
+				return false;
+			}
+		}
 		public override void Parse()
 		{
 			//if ( this.Value == null )
