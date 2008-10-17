@@ -108,7 +108,15 @@ namespace zeroflag.Serialization.Descriptors
 									// we got ourselves a base descriptor... now we need to specialize it for our generic type...
 									if ( genericDescriptor.IsGenericType && !genericDescriptor.IsGenericTypeDefinition )
 										genericDescriptor = genericDescriptor.GetGenericTypeDefinition();
-									descriptor = TypeHelper.SpecializeType( genericDescriptor, generics );
+									try
+									{
+										//TODO: specialize inner generic type (KeyValuePair<,>)
+										descriptor = TypeHelper.SpecializeType( genericDescriptor, generics );
+									}
+									catch ( ArgumentException )
+									{
+										return descriptor = null;
+									}
 								}
 							}
 						}
@@ -430,7 +438,7 @@ namespace zeroflag.Serialization.Descriptors
 			System.Diagnostics.Debug.Assert( owner == null || info == null || type.IsValueType || !desc.NeedsWriteAccess || this.CanWrite( info, owner ),
 				"Property write inaccessible. type='" + type + "' instance='" + instance + "' owner='" + owner + "' " + name );
 
-			if ( this.CanRead( info, owner ) && ( desc.NeedsWriteAccess && !this.CanWrite( info, owner ) ) )
+			if ( instance == null && this.CanRead( info, owner ) )// && ( desc.NeedsWriteAccess && !this.CanWrite( info, owner ) ) )
 			{
 				instance = info.GetValue( owner, null );
 			}
@@ -451,10 +459,13 @@ namespace zeroflag.Serialization.Descriptors
 					CWL( "Suspending type reflection without value:" + desc );
 				}
 			}
+#if !NOCATCH
 			catch ( Exception exc )
 			{
 				this.Exceptions.Add( new ExceptionTrace( exc, desc, type, name ) );
 			}
+#endif
+			finally { }
 
 			if ( !type.IsValueType && type != typeof( string ) && desc.Value != null )
 			{
