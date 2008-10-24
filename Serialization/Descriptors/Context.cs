@@ -72,20 +72,20 @@ namespace zeroflag.Serialization.Descriptors
 			}
 		}
 
-		public Descriptor GetDescriptor( Type value, params Type[] generics )
+		public Descriptor GetDescriptor( Type value )
 		{
-			Descriptor desc = (Descriptor)TypeHelper.CreateInstance( GetDescriptorType( value, generics ), generics );
+			Descriptor desc = (Descriptor)TypeHelper.CreateInstance( GetDescriptorType( value ) );
 			desc.Context = this;
 			return desc;
 		}
-		public Type GetDescriptorType( Type value, params Type[] generics )
+		public Type GetDescriptorType( Type value )
 		{
 			if ( !DescriptorTypes.ContainsKey( value ) )
 				lock ( DescriptorTypes )
 				{
 					if ( !DescriptorTypes.ContainsKey( value ) )
 					{
-						CWL( "GetDescriptorType(" + value + ", " + generics + ")" );
+						CWL( "GetDescriptorType(" + value + ")" );
 						Type descriptor = null;
 						if ( value.IsGenericType )
 						// value type is generic...
@@ -93,18 +93,26 @@ namespace zeroflag.Serialization.Descriptors
 							if ( !value.IsGenericTypeDefinition )
 							// if the value type is specialized (e.g. not <T> but <int> or <string>)...
 							{
-								if ( generics.Length <= 0 )
-									// get the generic arguments...
-									generics = value.GetGenericArguments();
+								Type[] generics = value.GetGenericArguments();
 
 								// get the fully generic type definition... (e.g. get <T> instead of <int>)
 								Type genericValue = value.GetGenericTypeDefinition();
 
 								// search for any descriptor that fits the generic definition...
-								Type genericDescriptor = GetDescriptorType( genericValue, generics );
+								Type genericDescriptor = GetDescriptorType( genericValue );
 
 								if ( genericDescriptor != null && genericValue != null )
 								{
+									Type genericBaseDescriptor = genericDescriptor.GetBaseTypes().Find( t => t.IsGenericSimilar( typeof( Descriptor<> ) ) );
+									var genericBaseGenerics = genericBaseDescriptor.GetGenericArguments();
+									var specializedValues = value.GetBaseTypesAndInterfaces();
+
+									Type specializedValue = null;
+									specializedValue = specializedValues.Find( t => t.IsGenericSimilar( genericBaseGenerics[ 0 ] ) );
+
+									if ( specializedValue != null && !specializedValue.IsGenericTypeDefinition )
+										generics = specializedValue.GetGenericArguments();
+
 									// we got ourselves a base descriptor... now we need to specialize it for our generic type...
 									if ( genericDescriptor.IsGenericType && !genericDescriptor.IsGenericTypeDefinition )
 										genericDescriptor = genericDescriptor.GetGenericTypeDefinition();
@@ -115,7 +123,7 @@ namespace zeroflag.Serialization.Descriptors
 									}
 									catch ( ArgumentException )
 									{
-										return descriptor = null;
+										return descriptor = genericDescriptor;
 									}
 								}
 							}
@@ -125,9 +133,9 @@ namespace zeroflag.Serialization.Descriptors
 						// no suitable descriptor yet...
 						{
 							// scan base types...
-							if ( value.BaseType != null )
+							if ( value.BaseType != null && value.BaseType != typeof( object ) )
 							{
-								descriptor = GetDescriptorType( value.BaseType, generics );
+								descriptor = GetDescriptorType( value.BaseType );
 							}
 						}
 
@@ -137,7 +145,7 @@ namespace zeroflag.Serialization.Descriptors
 							// scan interfaces...
 							foreach ( Type interf in value.GetInterfaces() )
 							{
-								descriptor = GetDescriptorType( interf, generics );
+								descriptor = GetDescriptorType( interf );
 								if ( descriptor == null || descriptor == typeof( ObjectDescriptor ) )
 									continue;
 								else
