@@ -133,6 +133,12 @@ namespace zeroflag.Threading
 
 		#endregion IsEmpty
 
+		public virtual void Clear()
+		{
+			this._Last = null;
+			this._First = null;
+			this._ReadLast = null;
+		}
 
 		/// <summary>
 		/// Write one value to the queue. This method may be used simultaneously by multiple threads.
