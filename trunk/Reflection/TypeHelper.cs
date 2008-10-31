@@ -236,12 +236,12 @@ namespace zeroflag
 				//if (baseType.IsGenericType)
 				//    baseType = baseType.GetGenericTypeDefinition();
 
-				if ( !Derived.ContainsKey( baseType ) || Derived[ baseType ] == null )
+				if ( !Derived.ContainsKey( baseType ) || Derived[baseType] == null )
 					lock ( Derived )
 						// check if the type was already parsed...
-						if ( !Derived.ContainsKey( baseType ) || Derived[ baseType ] == null )
+						if ( !Derived.ContainsKey( baseType ) || Derived[baseType] == null )
 						{
-							Derived[ baseType ] = new List<Type>();
+							Derived[baseType] = new List<Type>();
 
 							//TODO: ScanAssemblies(baseType.Assembly);
 							//ScanAssemblies(AppDomain.CurrentDomain.GetAssemblies());
@@ -255,12 +255,12 @@ namespace zeroflag
 									//    type = type.GetGenericTypeDefinition();
 									if ( type != null && ( baseType.IsAssignableFrom( type ) || type.IsSubclassOf( baseType ) || IsDerived( baseType, type.BaseType ) ) )
 									{
-										Derived[ baseType ].Add( type );
+										Derived[baseType].Add( type );
 									}
 								}
 							}
 						}
-				return Derived[ baseType ];
+				return Derived[baseType];
 			}
 
 			public static bool IsDerived( System.Type baseType, System.Type type )
@@ -319,7 +319,7 @@ namespace zeroflag
 					return null;
 				Type type = null;
 				if ( TypeNames.ContainsKey( name ) )
-					type = TypeNames[ name ];
+					type = TypeNames[name];
 				else
 				{
 					foreach ( System.Reflection.Assembly ass in AppDomain.CurrentDomain.GetAssemblies() )

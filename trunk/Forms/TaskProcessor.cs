@@ -20,11 +20,13 @@ namespace zeroflag.Forms
 			InitializeComponent();
 		}
 
+		bool _Cancel = false;
 		public bool Cancel
 		{
-			get { return this.backgroundWorker.CancellationPending; }
+			get { return _Cancel || this.backgroundWorker.CancellationPending; }
 			set
 			{
+				_Cancel = value;
 				if ( value )
 				{
 					this.Tasks.Clear();
@@ -39,6 +41,29 @@ namespace zeroflag.Forms
 		{
 			get { return this.backgroundWorker.IsBusy; }
 		}
+
+		#region Name
+
+		private string _Name;
+
+		/// <summary>
+		/// This taskprocessor's name (optional).
+		/// </summary>
+		public string Name
+		{
+			get { return _Name; }
+			set
+			{
+				if ( _Name != value )
+				{
+					_Name = value;
+					this.Add( () => System.Threading.Thread.CurrentThread.Name = value );
+				}
+			}
+		}
+
+		#endregion Name
+
 
 		#region Tasks
 		public void Add( Action task )
@@ -102,24 +127,53 @@ namespace zeroflag.Forms
 
 		#endregion Tasks
 
+		#region IdleThreadTimeout
+
+		private TimeSpan _IdleThreadTimeout = TimeSpan.FromSeconds( 2.0 );
+
+		/// <summary>
+		/// Time after which the worker thread gets suspended (leaves active waiting).
+		/// </summary>
+		public TimeSpan IdleThreadTimeout
+		{
+			get { return _IdleThreadTimeout; }
+			set
+			{
+				if ( _IdleThreadTimeout != value )
+				{
+					_IdleThreadTimeout = value;
+				}
+			}
+		}
+
+		#endregion IdleThreadTimeout
+
+
 		System.Threading.AutoResetEvent _wait = new System.Threading.AutoResetEvent( false );
+		DateTime _LastWork;
 		void backgroundWorker_DoWork( object sender, DoWorkEventArgs e )
 		{
-			//Console.WriteLine( "TaskProcessor started..." );
+			Console.WriteLine( "TaskProcessor(" + this.Name + ") started..." );
 			while ( /*this.Tasks.Count > 0 && */!this.Cancel )
 			{
 				if ( this.Tasks.Count > 0 )
 				{
-					if ( this.Tasks[ 0 ] != null )
-						this.Tasks[ 0 ]();
+					_LastWork = DateTime.Now;
+					if ( this.Tasks[0] != null )
+						this.Tasks[0]();
 					this.Tasks.RemoveAt( 0 );
 				}
 				else
 				{
+					if ( DateTime.Now - _LastWork > this.IdleThreadTimeout )
+					{
+						Console.WriteLine( "TaskProcessor(" + this.Name + ") idle timeout." );
+						return;
+					}
 					this._wait.WaitOne( 200, true );
 				}
 			}
-			//Console.WriteLine( "TaskProcessor halted." );
+			Console.WriteLine( "TaskProcessor(" + this.Name + ") halted." );
 		}
 
 	}
