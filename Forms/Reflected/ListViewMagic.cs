@@ -85,37 +85,56 @@ namespace zeroflag.Forms.Reflected
 					if ( value != null )
 					{
 						Type type = value.GetType();
-						Type generic = type.GetGenericTypeDefinition();
-						bool isCollection = false;
-						foreach ( var intf in generic.GetInterfaces() )
+						if ( type.IsGenericType )
 						{
-							if ( intf.Name.Contains( "ICollection" ) && intf.IsGenericType )
-								isCollection = true;
+							bool isCollection = false;
+							Type generic = type.GetGenericTypeDefinition();
+							foreach ( var intf in generic.GetInterfaces() )
+							{
+								if ( intf.Name.Contains( "ICollection" ) && intf.IsGenericType )
+									isCollection = true;
+							}
+							if ( !isCollection )
+							{
+								throw new ArgumentException( "The collection passed to this ListView does not implement ICollection<> (" + value.GetType() + ")" );
+							}
+							else
+							{
+								Type itemtype = null;
+								foreach ( var prop in type.GetProperties() )
+								{
+									var paras = prop.GetIndexParameters();
+									if ( paras != null && paras.Length == 1 )
+									{
+										itemtype = prop.PropertyType;
+									}
+								}
+								if ( itemtype == null )
+									throw new ArgumentException( "Cannot find the itemtype on collection (" + value.GetType() + ")" );
+								_Items = value;
+								this.ItemType = itemtype;
+							}
 						}
-						if ( !isCollection )
+						else if ( type.IsArray )
 						{
-							throw new ArgumentException( "The collection passed to this ListView does not implement ICollection<> (" + value.GetType() + ")" );
+							Type itemtype = type.GetElementType();
+							if ( itemtype == null )
+								throw new ArgumentException( "Cannot find the itemtype on collection (" + value.GetType() + ")" );
+							Type listtype = typeof( zeroflag.Collections.List<> ).Specialize( itemtype );
+							object list = listtype.CreateInstance();
+							var addrange = listtype.GetMethod( "AddRange", new Type[] { type } );
+							addrange.Invoke( list, new object[] { value } );
+							_Items = list;
+							this.ItemType = itemtype;
 						}
 						else
 						{
-							Type itemtype = null;
-							foreach ( var prop in type.GetProperties() )
-							{
-								var paras = prop.GetIndexParameters();
-								if ( paras != null && paras.Length == 1 )
-								{
-									itemtype = prop.PropertyType;
-								}
-							}
-							if ( itemtype == null )
-								throw new ArgumentException( "Cannot find the itemtype on collection (" + value.GetType() + ")" );
-							_Items = value;
-							this.ItemType = itemtype;
+							throw new ArgumentException( "Cannot interpret as any suitable collection (" + value.GetType() + ")" );
 						}
 					}
-					_Items = value;
-					if ( this.SpecializedView != null )
-						( (IListView)this.SpecializedView ).Items = (System.Collections.ICollection)this.Items;
+					//_Items = value;
+					//if ( this.SpecializedView != null )
+					//    ( (IListView)this.SpecializedView ).Items = (System.Collections.ICollection)this.Items;
 				}
 			}
 		}

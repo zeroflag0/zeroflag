@@ -14,6 +14,7 @@
 		protected override void Dispose( bool disposing )
 		{
 			this.Cancel = true;
+			this.OnDispose();
 			if ( disposing && ( components != null ) )
 			{
 				components.Dispose();
