@@ -27,13 +27,13 @@ namespace zeroflag.Forms
 			set
 			{
 				_Cancel = value;
-				if ( value )
-				{
-					this.Tasks.Clear();
-					this.backgroundWorker.CancelAsync();
-				}
-				else
-					this.backgroundWorker.RunWorkerAsync();
+				//if ( value )
+				//{
+				//    this.Tasks.Clear();
+				//    this.backgroundWorker.CancelAsync();
+				//}
+				//else
+				//this.backgroundWorker.RunWorkerAsync();
 			}
 		}
 
@@ -64,6 +64,32 @@ namespace zeroflag.Forms
 
 		#endregion Name
 
+		#region event ErrorHandling
+		public delegate void ErrorHandlingHandler( Action task, Exception exc );
+
+		private event ErrorHandlingHandler _ErrorHandling;
+		/// <summary>
+		/// When an error occurs during task execution.
+		/// </summary>
+		public event ErrorHandlingHandler ErrorHandling
+		{
+			add { this._ErrorHandling += value; }
+			remove { this._ErrorHandling -= value; }
+		}
+		/// <summary>
+		/// Call to raise the ErrorHandling event:
+		/// When an error occurs during task execution.
+		/// </summary>
+		protected virtual void OnErrorHandling( Action task, Exception exc )
+		{
+			// if there are event subscribers...
+			if ( this._ErrorHandling != null )
+			{
+				// call them...
+				this._ErrorHandling( task, exc );
+			}
+		}
+		#endregion event ErrorHandling
 
 		#region Tasks
 		public void Add( Action task )
@@ -117,7 +143,7 @@ namespace zeroflag.Forms
 				var list = new zeroflag.Collections.List<Action>() { };
 				list.ItemAdded += item =>
 				{
-					if ( !this.backgroundWorker.IsBusy )
+					if ( !this.backgroundWorker.IsBusy || _Working < 1 )
 						this.backgroundWorker.RunWorkerAsync();
 					_wait.Set();
 				};
@@ -150,31 +176,67 @@ namespace zeroflag.Forms
 
 
 		System.Threading.AutoResetEvent _wait = new System.Threading.AutoResetEvent( false );
-		DateTime _LastWork;
+		DateTime _LastWork = DateTime.Now;
+		int _Working = 0;
 		void backgroundWorker_DoWork( object sender, DoWorkEventArgs e )
 		{
-			Console.WriteLine( "TaskProcessor(" + this.Name + ") started..." );
-			while ( /*this.Tasks.Count > 0 && */!this.Cancel )
+			try
 			{
-				if ( this.Tasks.Count > 0 )
+				Action current;
+				System.Threading.Interlocked.Increment( ref _Working );
+				if ( _Working > 1 )
+					return;
+				Console.WriteLine( "TaskProcessor(" + this.Name + ") started..." );
+				while ( !this.Cancel || this.Tasks.Count > 0 )
 				{
-					_LastWork = DateTime.Now;
-					if ( this.Tasks[0] != null )
-						this.Tasks[0]();
-					this.Tasks.RemoveAt( 0 );
-				}
-				else
-				{
-					if ( DateTime.Now - _LastWork > this.IdleThreadTimeout )
+					if ( this.Tasks.Count > 0 )
 					{
-						Console.WriteLine( "TaskProcessor(" + this.Name + ") idle timeout." );
-						return;
+						_LastWork = DateTime.Now;
+						current = this.Tasks[0];
+						if ( current != null )
+						{
+							try
+							{
+								current();
+							}
+							catch ( Exception exc )
+							{
+								this.OnErrorHandling( current, exc );
+							}
+						}
+						this.Tasks.RemoveAt( 0 );
 					}
-					this._wait.WaitOne( 200, true );
+					else
+					{
+						if ( DateTime.Now - _LastWork > this.IdleThreadTimeout && !this.Cancel )
+						{
+							Console.WriteLine( "TaskProcessor(" + this.Name + ") idle timeout." );
+							this._wait.WaitOne( 180000, true );
+							Console.WriteLine( "TaskProcessor(" + this.Name + ") resuming..." );
+							//return;
+						}
+						else
+							this._wait.WaitOne( 200, true );
+					}
 				}
+				Console.WriteLine( "TaskProcessor(" + this.Name + ") halted." );
 			}
-			Console.WriteLine( "TaskProcessor(" + this.Name + ") halted." );
+			finally
+			{
+				System.Threading.Interlocked.Decrement( ref _Working );
+			}
 		}
+
+		protected virtual void OnDispose()
+		{
+			this.Cancel = true;
+			while ( this.backgroundWorker.IsBusy && _Working > 0 )
+			{
+				_wait.Set();
+				System.Threading.Thread.Sleep( 50 );
+			}
+		}
+
 
 	}
 }
