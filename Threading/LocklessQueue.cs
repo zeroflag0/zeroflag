@@ -158,8 +158,10 @@ namespace zeroflag.Threading
 				Interlocked.Exchange<Node>( ref last.Next, node );
 			}
 			else
+			{
 				// if there wasn't a last node before, the new node is also the first node...
 				Interlocked.Exchange<Node>( ref _First, node );
+			}
 		}
 
 		Node _ReadLast;
@@ -170,7 +172,7 @@ namespace zeroflag.Threading
 		/// <returns></returns>
 		public virtual T Read()
 		{
-			if ( First != null )	// <-- this check is crucial as First{get;} also corrects race-conditions in _First
+			if ( this.First != null )	// <-- this check is crucial as First{get;} also corrects race-conditions in _First
 				return ( _ReadLast = Interlocked.Exchange<Node>( ref _First, _First.Next ) ).Value;
 			else
 				return default( T );
