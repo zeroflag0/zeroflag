@@ -92,7 +92,7 @@ namespace zeroflag.Forms.Reflected
 
 			this.taskProcessor.Tasks.Add( new Action( () =>
 			{
-				List<Type> types = zeroflag.Reflection.TypeHelper.GetDerived( typeof( T ) );
+				var types = zeroflag.Reflection.TypeHelper.GetDerived( typeof( T ) );
 				foreach ( var type in types )
 				{
 					if ( type.IsAbstract || type.IsInterface )

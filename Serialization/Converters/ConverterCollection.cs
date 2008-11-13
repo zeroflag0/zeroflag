@@ -13,7 +13,7 @@ namespace zeroflag.Serialization.Converters
 			{
 				_Converters = new Dictionary<Type, Dictionary<Type, Converter>>();
 
-				List<Type> types = TypeHelper.GetDerived(typeof(Converter<,>));
+				var types = TypeHelper.GetDerived(typeof(Converter<,>));
 
 				foreach (Type type in types)
 				{

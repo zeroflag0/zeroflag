@@ -171,7 +171,7 @@ namespace zeroflag.Collections
 		public virtual void Clear()
 		{
 			while ( this.Count > 0 )
-				this.Remove( this[ 0 ] );
+				this.Remove( this[0] );
 			this.Items.Clear();
 		}
 
@@ -226,34 +226,34 @@ namespace zeroflag.Collections
 
 		public virtual void RemoveAt( int index )
 		{
-			this.Remove( this[ index ] );
+			this.Remove( this[index] );
 		}
 
-		public virtual T this[ int index ]
+		public virtual T this[int index]
 		{
-			get { return this.Items[ index ]; }
+			get { return this.Items[index]; }
 			set
 			{
-				T old = this.Items[ index ];
+				T old = this.Items[index];
 				if ( object.ReferenceEquals( null, old ) || object.ReferenceEquals( null, value ) ||
 					old.Equals( value ) )
 				{
-					this.Items[ index ] = value;
+					this.Items[index] = value;
 					this.OnItemRemoved( old );
 					this.OnItemChanged( old, value );
 					this.OnItemAdded( value );
 				}
 			}
 		}
-		public virtual T[] this[ int start, int end ]
+		public virtual T[] this[int start, int end]
 		{
 			get
 			{
-				return this[ start, end, 1 ];
+				return this[start, end, 1];
 			}
 		}
 
-		public virtual T[] this[ int start, int end, int step ]
+		public virtual T[] this[int start, int end, int step]
 		{
 			get
 			{
@@ -263,7 +263,7 @@ namespace zeroflag.Collections
 					start = this.Count + start;
 				if ( start > end && step > 0 )
 					step = -step;
-				T[] value = new T[ ( end - start ) / step ];
+				T[] value = new T[( end - start ) / step];
 				if ( step == 1 )
 				{
 					this.CopyTo( value, 0 );
@@ -271,7 +271,7 @@ namespace zeroflag.Collections
 				else
 				{
 					for ( int i = start, j = 0; j < value.Length; i += step, j++ )
-						value[ j ] = this[ i ];
+						value[j] = this[i];
 				}
 				return value;
 			}
@@ -323,6 +323,28 @@ namespace zeroflag.Collections
 			{
 				return default( S );
 			}
+		}
+
+		/// <summary>
+		/// Retrieves all the elements that match the the type specified.
+		/// </summary>
+		/// <param name="match">The System.Predicate<T> delegate that defines the conditions of the elements to search for.</param>
+		/// <returns>A System.Collections.Generic.List<T> containing all the elements that match the conditions defined by the specified predicate, if found; otherwise, an empty System.Collections.Generic.List<T>.</returns>
+		public List<S> FindAll<S>()
+			where S : T
+		{
+			var results = new List<S>();
+			foreach ( T val in this.Items.FindAll( m => m != null && typeof( S ).IsAssignableFrom( m.GetType() ) ) )
+			{
+				try
+				{
+					results.Add( (S)val );
+				}
+				catch ( InvalidCastException )
+				{
+				}
+			}
+			return results;
 		}
 
 		#endregion
@@ -445,15 +467,15 @@ namespace zeroflag.Collections
 			this.Remove( (T)value );
 		}
 
-		object System.Collections.IList.this[ int index ]
+		object System.Collections.IList.this[int index]
 		{
 			get
 			{
-				return this[ index ];
+				return this[index];
 			}
 			set
 			{
-				this[ index ] = (T)value;
+				this[index] = (T)value;
 			}
 		}
 

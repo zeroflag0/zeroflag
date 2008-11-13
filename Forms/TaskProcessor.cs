@@ -144,7 +144,20 @@ namespace zeroflag.Forms
 				list.ItemAdded += item =>
 				{
 					if ( !this.backgroundWorker.IsBusy || _Working < 1 )
-						this.backgroundWorker.RunWorkerAsync();
+					{
+						try
+						{
+							this.backgroundWorker.RunWorkerAsync();
+						}
+#if DEBUG || TRACE || VERBOSE
+						catch ( Exception exc )
+						{
+							Console.WriteLine(exc);
+						}
+#else
+						catch {}
+#endif
+					}
 					_wait.Set();
 				};
 				return list;

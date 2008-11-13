@@ -154,7 +154,7 @@ namespace zeroflag.Serialization
 
 		public PropertyInfo SearchType(Type type, string key)
 		{
-			List<Type> possibleMatches = TypeFinder.Instance.SearchAll(key);
+			var possibleMatches = TypeFinder.Instance.SearchAll(key);
 			var props = type.GetProperties();
 			foreach (PropertyInfo info in props)
 			{

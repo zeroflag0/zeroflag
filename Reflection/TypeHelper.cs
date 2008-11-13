@@ -55,8 +55,8 @@
 #endregion BSD License
 
 using System;
-using System.Collections.Generic;
 using System.Text;
+using zeroflag.Collections;
 
 public static class TypeExtensions
 {
