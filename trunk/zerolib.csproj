@@ -177,6 +177,7 @@
     <Compile Include="Forms\TaskProcessor.Designer.cs">
       <DependentUpon>TaskProcessor.cs</DependentUpon>
     </Compile>
+    <Compile Include="GetHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\InstanceProvider.cs" />
     <Compile Include="Reflection\TypeHelper.cs" />
@@ -213,11 +214,14 @@
     <Compile Include="Serialization\Descriptors\Descriptor.cs" />
     <Compile Include="Serialization\Descriptors\Descriptor~1.cs" />
     <Compile Include="Serialization\Descriptors\ListDescriptor~1.cs" />
+    <Compile Include="Serialization\Descriptors\NamedObjectProvider.cs" />
+    <Compile Include="Serialization\Descriptors\NamedObjectDescriptor~1.cs" />
     <Compile Include="Serialization\Descriptors\ObjectDescriptor.cs" />
     <Compile Include="Serialization\Descriptors\StringDescriptor.cs" />
     <Compile Include="Serialization\Descriptors\TypeDescriptor.cs" />
     <Compile Include="Serialization\ExceptionCollection.cs" />
     <Compile Include="Serialization\ExceptionTrace.cs" />
+    <Compile Include="Serialization\Descriptors\NamedObjectProvider~1.cs" />
     <Compile Include="Serialization\PropertyFinder.cs" />
     <Compile Include="Serialization\SerializationAttribute.cs" />
     <Compile Include="Serialization\Serializer.cs" />

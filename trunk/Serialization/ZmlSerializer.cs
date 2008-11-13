@@ -75,7 +75,7 @@ namespace zeroflag.Serialization
 			//if ( this.IgnoreList.Find( i => i != null && i( desc ) ) != null )
 			//    return;
 
-			string name = desc.Name ?? desc.Type.Name.Split( '`' )[ 0 ];
+			string name = desc.Name ?? desc.Type.Name.Split( '`' )[0];
 			CWL( "Serialize(" + desc + ")" );
 			if ( this.Converters.CanConvert<string>( desc.Value ) )
 			{
@@ -195,7 +195,7 @@ namespace zeroflag.Serialization
 						}
 						if ( this.IgnoreList.Find( i => i != null && i( inner ) ) != null )
 							continue;
-						if ( !( this.SimplifyOutput && inner.Value != null && ( inner.Type.GetMethod( "Parse", System.Reflection.BindingFlags.FlattenHierarchy | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod, null, System.Reflection.CallingConventions.Any, new Type[] { typeof( string ) }, new System.Reflection.ParameterModifier[ 0 ] ) != null ) ) &&
+						if ( !( this.SimplifyOutput && inner.Value != null && ( inner.Type.GetMethod( "Parse", System.Reflection.BindingFlags.FlattenHierarchy | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod, null, System.Reflection.CallingConventions.Any, new Type[] { typeof( string ) }, new System.Reflection.ParameterModifier[0] ) != null ) ) &&
 							( inner.Name == null || !this.Converters.CanConvert<string>( inner.Value ) ) )
 						{
 							// complex type...
@@ -274,7 +274,7 @@ namespace zeroflag.Serialization
 			if ( explicitType != null )
 			{
 				//Benchmark.Instance.Trace("TypeFinder.Instance"); 
-				Type type = TypeFinder.Instance[ explicitType, desc.Type ];
+				Type type = TypeFinder.Instance[explicitType, desc.Type];
 				//Benchmark.Instance.Trace("TypeFinder.Instance");
 				if ( type != null && type != desc.Type )
 				{
@@ -415,7 +415,7 @@ namespace zeroflag.Serialization
 							{
 								subType = ( (IListDescriptor)desc ).ItemType;
 								if ( subTypeName != null )
-									subType = TypeFinder.Instance[ subTypeName, subType ] ?? subType;
+									subType = TypeFinder.Instance[subTypeName, subType] ?? subType;
 							}
 							else
 							{
@@ -423,12 +423,12 @@ namespace zeroflag.Serialization
 								if ( info != null )
 								{
 									subType = info.PropertyType;
-									subType = TypeFinder.Instance[ subTypeName, subType ];
+									subType = TypeFinder.Instance[subTypeName, subType];
 								}
 								else
 								{
 									// try to find the type...
-									subType = TypeFinder.Instance[ subTypeName ];
+									subType = TypeFinder.Instance[subTypeName];
 								}
 							}
 						}
@@ -448,6 +448,7 @@ namespace zeroflag.Serialization
 							desc.Inner.Add( inner );
 						if ( inner == null )
 						{
+							this.Exceptions.Add( new ExceptionTrace( new Exception( "Cannot find property: " + subName + ", " + subType + ", " + subTypeName ), node, desc, desc.Type, desc.Value ) );
 							CWL( "Cannot find property: " + subName + ", " + subType + ", " + subTypeName );
 							continue;
 						}
@@ -501,7 +502,7 @@ namespace zeroflag.Serialization
 		{
 			try
 			{
-				return node.Attributes[ name ].Value;
+				return node.Attributes[name].Value;
 			}
 			catch ( Exception exc1 )
 			{

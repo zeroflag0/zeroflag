@@ -1,30 +1,41 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Serialization", "zeroflag.Serialization.csproj", "{48823787-7042-494D-B250-A3E60085BB2B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Serialization.Test", "Test\zeroflag.Serialization.Test.csproj", "{EF0349C3-2149-462A-AF1A-255D7635CF07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.zml", "..\zml\zeroflag.zml.csproj", "{1D342DD8-8157-47A3-9065-79F604ED50CE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zerolib", "..\zerolib.csproj", "{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+		SourcePatcher|Any CPU = SourcePatcher|Any CPU
+		SourcePatcher|x86 = SourcePatcher|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{48823787-7042-494D-B250-A3E60085BB2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{48823787-7042-494D-B250-A3E60085BB2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{48823787-7042-494D-B250-A3E60085BB2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{48823787-7042-494D-B250-A3E60085BB2B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EF0349C3-2149-462A-AF1A-255D7635CF07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EF0349C3-2149-462A-AF1A-255D7635CF07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF0349C3-2149-462A-AF1A-255D7635CF07}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{EF0349C3-2149-462A-AF1A-255D7635CF07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF0349C3-2149-462A-AF1A-255D7635CF07}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1D342DD8-8157-47A3-9065-79F604ED50CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1D342DD8-8157-47A3-9065-79F604ED50CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1D342DD8-8157-47A3-9065-79F604ED50CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1D342DD8-8157-47A3-9065-79F604ED50CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF0349C3-2149-462A-AF1A-255D7635CF07}.Release|x86.ActiveCfg = Release|Any CPU
+		{EF0349C3-2149-462A-AF1A-255D7635CF07}.SourcePatcher|Any CPU.ActiveCfg = Release|Any CPU
+		{EF0349C3-2149-462A-AF1A-255D7635CF07}.SourcePatcher|Any CPU.Build.0 = Release|Any CPU
+		{EF0349C3-2149-462A-AF1A-255D7635CF07}.SourcePatcher|x86.ActiveCfg = Release|Any CPU
+		{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}.Debug|x86.ActiveCfg = Debug|x86
+		{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}.Debug|x86.Build.0 = Debug|x86
+		{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}.Release|x86.ActiveCfg = Release|x86
+		{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}.Release|x86.Build.0 = Release|x86
+		{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}.SourcePatcher|Any CPU.ActiveCfg = SourcePatcher|Any CPU
+		{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}.SourcePatcher|Any CPU.Build.0 = SourcePatcher|Any CPU
+		{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}.SourcePatcher|x86.ActiveCfg = SourcePatcher|x86
+		{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}.SourcePatcher|x86.Build.0 = SourcePatcher|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,15 +6,15 @@ namespace zeroflag.Serialization
 {
 	public class ExceptionTrace
 	{
-		public ExceptionTrace(Exception exc, System.Xml.XmlNode node, Descriptors.Descriptor desc)
-			: this(exc, node, desc, null, null)
+		public ExceptionTrace( Exception exc, System.Xml.XmlNode node, Descriptors.Descriptor desc )
+			: this( exc, node, desc, null, null )
 		{
 		}
-		public ExceptionTrace(Exception exc, Descriptors.Descriptor desc, Type type, object value)
-			: this(exc, null, desc, type, value)
+		public ExceptionTrace( Exception exc, Descriptors.Descriptor desc, Type type, object value )
+			: this( exc, null, desc, type, value )
 		{
 		}
-		public ExceptionTrace(Exception exc, System.Xml.XmlNode node, Descriptors.Descriptor desc, Type type, object value)
+		public ExceptionTrace( Exception exc, System.Xml.XmlNode node, Descriptors.Descriptor desc, Type type, object value )
 		{
 			this.Exception = exc;
 			this.Node = node;
@@ -25,14 +25,14 @@ namespace zeroflag.Serialization
 
 		#region Exception
 
-		private Exception _Exception = default(Exception);
-		[System.ComponentModel.TypeConverter(typeof(System.ComponentModel.ExpandableObjectConverter))]
+		private Exception _Exception = default( Exception );
+		[System.ComponentModel.TypeConverter( typeof( System.ComponentModel.ExpandableObjectConverter ) )]
 		public Exception Exception
 		{
 			get { return _Exception; }
 			set
 			{
-				if (_Exception != value)
+				if ( _Exception != value )
 				{
 					_Exception = value;
 				}
@@ -42,15 +42,15 @@ namespace zeroflag.Serialization
 
 		#region Node
 
-		private System.Xml.XmlNode _Node = default(System.Xml.XmlNode);
+		private System.Xml.XmlNode _Node = default( System.Xml.XmlNode );
 
-		[System.ComponentModel.TypeConverter(typeof(System.ComponentModel.ExpandableObjectConverter))]
+		[System.ComponentModel.TypeConverter( typeof( System.ComponentModel.ExpandableObjectConverter ) )]
 		public System.Xml.XmlNode Node
 		{
 			get { return _Node; }
 			set
 			{
-				if (_Node != value)
+				if ( _Node != value )
 				{
 					_Node = value;
 				}
@@ -60,15 +60,15 @@ namespace zeroflag.Serialization
 
 		#region Descriptor
 
-		private Descriptors.Descriptor _Descriptor = default(Descriptors.Descriptor);
+		private Descriptors.Descriptor _Descriptor = default( Descriptors.Descriptor );
 
-		[System.ComponentModel.TypeConverter(typeof(System.ComponentModel.ExpandableObjectConverter))]
+		[System.ComponentModel.TypeConverter( typeof( System.ComponentModel.ExpandableObjectConverter ) )]
 		public Descriptors.Descriptor Descriptor
 		{
 			get { return _Descriptor; }
 			set
 			{
-				if (_Descriptor != value)
+				if ( _Descriptor != value )
 				{
 					_Descriptor = value;
 				}
@@ -78,15 +78,15 @@ namespace zeroflag.Serialization
 
 		#region Type
 
-		private Type _Type = default(Type);
+		private Type _Type = default( Type );
 
-		[System.ComponentModel.TypeConverter(typeof(System.ComponentModel.ExpandableObjectConverter))]
+		[System.ComponentModel.TypeConverter( typeof( System.ComponentModel.ExpandableObjectConverter ) )]
 		public Type Type
 		{
 			get { return _Type; }
 			set
 			{
-				if (_Type != value)
+				if ( _Type != value )
 				{
 					_Type = value;
 				}
@@ -96,20 +96,38 @@ namespace zeroflag.Serialization
 
 		#region Value
 
-		private object _Value = default(object);
+		private object _Value = default( object );
 
-		[System.ComponentModel.TypeConverter(typeof(System.ComponentModel.ExpandableObjectConverter))]
+		[System.ComponentModel.TypeConverter( typeof( System.ComponentModel.ExpandableObjectConverter ) )]
 		public object Value
 		{
 			get { return _Value; }
 			set
 			{
-				if (_Value != value)
+				if ( _Value != value )
 				{
 					_Value = value;
 				}
 			}
 		}
 		#endregion Value
+
+		public override string ToString()
+		{
+			StringBuilder sb = new StringBuilder();
+			sb.Append( "ExceptionTrace: " );
+			if ( this.Exception != null )
+				sb.Append( this.Exception.Message ).Append( "\n\t" )
+					.Append( "Stacktrace:\n\t\t" )
+					.Append( this.Exception.StackTrace.Replace( "\n", "\n\t" ) ).Append( "\n\t" );
+			else
+				sb.AppendLine( "<trace>\n\t" );
+			sb.Append( "Descriptor: " ).Append( this.Descriptor ).Append( "\n\t" )
+				.Append( "Value: " ).Append( this.Value ?? (object)"<null>" ).Append( "\n\t" )
+				.Append( "Type: " ).Append( this.Type ).Append( "\n\t" )
+				.Append( "Xml:\n\t\t" )
+				.Append( this.Node.OuterXml.Replace( "\n", "\n\t" ) ).Append( "\n" );
+			return sb.ToString();
+		}
 	}
 }
