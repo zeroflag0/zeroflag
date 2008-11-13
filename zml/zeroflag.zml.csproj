@@ -44,12 +44,6 @@
     <Compile Include="ZmlSerializer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Serialization\zeroflag.Serialization.csproj">
-      <Project>{48823787-7042-494D-B250-A3E60085BB2B}</Project>
-      <Name>zeroflag.Serialization</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="_ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

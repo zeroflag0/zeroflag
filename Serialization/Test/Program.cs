@@ -28,7 +28,7 @@
 
 //#define TEST1 // class A
 //#define TEST2 // dictionary
-#define TEST3 // winforms <-- doesn't work and it's not because my serializer is too stupid...
+//#define TEST3 // winforms <-- doesn't work and it's not because my serializer is too stupid...
 
 using System;
 using System.Collections.Generic;
@@ -38,7 +38,7 @@ using zeroflag.Serialization;
 namespace Test
 {
 #if TEST1 || TEST2
-	[System.ComponentModel.TypeConverter(typeof(System.ComponentModel.ExpandableObjectConverter))]
+	[System.ComponentModel.TypeConverter( typeof( System.ComponentModel.ExpandableObjectConverter ) )]
 	public class A
 	{
 		A _Parent;
@@ -69,18 +69,18 @@ namespace Test
 		{
 		}
 
-		public A(string name)
+		public A( string name )
 		{
 			this.Name = name;
 		}
 
-		public A(string name, params A[] children)
-			: this(name)
+		public A( string name, params A[] children )
+			: this( name )
 		{
-			foreach (A child in children)
+			foreach ( A child in children )
 			{
-				this.Children.Add(child);
-				if (child != null)
+				this.Children.Add( child );
+				if ( child != null )
 					child.Parent = this;
 			}
 			//this.Children.AddRange(children);
@@ -90,16 +90,16 @@ namespace Test
 		{
 			string value = this.Name ?? "<null>";
 			value += "[";
-			if (this.Parent != null)
+			if ( this.Parent != null )
 				value += this.Parent.Name;
 			value += "]";
 			value += "{";
-			if (this.Children.Count > 0)
+			if ( this.Children.Count > 0 )
 			{
-				foreach (A a in this.Children)
+				foreach ( A a in this.Children )
 					value += a + ", ";
 			}
-			value = value.TrimEnd(',', ' ') + "}";
+			value = value.TrimEnd( ',', ' ' ) + "}";
 			return value;
 		}
 
@@ -113,6 +113,7 @@ namespace Test
 			sw.Start();
 			Console.WriteLine( sw.ElapsedMilliseconds.ToString( "000000" ) + " start" );
 
+#if true
 			{
 				Test test = new Test( "root", 1, 1.5f );
 
@@ -130,6 +131,7 @@ namespace Test
 			}
 			//if (false)
 			{
+				Console.WriteLine( "2.0) ZML" );
 				Test test = new ZmlSerializer( "test.zml" ).Deserialize<Test>();
 				Console.WriteLine( "2.1) " + test );
 				//new zeroflag.Serialization.XmlSerializer("test2.xml").Serialize(test);
@@ -139,6 +141,36 @@ namespace Test
 				new ZmlSerializer( "result2.3.zml" ).Serialize( result );
 			}
 
+			{
+				Console.WriteLine( "3.0) Named Objects" );
+				var seri = new ZmlSerializer( "test_names.zml" );
+				seri.Context.NamedObjects.Add( new zeroflag.Serialization.Descriptors.NamedObjectProvider<Test2>( new Test2( "foo", 5, 1.5f ), new Test2( "bar", 2, 1.2f ) ) );
+
+				Test test = seri.Deserialize<Test>();
+				Console.WriteLine( "3.1) " + test );
+				//new zeroflag.Serialization.XmlSerializer("test2.xml").Serialize(test);
+				new ZmlSerializer( "result3.1.zml" ).Serialize( test );
+				Test result = new ZmlSerializer( "result3.1.zml" ).Deserialize<Test>();
+				Console.WriteLine( "3.3) " + result );
+				new ZmlSerializer( "result3.3.zml" ).Serialize( result );
+			}
+#endif
+			new Action( () =>
+			{
+				Console.WriteLine( "4.0) Named Objects Mixed" );
+				var seri = new ZmlSerializer( "test_names_mixed.zml" );
+				seri.Context.NamedObjects.Add( new zeroflag.Serialization.Descriptors.NamedObjectProvider<Test>( new Test2( "foo", 5, 1.5f ), new Test( "bar", 2, 1.2f ) ) );
+
+				Test test = seri.Deserialize<Test>();
+				Console.WriteLine( "4.1) " + test );
+				if ( test == null )
+					Console.WriteLine( seri.Exceptions.ToString() );
+				//new zeroflag.Serialization.XmlSerializer("test2.xml").Serialize(test);
+				new ZmlSerializer( "result4.1.zml" ).Serialize( test );
+				Test result = new ZmlSerializer( "result4.1.zml" ).Deserialize<Test>();
+				Console.WriteLine( "4.3) " + result );
+				new ZmlSerializer( "result4.3.zml" ).Serialize( result );
+			} )();
 
 			try
 			{
@@ -146,14 +178,14 @@ namespace Test
 				Serializer seri = new XmlSerializer();
 				seri.FileName = "test1.xml";
 
-				A a = new A("root", new A("foo"), new A("bar"), new A(null), null);
+				A a = new A( "root", new A( "foo" ), new A( "bar" ), new A( null ), null );
 
-				Console.WriteLine("a:= " + a);
+				Console.WriteLine( "a:= " + a );
 				//zeroflag.Serialization.Descriptors.Descriptor desc = zeroflag.Serialization.Descriptors.Descriptor.DoParse(a);
 
 				//Console.WriteLine(desc);
 				//Console.WriteLine(sw.ElapsedMilliseconds.ToString("000000") + " Serialize(test1.xml) start");
-				seri.Serialize(a);
+				seri.Serialize( a );
 				//Console.WriteLine(sw.ElapsedMilliseconds.ToString("000000") + " Serialize(test1.xml) end");
 				//seri.Serialize(desc);
 				//System.Windows.Forms.Application.Run(new DebugForm() { Target = a });
@@ -165,27 +197,28 @@ namespace Test
 				//Console.WriteLine(sw.ElapsedMilliseconds.ToString("000000") + " Deserialize(test1.xml) end");
 
 				//Console.WriteLine(sw.ElapsedMilliseconds.ToString("000000") + " Serialize(test1.result.xml) start");
-				new XmlSerializer("test1.result.xml").Serialize(b);
+				new XmlSerializer( "test1.result.xml" ).Serialize( b );
 				//Console.WriteLine(sw.ElapsedMilliseconds.ToString("000000") + " Serialize(test1.result.xml) end");
 
 
-				Console.WriteLine("a = " + a);
-				Console.WriteLine("b = " + b);
+				Console.WriteLine( "a = " + a );
+				Console.WriteLine( "b = " + b );
 				//b.Children[2] = new A("new");
 				//Console.WriteLine("Modified b...");
 				//Console.Write("a = " + a);
 				//Console.WriteLine(" b = " + b);
 #endif
 #if TEST2
+				Console.WriteLine( "Testing Dictionary<,>..." );
 				//TestDict<string, int>("foo", 1, "bar", 2, "bla", -1);
 
 				//TestDict<string, double>("foo", 1, "bar", 2, "bla", -1);
 
-				A foo = new A("foo"), bar = new A("bar", foo), bla = new A("bla", foo, bar);
-				Console.WriteLine("foo = " + foo);
-				Console.WriteLine("bar = " + bar);
-				Console.WriteLine("bla = " + bla);
-				TestDict<string, A>("foo", foo, "bar", bar, "bla", bla);
+				A foo = new A( "foo" ), bar = new A( "bar", foo ), bla = new A( "bla", foo, bar );
+				Console.WriteLine( "foo = " + foo );
+				Console.WriteLine( "bar = " + bar );
+				Console.WriteLine( "bla = " + bla );
+				TestDict<string, A>( "foo", foo, "bar", bar, "bla", bla );
 #endif
 #if TEST3
 				//System.Windows.Forms.Application.Run( new TestForm() );
@@ -203,22 +236,25 @@ namespace Test
 		}
 
 #if TEST2
-		static void TestDict<T1, T2>(T1 p11, T2 p12, T1 p21, T2 p22, T1 p31, T2 p32)
+		static void TestDict<T1, T2>( T1 p11, T2 p12, T1 p21, T2 p22, T1 p31, T2 p32 )
 		{
-			Serializer seri2 = new XmlSerializer("test_dict_" + typeof(T1).Name + "_" + typeof(T2).Name + ".xml");
+			Console.WriteLine( "Creating serializer..." );
+			Serializer seri2 = new XmlSerializer( "test_dict_" + typeof( T1 ).Name + "_" + typeof( T2 ).Name + ".xml" );
+			Console.WriteLine( "Creating dictionary..." );
 			Dictionary<T1, T2> dict = new Dictionary<T1, T2>();
-			dict.Add((T1)p11, (T2)p12);
-			dict.Add((T1)p21, (T2)p22);
-			dict.Add((T1)p31, (T2)p32);
-			seri2.Serialize(dict);
-
+			dict.Add( (T1)p11, (T2)p12 );
+			dict.Add( (T1)p21, (T2)p22 );
+			dict.Add( (T1)p31, (T2)p32 );
+			Console.WriteLine( "Serializing dictionary..." );
+			seri2.Serialize( dict );
+			Console.WriteLine( "Deserializing dictionary..." );
 			Dictionary<T1, T2> result = seri2.Deserialize<Dictionary<T1, T2>>();
-			Console.WriteLine("<TestDictResult>");
-			foreach (KeyValuePair<T1, T2> pair in result)
+			Console.WriteLine( "<TestDictResult>" );
+			foreach ( KeyValuePair<T1, T2> pair in result )
 			{
-				Console.WriteLine("\t" + pair.Key + " => " + pair.Value);
+				Console.WriteLine( "\t" + pair.Key + " => " + pair.Value );
 			}
-			Console.WriteLine("</TestDictResult>");
+			Console.WriteLine( "</TestDictResult>" );
 		}
 #endif
 	}

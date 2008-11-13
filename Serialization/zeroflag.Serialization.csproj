@@ -12,7 +12,7 @@
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
     <OldToolsVersion>2.0</OldToolsVersion>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|Any CPU' ">
     <OutputType>Library</OutputType>
@@ -63,6 +63,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
@@ -116,6 +119,9 @@
     <Compile Include="Descriptors\Descriptor~1.cs" />
     <None Include="Descriptors\DictionaryDescriptor~2.cs" />
     <Compile Include="Descriptors\ListDescriptor.cs" />
+    <Compile Include="Descriptors\NamedObjectDescriptor~1.cs" />
+    <Compile Include="Descriptors\NamedObjectProvider.cs" />
+    <Compile Include="Descriptors\NamedObjectProvider~1.cs" />
     <Compile Include="Descriptors\ObjectDescriptor.cs" />
     <Compile Include="Descriptors\ListDescriptor~1.cs" />
     <Compile Include="Descriptors\StringDescriptor.cs" />

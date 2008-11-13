@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<test name="root" int="0" real="0.5" _id="0">
+	<inner>
+		<test2 name="foo"/>
+		<test2 name="bar"/>
+	</inner>
+</test>

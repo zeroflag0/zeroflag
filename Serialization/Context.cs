@@ -53,7 +53,7 @@ namespace zeroflag.Serialization.Descriptors
 							while ( !genericDescriptor.IsGenericType || typeof( Descriptor<> ) != genericDescriptor.GetGenericTypeDefinition() )
 								genericDescriptor = genericDescriptor.BaseType;
 
-							valueType = genericDescriptor.GetGenericArguments()[0];
+							valueType = genericDescriptor.GetGenericArguments()[ 0 ];
 							if ( valueType.IsGenericType )
 								valueType = valueType.GetGenericTypeDefinition();
 
@@ -108,7 +108,7 @@ namespace zeroflag.Serialization.Descriptors
 									var specializedValues = value.GetBaseTypesAndInterfaces();
 
 									Type specializedValue = null;
-									specializedValue = specializedValues.Find( t => t.IsGenericSimilar( genericBaseGenerics[0] ) );
+									specializedValue = specializedValues.Find( t => t.IsGenericSimilar( genericBaseGenerics[ 0 ] ) );
 
 									if ( specializedValue != null && !specializedValue.IsGenericTypeDefinition )
 										generics = specializedValue.GetGenericArguments();
@@ -159,7 +159,7 @@ namespace zeroflag.Serialization.Descriptors
 							return typeof( ObjectDescriptor );
 					}
 				}
-			return DescriptorTypes[value];
+			return DescriptorTypes[ value ];
 		}
 #if OBSOLETE
 		//static Dictionary<Type, Descriptor> _Descriptors = new Dictionary<Type, Descriptor>();
@@ -410,10 +410,7 @@ namespace zeroflag.Serialization.Descriptors
 
 			//System.Diagnostics.Debug.Assert(type != null, "Type and instance were null! type='" + type + "' instance='" + instance + "' owner='" + owner + "' " + name);
 			if ( type == null )
-			{
-				this.Serializer.Exceptions.Add( new ExceptionTrace( new Exception( "Type and instance were null!" ), null, null, type, instance ) );
 				return null; // throw new NullReferenceException("Type and instance were null! type='" + type + "' instance='" + instance + "' owner='" + owner + "' " + name);
-			}
 
 			//if (instance == null)
 			//    System.Diagnostics.Debug.Assert(instance == null || type.IsAssignableFrom(instance.GetType()), "Type and instance do not match! type='" + type + "' instance='" + instance + "' instancetype='" + (instance != null?instance.GetType():null) + "' " + name);
@@ -427,8 +424,8 @@ namespace zeroflag.Serialization.Descriptors
 					// there's an instance to parse, so search for a value-descriptor...
 					if ( this.ParsedObjects.ContainsKey( instance ) )
 					{
-						this.ParsedObjects[instance].IsReferenced = true;
-						return this.ParsedObjects[instance];
+						this.ParsedObjects[ instance ].IsReferenced = true;
+						return this.ParsedObjects[ instance ];
 					}
 					else if ( type.IsAssignableFrom( instance.GetType() ) )
 						type = instance.GetType();
@@ -440,7 +437,7 @@ namespace zeroflag.Serialization.Descriptors
 					{
 						while ( this.ParsedTypes.ContainsKey( type ) )
 						{
-							desc = this.ParsedTypes[type];
+							desc = this.ParsedTypes[ type ];
 							if ( desc.Value != null )
 							{
 								while ( this.ParsedTypes.Remove( type ) ) ;
