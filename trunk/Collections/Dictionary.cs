@@ -68,11 +68,6 @@ namespace zeroflag.Collections
 			this.Items.Add( key, value );
 		}
 
-		public bool ContainsKey( TKey key )
-		{
-			return this.Items.ContainsKey( key );
-		}
-
 		public System.Collections.Generic.ICollection<TKey> Keys
 		{
 			get { return this.Items.Keys; }
@@ -93,18 +88,18 @@ namespace zeroflag.Collections
 			get { return this.Items.Values; }
 		}
 
-		public TValue this[ TKey key ]
+		public TValue this[TKey key]
 		{
 			get
 			{
 				if ( this.Items.ContainsKey( key ) )
-					return this.Items[ key ];
+					return this.Items[key];
 				else
-					return this.Items[ key ] = this.DefaultValue( key );
+					return this.Items[key] = this.DefaultValue( key );
 			}
 			set
 			{
-				this.Items[ key ] = value;
+				this.Items[key] = value;
 			}
 		}
 
@@ -172,5 +167,16 @@ namespace zeroflag.Collections
 
 		#endregion
 
+		#region Advanced
+		public bool ContainsValue( TValue value )
+		{
+			return this.Items.ContainsValue( value );
+		}
+
+		public bool ContainsKey( TKey key )
+		{
+			return this.Items.ContainsKey( key );
+		}
+		#endregion
 	}
 }

@@ -38,7 +38,7 @@ namespace zeroflag.Serialization.Descriptors
 			{
 				lock ( typeof( Descriptor ) )
 				{
-					List<Type> types = TypeHelper.GetDerived( typeof( Descriptor<> ) );
+					var types = TypeHelper.GetDerived( typeof( Descriptor<> ) );
 					Type valueType, descriptor;
 					foreach ( Type descriptorType in types )
 					{
