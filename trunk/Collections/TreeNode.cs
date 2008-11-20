@@ -190,24 +190,54 @@ namespace zeroflag.Collections
 		#endregion System.Collections.Generic.ICollection`1
 
 		#region Children
-		private List<Self> _Children = new List<Self>();
-		[System.ComponentModel.Browsable(false)]
+
+		#region Children
+		private List<Self> _Children;
+
+		/// <summary>
+		/// Child nodes.
+		/// </summary>
+		[System.ComponentModel.Browsable( false )]
 		public List<Self> Children
 		{
-			get { return _Children; }
-			set
+			get { return _Children ?? ( _Children = this.ChildrenCreate ); }
+			//set { _Children = value; }
+		}
+
+		/// <summary>
+		/// Creates the default/initial value for Children.
+		/// Child nodes.
+		/// </summary>
+		protected virtual List<Self> ChildrenCreate
+		{
+			get
 			{
-				if (_Children != value && value != null)
-				{
-					this._Children.Clear();
-					foreach (Self item in value)
-					{
-						this._Children.Add(item);
-					}
-					//_Children = value;
-				}
+				var children = _Children = new List<Self>();
+				this.InitializeChildren();
+				return children;
 			}
 		}
+
+		#endregion Children
+
+		//private List<Self> _Children = new List<Self>();
+		//[System.ComponentModel.Browsable(false)]
+		//public List<Self> Children
+		//{
+		//    get { return _Children; }
+		//    set
+		//    {
+		//        if (_Children != value && value != null)
+		//        {
+		//            this._Children.Clear();
+		//            foreach (Self item in value)
+		//            {
+		//                this._Children.Add(item);
+		//            }
+		//            //_Children = value;
+		//        }
+		//    }
+		//}
 
 		private void InitializeChildren()
 		{

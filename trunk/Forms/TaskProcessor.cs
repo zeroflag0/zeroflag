@@ -26,7 +26,18 @@ namespace zeroflag.Forms
 			get { return _Cancel || this.backgroundWorker.CancellationPending; }
 			set
 			{
-				_Cancel = value;
+				if ( value != _Cancel )
+				{
+#if DEBUG && false
+					Console.WriteLine( ( this.Name ?? this.ToString() ) + ".Cancel = " + value );
+					Console.WriteLine( new System.Diagnostics.StackTrace( 1 ) );
+#endif
+					_Cancel = value;
+					if ( _Cancel )
+						this.CancelRequestTime = DateTime.Now;
+					else
+						this.CancelRequestTime = null;
+				}
 				//if ( value )
 				//{
 				//    this.Tasks.Clear();
@@ -152,19 +163,61 @@ namespace zeroflag.Forms
 #if DEBUG || TRACE || VERBOSE
 						catch ( Exception exc )
 						{
-							Console.WriteLine(exc);
+							Console.WriteLine( exc );
 						}
 #else
 						catch {}
 #endif
 					}
-					_wait.Set();
+					Wait.Set();
 				};
 				return list;
 			}
 		}
 
 		#endregion Tasks
+
+		#region CancelTimeout
+		#region CancelRequestTime
+
+		private DateTime? _CancelRequestTime;
+
+		/// <summary>
+		/// When was the Cancel issued?
+		/// </summary>
+		public DateTime? CancelRequestTime
+		{
+			get { return _CancelRequestTime; }
+			set
+			{
+				if ( _CancelRequestTime != value )
+				{
+					_CancelRequestTime = value;
+				}
+			}
+		}
+
+		#endregion CancelRequestTime
+
+		private TimeSpan _CancelTimeout = TimeSpan.FromSeconds( 30 );
+
+		/// <summary>
+		/// Time for how long the thread will be allowed to contineue after Cancel has been set.
+		/// </summary>
+		public TimeSpan CancelTimeout
+		{
+			get { return _CancelTimeout; }
+			set
+			{
+				if ( _CancelTimeout != value )
+				{
+					_CancelTimeout = value;
+				}
+			}
+		}
+
+		#endregion CancelTimeout
+
 
 		#region IdleThreadTimeout
 
@@ -187,8 +240,76 @@ namespace zeroflag.Forms
 
 		#endregion IdleThreadTimeout
 
+#if DEBUG
+		#region DebugTrace
 
-		System.Threading.AutoResetEvent _wait = new System.Threading.AutoResetEvent( false );
+		private static bool _DebugTrace;
+
+		/// <summary>
+		/// Trace the current state of the worker.
+		/// </summary>
+		public static bool DebugTrace
+		{
+			get { return _DebugTrace; }
+			set
+			{
+				if ( _DebugTrace != value )
+				{
+					_DebugTrace = value;
+					if ( value )
+					{
+						lock ( _WaitHandles )
+						{
+							foreach ( var handle in _WaitHandles )
+							{
+								handle.Set();
+							}
+						}
+					}
+				}
+			}
+		}
+
+		#endregion DebugTrace
+		private static List<System.Threading.AutoResetEvent> _WaitHandles = new List<System.Threading.AutoResetEvent>();
+#endif
+
+		//System.Threading.AutoResetEvent Wait = new System.Threading.AutoResetEvent( false );
+
+		#region Wait
+		private System.Threading.AutoResetEvent _Wait;
+
+		/// <summary>
+		/// Wait handle.
+		/// </summary>
+		protected System.Threading.AutoResetEvent Wait
+		{
+			get { return _Wait ?? ( _Wait = this.WaitCreate ); }
+			//set { _Wait = value; }
+		}
+
+		/// <summary>
+		/// Creates the default/initial value for Wait.
+		/// Wait handle.
+		/// </summary>
+		protected virtual System.Threading.AutoResetEvent WaitCreate
+		{
+			get
+			{
+				var Wait = _Wait = new System.Threading.AutoResetEvent( false );
+#if DEBUG
+				lock ( _WaitHandles )
+				{
+					_WaitHandles.Add( _Wait );
+				}
+#endif
+				return Wait;
+			}
+		}
+
+		#endregion Wait
+
+
 		DateTime _LastWork = DateTime.Now;
 		int _Working = 0;
 		void backgroundWorker_DoWork( object sender, DoWorkEventArgs e )
@@ -224,13 +345,18 @@ namespace zeroflag.Forms
 						if ( DateTime.Now - _LastWork > this.IdleThreadTimeout && !this.Cancel )
 						{
 							Console.WriteLine( "TaskProcessor(" + this.Name + ") idle timeout." );
-							this._wait.WaitOne( 180000, true );
+							this.Wait.WaitOne( 15000, true );
 							Console.WriteLine( "TaskProcessor(" + this.Name + ") resuming..." );
+							_LastWork = DateTime.Now;
 							//return;
 						}
 						else
-							this._wait.WaitOne( 200, true );
+							this.Wait.WaitOne( 200, true );
 					}
+#if DEBUG
+					if ( DebugTrace )
+						Console.WriteLine( new System.Diagnostics.StackTrace() );
+#endif
 				}
 				Console.WriteLine( "TaskProcessor(" + this.Name + ") halted." );
 			}
@@ -245,8 +371,21 @@ namespace zeroflag.Forms
 			this.Cancel = true;
 			while ( this.backgroundWorker.IsBusy && _Working > 0 )
 			{
-				_wait.Set();
+				Wait.Set();
 				System.Threading.Thread.Sleep( 50 );
+				if ( DateTime.Now - this.CancelRequestTime > this.CancelTimeout )
+				{
+					Console.WriteLine( ( this.Name ?? this.ToString() ) + "CancelTimeout" );
+					try
+					{
+						this.backgroundWorker.CancelAsync();
+					}
+					catch ( Exception exc )
+					{
+						Console.WriteLine( exc );
+					}
+					break;
+				}
 			}
 		}
 
