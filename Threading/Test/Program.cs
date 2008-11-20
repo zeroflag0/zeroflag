@@ -28,13 +28,29 @@
 
 //#define TEST_TASKS
 
+//#define BIT64		// uses Int64 for testing
+//#define BITLARGE		// uses NxInt32 for testing.
+#if BITLARGE32 || BITLARGE24 || BITLARGE16
+#define BITLARGE
+#endif
+
+#if BITLARGE
+#if BITLARGE32
+#define BITLARGE24
+#endif
+#if BITLARGE24
+#define BITLARGE16
+#endif
+//#define BITLARGE32
+#endif
+
 #define TEST_MULTIWRITERQUEUE
 #define TEST_PERFORMANCE_MULTIWRITERQUEUE
 #if !TEST_PERFORMANCE_MULTIWRITERQUEUE
 //#define TEST_VERBOSE_MULTIWRITERQUEUE
 #endif
 
-#define TEST_SINGLEWRITERQUEUE
+//#define TEST_SINGLEWRITERQUEUE
 #define TEST_PERFORMANCE_SINGLEWRITERQUEUE
 #if !TEST_PERFORMANCE_SINGLEWRITERQUEUE
 //#define TEST_VERBOSE_SINGLEWRITERQUEUE
@@ -47,10 +63,99 @@ using zeroflag.Threading;
 
 namespace Test
 {
+#if BIT64
+	using Data = System.Int64;
+#elif BITLARGE
+	using Data = TestData;
+	struct TestData
+	{
+		int a0;
+		int a1;
+		int a2;
+		int a3;
+		int a4;
+		int a5;
+		int a6;
+		int a7;
+		int a8;
+		int a9;
+
+#if BITLARGE16
+		int b0;
+		int b1;
+		int b2;
+		int b3;
+		int b4;
+		int b5;
+		int b6;
+		int b7;
+		int b8;
+		int b9;
+
+#if BITLARGE24
+		int c0;
+		int c1;
+		int c2;
+		int c3;
+		int c4;
+		int c5;
+		int c6;
+		int c7;
+		int c8;
+		int c9;
+
+#if BITLARGE32
+		int d0;
+		int d1;
+		int d2;
+		int d3;
+		int d4;
+		int d5;
+		int d6;
+		int d7;
+		int d8;
+		int d9;
+#endif
+#endif
+#endif
+
+		public TestData( int value )
+		{
+#if BITLARGE16
+			b0 = b1 = b2 = b3 = b4 = b5 = b6 = b7 = b8 = b9 =
+#if BITLARGE24
+			c0 = c1 = c2 = c3 = c4 = c5 = c6 = c7 = c8 = c9 = 
+#if BITLARGE32
+			d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = d9 =
+#endif
+#endif
+#endif
+			a0 = a1 = a2 = a3 = a4 = a5 = a6 = a7 = a8 = a9 = value;
+		}
+
+		public static implicit operator TestData( int value )
+		{
+			return new TestData( value );
+		}
+		public static implicit operator int( TestData value )
+		{
+			return value.a0;
+		}
+	}
+#else
+	using Data = System.Int32;
+#endif
 	class Program
 	{
+		static int DataSize
+		{
+			get { return System.Runtime.InteropServices.Marshal.SizeOf( typeof( Data ) ); }
+		}
+		static StringBuilder Report = new StringBuilder();
 		static void Main( string[] args )
 		{
+			Report.Append( "System: " + Environment.OSVersion + " " + ( IntPtr.Size * 8 ) + "bit, CPUs=" + Environment.ProcessorCount + ", CLR=" + Environment.Version + ", ItemSize=" + DataSize + "bytes" ).AppendLine();
+
 #if TEST_TASKS
 			//new Run(delegate() { Console.WriteLine("test1"); }).then(delegate() { Console.WriteLine("test2"); }).Execute();
 			//new Run(delegate() { Console.WriteLine("test1.0"); }).and(delegate() { Console.WriteLine("test1.1"); }).then(delegate() { Console.WriteLine("test2"); }).Execute().Join();
@@ -100,10 +205,11 @@ namespace Test
 #else
 			TestMultiWriterQueue( 20, 1 );
 			TestMultiWriterQueue( 2000000, 20 );
-			TestMultiWriterQueue( 2000000, 10 );
+			//TestMultiWriterQueue( 2000000, 10 );
 			TestMultiWriterQueue( 2000000, 8 );
 			TestMultiWriterQueue( 2000000, 4 );
 			TestMultiWriterQueue( 2000000, 2 );
+			TestMultiWriterQueue( 2000000, 1 );
 #endif
 #endif
 #endif//TEST_MULTIWRITERQUEUE
@@ -122,6 +228,8 @@ namespace Test
 #endif
 #endif
 #endif//TEST_MULTIWRITERQUEUE
+			System.IO.File.WriteAllText( "Report" + DataSize + ".txt", Report.ToString() );
+			System.Windows.Forms.Application.Run( new ReportForm( Report.ToString() ) );
 		}
 		static int count = 0;
 		static Task Task
@@ -174,9 +282,10 @@ namespace Test
 			GC.Collect();
 
 			Console.WriteLine( "Testing MultiWriterQueue..." );
-			Console.WriteLine( "\tConfiguration: " + BuildType + ", Threads=" + ThreadCount + ", Items=" + ItemCount );
+			//Report.Append( "MultiWriterQueue Configuration: " + BuildType + ", Threads=" + ThreadCount + ", Items=" + ItemCount + ", ItemSize=" + System.Runtime.InteropServices.Marshal.SizeOf( typeof( Data ) ) + "bytes, performance test" ).AppendLine();
+			Console.WriteLine( "\tConfiguration: " + BuildType + ", Threads=" + ThreadCount + ", Items=" + ItemCount + ", ItemSize=" + System.Runtime.InteropServices.Marshal.SizeOf( typeof( Data ) ) + "bytes, performance test" );
 			Console.WriteLine( "\tSystem: " + Environment.OSVersion + ", CPUs=" + Environment.ProcessorCount );
-			zeroflag.Threading.LocklessQueue<Box<KeyValuePair<int, int>>> queue = new LocklessQueue<Box<KeyValuePair<int, int>>>();
+			zeroflag.Threading.LocklessQueue<Box<KeyValuePair<int, Data>>> queue = new LocklessQueue<Box<KeyValuePair<int, Data>>>();
 			List<System.Threading.Thread> threads = new List<System.Threading.Thread>();
 			int threadsFinished = 0;
 			for ( int t = 0; t < ThreadCount; t++ )
@@ -186,10 +295,10 @@ namespace Test
 					//Console.WriteLine( System.Threading.Thread.CurrentThread.ManagedThreadId + "> Filling queue..." );
 					System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 					sw.Start();
-					Random rand = new Random();
+					//Random rand = new Random();
 					for ( int i = 0; i < ItemCount; i++ )
 					{
-						queue.Write( new Box<KeyValuePair<int, int>>() { Value = new KeyValuePair<int, int>( System.Threading.Thread.CurrentThread.ManagedThreadId, i ) } );
+						queue.Write( new Box<KeyValuePair<int, Data>>() { Value = new KeyValuePair<int, Data>( System.Threading.Thread.CurrentThread.ManagedThreadId, i ) } );
 #if TEST_VERBOSE_MULTIWRITERQUEUE
 							Console.WriteLine( System.Threading.Thread.CurrentThread.ManagedThreadId + "> wrote " + queue.First );
 #endif
@@ -199,10 +308,11 @@ namespace Test
 #endif
 					}
 					sw.Stop();
-					Console.WriteLine( System.Threading.Thread.CurrentThread.ManagedThreadId + "> Wrote " + ItemCount + " items in " + sw.ElapsedMilliseconds + "ms." );
+					Console.WriteLine( System.Threading.Thread.CurrentThread.ManagedThreadId + "> Wrote " + ItemCount + " items(" + DataSize + "bytes each) in " + sw.ElapsedMilliseconds + "ms." );
+					//Console.WriteLine( System.Threading.Thread.CurrentThread.ManagedThreadId + "> Wrote " + ItemCount + " items in " + sw.ElapsedMilliseconds + "ms." );
 					System.Threading.Interlocked.Increment( ref threadsFinished );
 				} ) );
-			Dictionary<int, int> results = new Dictionary<int, int>();
+			Dictionary<int, Data> results = new Dictionary<int, Data>();
 
 			//while ( threadsFinished != ThreadCount )
 			//    System.Threading.Thread.Sleep( 100 );
@@ -226,23 +336,23 @@ namespace Test
 					{
 						empty = 0;
 						//System.Threading.Interlocked.Decrement( ref count );
-						KeyValuePair<int, int> value = box.Value;
+						KeyValuePair<int, Data> value = box.Value;
 #if TEST_VERBOSE_MULTIWRITERQUEUE
 						Console.WriteLine( "  < read " + node );
 						Console.WriteLine( "\t" + queue.First );
 						Console.WriteLine( "\t" + queue.Last );
 #endif
-						if ( results.ContainsKey( value.Key ) && results[ value.Key ] != value.Value - 1 )
+						if ( results.ContainsKey( value.Key ) && results[value.Key] != value.Value - 1 )
 						{
-							if ( results[ value.Key ] < value.Value )
-								Console.WriteLine( "Missing value from writer " + value.Key + ": previous=" + results[ value.Key ] + ", current=" + value.Value );
+							if ( results[value.Key] < value.Value )
+								Console.WriteLine( "Missing value from writer " + value.Key + ": previous=" + results[value.Key] + ", current=" + value.Value );
 							else
-								Console.WriteLine( "Duplicated value from writer " + value.Key + ": previous=" + results[ value.Key ] + ", current=" + value.Value );
+								Console.WriteLine( "Duplicated value from writer " + value.Key + ": previous=" + results[value.Key] + ", current=" + value.Value );
 						}
 						else
 							read++;
 
-						results[ value.Key ] = value.Value;
+						results[value.Key] = value.Value;
 					}
 					else
 					{
@@ -273,7 +383,9 @@ namespace Test
 				}
 				while ( true );
 				sw.Stop();
-				Console.WriteLine( ">>> " + read + " items from " + ThreadCount + " threads received in " + sw.ElapsedMilliseconds + "ms (" + (int)( read / ( sw.ElapsedMilliseconds / 1000.0 ) ) + " messages/second)." );
+				//Console.WriteLine( ">>> " + read + " items from " + ThreadCount + " threads received in " + sw.ElapsedMilliseconds + "ms (" + (int)( read / ( sw.ElapsedMilliseconds / 1000.0 ) ) + " messages/second)." );
+				Report.Append( "" + read + " items from " + ThreadCount + " threads received in " + sw.ElapsedMilliseconds + "ms (" + (int)( read / ( sw.ElapsedMilliseconds / 1000.0 ) ) + " messages/second)." ).AppendLine();
+				Console.WriteLine( ">>> " + read + " items(" + System.Runtime.InteropServices.Marshal.SizeOf( typeof( Data ) ) + "bytes each) from " + ThreadCount + " threads received in " + sw.ElapsedMilliseconds + "ms (" + (int)( read / ( sw.ElapsedMilliseconds / 1000.0 ) ) + " messages/second)." );
 				Console.WriteLine();
 			}
 		}
@@ -291,10 +403,10 @@ namespace Test
 #if !TEST_PERFORMANCE_SINGLEWRITERQUEUE
 			Console.WriteLine( "\tConfiguration: " + BuildType + ", Threads=" + ThreadCount + ", Items=" + ItemCount + ", NO PERFORMANCE TEST" );
 #else
-			Console.WriteLine( "\tConfiguration: " + BuildType + ", Threads=" + ThreadCount + ", Items=" + ItemCount + ", performance test" );
+			Console.WriteLine( "\tConfiguration: " + BuildType + ", Threads=" + ThreadCount + ", Items=" + ItemCount + ", ItemSize=" + System.Runtime.InteropServices.Marshal.SizeOf( typeof( Data ) ) + "bytes, performance test" );
 #endif
 			Console.WriteLine( "\tSystem: " + Environment.OSVersion + ", CPUs=" + Environment.ProcessorCount );
-			zeroflag.Threading.LocklessQueueOld<Box<KeyValuePair<int, int>>> queue = new LocklessQueueOld<Box<KeyValuePair<int, int>>>();
+			zeroflag.Threading.LocklessQueueOld<Box<KeyValuePair<int, Data>>> queue = new LocklessQueueOld<Box<KeyValuePair<int, Data>>>();
 			List<System.Threading.Thread> threads = new List<System.Threading.Thread>();
 			int threadsFinished = 0;
 			for ( int t = 0; t < ThreadCount; t++ )
@@ -312,7 +424,7 @@ namespace Test
 						queue.Push( item );
 						Console.WriteLine( System.Threading.Thread.CurrentThread.ManagedThreadId + "> wrote " + item );
 #else
-						queue.Push( new Box<KeyValuePair<int, int>>() { Value = new KeyValuePair<int, int>( System.Threading.Thread.CurrentThread.ManagedThreadId, i ) } );
+						queue.Push( new Box<KeyValuePair<int, Data>>() { Value = new KeyValuePair<int, Data>( System.Threading.Thread.CurrentThread.ManagedThreadId, i ) } );
 #endif
 						//System.Threading.Interlocked.Increment( ref count );
 #if !TEST_PERFORMANCE_SINGLEWRITERQUEUE
@@ -320,7 +432,7 @@ namespace Test
 #endif
 					}
 					sw.Stop();
-					Console.WriteLine( System.Threading.Thread.CurrentThread.ManagedThreadId + "> Wrote " + ItemCount + " items in " + sw.ElapsedMilliseconds + "ms." );
+					Console.WriteLine( System.Threading.Thread.CurrentThread.ManagedThreadId + "> Wrote " + ItemCount + " items(" + System.Runtime.InteropServices.Marshal.SizeOf( typeof( Data ) ) + "bytes each) in " + sw.ElapsedMilliseconds + "ms." );
 					System.Threading.Interlocked.Increment( ref threadsFinished );
 					while ( !done )
 						queue.Update();
@@ -346,23 +458,23 @@ namespace Test
 					{
 						empty = 0;
 						//System.Threading.Interlocked.Decrement( ref count );
-						KeyValuePair<int, int> value = box.Value;
+						KeyValuePair<int, Data> value = box.Value;
 #if TEST_VERBOSE_SINGLEWRITERQUEUE
 						Console.WriteLine( "  < read " + node );
 						Console.WriteLine( "\t" + queue.First );
 						Console.WriteLine( "\t" + queue.Last );
 #endif
-						if ( results.ContainsKey( value.Key ) && results[ value.Key ] != value.Value - 1 )
+						if ( results.ContainsKey( value.Key ) && results[value.Key] != value.Value - 1 )
 						{
-							if ( results[ value.Key ] < value.Value )
-								Console.WriteLine( "Missing value from writer " + value.Key + ": previous=" + results[ value.Key ] + ", current=" + value.Value );
+							if ( results[value.Key] < value.Value )
+								Console.WriteLine( "Missing value from writer " + value.Key + ": previous=" + results[value.Key] + ", current=" + value.Value );
 							else
-								Console.WriteLine( "Duplicated value from writer " + value.Key + ": previous=" + results[ value.Key ] + ", current=" + value.Value );
+								Console.WriteLine( "Duplicated value from writer " + value.Key + ": previous=" + results[value.Key] + ", current=" + value.Value );
 						}
 						else
 							read++;
 
-						results[ value.Key ] = value.Value;
+						results[value.Key] = value.Value;
 					}
 					else
 					{
@@ -394,7 +506,7 @@ namespace Test
 				while ( true );
 				sw.Stop();
 				done = true;
-				Console.WriteLine( ">>> " + read + " items from " + ThreadCount + " threads received in " + sw.ElapsedMilliseconds + "ms (" + (int)( read / ( sw.ElapsedMilliseconds / 1000.0 ) ) + " messages/second)." );
+				Console.WriteLine( ">>> " + read + " items(" + System.Runtime.InteropServices.Marshal.SizeOf( typeof( Data ) ) + "bytes each) from " + ThreadCount + " threads received in " + sw.ElapsedMilliseconds + "ms (" + (int)( read / ( sw.ElapsedMilliseconds / 1000.0 ) ) + " messages/second)." );
 				Console.WriteLine();
 			}
 		}

@@ -106,7 +106,18 @@ namespace zeroflag.Serialization.Descriptors
 				{
 					//if (sub.Name == NameItem)
 					//{
-					T item = (T)sub.GenerateLink();
+					T item;
+					//try
+					{
+						item = (T)sub.GenerateLink();
+					}
+					//catch ( InvalidCastException )
+					//{
+					//    sub.Value = null;
+					//    sub.GenerateParse();
+					//    sub.GenerateCreate();
+					//    item = (T)sub.GenerateLink();
+					//}
 					if ( item != null )
 						value.Add( item );
 					//}

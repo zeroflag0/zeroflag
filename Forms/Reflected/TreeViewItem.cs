@@ -159,10 +159,24 @@ namespace zeroflag.Forms.Reflected
 		public virtual void Update()
 		{
 			if ( this.TreeView != null )
-				this.TreeView.Invoke( new Action( () =>
-						{
+			{
+				try
+				{
+					Action act = new Action( () =>
+							{
 								this.Text = this.Owner.Decorate( this.Value ) + ( this.CyclicReference ? " [CYCLIC REFERENCE]" : "" );
-						} ) );
+							} );
+					if ( this.TreeView.InvokeRequired )
+						this.TreeView.BeginInvoke( act );
+					else
+						act();
+				}
+				catch ( Exception exc )
+				{
+					Console.WriteLine( exc );
+					//System.Diagnostics.Debugger.Log( 10, this.GetType().ToString(), exc.ToString() );
+				}
+			}
 		}
 	}
 }

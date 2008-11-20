@@ -322,16 +322,27 @@ namespace zeroflag
 					type = TypeNames[name];
 				else
 				{
-					foreach ( System.Reflection.Assembly ass in AppDomain.CurrentDomain.GetAssemblies() )
-					{
-						if ( ( type = ass.GetType( name ) ) != null )
-							break;
-					}
-					//foreach (Type t in Types)
-					//{
-					//    if (name.Contains(t.Name))
-					//        type = t;
-					//}
+					type = Type.GetType( name );
+					if ( type == null )
+						foreach ( System.Reflection.Assembly ass in AppDomain.CurrentDomain.GetAssemblies() )
+						{
+							if ( ( type = ass.GetType( name ) ) != null )
+								break;
+						}
+					if ( type == null )
+						foreach ( Type t in Types )
+						{
+							if ( t.Name != null )
+							{
+								TypeNames[t.Name] = t;
+								//TypeNames.Add( t.Name.ToLower(), t );
+								if ( name.Contains( t.Name ) || name.ToLower().Contains( t.Name.ToLower() ) )
+								{
+									type = t;
+									break;
+								}
+							}
+						}
 				}
 
 				return type;
