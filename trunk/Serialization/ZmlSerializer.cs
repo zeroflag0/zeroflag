@@ -1,4 +1,5 @@
-﻿using System;
+﻿//#define DEBUGTYPE
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
@@ -251,7 +252,7 @@ namespace zeroflag.Serialization
 			return value;
 		}
 #if DEBUGTYPE
-		const string BreakOnType = "State";
+		const string BreakOnType = "";
 #endif
 		int depth = 0;
 		protected virtual object Deserialize( object value, Descriptor desc, Descriptor outer, XmlNode node )
