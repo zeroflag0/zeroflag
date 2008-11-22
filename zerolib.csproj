@@ -195,6 +195,7 @@
     <Compile Include="Serialization\Converters\String\Color.cs" />
     <Compile Include="Serialization\Converters\String\Converter.cs" />
     <Compile Include="Serialization\Converters\String\Converter~1.cs" />
+    <Compile Include="Serialization\Converters\String\ByteArray.cs" />
     <Compile Include="Serialization\Converters\String\Decimal.cs" />
     <Compile Include="Serialization\Converters\String\Double.cs" />
     <Compile Include="Serialization\Converters\String\Enum.cs" />

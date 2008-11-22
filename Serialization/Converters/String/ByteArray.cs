@@ -30,45 +30,30 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace zeroflag.Serialization.Descriptors
+namespace zeroflag.Serialization.Converters.String
 {
-	public class ObjectDescriptor : Descriptor<object>
+	public class ByteArray : Converter<System.Byte[]>
 	{
-		public override bool NeedsWriteAccess
+		public override System.Byte[] ___Parse( Type type, string value )
 		{
-			get
+			if ( value.ToLower().StartsWith( "0x" ) )
+				value = value.Remove( 0, 2 );
+			List<byte> result = new List<byte>();
+			for ( int i = 0; i < value.Length; i += 2 )
 			{
-				return false;
+				result.Add( System.Byte.Parse( value.Substring( i, 2 ) ) );
 			}
+			return result.ToArray();
 		}
-		public override void Parse()
+
+		public override string _Generate( Type type, byte[] value )
 		{
-			//if ( this.Value == null )
-			//    return;
-
-			Type type = this.Type;
-
-			System.Reflection.PropertyInfo[] properties = this.GetProperties( type ).ToArray();
-
-			foreach ( System.Reflection.PropertyInfo property in properties )
+			StringBuilder result = new StringBuilder( "0x" );
+			foreach ( byte b in value )
 			{
-				Descriptor desc = this.Context.Parse( property, this.Value );
-				if ( desc != null && !this.Inner.Contains( desc ) )
-					this.Inner.Add( desc );
+				result.Append( b.ToString( "X" ).PadLeft( 2, '0' ) );
 			}
-
-			//if ( type.IsValueType )
-			//{
-			//    System.Reflection.FieldInfo[] fields = type.GetFields();
-
-			//    foreach ( System.Reflection.FieldInfo property in fields )
-			//    {
-			//        Descriptor desc = this.Context.Parse( property, this.Value );
-			//        if ( desc != null && !this.Inner.Contains( desc ) )
-			//            this.Inner.Add( desc );
-			//    }
-
-			//}
+			return result.ToString();
 		}
 	}
 }

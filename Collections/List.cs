@@ -257,6 +257,8 @@ namespace zeroflag.Collections
 		{
 			get
 			{
+				if ( end == 0 )
+					end = -1;
 				if ( end < 0 )
 					end = this.Count + end;
 				if ( start < 0 )
@@ -264,11 +266,11 @@ namespace zeroflag.Collections
 				if ( start > end && step > 0 )
 					step = -step;
 				T[] value = new T[( end - start ) / step];
-				if ( step == 1 )
-				{
-					this.CopyTo( value, 0 );
-				}
-				else
+				//if ( step == 1 )
+				//{
+				//    this.CopyTo( value, 0 );
+				//}
+				//else
 				{
 					for ( int i = start, j = 0; j < value.Length; i += step, j++ )
 						value[j] = this[i];

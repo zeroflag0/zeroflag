@@ -606,11 +606,11 @@ namespace zeroflag.Forms.Reflected
 			}
 		}
 
-		System.Collections.ICollection IListView.SelectedItems
+		System.Collections.IList IListView.SelectedItems
 		{
 			get
 			{
-				return (System.Collections.ICollection)this.SelectedItems;
+				return (System.Collections.IList)this.SelectedItems;
 			}
 		}
 

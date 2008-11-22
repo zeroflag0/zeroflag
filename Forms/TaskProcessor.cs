@@ -38,6 +38,7 @@ namespace zeroflag.Forms
 					else
 						this.CancelRequestTime = null;
 				}
+				//Console.WriteLine( this + ".Cancel = " + value );
 				//if ( value )
 				//{
 				//    this.Tasks.Clear();
@@ -199,7 +200,7 @@ namespace zeroflag.Forms
 
 		#endregion CancelRequestTime
 
-		private TimeSpan _CancelTimeout = TimeSpan.FromSeconds( 30 );
+		private TimeSpan _CancelTimeout = TimeSpan.FromSeconds( 10 );
 
 		/// <summary>
 		/// Time for how long the thread will be allowed to contineue after Cancel has been set.
@@ -323,9 +324,13 @@ namespace zeroflag.Forms
 				Console.WriteLine( "TaskProcessor(" + this.Name + ") started..." );
 				while ( !this.Cancel || this.Tasks.Count > 0 )
 				{
+					if ( this.Cancel && DateTime.Now - this.CancelRequestTime > this.CancelTimeout )
+					{
+						Console.WriteLine( "TaskProcessor(" + this.Name + ") canceled..." );
+						break;
+					}
 					if ( this.Tasks.Count > 0 )
 					{
-						_LastWork = DateTime.Now;
 						current = this.Tasks[0];
 						if ( current != null )
 						{
@@ -335,9 +340,11 @@ namespace zeroflag.Forms
 							}
 							catch ( Exception exc )
 							{
+								Console.WriteLine( exc );
 								this.OnErrorHandling( current, exc );
 							}
 						}
+						_LastWork = DateTime.Now;
 						this.Tasks.RemoveAt( 0 );
 					}
 					else
@@ -366,8 +373,13 @@ namespace zeroflag.Forms
 			}
 		}
 
+		public override string ToString()
+		{
+			return ( (object)this.Name ?? base.ToString() ).ToString();
+		}
 		protected virtual void OnDispose()
 		{
+			Console.WriteLine( this + ".OnDispose()" );
 			this.Cancel = true;
 			while ( this.backgroundWorker.IsBusy && _Working > 0 )
 			{
@@ -388,7 +400,6 @@ namespace zeroflag.Forms
 				}
 			}
 		}
-
 
 	}
 }

@@ -34,6 +34,7 @@
 			// _Control
 			// 
 			this._Control.BorderStyle = System.Windows.Forms.BorderStyle.None;
+			this._Control.Scrollable = true;
 			this._Control.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._Control.FullRowSelect = true;
 			this._Control.Location = new System.Drawing.Point(0, 0);

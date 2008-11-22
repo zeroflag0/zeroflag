@@ -14,7 +14,7 @@ namespace zeroflag.Forms.Reflected
 		event Action<object> ItemSelected;
 		event Action<object> ItemRemoved;
 		System.Collections.ICollection Items { get; set; }
-		System.Collections.ICollection SelectedItems { get; }
+		System.Collections.IList SelectedItems { get; }
 		void Synchronize();
 		//TypeDescription TypeDescription { get; set; }
 	}
