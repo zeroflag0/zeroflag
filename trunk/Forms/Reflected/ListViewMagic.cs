@@ -172,6 +172,8 @@ namespace zeroflag.Forms.Reflected
 				list.ItemSelected += new Action<object>( SpecializedViewItemSelected );
 				list.ItemDeselected += new Action<object>( SpecializedViewItemDeselected );
 				list.Sorting = this.Sorting;
+				view.AutoScroll = this.AutoScroll;
+				//base.AutoScroll = false;
 				try
 				{
 					this.SuspendLayout();
@@ -260,7 +262,7 @@ namespace zeroflag.Forms.Reflected
 			remove { _ItemSelected -= value; }
 		}
 
-		public System.Collections.ICollection SelectedItems
+		public System.Collections.IList SelectedItems
 		{
 			get { return ( (IListView)this.SpecializedView ).SelectedItems; }
 		}
