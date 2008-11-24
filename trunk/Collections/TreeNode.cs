@@ -41,7 +41,7 @@ namespace zeroflag.Collections
 			this.InitializeChildren();
 		}
 
-		public TreeNode(Self parent)
+		public TreeNode( Self parent )
 			: this()
 		{
 			this.Parent = parent;
@@ -119,15 +119,15 @@ namespace zeroflag.Collections
 			get { return _Parent; }
 			set
 			{
-				if (_Parent != value)
+				if ( _Parent != value )
 				{
-					this.OnParentChanged(_Parent, _Parent = value);
+					this.OnParentChanged( _Parent, _Parent = value );
 				}
 			}
 		}
 
 		#region ParentChanged event
-		public delegate void ParentChangedHandler(object sender, Self oldvalue, Self newvalue);
+		public delegate void ParentChangedHandler( object sender, Self oldvalue, Self newvalue );
 
 		private event ParentChangedHandler _ParentChanged;
 		/// <summary>
@@ -142,19 +142,19 @@ namespace zeroflag.Collections
 		/// <summary>
 		/// Raises the ParentChanged event.
 		/// </summary>
-		protected virtual void OnParentChanged(Self oldvalue, Self newvalue)
+		protected virtual void OnParentChanged( Self oldvalue, Self newvalue )
 		{
-			if (oldvalue != null)
-				while (oldvalue.Contains((Self)this))
-					oldvalue.Remove((Self)this);
-			if (newvalue != null && !newvalue.Contains((Self)this))
-				newvalue.Add((Self)this);
+			if ( oldvalue != null )
+				while ( oldvalue.Contains( (Self)this ) )
+					oldvalue.Remove( (Self)this );
+			if ( newvalue != null && !newvalue.Contains( (Self)this ) )
+				newvalue.Add( (Self)this );
 
 			// if there are event subscribers...
-			if (this._ParentChanged != null)
+			if ( this._ParentChanged != null )
 			{
 				// call them...
-				this._ParentChanged(this, oldvalue, newvalue);
+				this._ParentChanged( this, oldvalue, newvalue );
 			}
 		}
 		#endregion ParentChanged event
@@ -162,9 +162,9 @@ namespace zeroflag.Collections
 
 		#region System.Collections.Generic.ICollection`1
 
-		public virtual void Add(Self child)
+		public virtual void Add( Self child )
 		{
-			this.Children.Add(child);
+			this.Children.Add( child );
 		}
 
 		public virtual void Clear()
@@ -172,14 +172,14 @@ namespace zeroflag.Collections
 			this.Children.Clear();
 		}
 
-		public virtual bool Contains(Self child)
+		public virtual bool Contains( Self child )
 		{
-			return this.Children.Contains(child);
+			return this.Children.Contains( child );
 		}
 
-		public virtual bool Remove(Self child)
+		public virtual bool Remove( Self child )
 		{
-			return this.Children.Remove(child);
+			return this.Children.Remove( child );
 		}
 
 		public virtual int Count
@@ -244,13 +244,13 @@ namespace zeroflag.Collections
 			this.Children.ItemChanged += this.Children_ItemChanged;
 		}
 
-		void Children_ItemChanged(object sender, TreeNode<Self> oldvalue, TreeNode<Self> newvalue)
+		void Children_ItemChanged( object sender, TreeNode<Self> oldvalue, TreeNode<Self> newvalue )
 		{
-			if (oldvalue != null)
+			if ( oldvalue != null )
 			{
 				oldvalue.Parent = null;
 			}
-			if (newvalue != null)
+			if ( newvalue != null )
 			{
 				newvalue.Parent = (Self)this;
 			}
@@ -272,22 +272,26 @@ namespace zeroflag.Collections
 
 		System.Collections.Generic.IEnumerable<Self> Enumerate()
 		{
-			foreach (TreeNode<Self> child in Enumerate(this))
-			{
-				yield return (Self)child;
-			}
-		}
-		System.Collections.Generic.IEnumerable<TreeNode<Self>> Enumerate(TreeNode<Self> node)
-		{
-			foreach (TreeNode<Self> child in this.Children)
+			foreach ( Self child in this.Children )
 			{
 				yield return child;
-				foreach (TreeNode<Self> inner in Enumerate(child))
+				foreach ( Self inner in child.Enumerate() )
 				{
 					yield return inner;
 				}
 			}
 		}
+		//System.Collections.Generic.IEnumerable<TreeNode<Self>> EnumerateT()
+		//{
+		//    foreach ( TreeNode<Self> child in this.Children )
+		//    {
+		//        yield return child;
+		//        foreach ( TreeNode<Self> inner in child.EnumerateT() )
+		//        {
+		//            yield return inner;
+		//        }
+		//    }
+		//}
 
 		#endregion IEnumerable
 
