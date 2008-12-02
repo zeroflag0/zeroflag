@@ -347,6 +347,24 @@ namespace zeroflag.Windows
 			}
 		}
 
+		public string Text
+		{
+			get
+			{
+				string text = null;
+				unsafe
+				{
+					byte[] buffer = new byte[512];
+					fixed ( byte* ptr = buffer )
+					{
+						WinAPI.GetWindowText( this.Handle, ptr, buffer.Length );
+					}
+					text = System.Text.Encoding.ASCII.GetString( buffer ).Trim().TrimEnd( '\0' );
+				}
+				return text;
+			}
+		}
+
 		public button MouseButtons
 		{
 			get

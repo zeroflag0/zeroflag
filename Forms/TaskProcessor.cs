@@ -69,7 +69,8 @@ namespace zeroflag.Forms
 				if ( _Name != value )
 				{
 					_Name = value;
-					this.Add( () => System.Threading.Thread.CurrentThread.Name = value );
+					if ( _Tasks != null )
+						this.Add( () => System.Threading.Thread.CurrentThread.Name = value );
 				}
 			}
 		}
@@ -106,40 +107,69 @@ namespace zeroflag.Forms
 		#region Tasks
 		public void Add( Action task )
 		{
-			this.Tasks.Add( task );
+			this.Tasks.Write( task );
+			if ( !this.backgroundWorker.IsBusy || _Working < 1 )
+			{
+				try
+				{
+					this.backgroundWorker.RunWorkerAsync();
+				}
+#if DEBUG
+							//|| TRACE || VERBOSE
+						catch ( Exception exc )
+						{
+							Console.WriteLine( exc );
+						}
+#else
+				catch { }
+#endif
+			}
+			Wait.Set();
 		}
 
 		public void Add( params Action[] tasks )
 		{
-			this.Tasks.AddRange( tasks );
+			foreach ( var task in tasks )
+				this.Add( task );
+			//this.Tasks.AddRange( tasks );
 		}
 
 		public void Add<T1>( Action<T1> task, T1 p1 )
 		{
-			this.Tasks.Add( () => task( p1 ) );
+			this.Add( () => task( p1 ) );
 		}
 
 		public void Add<T1, T2>( Action<T1, T2> task, T1 p1, T2 p2 )
 		{
-			this.Tasks.Add( () => task( p1, p2 ) );
+			this.Add( () => task( p1, p2 ) );
 		}
 
 		public void Add<T1, T2, T3>( Action<T1, T2, T3> task, T1 p1, T2 p2, T3 p3 )
 		{
-			this.Tasks.Add( () => task( p1, p2, p3 ) );
+			this.Add( () => task( p1, p2, p3 ) );
 		}
 
 		public void Add<T1, T2, T3, T4>( Action<T1, T2, T3, T4> task, T1 p1, T2 p2, T3 p3, T4 p4 )
 		{
-			this.Tasks.Add( () => task( p1, p2, p3, p4 ) );
+			this.Add( () => task( p1, p2, p3, p4 ) );
 		}
 
-		private zeroflag.Collections.List<Action> _Tasks;
+		public int Count
+		{
+			get { return this.Tasks.Count; }
+		}
+
+		public void Clear()
+		{
+			this.Tasks.Clear();
+		}
+
+		private zeroflag.Threading.LocklessQueue<Action> _Tasks;
 
 		/// <summary>
 		/// Tasks to be processed in the background.
 		/// </summary>
-		public zeroflag.Collections.List<Action> Tasks
+		protected zeroflag.Threading.LocklessQueue<Action> Tasks
 		{
 			get { return _Tasks ?? ( _Tasks = this.TasksCreate ); }
 		}
@@ -148,11 +178,12 @@ namespace zeroflag.Forms
 		/// Creates the default/initial value for Tasks.
 		/// Tasks to be processed in the background.
 		/// </summary>
-		protected virtual zeroflag.Collections.List<Action> TasksCreate
+		protected virtual zeroflag.Threading.LocklessQueue<Action> TasksCreate
 		{
 			get
 			{
-				var list = new zeroflag.Collections.List<Action>() { };
+				var list = new zeroflag.Threading.LocklessQueue<Action>() { };
+#if OBSOLETE
 				list.ItemAdded += item =>
 				{
 					if ( !this.backgroundWorker.IsBusy || _Working < 1 )
@@ -161,7 +192,8 @@ namespace zeroflag.Forms
 						{
 							this.backgroundWorker.RunWorkerAsync();
 						}
-#if DEBUG || TRACE || VERBOSE
+#if DEBUG
+							//|| TRACE || VERBOSE
 						catch ( Exception exc )
 						{
 							Console.WriteLine( exc );
@@ -172,6 +204,9 @@ namespace zeroflag.Forms
 					}
 					Wait.Set();
 				};
+#endif
+				if ( _Name != null )
+					list.Write( () => System.Threading.Thread.CurrentThread.Name = this.Name );
 				return list;
 			}
 		}
@@ -322,16 +357,17 @@ namespace zeroflag.Forms
 				if ( _Working > 1 )
 					return;
 				Console.WriteLine( "TaskProcessor(" + this.Name + ") started..." );
-				while ( !this.Cancel || this.Tasks.Count > 0 )
+				while ( !this.Cancel || !this.Tasks.IsEmpty )
 				{
-					if ( this.Cancel && DateTime.Now - this.CancelRequestTime > this.CancelTimeout )
+					if ( this.Cancel && ( DateTime.Now - this.CancelRequestTime ).Value.TotalMilliseconds > this.CancelTimeout.TotalMilliseconds * 0.85 )
 					{
 						Console.WriteLine( "TaskProcessor(" + this.Name + ") canceled..." );
 						break;
 					}
 					if ( this.Tasks.Count > 0 )
 					{
-						current = this.Tasks[0];
+						//current = this.Tasks[0];
+						current = this.Tasks.Read();
 						if ( current != null )
 						{
 							try
@@ -345,15 +381,19 @@ namespace zeroflag.Forms
 							}
 						}
 						_LastWork = DateTime.Now;
-						this.Tasks.RemoveAt( 0 );
+						//this.Tasks.RemoveAt( 0 );
 					}
 					else
 					{
 						if ( DateTime.Now - _LastWork > this.IdleThreadTimeout && !this.Cancel )
 						{
+#if DEBUG
 							Console.WriteLine( "TaskProcessor(" + this.Name + ") idle timeout." );
+#endif
 							this.Wait.WaitOne( 15000, true );
+#if DEBUG
 							Console.WriteLine( "TaskProcessor(" + this.Name + ") resuming..." );
+#endif
 							_LastWork = DateTime.Now;
 							//return;
 						}

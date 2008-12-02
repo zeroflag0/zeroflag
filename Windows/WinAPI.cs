@@ -45,35 +45,35 @@ namespace zeroflag.Windows
 		//    return (IntPtr)(((short)low) | (((ushort)high) << 0x10));
 		//}
 
-		public static zeroflag.Windows.MouseButtons ConvertMouseButtons(button value)
+		public static zeroflag.Windows.MouseButtons ConvertMouseButtons( button value )
 		{
 			zeroflag.Windows.MouseButtons converted = zeroflag.Windows.MouseButtons.None;
-			if ((value & button.Left) != 0)
+			if ( ( value & button.Left ) != 0 )
 			{
 				converted |= zeroflag.Windows.MouseButtons.MK_LBUTTON;
 			}
-			if ((value & button.Right) != 0)
+			if ( ( value & button.Right ) != 0 )
 			{
 				converted |= zeroflag.Windows.MouseButtons.MK_RBUTTON;
 			}
-			if ((value & button.Middle) != 0)
+			if ( ( value & button.Middle ) != 0 )
 			{
 				converted |= zeroflag.Windows.MouseButtons.MK_MBUTTON;
 			}
-			if ((value & button.XButton1) != 0)
+			if ( ( value & button.XButton1 ) != 0 )
 			{
 				converted |= zeroflag.Windows.MouseButtons.MK_XBUTTON1;
 			}
-			if ((value & button.XButton2) != 0)
+			if ( ( value & button.XButton2 ) != 0 )
 			{
 				converted |= zeroflag.Windows.MouseButtons.MK_XBUTTON2;
 			}
 			return converted;
 		}
 
-		public static IntPtr ConvertMousePosition(Point location)
+		public static IntPtr ConvertMousePosition( Point location )
 		{
-			return new IntPtr(location.X | location.Y << 0x10);
+			return new IntPtr( location.X | location.Y << 0x10 );
 		}
 
 		#region VK
@@ -693,118 +693,118 @@ namespace zeroflag.Windows
 		static System.Collections.Generic.Dictionary<key, ScanCode> CreateKeyScanCodes()
 		{
 			System.Collections.Generic.Dictionary<key, ScanCode> codes = new System.Collections.Generic.Dictionary<key, ScanCode>();
-			codes.Add(key.NoName, ScanCode.NONE);
-			codes.Add(key.Escape, ScanCode.ESCAPE);
-			codes.Add(key.D1, ScanCode.D1);
-			codes.Add(key.D2, ScanCode.D2);
-			codes.Add(key.D3, ScanCode.D3);
-			codes.Add(key.D4, ScanCode.D4);
-			codes.Add(key.D5, ScanCode.D5);
-			codes.Add(key.D6, ScanCode.D6);
-			codes.Add(key.D7, ScanCode.D7);
-			codes.Add(key.D8, ScanCode.D8);
-			codes.Add(key.D9, ScanCode.D9);
-			codes.Add(key.D0, ScanCode.D0);
-			codes.Add(key.OemMinus, ScanCode.MINUS);    /* - on main keyboard */
-			codes.Add(key.Oemplus, ScanCode.EQUALS);
-			codes.Add(key.Back, ScanCode.BACK);    /* backspace */
-			codes.Add(key.Tab, ScanCode.TAB);
-			codes.Add(key.Q, ScanCode.Q);
-			codes.Add(key.W, ScanCode.W);
-			codes.Add(key.E, ScanCode.E);
-			codes.Add(key.R, ScanCode.R);
-			codes.Add(key.T, ScanCode.T);
-			codes.Add(key.Y, ScanCode.Y);
-			codes.Add(key.U, ScanCode.U);
-			codes.Add(key.I, ScanCode.I);
-			codes.Add(key.O, ScanCode.O);
-			codes.Add(key.P, ScanCode.P);
-			codes.Add(key.OemOpenBrackets, ScanCode.LBRACKET);
-			codes.Add(key.OemCloseBrackets, ScanCode.RBRACKET);
-			codes.Add(key.Enter, ScanCode.RETURN);    /* Enter on main keyboard */
-			codes.Add(key.LControlKey, ScanCode.LCONTROL);
-			codes.Add(key.A, ScanCode.A);
-			codes.Add(key.S, ScanCode.S);
-			codes.Add(key.D, ScanCode.D);
-			codes.Add(key.F, ScanCode.F);
-			codes.Add(key.G, ScanCode.G);
-			codes.Add(key.H, ScanCode.H);
-			codes.Add(key.J, ScanCode.J);
-			codes.Add(key.K, ScanCode.K);
-			codes.Add(key.L, ScanCode.L);
-			codes.Add(key.OemSemicolon, ScanCode.SEMICOLON);
-			codes.Add(key.OemQuotes, ScanCode.APOSTROPHE);
-			codes.Add(key.Oemtilde, ScanCode.GRAVE);    /* accent grave */
-			codes.Add(key.LShiftKey, ScanCode.LSHIFT);
-			codes.Add(key.OemBackslash, ScanCode.BACKSLASH);
-			codes.Add(key.Z, ScanCode.Z);
-			codes.Add(key.X, ScanCode.X);
-			codes.Add(key.C, ScanCode.C);
-			codes.Add(key.V, ScanCode.V);
-			codes.Add(key.B, ScanCode.B);
-			codes.Add(key.N, ScanCode.N);
-			codes.Add(key.M, ScanCode.M);
-			codes.Add(key.Oemcomma, ScanCode.COMMA);
-			codes.Add(key.OemPeriod, ScanCode.PERIOD);    /* . on main keyboard */
-			codes.Add(key.OemQuestion, ScanCode.SLASH);    /* / on main keyboard */
-			codes.Add(key.RShiftKey, ScanCode.RSHIFT);
-			codes.Add(key.Multiply, ScanCode.MULTIPLY);    /* * on numeric keypad */
-			codes.Add(key.Alt, ScanCode.LMENU);    /* left Alt */
-			codes.Add(key.Space, ScanCode.SPACE);
-			codes.Add(key.Capital, ScanCode.CAPITAL);
-			codes.Add(key.F1, ScanCode.F1);
-			codes.Add(key.F2, ScanCode.F2);
-			codes.Add(key.F3, ScanCode.F3);
-			codes.Add(key.F4, ScanCode.F4);
-			codes.Add(key.F5, ScanCode.F5);
-			codes.Add(key.F6, ScanCode.F6);
-			codes.Add(key.F7, ScanCode.F7);
-			codes.Add(key.F8, ScanCode.F8);
-			codes.Add(key.F9, ScanCode.F9);
-			codes.Add(key.F10, ScanCode.F10);
-			codes.Add(key.NumLock, ScanCode.NUMLOCK);
-			codes.Add(key.Scroll, ScanCode.SCROLL);    /* Scroll Lock */
-			codes.Add(key.NumPad7, ScanCode.NUMPAD7);
-			codes.Add(key.NumPad8, ScanCode.NUMPAD8);
-			codes.Add(key.NumPad9, ScanCode.NUMPAD9);
-			codes.Add(key.Subtract, ScanCode.SUBTRACT);    /* - on numeric keypad */
-			codes.Add(key.NumPad4, ScanCode.NUMPAD4);
-			codes.Add(key.NumPad5, ScanCode.NUMPAD5);
-			codes.Add(key.NumPad6, ScanCode.NUMPAD6);
-			codes.Add(key.Add, ScanCode.ADD);    /* + on numeric keypad */
-			codes.Add(key.NumPad1, ScanCode.NUMPAD1);
-			codes.Add(key.NumPad2, ScanCode.NUMPAD2);
-			codes.Add(key.NumPad3, ScanCode.NUMPAD3);
-			codes.Add(key.NumPad0, ScanCode.NUMPAD0);
-			codes.Add(key.Decimal, ScanCode.DECIMAL);    /* . on numeric keypad */
+			codes.Add( key.NoName, ScanCode.NONE );
+			codes.Add( key.Escape, ScanCode.ESCAPE );
+			codes.Add( key.D1, ScanCode.D1 );
+			codes.Add( key.D2, ScanCode.D2 );
+			codes.Add( key.D3, ScanCode.D3 );
+			codes.Add( key.D4, ScanCode.D4 );
+			codes.Add( key.D5, ScanCode.D5 );
+			codes.Add( key.D6, ScanCode.D6 );
+			codes.Add( key.D7, ScanCode.D7 );
+			codes.Add( key.D8, ScanCode.D8 );
+			codes.Add( key.D9, ScanCode.D9 );
+			codes.Add( key.D0, ScanCode.D0 );
+			codes.Add( key.OemMinus, ScanCode.MINUS );    /* - on main keyboard */
+			codes.Add( key.Oemplus, ScanCode.EQUALS );
+			codes.Add( key.Back, ScanCode.BACK );    /* backspace */
+			codes.Add( key.Tab, ScanCode.TAB );
+			codes.Add( key.Q, ScanCode.Q );
+			codes.Add( key.W, ScanCode.W );
+			codes.Add( key.E, ScanCode.E );
+			codes.Add( key.R, ScanCode.R );
+			codes.Add( key.T, ScanCode.T );
+			codes.Add( key.Y, ScanCode.Y );
+			codes.Add( key.U, ScanCode.U );
+			codes.Add( key.I, ScanCode.I );
+			codes.Add( key.O, ScanCode.O );
+			codes.Add( key.P, ScanCode.P );
+			codes.Add( key.OemOpenBrackets, ScanCode.LBRACKET );
+			codes.Add( key.OemCloseBrackets, ScanCode.RBRACKET );
+			codes.Add( key.Enter, ScanCode.RETURN );    /* Enter on main keyboard */
+			codes.Add( key.LControlKey, ScanCode.LCONTROL );
+			codes.Add( key.A, ScanCode.A );
+			codes.Add( key.S, ScanCode.S );
+			codes.Add( key.D, ScanCode.D );
+			codes.Add( key.F, ScanCode.F );
+			codes.Add( key.G, ScanCode.G );
+			codes.Add( key.H, ScanCode.H );
+			codes.Add( key.J, ScanCode.J );
+			codes.Add( key.K, ScanCode.K );
+			codes.Add( key.L, ScanCode.L );
+			codes.Add( key.OemSemicolon, ScanCode.SEMICOLON );
+			codes.Add( key.OemQuotes, ScanCode.APOSTROPHE );
+			codes.Add( key.Oemtilde, ScanCode.GRAVE );    /* accent grave */
+			codes.Add( key.LShiftKey, ScanCode.LSHIFT );
+			codes.Add( key.OemBackslash, ScanCode.BACKSLASH );
+			codes.Add( key.Z, ScanCode.Z );
+			codes.Add( key.X, ScanCode.X );
+			codes.Add( key.C, ScanCode.C );
+			codes.Add( key.V, ScanCode.V );
+			codes.Add( key.B, ScanCode.B );
+			codes.Add( key.N, ScanCode.N );
+			codes.Add( key.M, ScanCode.M );
+			codes.Add( key.Oemcomma, ScanCode.COMMA );
+			codes.Add( key.OemPeriod, ScanCode.PERIOD );    /* . on main keyboard */
+			codes.Add( key.OemQuestion, ScanCode.SLASH );    /* / on main keyboard */
+			codes.Add( key.RShiftKey, ScanCode.RSHIFT );
+			codes.Add( key.Multiply, ScanCode.MULTIPLY );    /* * on numeric keypad */
+			codes.Add( key.Alt, ScanCode.LMENU );    /* left Alt */
+			codes.Add( key.Space, ScanCode.SPACE );
+			codes.Add( key.Capital, ScanCode.CAPITAL );
+			codes.Add( key.F1, ScanCode.F1 );
+			codes.Add( key.F2, ScanCode.F2 );
+			codes.Add( key.F3, ScanCode.F3 );
+			codes.Add( key.F4, ScanCode.F4 );
+			codes.Add( key.F5, ScanCode.F5 );
+			codes.Add( key.F6, ScanCode.F6 );
+			codes.Add( key.F7, ScanCode.F7 );
+			codes.Add( key.F8, ScanCode.F8 );
+			codes.Add( key.F9, ScanCode.F9 );
+			codes.Add( key.F10, ScanCode.F10 );
+			codes.Add( key.NumLock, ScanCode.NUMLOCK );
+			codes.Add( key.Scroll, ScanCode.SCROLL );    /* Scroll Lock */
+			codes.Add( key.NumPad7, ScanCode.NUMPAD7 );
+			codes.Add( key.NumPad8, ScanCode.NUMPAD8 );
+			codes.Add( key.NumPad9, ScanCode.NUMPAD9 );
+			codes.Add( key.Subtract, ScanCode.SUBTRACT );    /* - on numeric keypad */
+			codes.Add( key.NumPad4, ScanCode.NUMPAD4 );
+			codes.Add( key.NumPad5, ScanCode.NUMPAD5 );
+			codes.Add( key.NumPad6, ScanCode.NUMPAD6 );
+			codes.Add( key.Add, ScanCode.ADD );    /* + on numeric keypad */
+			codes.Add( key.NumPad1, ScanCode.NUMPAD1 );
+			codes.Add( key.NumPad2, ScanCode.NUMPAD2 );
+			codes.Add( key.NumPad3, ScanCode.NUMPAD3 );
+			codes.Add( key.NumPad0, ScanCode.NUMPAD0 );
+			codes.Add( key.Decimal, ScanCode.DECIMAL );    /* . on numeric keypad */
 			//same as backslash: codes.Add(key.Oem102, ScanCode.OEM_102);    /* <> or \| on RT 102-key keyboard (Non-U.S.) */
-			codes.Add(key.F11, ScanCode.F11);
-			codes.Add(key.F12, ScanCode.F12);
-			codes.Add(key.F13, ScanCode.F13);    /*                     (NEC PC98) */
-			codes.Add(key.F14, ScanCode.F14);    /*                     (NEC PC98) */
-			codes.Add(key.F15, ScanCode.F15);    /*                     (NEC PC98) */
+			codes.Add( key.F11, ScanCode.F11 );
+			codes.Add( key.F12, ScanCode.F12 );
+			codes.Add( key.F13, ScanCode.F13 );    /*                     (NEC PC98) */
+			codes.Add( key.F14, ScanCode.F14 );    /*                     (NEC PC98) */
+			codes.Add( key.F15, ScanCode.F15 );    /*                     (NEC PC98) */
 			//codes.Add(key.KanaMode, ScanCode.KANA);    /* (Japanese keyboard)            */
 			//codes.Add(key.FinalMode, ScanCode.ABNT_C1);    /* /? on Brazilian keyboard */
 			//codes.Add(key.FinalMode, ScanCode.CONVERT);    /* (Japanese keyboard)            */
 			//codes.Add(key.FinalMode, ScanCode.NOCONVERT);    /* (Japanese keyboard)            */
 			//same as Return: codes.Add(key.Enter, ScanCode.NUMPADENTER);    /* Enter on numeric keypad */
-			codes.Add(key.RControlKey, ScanCode.RCONTROL);
+			codes.Add( key.RControlKey, ScanCode.RCONTROL );
 			//codes.Add(key.Decimal, ScanCode.NUMPADCOMMA);    /* , on numeric keypad (NEC PC98) */
-			codes.Add(key.Divide, ScanCode.DIVIDE);    /* / on numeric keypad */
-			codes.Add(key.RMenu, ScanCode.RMENU);    /* right Alt */
-			codes.Add(key.Pause, ScanCode.PAUSE);    /* Pause */
-			codes.Add(key.Home, ScanCode.HOME);    /* Home on arrow keypad */
-			codes.Add(key.Up, ScanCode.UP);    /* UpArrow on arrow keypad */
-			codes.Add(key.PageUp, ScanCode.PRIOR);    /* PgUp on arrow keypad */
-			codes.Add(key.Left, ScanCode.LEFT);    /* LeftArrow on arrow keypad */
-			codes.Add(key.Right, ScanCode.RIGHT);    /* RightArrow on arrow keypad */
-			codes.Add(key.End, ScanCode.END);    /* End on arrow keypad */
-			codes.Add(key.Down, ScanCode.DOWN);    /* DownArrow on arrow keypad */
-			codes.Add(key.PageDown, ScanCode.NEXT);    /* PgDn on arrow keypad */
-			codes.Add(key.Insert, ScanCode.INSERT);    /* Insert on arrow keypad */
-			codes.Add(key.Delete, ScanCode.DELETE);    /* Delete on arrow keypad */
-			codes.Add(key.LWin, ScanCode.LWIN);    /* Left Windows key */
-			codes.Add(key.RWin, ScanCode.RWIN);    /* Right Windows key */
+			codes.Add( key.Divide, ScanCode.DIVIDE );    /* / on numeric keypad */
+			codes.Add( key.RMenu, ScanCode.RMENU );    /* right Alt */
+			codes.Add( key.Pause, ScanCode.PAUSE );    /* Pause */
+			codes.Add( key.Home, ScanCode.HOME );    /* Home on arrow keypad */
+			codes.Add( key.Up, ScanCode.UP );    /* UpArrow on arrow keypad */
+			codes.Add( key.PageUp, ScanCode.PRIOR );    /* PgUp on arrow keypad */
+			codes.Add( key.Left, ScanCode.LEFT );    /* LeftArrow on arrow keypad */
+			codes.Add( key.Right, ScanCode.RIGHT );    /* RightArrow on arrow keypad */
+			codes.Add( key.End, ScanCode.END );    /* End on arrow keypad */
+			codes.Add( key.Down, ScanCode.DOWN );    /* DownArrow on arrow keypad */
+			codes.Add( key.PageDown, ScanCode.NEXT );    /* PgDn on arrow keypad */
+			codes.Add( key.Insert, ScanCode.INSERT );    /* Insert on arrow keypad */
+			codes.Add( key.Delete, ScanCode.DELETE );    /* Delete on arrow keypad */
+			codes.Add( key.LWin, ScanCode.LWIN );    /* Left Windows key */
+			codes.Add( key.RWin, ScanCode.RWIN );    /* Right Windows key */
 
 			return codes;
 		}
@@ -813,12 +813,12 @@ namespace zeroflag.Windows
 
 		public static System.Collections.Generic.Dictionary<key, ScanCode> KeyScanCodes
 		{
-			get { return WinAPI._KeyScanCodes ?? (WinAPI._KeyScanCodes = WinAPI.CreateKeyScanCodes()); }
+			get { return WinAPI._KeyScanCodes ?? ( WinAPI._KeyScanCodes = WinAPI.CreateKeyScanCodes() ); }
 		}
 
 		#endregion KeyScanCodes
 
-		[StructLayout(LayoutKind.Sequential)]
+		[StructLayout( LayoutKind.Sequential )]
 		struct MOUSEINPUT
 		{
 			public int dx;
@@ -829,7 +829,7 @@ namespace zeroflag.Windows
 			public IntPtr dwExtraInfo;
 		}
 
-		[StructLayout(LayoutKind.Sequential)]
+		[StructLayout( LayoutKind.Sequential )]
 		struct KEYBDINPUT
 		{
 			public VK Vk;
@@ -839,7 +839,7 @@ namespace zeroflag.Windows
 			public IntPtr dwExtraInfo;
 		}
 
-		[StructLayout(LayoutKind.Sequential)]
+		[StructLayout( LayoutKind.Sequential )]
 		struct HARDWAREINPUT
 		{
 			public uint uMsg;
@@ -847,16 +847,16 @@ namespace zeroflag.Windows
 			public ushort wParamH;
 		}
 
-		[StructLayout(LayoutKind.Explicit, Size = 28)]
+		[StructLayout( LayoutKind.Explicit, Size = 28 )]
 		struct INPUT
 		{
-			[FieldOffset(0)]
+			[FieldOffset( 0 )]
 			public InputSource type;
-			[FieldOffset(4)]
+			[FieldOffset( 4 )]
 			public MOUSEINPUT mi;
-			[FieldOffset(4)]
+			[FieldOffset( 4 )]
 			public KEYBDINPUT ki;
-			[FieldOffset(4)]
+			[FieldOffset( 4 )]
 			public HARDWAREINPUT hi;
 		}
 
@@ -908,118 +908,125 @@ namespace zeroflag.Windows
 		//[System.Runtime.InteropServices.DllImport("User32.dll")]
 		//private static extern uint SendInput(uint numberOfInputs, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPArray, SizeConst = 1)] KEYBOARD_INPUT[] input, int structSize);
 
-		[System.Runtime.InteropServices.DllImport("User32.dll")]
-		private static extern uint SendInput(uint numberOfInputs, [System.Runtime.InteropServices.MarshalAs(System.Runtime.InteropServices.UnmanagedType.LPArray, SizeConst = 1)] INPUT[] input, int structSize);
+		[System.Runtime.InteropServices.DllImport( "User32.dll" )]
+		private static extern uint SendInput( uint numberOfInputs, [System.Runtime.InteropServices.MarshalAs( System.Runtime.InteropServices.UnmanagedType.LPArray, SizeConst = 1 )] INPUT[] input, int structSize );
 
-		public static void KeyDown(VK vk)
+		public static void KeyDown( VK vk )
 		{
-			SendKey(vk, true);
+			SendKey( vk, true );
 		}
 
-		public static void KeyUp(VK vk)
+		public static void KeyUp( VK vk )
 		{
-			SendKey(vk, false);
+			SendKey( vk, false );
 		}
 
-		public static void SendKey(VK vk, bool press)
+		public static void SendKey( VK vk, bool press )
 		{
-			SendKey(vk, ScanCode.NONE, press);
+			SendKey( vk, ScanCode.NONE, press );
 		}
 
-		public static void KeyDown(ScanCode scanCode)
+		public static void KeyDown( ScanCode scanCode )
 		{
-			SendKey(scanCode, true);
+			SendKey( scanCode, true );
 		}
 
-		public static void KeyUp(ScanCode scanCode)
+		public static void KeyUp( ScanCode scanCode )
 		{
-			SendKey(scanCode, false);
+			SendKey( scanCode, false );
 		}
 
-		public static void SendKey(ScanCode scanCode, bool press)
+		public static void SendKey( ScanCode scanCode, bool press )
 		{
-			SendKey(VK.NONE, scanCode, press);
+			SendKey( VK.NONE, scanCode, press );
 		}
 
-		public static void KeyDown(key key)
+		public static void KeyDown( key key )
 		{
-			SendKey(key, true);
+			SendKey( key, true );
 		}
 
-		public static void KeyUp(key key)
+		public static void KeyUp( key key )
 		{
-			SendKey(key, false);
+			SendKey( key, false );
 		}
 
-		public static void SendKey(key key, bool press)
+		public static void SendKey( key key, bool press )
 		{
 			ScanCode code;
-			if (KeyScanCodes.ContainsKey(key))
+			if ( KeyScanCodes.ContainsKey( key ) )
 				code = KeyScanCodes[key];
 			else
 				code = (ScanCode)(int)key;
-			SendKey(VK.NONE, code, press);
+			SendKey( VK.NONE, code, press );
 		}
 
-		public static void SendKey(VK vk, ScanCode scanCode, bool press)
+		public static void SendKey( VK vk, ScanCode scanCode, bool press )
 		{
 			INPUT[] input = new INPUT[1];
 			input[0].ki = new KEYBDINPUT();
 			input[0].type = InputSource.KEYBOARD;
-			if (scanCode > 0)
+			if ( scanCode > 0 )
 				input[0].ki.Flags = InputKeyFlags.SCANCODE;
 
-			if (((int)scanCode & 0xFF00) == 0xE000)
+			if ( ( (int)scanCode & 0xFF00 ) == 0xE000 )
 			{ // extended key?
 				input[0].ki.Flags |= InputKeyFlags.EXTENDEDKEY;
 			}
 
 			input[0].ki.Vk = vk;
 
-			if (press)
+			if ( press )
 			{ // press?
 				input[0].ki.ScanCode = scanCode;
-				Console.Write("[" + scanCode + "]v ");
+				Console.Write( "[" + scanCode + "]v " );
 			}
 			else
 			{ // release?
 				input[0].ki.ScanCode = scanCode;
 				input[0].ki.Flags |= InputKeyFlags.KEYUP;
-				Console.Write("[" + scanCode + "]^ ");
+				Console.Write( "[" + scanCode + "]^ " );
 			}
 
-			uint result = SendInput(1, input, Marshal.SizeOf(input[0]));
+			uint result = SendInput( 1, input, Marshal.SizeOf( input[0] ) );
 
-			if (result != 1)
+			if ( result != 1 )
 			{
-				throw new Exception("Could not send key: " + scanCode);
+				throw new Exception( "Could not send key: " + scanCode );
 			}
 		}
 
 		//[DllImport("user32.dll")]
 		//public static extern IntPtr GetActiveWindow();
-		[DllImport("user32.dll")]
+		[DllImport( "user32.dll" )]
 		public static extern IntPtr GetForegroundWindow();
-		[DllImport("user32.dll")]
-		public static extern bool SetForegroundWindow(IntPtr handle);
+		[DllImport( "user32.dll" )]
+		public static extern bool SetForegroundWindow( IntPtr handle );
 
-		[DllImport("user32.dll")]
-		public static extern bool GetClientRect(IntPtr hWnd, ref LPRECT lpRect);
-		[DllImport("user32.dll")]
+		[DllImport( "user32.dll" )]
+		public static extern IntPtr FindWindow( string lpClassName, string lpWindowName );
+
+		[DllImport( "user32.dll" )]
+		internal unsafe static extern int GetWindowText( IntPtr hWnd, byte* lpString, int nMaxCount );
+
+
+		[DllImport( "user32.dll" )]
+		public static extern bool GetClientRect( IntPtr hWnd, ref LPRECT lpRect );
+		[DllImport( "user32.dll" )]
 		public static extern ulong GetLastError();
-		[DllImport("user32.dll")]
-		public static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
-		[DllImport("user32.dll")]
-		public static extern bool RegisterHotKey(IntPtr hWnd, int id, ModKeys fsModifiers, key vk);
-		[DllImport("user32.dll")]
-		public static extern uint SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
-		[DllImport("user32.dll")]
-		public static extern uint SendMessage(IntPtr hWnd, WindowsMessages msg, IntPtr wParam, IntPtr lParam);
-		[DllImport("user32.dll")]
-		public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
+		[DllImport( "user32.dll" )]
+		public static extern bool RegisterHotKey( IntPtr hWnd, int id, uint fsModifiers, uint vk );
+		[DllImport( "user32.dll" )]
+		public static extern bool RegisterHotKey( IntPtr hWnd, int id, ModKeys fsModifiers, key vk );
+		[DllImport( "user32.dll" )]
+		public static extern uint SendMessage( IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam );
+		[DllImport( "user32.dll" )]
+		public static extern uint SendMessage( IntPtr hWnd, WindowsMessages msg, IntPtr wParam, IntPtr lParam );
+		[DllImport( "user32.dll" )]
+		public static extern bool UnregisterHotKey( IntPtr hWnd, int id );
 
-		[DllImport("user32.dll")]
-		public static extern IntPtr SetFocus(IntPtr hWnd);
+		[DllImport( "user32.dll" )]
+		public static extern IntPtr SetFocus( IntPtr hWnd );
 
 		public static IntPtr NULL
 		{
@@ -1029,7 +1036,7 @@ namespace zeroflag.Windows
 			}
 		}
 
-		[StructLayout(LayoutKind.Sequential)]
+		[StructLayout( LayoutKind.Sequential )]
 		public struct LPRECT
 		{
 			public long left;

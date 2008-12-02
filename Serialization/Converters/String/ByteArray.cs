@@ -41,7 +41,7 @@ namespace zeroflag.Serialization.Converters.String
 			List<byte> result = new List<byte>();
 			for ( int i = 0; i < value.Length; i += 2 )
 			{
-				result.Add( System.Byte.Parse( value.Substring( i, 2 ) ) );
+				result.Add( System.Byte.Parse( value.Substring( i, 2 ), System.Globalization.NumberStyles.HexNumber ) );
 			}
 			return result.ToArray();
 		}
