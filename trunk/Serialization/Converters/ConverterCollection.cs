@@ -111,6 +111,10 @@ namespace zeroflag.Serialization.Converters
 			return b != null ? (T)b.__Generate(type, value) : default(T);
 		}
 
+		public R Parse<R, T>( T source )
+		{
+			return (R)this.Parse<T>( typeof( R ), source );
+		}
 		public object Parse<T>(Type type, T source)
 		{
 			try

@@ -90,7 +90,7 @@ namespace zeroflag.Forms.Reflected
 			this.contextMenu.CreateControl();
 			locationLastContext = new Point( this.contextMenu.Left, this.contextMenu.Top );
 
-			this.taskProcessor.Tasks.Add( new Action( () =>
+			this.taskProcessor.Add( new Action( () =>
 			{
 				var types = zeroflag.Reflection.TypeHelper.GetDerived( typeof( T ) );
 				foreach ( var type in types )
@@ -129,7 +129,7 @@ namespace zeroflag.Forms.Reflected
 
 		void AddItemClick( object sender, EventArgs e )
 		{
-			this.taskProcessor.Tasks.Add( new Action( () =>
+			this.taskProcessor.Add( new Action( () =>
 			{
 				ToolStripMenuItem item = sender as ToolStripMenuItem;
 				Type type = item.Tag as Type;

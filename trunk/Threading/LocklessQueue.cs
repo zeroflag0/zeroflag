@@ -133,6 +133,27 @@ namespace zeroflag.Threading
 
 		#endregion IsEmpty
 
+		#region Count
+		private int _Count = 0;
+
+		/// <summary>
+		/// How many items this queue contains.
+		/// </summary>
+		public int Count
+		{
+			get { return _Count; }
+			//set
+			//{
+			//    if ( _Count != value )
+			//    {
+			//        _Count = value;
+			//    }
+			//}
+		}
+
+		#endregion Count
+
+
 		public virtual void Clear()
 		{
 			this._Last = null;
@@ -162,6 +183,7 @@ namespace zeroflag.Threading
 				// if there wasn't a last node before, the new node is also the first node...
 				Interlocked.Exchange<Node>( ref _First, node );
 			}
+			Interlocked.Increment( ref _Count );
 		}
 
 		Node _ReadLast;
@@ -173,7 +195,10 @@ namespace zeroflag.Threading
 		public virtual T Read()
 		{
 			if ( this.First != null )	// <-- this check is crucial as First{get;} also corrects race-conditions in _First
+			{
+				Interlocked.Decrement( ref _Count );
 				return ( _ReadLast = Interlocked.Exchange<Node>( ref _First, _First.Next ) ).Value;
+			}
 			else
 				return default( T );
 		}
