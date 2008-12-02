@@ -19,7 +19,7 @@ namespace zeroflag.Forms.Reflected
 		//TypeDescription TypeDescription { get; set; }
 	}
 
-	public abstract class ListViewControlBase : System.Windows.Forms.UserControl//, IListView
+	public class ListViewControlBase : System.Windows.Forms.UserControl//, IListView
 	{
 		#region IListView Members
 

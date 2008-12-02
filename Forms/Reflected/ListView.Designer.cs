@@ -28,35 +28,31 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this._Control = new System.Windows.Forms.ListView();
+			this._Control = new System.Windows.Forms.ListBox();
 			this.SuspendLayout();
 			// 
 			// _Control
 			// 
-			this._Control.BorderStyle = System.Windows.Forms.BorderStyle.None;
-			this._Control.Scrollable = true;
 			this._Control.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._Control.FullRowSelect = true;
-			this._Control.Location = new System.Drawing.Point(0, 0);
+			this._Control.FormattingEnabled = true;
+			this._Control.Location = new System.Drawing.Point( 0, 0 );
 			this._Control.Name = "_Control";
-			this._Control.Size = new System.Drawing.Size(150, 150);
+			this._Control.Size = new System.Drawing.Size( 150, 147 );
 			this._Control.TabIndex = 0;
-			this._Control.UseCompatibleStateImageBehavior = false;
-			this._Control.HideSelection = false;
-			this._Control.View = System.Windows.Forms.View.Details;
 			// 
 			// ListView
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleDimensions = new System.Drawing.SizeF( 6F, 13F );
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.Controls.Add(this._Control);
+			this.Controls.Add( this._Control );
 			this.Name = "ListView";
-			this.ResumeLayout(false);
+			this.ResumeLayout( false );
 
 		}
 
 		#endregion
 
-		private System.Windows.Forms.ListView _Control;
+		private System.Windows.Forms.ListBox _Control;
+
 	}
 }

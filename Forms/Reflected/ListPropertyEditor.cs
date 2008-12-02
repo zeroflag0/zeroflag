@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace zeroflag.Forms.Reflected
 {
-	public partial class ListPropertyEditor<T> : UserControl
+	public partial class ListPropertyEditor<T> : UserControl, zeroflag.Forms.Reflected.IListEditor
 	{
 		public ListPropertyEditor()
 		{
@@ -141,6 +141,11 @@ namespace zeroflag.Forms.Reflected
 		#endregion event ItemDeselected
 
 		#endregion SelectedItems
+
+		public void SetItems( object items )
+		{
+			this.Items = new zeroflag.Collections.List<T>( (List<T>)items );
+		}
 
 		public TypeDescription TypeDescription
 		{

@@ -17,26 +17,41 @@ namespace zeroflag.Forms.Reflected
 			//this.Synchronize();
 
 			//new zeroflag.Forms.DebugForm(AppDomain.CurrentDomain.GetAssemblies());
-			this.Control.Sorting = SortOrder.Ascending;
+			//this.Control.Sorting = SortOrder.Ascending;
 			this.Control.SelectedIndexChanged += new EventHandler( ListViewControl_SelectedIndexChanged );
 		}
 
 		void ListViewControl_SelectedIndexChanged( object sender, EventArgs e )
 		{
+#if LISTVIEW
 			foreach ( ListViewItem<ListView<T>, T> view in this.Control.SelectedItems )
 			{
-				T item = this.ItemSync[ view ];
+				T item = this.ItemSync[view];
 				if ( !this.SelectedItems.Contains( item ) )
 					this.SelectedItems.Add( item );
 			}
 			List<T> selected = new List<T>( this.SelectedItems );
 			foreach ( T item in selected )
 			{
-				var view = this.ItemSync[ item ];
+				var view = this.ItemSync[item];
 				if ( !this.Control.SelectedItems.Contains( view ) )
 					this.SelectedItems.Remove( item );
 			}
 			//this.SelectedItemSync.Synchronize();
+#else
+			foreach ( T item in this.Control.SelectedItems )
+			{
+				if ( !this.SelectedItems.Contains( item ) )
+					this.SelectedItems.Add( item );
+			}
+			List<T> selected = new List<T>( this.SelectedItems );
+			foreach ( T item in selected )
+			{
+				if ( !this.Control.SelectedItems.Contains( item ) )
+					this.SelectedItems.Remove( item );
+			}
+			this.Synchronize();
+#endif
 		}
 
 		#region TypeDescription
@@ -101,11 +116,14 @@ namespace zeroflag.Forms.Reflected
 					}
 
 					this._Items = value;
-
+#if LISTVIEW
 					this._Control.Items.Clear();
 					_ItemSync = null;
 					_SelectedItems = null;
 					_SelectedItemSync = null;
+#else
+					this.Control.DataSource = value;
+#endif
 
 					if ( this._Items != null )
 					{
@@ -121,7 +139,7 @@ namespace zeroflag.Forms.Reflected
 		{
 			get
 			{
-				zeroflag.Collections.List<T> items = new zeroflag.Collections.Collection<T>();
+				zeroflag.Collections.List<T> items = new zeroflag.Collections.List<T>();
 
 				return items;
 			}
@@ -217,7 +235,7 @@ namespace zeroflag.Forms.Reflected
 		#endregion ItemChanged event
 
 		[Browsable( false )]
-		public System.Windows.Forms.ListView Control
+		public System.Windows.Forms.ListBox Control
 		{
 			get { return _Control; }
 		}
@@ -381,7 +399,7 @@ namespace zeroflag.Forms.Reflected
 			{
 				return new zeroflag.Collections.CollectionSynchronizer<T, ListViewItem<ListView<T>, T>>
 					( this.SelectedItems,
-					item => { var view = this.ItemSync[ item ]; view.Selected = true; return view; },
+					item => { var view = this.ItemSync[item]; view.Selected = true; return view; },
 					view => view.Selected = false,
 					( item, view ) =>
 					{
@@ -394,7 +412,7 @@ namespace zeroflag.Forms.Reflected
 		#endregion SelectedItemSync
 
 		#region ColumnSync
-
+#if LISTVIEW
 		private zeroflag.Collections.CollectionSynchronizer<PropertyDescription, ColumnHeader> _ColumnSync = null;
 
 		public zeroflag.Collections.CollectionSynchronizer<PropertyDescription, ColumnHeader> ColumnSync
@@ -477,6 +495,7 @@ namespace zeroflag.Forms.Reflected
 						} );
 			}
 		}
+#endif
 		protected T Dummy
 		{
 			get { return default( T ); }
@@ -490,6 +509,7 @@ namespace zeroflag.Forms.Reflected
 		/// <value>true if multiple items in the control can be selected at one time; otherwise, false. The default is true.</value>
 		public virtual bool MultiSelect
 		{
+#if LISTVIEW
 			get
 			{
 				return this.Control != null && this.Control.MultiSelect;
@@ -499,24 +519,45 @@ namespace zeroflag.Forms.Reflected
 				if ( this.Control != null )
 					this.Control.MultiSelect = value;
 			}
+#else
+			get { return false; }
+			set { }
+#endif
 		}
-
+		int _Synchronizing = 0;
 		public virtual void Synchronize()
 		{
+			if ( System.Threading.Interlocked.CompareExchange( ref _Synchronizing, 1, 0 ) == 0 )
+			{
+				try
+				{
+#if LISTVIEW
 			this.ColumnSync.Synchronize();
 
 			this.ItemSync.Synchronize();
 
 			this.SelectedItemSync.Synchronize();
+#else
+					this.Control.FormattingEnabled = false;
+					this.Control.FormattingEnabled = true;
+					//this.Control.SuspendLayout();
+					//this.Control.ResumeLayout();
+					//this.Control.Refresh();
+#endif
 
-			//List<T> items = new List<T>(this.Items);
-			//List<T> removes = new List<T>();
+					//List<T> items = new List<T>(this.Items);
+					//List<T> removes = new List<T>();
 
-			//foreach (T item in items)
-			//{
-			//    this.SynchronizeItem(item);
-			//}
-
+					//foreach (T item in items)
+					//{
+					//    this.SynchronizeItem(item);
+					//}
+				}
+				finally
+				{
+					_Synchronizing = 0;
+				}
+			}
 		}
 
 		//protected virtual void SynchronizeItem(T item)
@@ -616,6 +657,7 @@ namespace zeroflag.Forms.Reflected
 
 		public SortOrder Sorting
 		{
+#if LISTVIEW
 			get
 			{
 				return this.Control.Sorting;
@@ -624,6 +666,10 @@ namespace zeroflag.Forms.Reflected
 			{
 				this.Control.Sorting = value;
 			}
+#else
+			get { return SortOrder.None; }
+			set { }
+#endif
 		}
 
 		#endregion
