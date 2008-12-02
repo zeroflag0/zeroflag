@@ -54,47 +54,53 @@ namespace zeroflag.Forms.Reflected
 
 		public void Synchronize()
 		{
-			if ( typeof( T ) != typeof( string ) )
-			{
-				TypeDescription desc = this.Owner.TypeDescription;
+			//if ( typeof( T ) != typeof( string ) )
+			//{
+			//    TypeDescription desc = this.Owner.TypeDescription;
 
-				var subItems = this.SubItems;
-				//if ( subItems.Count > 0 &&
-				//    subItems[ 0 ] != null &&
-				//    ( subItems[ 0 ].Name == null || subItems[ 0 ].Name == "" ) )
-				//    subItems.RemoveAt( 0 );
+			//    var subItems = this.SubItems;
+			//    //if ( subItems.Count > 0 &&
+			//    //    subItems[ 0 ] != null &&
+			//    //    ( subItems[ 0 ].Name == null || subItems[ 0 ].Name == "" ) )
+			//    //    subItems.RemoveAt( 0 );
 
 
-				foreach ( var prop in desc.Properties )
-				{
-					if ( !this.Owner.Control.Columns.ContainsKey( prop.Name ) )
-						continue;
-					ListViewSubItem cell;
-					int index = this.Owner.Control.Columns.IndexOfKey( prop.Name );
+			//    foreach ( var prop in desc.Properties )
+			//    {
+			//        if ( !this.Owner.Control.Columns.ContainsKey( prop.Name ) )
+			//            continue;
+			//        ListViewSubItem cell;
+			//        int index = this.Owner.Control.Columns.IndexOfKey( prop.Name );
 
-					while ( subItems.Count <= index )
-						subItems.Add( new ListViewSubItem( this, "" ) );
-					cell = subItems[ index ];
+			//        while ( subItems.Count <= index )
+			//            subItems.Add( new ListViewSubItem( this, "" ) );
+			//        cell = subItems[ index ];
 
-					cell.Name = prop.Name;
+			//        cell.Name = prop.Name;
 
-					try
-					{
-						object value = prop.PropertyInfo.GetValue( this.Value, null );
+			//        try
+			//        {
+			//            object value = prop.PropertyInfo.GetValue( this.Value, null );
 
-						cell.Text = "" + value;
+			//            cell.Text = "" + value;
 
-					}
-					catch ( Exception exc )
-					{
-						cell.Text = exc.ToString();
-					}
-				}
-			}
-			else
+			//        }
+			//        catch ( Exception exc )
+			//        {
+			//            cell.Text = exc.ToString();
+			//        }
+			//    }
+			//}
+			//else
 			{
 				base.Text = this.Value + "";
 			}
+		}
+
+		public override string ToString()
+		{
+			return this.Value + "";
+			//return ( (object)this.Value ?? base.ToString() ) + "";
 		}
 	}
 }

@@ -102,6 +102,7 @@
       <DependentUpon>DebugForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\Reflected\Filtering.cs" />
+    <Compile Include="Forms\Reflected\IListEditor.cs" />
     <Compile Include="Forms\Reflected\IListView.cs">
       <SubType>UserControl</SubType>
     </Compile>

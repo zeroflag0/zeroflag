@@ -54,6 +54,11 @@ namespace zeroflag.Collections
 		{
 			this._Items = new System.Collections.Generic.List<T>( list );
 		}
+		//public List( System.Collections.Generic.List<T> list )
+		//    : this()
+		//{
+		//    this._Items = list;
+		//}
 
 		#endregion Constructors
 
