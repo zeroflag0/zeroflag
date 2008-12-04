@@ -17,7 +17,7 @@ namespace zeroflag.Serialization
 		public ExceptionTrace( Exception exc, System.Xml.XmlNode node, Descriptors.Descriptor desc, Type type, object value )
 		{
 			this.Exception = exc;
-			this.Node = node;
+			//this.Node = node.rea;
 			this.Descriptor = desc;
 			this.Type = type;
 			this.Value = value;
