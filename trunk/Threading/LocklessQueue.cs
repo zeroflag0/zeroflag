@@ -156,6 +156,7 @@ namespace zeroflag.Threading
 
 		public virtual void Clear()
 		{
+			this._Count = 0;
 			this._Last = null;
 			this._First = null;
 			this._ReadLast = null;

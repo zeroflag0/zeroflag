@@ -62,11 +62,14 @@ namespace zeroflag.Forms.Reflected
 
 		private void buttonRemove_Click( object sender, EventArgs e )
 		{
-			List<T> remove = new List<T>( this.SelectedItems );
-			this.SelectedItems.Clear();
-			foreach ( T item in remove )
+			using ( this.listView.DisableSync )
 			{
-				this.Items.Remove( item );
+				List<T> remove = new List<T>( this.SelectedItems.ToArray() );
+				this.SelectedItems.Clear();
+				foreach ( T item in remove )
+				{
+					this.Items.Remove( item );
+				}
 			}
 			this.listView.Synchronize();
 		}
@@ -166,8 +169,8 @@ namespace zeroflag.Forms.Reflected
 		{
 			while ( this.Tasks.Count > 0 && !e.Cancel )
 			{
-				if ( this.Tasks[ 0 ] != null )
-					this.Tasks[ 0 ]();
+				if ( this.Tasks[0] != null )
+					this.Tasks[0]();
 				this.Tasks.RemoveAt( 0 );
 			}
 		}

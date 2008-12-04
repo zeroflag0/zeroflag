@@ -182,7 +182,7 @@ namespace zeroflag.Forms
 		{
 			get
 			{
-				var list = new zeroflag.Threading.LocklessQueue<Action>() { };
+				var list = _Tasks = new zeroflag.Threading.LocklessQueue<Action>() { };
 #if OBSOLETE
 				list.ItemAdded += item =>
 				{
@@ -206,7 +206,7 @@ namespace zeroflag.Forms
 				};
 #endif
 				if ( _Name != null )
-					list.Write( () => System.Threading.Thread.CurrentThread.Name = this.Name );
+					this.Add( () => System.Threading.Thread.CurrentThread.Name = this.Name );
 				return list;
 			}
 		}

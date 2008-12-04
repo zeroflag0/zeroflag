@@ -50,7 +50,7 @@ namespace zeroflag.Forms.Reflected
 				if ( !this.Control.SelectedItems.Contains( item ) )
 					this.SelectedItems.Remove( item );
 			}
-			this.Synchronize();
+			//this.Synchronize();
 #endif
 		}
 
@@ -279,14 +279,16 @@ namespace zeroflag.Forms.Reflected
 
 		void __ItemDeselected( T item )
 		{
-			this.Synchronize();
+			this.Control.SelectedItems.Remove( item );
 			this.OnItemDeselected( item );
+			this.Synchronize();
 		}
 
 		void __ItemSelected( T item )
 		{
-			this.Synchronize();
+			this.Control.SelectedItems.Add( item );
 			this.OnItemSelected( item );
+			this.Synchronize();
 		}
 
 		#region event ItemSelected
@@ -344,7 +346,7 @@ namespace zeroflag.Forms.Reflected
 		#region Synchronization
 
 		#region ItemSync
-
+#if LISTVIEW
 		private zeroflag.Collections.CollectionSynchronizer<T, ListViewItem<ListView<T>, T>> _ItemSync = null;
 
 		public zeroflag.Collections.CollectionSynchronizer<T, ListViewItem<ListView<T>, T>> ItemSync
@@ -374,11 +376,11 @@ namespace zeroflag.Forms.Reflected
 					);
 			}
 		}
-
+#endif
 		#endregion ItemSync
 
 		#region SelectedItemSync
-
+#if LISTVIEW
 		private zeroflag.Collections.CollectionSynchronizer<T, ListViewItem<ListView<T>, T>> _SelectedItemSync = null;
 
 		public zeroflag.Collections.CollectionSynchronizer<T, ListViewItem<ListView<T>, T>> SelectedItemSync
@@ -408,7 +410,7 @@ namespace zeroflag.Forms.Reflected
 					);
 			}
 		}
-
+#endif
 		#endregion SelectedItemSync
 
 		#region ColumnSync
@@ -520,10 +522,68 @@ namespace zeroflag.Forms.Reflected
 					this.Control.MultiSelect = value;
 			}
 #else
-			get { return false; }
-			set { }
+			get { return this.Control.SelectionMode == SelectionMode.MultiExtended; }
+			set
+			{
+				if ( value )
+					this.Control.SelectionMode = SelectionMode.MultiExtended;
+				else
+					this.Control.SelectionMode = SelectionMode.One;
+			}
 #endif
 		}
+		public DisableSyncHandler DisableSync
+		{
+			get
+			{
+				return new DisableSyncHandler( this );
+			}
+		}
+		void DisableSyncInc()
+		{
+			System.Threading.Interlocked.Increment( ref _Synchronizing );
+		}
+		void DisableSyncDec()
+		{
+			System.Threading.Interlocked.Decrement( ref _Synchronizing );
+		}
+		public class DisableSyncHandler : IDisposable
+		{
+			public DisableSyncHandler( ListView<T> listview )
+			{
+				listview.DisableSyncInc();
+				this.ListView = listview;
+			}
+			#region ListView
+			private ListView<T> _ListView;
+
+			/// <summary>
+			/// ListView
+			/// </summary>
+			public ListView<T> ListView
+			{
+				get { return _ListView; }
+				protected set
+				{
+					if ( _ListView != value )
+					{
+						_ListView = value;
+					}
+				}
+			}
+
+			#endregion ListView
+
+			#region IDisposable Members
+
+			public void Dispose()
+			{
+				this.ListView.DisableSyncDec();
+			}
+
+			#endregion
+		}
+
 		int _Synchronizing = 0;
 		public virtual void Synchronize()
 		{
@@ -538,8 +598,14 @@ namespace zeroflag.Forms.Reflected
 
 			this.SelectedItemSync.Synchronize();
 #else
-					this.Control.FormattingEnabled = false;
-					this.Control.FormattingEnabled = true;
+					try
+					{
+						this.Control.FormattingEnabled = !this.Control.FormattingEnabled;
+					}
+					catch ( ArgumentOutOfRangeException )
+					{
+					}
+					//this.Control.FormattingEnabled = true;
 					//this.Control.SuspendLayout();
 					//this.Control.ResumeLayout();
 					//this.Control.Refresh();
@@ -555,7 +621,7 @@ namespace zeroflag.Forms.Reflected
 				}
 				finally
 				{
-					_Synchronizing = 0;
+					System.Threading.Interlocked.Decrement( ref _Synchronizing );
 				}
 			}
 		}
