@@ -64,7 +64,7 @@ namespace zeroflag.Threading
 	/// A single-reader multi-writer message-queue without locking.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public class LocklessQueue<T>
+	public class LocklessQueue<T> : IEnumerable<T>
 	{
 		#region First
 
@@ -236,5 +236,24 @@ namespace zeroflag.Threading
 			}
 		}
 		#endregion Node
+
+		#region IEnumerable<T> Members
+
+		public IEnumerator<T> GetEnumerator()
+		{
+			while ( !this.IsEmpty )
+				yield return this.Read();
+		}
+
+		#endregion
+
+		#region IEnumerable Members
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+		{
+			return this.GetEnumerator();
+		}
+
+		#endregion
 	}
 }

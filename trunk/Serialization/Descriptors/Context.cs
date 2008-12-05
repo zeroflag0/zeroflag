@@ -61,14 +61,14 @@ namespace zeroflag.Serialization.Descriptors
 						}
 						catch ( Exception exc )
 						{
-							Console.WriteLine( exc );
+							CWL( exc );
 						}
 					}
 				}
 			}
 			catch ( Exception exc )
 			{
-				Console.WriteLine( exc );
+				CWL( exc );
 			}
 		}
 
@@ -85,7 +85,7 @@ namespace zeroflag.Serialization.Descriptors
 				{
 					if ( !DescriptorTypes.ContainsKey( value ) )
 					{
-						CWL( "GetDescriptorType(" + value + ")" );
+						//CWL( "GetDescriptorType(" + value + ")" );
 						Type descriptor = null;
 						if ( value.IsGenericType )
 						// value type is generic...
@@ -123,7 +123,7 @@ namespace zeroflag.Serialization.Descriptors
 									}
 									catch ( ArgumentException )
 									{
-										return descriptor = genericDescriptor;
+										//return descriptor = genericDescriptor;
 									}
 								}
 							}
@@ -153,13 +153,15 @@ namespace zeroflag.Serialization.Descriptors
 							}
 						}
 
-						if ( descriptor != null )
-							DescriptorTypes.Add( value, descriptor );
+						if ( descriptor == null || descriptor == typeof( ObjectDescriptor ) )
+						{
+							DescriptorTypes.Add( value, null );
+						}
 						else
-							return typeof( ObjectDescriptor );
+							DescriptorTypes.Add( value, descriptor );
 					}
 				}
-			return DescriptorTypes[value];
+			return DescriptorTypes[value] ?? typeof( ObjectDescriptor );
 		}
 #if OBSOLETE
 		//static Dictionary<Type, Descriptor> _Descriptors = new Dictionary<Type, Descriptor>();
@@ -354,10 +356,10 @@ namespace zeroflag.Serialization.Descriptors
 			string name = info.Name;
 			type = type ?? info.PropertyType;
 			object instance = null;
-			if ( owner != null && info.GetIndexParameters().Length == 0 )
-			{
-				instance = info.GetValue( owner, null );
-			}
+			//if ( owner != null && info.GetIndexParameters().Length == 0 )
+			//{
+			//    instance = info.GetValue( owner, null );
+			//}
 			//dbg.Assert(info != null && owner != null && this.CanRead(info, owner), "Property read inaccessible. type='" + type + "' instance='" + instance + "' owner='" + owner + "' " + name);
 
 			return this.Parse( name, type, instance, owner, info );
@@ -403,20 +405,139 @@ namespace zeroflag.Serialization.Descriptors
 				_depth--;
 			}
 		}
+		static string PrintArray( System.Collections.IEnumerable arr )
+		{
+			if ( arr == null )
+				return "<null>";
+			StringBuilder b = new StringBuilder( arr.ToString() ).Append( "{" );
+			foreach ( object item in arr )
+			{
+				if ( !( item is string ) && item is System.Collections.IEnumerable )
+					b.Append( PrintArray( item as System.Collections.IEnumerable ) );
+				else
+					b.Append( ( item ?? "<null>" ) );
+				b.Append( "," );
+			}
+			return b.Append( "}" ).ToString();
+		}
 		Descriptor _Parse( string name, Type type, object instance, object owner, System.Reflection.PropertyInfo info )
 		{
 			if ( type == null && instance != null )
 				type = instance.GetType();
 
+			bool autogetvalue = true;
 			//System.Diagnostics.Debug.Assert(type != null, "Type and instance were null! type='" + type + "' instance='" + instance + "' owner='" + owner + "' " + name);
 			if ( type == null )
 			{
 				this.Serializer.Exceptions.Add( new ExceptionTrace( new Exception( "Type and instance were null!" ), null, null, type, instance ) );
 				return null; // throw new NullReferenceException("Type and instance were null! type='" + type + "' instance='" + instance + "' owner='" + owner + "' " + name);
 			}
+			CWL( new StringBuilder().Append( '.', _depth ).ToString() + "Serializing(type=" + type + ", info=" + info + ", owner=" + owner + ( owner != null ? "{" + owner.GetType() + "}" : "" ) + ")" );
 
-			//if (instance == null)
+			List<Descriptor.FilterHandler> filters = null;
+			{
+				foreach ( var att in type.GetCustomAttributes( typeof( zeroflag.Serialization.Attributes.Attribute ), true ) )
+				{
+					if ( att is SerializerIgnoreAttribute && ( att as SerializerIgnoreAttribute ).Ignore )
+					{
+						CWL( "Ignoring type " + type + " on " + ( owner != null ? owner + " {" + owner.GetType() + "}" : "<null>" ) );
+						return null;
+					}
+					else if ( att is SerializerRelevantPropertiesAttribute )
+					{
+						var rel = ( att as SerializerRelevantPropertiesAttribute );
+						if ( rel.All )
+						{ }
+						else
+						{
+							CWL( "Found relevant properties: " + PrintArray( rel.PropertyNames ) + " on " + ( owner != null ? owner + " {" + owner.GetType() + "}" : "<null>" ) );
+							filters = filters ?? new List<Descriptor.FilterHandler>();
+							List<string> relevant = new List<string>( rel.PropertyNames );
+							filters.Add( ( object o, ref System.Reflection.PropertyInfo p ) => p.Name != null && relevant.Contains( p.Name ) );
+							//foreach ( string relevant in rel.PropertyNames )
+							//{
+							//    string r = relevant.ToLower();
+							//    filters.Add( ( object o, ref System.Reflection.PropertyInfo p ) => p.Name != null && p.Name.ToLower() == r );
+							//}
+
+						}
+					}
+					else if ( att is SerializerIgnorePropertiesAttribute )
+					{
+						var ig = ( att as SerializerIgnorePropertiesAttribute );
+						filters = filters ?? new List<Descriptor.FilterHandler>();
+						List<string> ignore = new List<string>( ig.PropertyNames );
+						filters.Add( ( object o, ref System.Reflection.PropertyInfo p ) => p.Name != null && !ignore.Contains( p.Name ) );
+					}
+				}
+			}
+			if ( info != null )
+			{
+#if false
+				if ( owner != null )
+				{
+					bool? isrelevant = null;
+					foreach ( var att in owner.GetType().GetCustomAttributes( typeof( SerializerRelevantPropertiesAttribute ), true ) )
+					{
+						CWL( "Checking relevant properties " + att + " on " + owner );
+						isrelevant = isrelevant ?? false;
+						if ( att is SerializerRelevantPropertiesAttribute )
+						{
+							var rel = ( att as SerializerRelevantPropertiesAttribute );
+							if ( !rel.All && rel.PropertyNames != null )
+							{
+								foreach ( string prop in rel.PropertyNames )
+								{
+									if ( prop.ToLower() == info.Name.ToLower() )
+										isrelevant = true;
+								}
+							}
+							else
+							{
+								isrelevant = true;
+							}
+						}
+					}
+					if ( isrelevant != null && !isrelevant.Value )
+					{
+						CWL( "Ignoring irrelevant property " + info + " on " + owner + " {" + owner.GetType() + "}" );
+						return null;
+					}
+				}
+#endif
+				foreach ( var att in info.GetCustomAttributes( typeof( zeroflag.Serialization.Attributes.Attribute ), true ) )
+				{
+					CWL( "Checking attribute " + att + " on " + info + " on " + ( owner != null ? owner + " {" + owner.GetType() + "}" : "<null>" ) );
+					if ( att is SerializerIgnoreAttribute && ( att as SerializerIgnoreAttribute ).Ignore )
+					{
+						CWL( " ** Ignoring property " + info + " on " + ( owner != null ? owner + " {" + owner.GetType() + "}" : "<null>" ) );
+						return null;
+					}
+					if ( att is SerializerRedirectAttribute )
+					{
+						var red = att as SerializerRedirectAttribute;
+						if ( red.Target != null && owner != null )
+						{
+							CWL( "Redirecting " + info + " to " + red.Target + " on " + owner + " {" + owner.GetType() + "}" );
+							var redirect = owner.GetType().GetProperty( red.Target, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic, null, info.PropertyType, new Type[0], null );
+							info = redirect;
+							//instance = redirect.GetValue( owner, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic, null, null, null );
+							CWL( "\tredirected to " + redirect + " = " + instance );
+							autogetvalue = false;
+							break;
+						}
+					}
+				}
+			}
+			if ( info == null && owner != null && !( owner is System.Collections.IEnumerable ) )
+				CWL( "info is null" );
+
 			//    System.Diagnostics.Debug.Assert(instance == null || type.IsAssignableFrom(instance.GetType()), "Type and instance do not match! type='" + type + "' instance='" + instance + "' instancetype='" + (instance != null?instance.GetType():null) + "' " + name);
+
+			if ( autogetvalue && instance == null && this.CanRead( info, owner ) )// && ( desc.NeedsWriteAccess && !this.CanWrite( info, owner ) ) )
+			{
+				instance = info.GetValue( owner, null );
+			}
 
 
 			Descriptor desc = null;
@@ -428,7 +549,11 @@ namespace zeroflag.Serialization.Descriptors
 					if ( this.ParsedObjects.ContainsKey( instance ) )
 					{
 						this.ParsedObjects[instance].IsReferenced = true;
-						return this.ParsedObjects[instance];
+						var t = this.ParsedObjects[instance];
+						var d = new ObjectDescriptor() { Value = t.Value, Id = t.Id, IsReferenced = t.IsReferenced, Type = t.Type, Context = this, Property = info };
+						if ( info != null )
+							d.Name = info.Name;
+						return d;
 					}
 					else if ( type.IsAssignableFrom( instance.GetType() ) )
 						type = instance.GetType();
@@ -479,16 +604,13 @@ namespace zeroflag.Serialization.Descriptors
 			System.Diagnostics.Debug.Assert( owner == null || info == null || type.IsValueType || !desc.NeedsWriteAccess || this.CanWrite( info, owner ),
 				"Property write inaccessible. type='" + type + "' instance='" + instance + "' owner='" + owner + "' " + name );
 
-			if ( instance == null && this.CanRead( info, owner ) )// && ( desc.NeedsWriteAccess && !this.CanWrite( info, owner ) ) )
-			{
-				instance = info.GetValue( owner, null );
-			}
-
 			try
 			{
-				if ( instance != null || owner != null )
+				if ( filters != null )
+					desc.Filters.AddRange( filters );
+				if ( instance != null )// || owner != null )
 				{
-					desc.Parse( name, type, instance );
+					desc.Parse( name, type, instance, info );
 					desc.Parsed = true;
 				}
 				else

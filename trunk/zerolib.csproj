@@ -33,7 +33,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;VERBOSE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
     <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
@@ -183,7 +183,11 @@
     <Compile Include="Reflection\InstanceProvider.cs" />
     <Compile Include="Reflection\TypeHelper.cs" />
     <Compile Include="Reflection\TypeProvider.cs" />
-    <Compile Include="Serialization\Attributes\IgnoreAttribute.cs" />
+    <Compile Include="Serialization\Attributes\Attribute.cs" />
+    <Compile Include="Serialization\Attributes\SerializerIgnorePropertiesAttribute.cs" />
+    <Compile Include="Serialization\Attributes\SerializerRedirectAttribute.cs" />
+    <Compile Include="Serialization\Attributes\SerializerIgnoreAttribute.cs" />
+    <Compile Include="Serialization\Attributes\SerializerRelevantPropertiesAttribute.cs" />
     <Compile Include="Serialization\Benchmark.cs" />
     <Compile Include="Serialization\Converters\Converter.cs" />
     <Compile Include="Serialization\Converters\ConverterCollection.cs" />
@@ -211,6 +215,7 @@
     <Compile Include="Serialization\Converters\String\UInt32.cs" />
     <Compile Include="Serialization\Converters\String\UInt64.cs" />
     <Compile Include="Serialization\Descriptors\Context.cs" />
+    <Compile Include="Serialization\Descriptors\ArrayDescriptor.cs" />
     <Compile Include="Serialization\Descriptors\DateTimeDescriptor.cs" />
     <Compile Include="Serialization\Descriptors\DelegateDescriptor.cs" />
     <Compile Include="Serialization\Descriptors\Descriptor.cs" />

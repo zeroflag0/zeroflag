@@ -50,8 +50,31 @@ namespace zeroflag.Serialization.Descriptors
 
 			System.Reflection.PropertyInfo[] properties = this.GetProperties( type ).ToArray();
 
-			foreach ( System.Reflection.PropertyInfo property in properties )
+			foreach ( System.Reflection.PropertyInfo prop in properties )
 			{
+				System.Reflection.PropertyInfo property = prop;
+				if ( this.HasFilters )
+				{
+					bool filtered = true;
+					foreach ( var filter in this.Filters )
+					{
+						if ( ( filter( this.Value, ref property ) ) )
+						{
+							filtered = false;
+							break;
+						}
+					}
+					if ( filtered )
+					{
+						//CWL( "\t" + this + " filtered property " + property );
+						continue;
+					}
+					else
+					{
+						//CWL( "\t" + this + " un-filtered property " + property );
+					}
+				}
+
 				Descriptor desc = this.Context.Parse( property, this.Value );
 				if ( desc != null && !this.Inner.Contains( desc ) )
 					this.Inner.Add( desc );
