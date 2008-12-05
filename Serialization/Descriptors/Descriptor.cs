@@ -210,6 +210,27 @@ namespace zeroflag.Serialization.Descriptors
 			set { _Name = value; }
 		}
 
+		#region Property
+		private System.Reflection.PropertyInfo _Property;
+
+		/// <summary>
+		/// Property
+		/// </summary>
+		public System.Reflection.PropertyInfo Property
+		{
+			get { return _Property; }
+			set
+			{
+				if ( _Property != value )
+				{
+					_Property = value;
+				}
+			}
+		}
+
+		#endregion Property
+
+
 		int? _Id = null;
 		public virtual int? Id
 		{
@@ -277,7 +298,7 @@ namespace zeroflag.Serialization.Descriptors
 
 		public abstract void Parse();
 
-		public virtual Descriptor Parse( string name, Type type, object value
+		public virtual Descriptor Parse( string name, Type type, object value, System.Reflection.PropertyInfo property
 			//, object ownerInstance
 #if OWNER
 			, Descriptor owner
@@ -287,6 +308,7 @@ namespace zeroflag.Serialization.Descriptors
 			this.Name = name;
 			this.Type = type;
 			this.Value = value;
+			this.Property = property;
 #if OWNER
 			this.Owner = owner;
 #endif
@@ -306,11 +328,11 @@ namespace zeroflag.Serialization.Descriptors
 
 			if ( this.Id != null && this.Context.CreatedInstances.ContainsKey( this.Id.Value ) )// && this != this.Generated[this.Id.Value])
 			{
-				if ( this == this.Context.CreatedInstances[ this.Id.Value ] )
+				if ( this == this.Context.CreatedInstances[this.Id.Value] )
 					CWL( "Link self!" );
 				CWL( "Link(name='" + this.Name + "', type='" + this.Type + "', isnull='" + this.IsNull + "', id='" + this.Id + "', value='" + this.Value + "', children='" + this.Inner.Count + "')" );
 
-				Descriptor other = this.Context.CreatedInstances[ this.Id.Value ];
+				Descriptor other = this.Context.CreatedInstances[this.Id.Value];
 				CWL( "  To(name='" + other.Name + "', type='" + other.Type + "', isnull='" + other.IsNull + "', id='" + other.Id + "', value='" + other.Value + "', children='" + other.Inner.Count + "')" );
 				this.Type = other.Type;
 				this.Value = other.Value;
@@ -439,7 +461,52 @@ namespace zeroflag.Serialization.Descriptors
 		}
 		#endregion Generate
 
-		public System.Reflection.PropertyInfo Property( Type type )
+		#region Filters
+		public delegate bool FilterHandler( object owner, ref System.Reflection.PropertyInfo property );
+		private List<FilterHandler> _Filters;
+
+		/// <summary>
+		/// Filter inner properties.
+		/// </summary>
+		public List<FilterHandler> Filters
+		{
+			get { return _Filters ?? ( _Filters = this.FiltersCreate ); }
+			//protected set
+			//{
+			//	if (_Filters != value)
+			//	{
+			//		//if (_Filters != null) { }
+			//		_Filters = value;
+			//		//if (_Filters != null) { }
+			//	}
+			//}
+		}
+
+		/// <summary>
+		/// Creates the default/initial value for Filters.
+		/// Filter inner properties.
+		/// </summary>
+		protected virtual List<FilterHandler> FiltersCreate
+		{
+			get
+			{
+				var value = _Filters = new List<FilterHandler>();
+				return value;
+			}
+		}
+
+		public bool HasFilters
+		{
+			get
+			{
+				return _Filters != null && this.Filters.Count > 0;
+			}
+		}
+
+		#endregion Filters
+
+
+		public System.Reflection.PropertyInfo FindProperty( Type type )
 		{
 			var props = this.GetProperties( this.Type );
 			foreach ( var prop in props )
@@ -450,22 +517,22 @@ namespace zeroflag.Serialization.Descriptors
 			return null;
 		}
 
-		public System.Reflection.PropertyInfo Property( string property )
+		public System.Reflection.PropertyInfo FindProperty( string property )
 		{
-			return this.Property( property, false );
+			return this.FindProperty( property, false );
 		}
 
-		public System.Reflection.PropertyInfo Property( string property, bool byType )
+		public virtual System.Reflection.PropertyInfo FindProperty( string property, bool byType )
 		{
 			var props = this.GetPropertyNames( this.Type );
 			// search by name, case sensitive (fast)...
 			if ( props.ContainsKey( property ) )
-				return props[ property ];
+				return props[property];
 			var names = new List<string>( props.Keys );
 			// search by name, case insensitive...
 			string key = names.Find( n => n.ToLower() == property.ToLower() );
 			if ( key != null )
-				return props[ key ];
+				return props[key];
 
 			if ( !byType )
 				return null;
@@ -474,19 +541,19 @@ namespace zeroflag.Serialization.Descriptors
 			Dictionary<Type, string> types = new Dictionary<Type, string>();
 			foreach ( string name in props.Keys )
 			{
-				if ( !types.ContainsKey( props[ name ].PropertyType ) )
-					types.Add( props[ name ].PropertyType, name );
+				if ( !types.ContainsKey( props[name].PropertyType ) )
+					types.Add( props[name].PropertyType, name );
 			}
 
 			// search types, case insensitive...
 			List<Type> typeSearch = new List<Type>( types.Keys );
 			Type type = typeSearch.Find( t => t.Name != null && t.Name.ToLower() == property.ToLower() );
-			if ( type != null && types.ContainsKey( type ) && props.ContainsKey( types[ type ] ) )
-				return props[ types[ type ] ];
+			if ( type != null && types.ContainsKey( type ) && props.ContainsKey( types[type] ) )
+				return props[types[type]];
 
 			type = typeSearch.Find( t => t.Name != null && ( t.Name.ToLower().Contains( property.ToLower() ) || property.ToLower().Contains( t.Name.ToLower() ) ) );
-			if ( type != null && types.ContainsKey( type ) && props.ContainsKey( types[ type ] ) )
-				return props[ types[ type ] ];
+			if ( type != null && types.ContainsKey( type ) && props.ContainsKey( types[type] ) )
+				return props[types[type]];
 
 			return null;
 		}
@@ -530,7 +597,7 @@ namespace zeroflag.Serialization.Descriptors
 
 		public StringBuilder ToString( StringBuilder builder )
 		{
-			return builder.Append( this.GetType().Name ).Append( "[" ).Append( this.Name ).Append( ", " ).Append( this.Type ).Append( ", " ).Append( this.Id ).Append( this.IsNull ? "<null>" : "" ).Append( "]" );// -> { ");
+			return builder.Append( this.GetType().Name ).Append( "[" ).Append( this.Name ).Append( ", " ).Append( this.Property ).Append( "," ).Append( this.Type ).Append( ", " ).Append( this.Id ).Append( this.IsNull ? "<null>" : "" ).Append( "]" );// -> { ");
 		}
 
 		public StringBuilder ToStringTree()
@@ -541,7 +608,7 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			if ( depth > 20 )
 				return builder;
-			builder.Append( ' ', depth * 2 ).Append( this.Name ?? "<noname>" ).Append( " (" ).Append( this.Type ).Append( "," ).Append( this.Id ).Append( ") := " ).Append( this.Value ?? (object)"<null>" ).AppendLine();
+			builder.Append( ' ', depth * 2 ).Append( this.Name ?? "<noname>" ).Append( " (" ).Append( this.Property ).Append( "," ).Append( this.Type ).Append( "," ).Append( this.Id ).Append( ") := " ).Append( this.Value ?? (object)"<null>" ).AppendLine();
 			depth++;
 			foreach ( Descriptor child in this.Inner )
 				child.ToStringTree( builder, depth );

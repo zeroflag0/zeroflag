@@ -103,8 +103,10 @@ namespace zeroflag.Serialization
 			//if ( this.IgnoreList.Find( i => i != null && i( desc ) ) != null )
 			//    return;
 
-			string name = desc.Name ?? desc.Type.Name.Split( '`' )[0];
-			CWL( "Serialize(" + desc + ")" );
+			string name = desc.Name;
+			if ( name == null && desc.Property == null )
+				name = desc.Type.Name.Split( '`' )[0];
+			CWL( "Serialize(" + desc + " *** in " + valueParent + ")" );
 			if ( this.Converters.CanConvert<string>( desc.Value ) )
 			{
 				if ( desc.Name == null )
@@ -164,7 +166,7 @@ namespace zeroflag.Serialization
 					}
 				}
 			}
-			else if ( this.SimplifyOutput && desc.Value != null && ( desc.Type.GetMethod( "Parse", System.Reflection.BindingFlags.FlattenHierarchy | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod ) != null ) )
+			else if ( this.SimplifyOutput && desc.Value != null && ( desc.Type.GetMethod( "Parse", System.Reflection.BindingFlags.FlattenHierarchy | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod, null, new Type[] { typeof( string ) }, null ) != null ) )
 			{
 				//XmlAttribute node = doc.CreateAttribute( name );
 				//node.Value = desc.Value.ToString();
@@ -184,7 +186,6 @@ namespace zeroflag.Serialization
 				if ( !( desc.IsNull && this.HideUnused ) )
 				{
 					//XmlElement node = doc.CreateElement( name );
-					doc.WriteStartElement( name );
 					try
 					{
 						if ( valueParent != null && valueParent.Value != null && desc.Name != null )
@@ -216,12 +217,15 @@ namespace zeroflag.Serialization
 						if ( desc.Id > -1 && desc.IsReferenced )
 						{
 							//this.WriteAttribute( AttributeId, desc.Id.ToString(), doc, node );
+							doc.WriteStartElement( name );
 							doc.WriteAttributeString( AttributeId, desc.Id.ToString() );
 							if ( ids.Contains( desc.Id ?? -1 ) )
 								isReference = true;
 							else
 								ids.Add( desc.Id ?? -1 );
 						}
+						else
+							doc.WriteStartElement( name );
 
 						if ( !isReference )
 						{
@@ -231,7 +235,7 @@ namespace zeroflag.Serialization
 							{
 								if ( this.HideUnused && inner.Name != null )
 								{
-									if ( !desc.Property( inner.Name ).CanWrite && inner.NeedsWriteAccess )
+									if ( !( desc is IListDescriptor ) && !desc.FindProperty( inner.Name ).CanWrite && inner.NeedsWriteAccess )
 										continue;
 									if ( inner is IListDescriptor && inner.Value != null &&
 										( ( inner.Value is System.Collections.ICollection && ( (System.Collections.ICollection)inner.Value ).Count <= 0 )
@@ -366,7 +370,7 @@ namespace zeroflag.Serialization
 			desc.Value = value;
 			if ( desc.Value == null && desc.Name != null && outer != null && outer.Value != null )
 			{
-				var info = outer.Property( desc.Name );
+				var info = outer.FindProperty( desc.Name );
 				if ( info != null && info.GetIndexParameters().Length == 0 )
 				{
 					value = desc.Value = info.GetValue( outer.Value, null );
@@ -451,6 +455,7 @@ namespace zeroflag.Serialization
 						if ( this.Converters.CanConvert<string>( desc.Type ) )
 						{
 							desc.Value = this.Converters.Parse<string>( desc.Type, text );
+							desc.Inner.Clear();
 						}
 						else
 						{
@@ -459,7 +464,7 @@ namespace zeroflag.Serialization
 								inner.Value = this.Converters.Parse<string>( typeof( string ), text );
 							else
 							{
-								var prop = desc.Property( "Value" ) ?? desc.Property( "Content" );
+								var prop = desc.FindProperty( "Value" ) ?? desc.FindProperty( "Content" );
 								if ( prop != null )
 									prop.SetValue( desc.Value, this.Converters.Parse<string>( prop.PropertyType, text ), null );
 								else
@@ -504,7 +509,7 @@ namespace zeroflag.Serialization
 						{
 							// try to find the property on the type...
 							//var info = new List<System.Reflection.PropertyInfo>(desc.Type.GetProperties()).Find(i => i.Name.ToLower() == sub.Name.ToLower());
-							var info = desc.Property( subTypeName );
+							var info = desc.FindProperty( subTypeName );
 							if ( info != null )
 							{
 								subType = info.PropertyType;
@@ -518,7 +523,7 @@ namespace zeroflag.Serialization
 							}
 							else
 							{
-								info = desc.Property( subTypeName, true );
+								info = desc.FindProperty( subTypeName, true );
 								if ( info != null )
 								{
 									subType = info.PropertyType;

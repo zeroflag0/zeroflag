@@ -66,6 +66,76 @@ namespace zeroflag.Serialization.Descriptors
 
 		#endregion NameProvider
 
+		#region TypeNameProvider
+		private GetHandler<string,T> _TypeNameProvider;
+
+		/// <summary>
+		/// Used to retrieve a type-name for an object. By default using ToString().
+		/// </summary>
+		public GetHandler<string,T> TypeNameProvider
+		{
+			get { return _TypeNameProvider ?? ( _TypeNameProvider = this.TypeNameProviderCreate ); }
+			//protected set
+			//{
+			//	if (_TypeNameProvider != value)
+			//	{
+			//		//if (_TypeNameProvider != null) { }
+			//		_TypeNameProvider = value;
+			//		//if (_TypeNameProvider != null) { }
+			//	}
+			//}
+		}
+
+		/// <summary>
+		/// Creates the default/initial value for TypeNameProvider.
+		/// Used to retrieve a type-name for an object. By default using ToString().
+		/// </summary>
+		protected virtual GetHandler<string,T> TypeNameProviderCreate
+		{
+			get
+			{
+				var value = _TypeNameProvider = val => val.ToString();
+				return value;
+			}
+		}
+
+		#endregion TypeNameProvider
+
+		#region DescriptorCustomizationHandle
+		private Action<NamedObjectDescriptor<T>> _DescriptorCustomizationHandle;
+
+		/// <summary>
+		/// A callback to allow customization of the created descriptors.
+		/// </summary>
+		public Action<NamedObjectDescriptor<T>> DescriptorCustomizationHandle
+		{
+			get { return _DescriptorCustomizationHandle ?? ( _DescriptorCustomizationHandle = this.DescriptorCustomizationHandleCreate ); }
+			set
+			{
+				if ( _DescriptorCustomizationHandle != value )
+				{
+					//if (_DescriptorCustomizationHandle != null) { }
+					_DescriptorCustomizationHandle = value;
+					//if (_DescriptorCustomizationHandle != null) { }
+				}
+			}
+		}
+
+		/// <summary>
+		/// Creates the default/initial value for DescriptorCustomizationHandle.
+		/// A callback to allow customization of the created descriptors.
+		/// </summary>
+		protected virtual Action<NamedObjectDescriptor<T>> DescriptorCustomizationHandleCreate
+		{
+			get
+			{
+				return null;
+			}
+		}
+
+		#endregion DescriptorCustomizationHandle
+
+
 		#region Objects
 		private zeroflag.Collections.Collection<T> _Objects;
 
