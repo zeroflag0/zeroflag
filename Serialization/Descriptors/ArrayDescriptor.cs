@@ -98,6 +98,22 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			//return base.GenerateLink();
 			Array arr = this.GetValue();
+			IArrayCreator ctr = null;
+			var t = typeof( ArrayCreator<> ).Specialize( this.ItemType );
+			ctr = (IArrayCreator)t.CreateInstance();
+
+			if ( arr != null && arr.Length == this.Inner.Count )
+			{
+				try
+				{
+					ctr.Array = arr;
+				}
+				catch ( Exception exc )
+				{
+					Console.WriteLine( exc );
+					arr = null;
+				}
+			}
 
 			if ( arr == null || arr.Length != this.Inner.Count )
 			{
@@ -105,30 +121,33 @@ namespace zeroflag.Serialization.Descriptors
 				try
 				{
 
-					var m = typeof( ArrayCreator<> ).Specialize( this.ItemType ).GetMethod( "CreateArray", System.Reflection.BindingFlags.Static );
-					Console.WriteLine( "m=" + m );
-					m.Invoke( null, new object[] { this.Inner.Count } );
+					//Console.WriteLine( "m=" + m );
+					//m.Invoke( null, new object[] { this.Inner.Count } );
+					ctr.Create( this.Inner.Count );
+					this.Value = arr = ctr.Array;
+
 				}
 				catch ( Exception exc )
 				{
 					Console.WriteLine( exc );
 				}
 			}
+
 			if ( arr != null && this.Inner.Count > 0 )
 			{
-				System.Reflection.PropertyInfo indexer = null;
-				indexer = arr.GetType().GetProperty( "Item", this.ItemType, new Type[] { typeof( int ) } );
-				if ( indexer == null )
-					foreach ( var p in arr.GetType().GetProperties() )
-					{
-						if ( p != null && p.PropertyType == this.ItemType && p.GetIndexParameters().Length == 1 && p.GetIndexParameters()[0].ParameterType == typeof( int ) )
-						{
-							indexer = p;
-							Console.WriteLine( "Manually found indexer: " + indexer );
-							break;
-						}
-					}
-					Console.WriteLine( "Found indexer: " + indexer );
+				//System.Reflection.PropertyInfo indexer = null;
+				//indexer = arr.GetType().GetProperty( "Item", this.ItemType, new Type[] { typeof( int ) } );
+				//if ( indexer == null )
+				//    foreach ( var p in arr.GetType().GetProperties() )
+				//    {
+				//        if ( p != null && p.PropertyType == this.ItemType && p.GetIndexParameters().Length == 1 && p.GetIndexParameters()[0].ParameterType == typeof( int ) )
+				//        {
+				//            indexer = p;
+				//            Console.WriteLine( "Manually found indexer: " + indexer );
+				//            break;
+				//        }
+				//    }
+				//Console.WriteLine( "Found indexer: " + indexer );
 				int i = 0;
 				foreach ( Descriptor sub in this.Inner )
 				{
@@ -148,7 +167,8 @@ namespace zeroflag.Serialization.Descriptors
 					//}
 					if ( item != null )
 					{
-						indexer.SetValue( arr, item, new object[] { i } );
+						ctr[i] = item;
+						//indexer.SetValue( arr, item, new object[] { i } );
 						//value.Add( item );
 					}
 					//}
@@ -157,11 +177,60 @@ namespace zeroflag.Serialization.Descriptors
 			}
 			return this.Value;
 		}
-		class ArrayCreator<T>
+		interface IArrayCreator
 		{
-			public static T[] CreateArray( int i )
+			void Create( int size );
+			object this[int i] { get; set; }
+			Array Array { get; set; }
+		}
+		class ArrayCreator<T> : IArrayCreator
+		{
+			#region Items
+			private T[] _Items;
+
+			/// <summary>
+			/// The array created.
+			/// </summary>
+			public T[] Items
 			{
-				return new T[i];
+				get { return _Items; }
+				set
+				{
+					if ( _Items != value )
+					{
+						_Items = value;
+					}
+				}
+			}
+
+			#endregion Items
+
+			public Array Array
+			{
+				get
+				{
+					return this.Items;
+				}
+				set
+				{
+					this.Items = (T[])value;
+				}
+			}
+
+			public void Create( int size )
+			{
+				this.CreateArray( size );
+			}
+
+			public T[] CreateArray( int size )
+			{
+				return this.Items = new T[size];
+			}
+
+			public object this[int i]
+			{
+				get { return this.Items[i]; }
+				set { this.Items[i] = (T)value; }
 			}
 		}
 
