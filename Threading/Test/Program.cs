@@ -154,6 +154,7 @@ namespace Test
 		static StringBuilder Report = new StringBuilder();
 		static void Main( string[] args )
 		{
+			System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Highest;
 			Report.Append( "System: " + Environment.OSVersion + " " + ( IntPtr.Size * 8 ) + "bit, CPUs=" + Environment.ProcessorCount + ", CLR=" + Environment.Version + ", ItemSize=" + DataSize + "bytes" ).AppendLine();
 
 #if TEST_TASKS
@@ -292,6 +293,7 @@ namespace Test
 				threads.Add(
 				new System.Threading.Thread( () =>
 				{
+					System.Threading.Thread.CurrentThread.Priority = System.Threading.ThreadPriority.Highest;
 					//Console.WriteLine( System.Threading.Thread.CurrentThread.ManagedThreadId + "> Filling queue..." );
 					System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 					sw.Start();
