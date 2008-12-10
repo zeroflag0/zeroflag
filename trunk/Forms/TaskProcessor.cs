@@ -20,10 +20,47 @@ namespace zeroflag.Forms
 			InitializeComponent();
 		}
 
+		#region Thread
+		private System.Threading.Thread _Thread;
+
+		/// <summary>
+		/// The thread used by this TaskProcessor.
+		/// </summary>
+		public System.Threading.Thread Thread
+		{
+			get { return _Thread ?? ( _Thread = this.ThreadCreate ); }
+			protected set
+			{
+				if ( _Thread != value )
+				{
+					//if (_Thread != null) { }
+					_Thread = value;
+					//if (_Thread != null) { }
+				}
+			}
+		}
+
+		/// <summary>
+		/// Creates the default/initial value for Thread.
+		/// The thread used by this TaskProcessor.
+		/// </summary>
+		protected virtual System.Threading.Thread ThreadCreate
+		{
+			get
+			{
+				var value = _Thread = new System.Threading.Thread( new System.Threading.ThreadStart( this.Run ) );
+				value.Start();
+				return value;
+			}
+		}
+
+		#endregion Thread
+
+
 		bool _Cancel = false;
 		public bool Cancel
 		{
-			get { return _Cancel || this.backgroundWorker.CancellationPending; }
+			get { return _Cancel; }
 			set
 			{
 				if ( value != _Cancel )
@@ -51,7 +88,7 @@ namespace zeroflag.Forms
 
 		public bool IsRunning
 		{
-			get { return this.backgroundWorker.IsBusy; }
+			get { return this._Thread != null && this.Thread.IsAlive && this._Working > 0; }
 		}
 
 		#region Name
@@ -69,8 +106,9 @@ namespace zeroflag.Forms
 				if ( _Name != value )
 				{
 					_Name = value;
-					if ( _Tasks != null )
-						this.Add( () => System.Threading.Thread.CurrentThread.Name = value );
+					_Restart = 1;
+					//if ( _Tasks != null )
+					//    this.Add( () => System.System.Threading.Thread.CurrentThread.Name = value );
 				}
 			}
 		}
@@ -108,22 +146,23 @@ namespace zeroflag.Forms
 		public void Add( Action task )
 		{
 			this.Tasks.Write( task );
-			if ( !this.backgroundWorker.IsBusy || _Working < 1 )
-			{
-				try
-				{
-					this.backgroundWorker.RunWorkerAsync();
-				}
-#if DEBUG
-							//|| TRACE || VERBOSE
-						catch ( Exception exc )
-						{
-							Console.WriteLine( exc );
-						}
-#else
-				catch { }
-#endif
-			}
+			this.Thread.GetType();
+			//            if ( !this.backgroundWorker.IsBusy || _Working < 1 )
+			//            {
+			//                try
+			//                {
+			//                    this.backgroundWorker.RunWorkerAsync();
+			//                }
+			//#if DEBUG
+			//                            //|| TRACE || VERBOSE
+			//                        catch ( Exception exc )
+			//                        {
+			//                            Console.WriteLine( exc );
+			//                        }
+			//#else
+			//                catch { }
+			//#endif
+			//            }
 			Wait.Set();
 		}
 
@@ -205,8 +244,8 @@ namespace zeroflag.Forms
 					Wait.Set();
 				};
 #endif
-				if ( _Name != null )
-					this.Add( () => System.Threading.Thread.CurrentThread.Name = this.Name );
+				//if ( _Name != null )
+				//    this.Add( () => System.Threading.Thread.CurrentThread.Name = this.Name );
 				return list;
 			}
 		}
@@ -348,8 +387,19 @@ namespace zeroflag.Forms
 
 		DateTime _LastWork = DateTime.Now;
 		int _Working = 0;
-		void backgroundWorker_DoWork( object sender, DoWorkEventArgs e )
+		int _Restart = 0;
+		//void backgroundWorker_DoWork( object sender, DoWorkEventArgs e )
+		protected virtual void Run()
 		{
+			if ( this._Name != null )
+				try
+				{
+					System.Threading.Thread.CurrentThread.Name = this.Name;
+				}
+				catch ( Exception exc )
+				{
+					Console.WriteLine( exc );
+				}
 			try
 			{
 				Action current;
@@ -359,6 +409,13 @@ namespace zeroflag.Forms
 				Console.WriteLine( "TaskProcessor(" + this.Name + ") started..." );
 				while ( !this.Cancel || !this.Tasks.IsEmpty )
 				{
+					if ( System.Threading.Interlocked.CompareExchange( ref _Restart, 0, 1 ) != 0 )
+					{
+						Console.WriteLine( "TaskProcessor(" + this.Name + ") restarting..." );
+						this.Thread = null;
+						this.Thread.GetType();
+						return;
+					}
 					if ( this.Cancel && ( DateTime.Now - this.CancelRequestTime ).Value.TotalMilliseconds > this.CancelTimeout.TotalMilliseconds * 0.85 )
 					{
 						Console.WriteLine( "TaskProcessor(" + this.Name + ") canceled..." );
@@ -407,6 +464,10 @@ namespace zeroflag.Forms
 				}
 				Console.WriteLine( "TaskProcessor(" + this.Name + ") halted." );
 			}
+			catch ( System.Threading.ThreadAbortException )
+			{
+				Console.WriteLine( "TaskProcessor(" + this.Name + ") aborted!" );
+			}
 			finally
 			{
 				System.Threading.Interlocked.Decrement( ref _Working );
@@ -421,7 +482,7 @@ namespace zeroflag.Forms
 		{
 			Console.WriteLine( this + ".OnDispose()" );
 			this.Cancel = true;
-			while ( this.backgroundWorker.IsBusy && _Working > 0 )
+			while ( this.IsRunning )
 			{
 				Wait.Set();
 				System.Threading.Thread.Sleep( 50 );
@@ -430,7 +491,7 @@ namespace zeroflag.Forms
 					Console.WriteLine( ( this.Name ?? this.ToString() ) + "CancelTimeout" );
 					try
 					{
-						this.backgroundWorker.CancelAsync();
+						this.Thread.Abort();
 					}
 					catch ( Exception exc )
 					{
@@ -439,6 +500,24 @@ namespace zeroflag.Forms
 					break;
 				}
 			}
+			//while ( this.backgroundWorker.IsBusy && _Working > 0 )
+			//{
+			//    Wait.Set();
+			//    System.System.Threading.Thread.Sleep( 50 );
+			//    if ( DateTime.Now - this.CancelRequestTime > this.CancelTimeout )
+			//    {
+			//        Console.WriteLine( ( this.Name ?? this.ToString() ) + "CancelTimeout" );
+			//        try
+			//        {
+			//            this.backgroundWorker.CancelAsync();
+			//        }
+			//        catch ( Exception exc )
+			//        {
+			//            Console.WriteLine( exc );
+			//        }
+			//        break;
+			//    }
+			//}
 		}
 
 	}

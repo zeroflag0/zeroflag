@@ -484,10 +484,10 @@ namespace zeroflag.Serialization
 						}
 					}
 #if CATCHALL
-					catch (Exception exc)
+					catch ( Exception exc )
 					{
-						CWL(exc);
-						this.Exceptions.Add(new ExceptionTrace(exc, node, desc));
+						CWL( exc );
+						this.Exceptions.Add( new ExceptionTrace( exc, null, desc ) );
 					}
 #endif
 					finally { }
@@ -574,9 +574,9 @@ namespace zeroflag.Serialization
 						}
 					}
 #if CATCHALL
-					catch (Exception exc)
+					catch ( Exception exc )
 					{
-						this.Exceptions.Add(new	ExceptionTrace(exc, node, desc));
+						this.Exceptions.Add( new ExceptionTrace( exc, null, desc ) );
 					}
 #endif
 					finally { }
@@ -592,9 +592,9 @@ namespace zeroflag.Serialization
 				return desc.GenerateLink();
 			}
 #if CATCHALL
-			catch (Exception exc)
+			catch ( Exception exc )
 			{
-				this.Exceptions.Add(new ExceptionTrace(exc, node, desc));
+				this.Exceptions.Add( new ExceptionTrace( exc, null, desc ) );
 				return null;
 			}
 #endif
