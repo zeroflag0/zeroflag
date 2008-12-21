@@ -534,11 +534,17 @@ namespace zeroflag.Serialization.Descriptors
 
 			//    System.Diagnostics.Debug.Assert(instance == null || type.IsAssignableFrom(instance.GetType()), "Type and instance do not match! type='" + type + "' instance='" + instance + "' instancetype='" + (instance != null?instance.GetType():null) + "' " + name);
 
-			if ( autogetvalue && instance == null && this.CanRead( info, owner ) )// && ( desc.NeedsWriteAccess && !this.CanWrite( info, owner ) ) )
+			if ( autogetvalue && owner != null && instance == null /*&& ( !this.CanWrite( info, owner ) )*/ && this.CanRead( info, owner ) )
 			{
-				instance = info.GetValue( owner, null );
+				try
+				{
+					instance = info.GetValue( owner, null );
+				}
+				catch ( Exception exc )
+				{
+					throw new Exception( "Failed to get value from " + info + " on " + owner + ".", exc );
+				}
 			}
-
 
 			Descriptor desc = null;
 

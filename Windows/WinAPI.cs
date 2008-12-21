@@ -1044,5 +1044,58 @@ namespace zeroflag.Windows
 			public long right;
 			public long bottom;
 		}
+
+		[DllImport( "kernel32.dll" )]
+		public static extern void GetSystemInfo( [MarshalAs( UnmanagedType.Struct )] ref SystemInfo lpSystemInfo );
+
+		[StructLayout( LayoutKind.Sequential )]
+		public struct SystemInfo
+		{
+			public ProcessorInfo ProcessorInfo;
+			public uint PageSize;
+			public UInt32 MinimumApplicationAddress;
+			public UInt32 MaximumApplicationAddress;
+			public UInt32 ActiveProcessorMask;
+			public uint NumberOfProcessors;
+			public uint ProcessorType;
+			public uint AllocationGranularity;
+			public ushort ProcessorLevel;
+			public ushort ProcessorRevision;
+		}
+
+		[StructLayout( LayoutKind.Explicit )]
+		public struct ProcessorInfo
+		{
+			[FieldOffset( 0 )]
+			public uint OemId;
+			[FieldOffset( 0 )]
+			public ProcessorArchitecture ProcessorArchitecture;
+			[FieldOffset( 2 )]
+			public ushort Reserved;
+		}
+
+		public enum ProcessorArchitecture : ushort
+		{
+			/// <summary>
+			/// x64 (AMD or Intel)
+			/// </summary>
+			x64 = 9,
+
+
+			/// <summary>
+			/// Intel Itanium Processor Family (IPF)
+			/// </summary>
+			IA64 = 6,
+
+			/// <summary>
+			/// x86
+			/// </summary>
+			x86 = 0,
+
+			/// <summary>
+			/// Unknown architecture.
+			/// </summary>
+			Unknown = 0xffff,
+		}
 	}
 }

@@ -251,6 +251,8 @@ namespace zeroflag
 							{
 								foreach ( System.Type type in Types )
 								{
+									if ( type == null )
+										continue;
 									//if (type.IsGenericType)
 									//    type = type.GetGenericTypeDefinition();
 									if ( type != null && ( baseType.IsAssignableFrom( type ) || type.IsSubclassOf( baseType ) || IsDerived( baseType, type.BaseType ) ) )

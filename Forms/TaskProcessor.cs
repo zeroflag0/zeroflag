@@ -48,11 +48,44 @@ namespace zeroflag.Forms
 		{
 			get
 			{
-				var value = _Thread = new System.Threading.Thread( new System.Threading.ThreadStart( this.Run ) );
+				var value = new System.Threading.Thread( new System.Threading.ThreadStart( this.Run ) );
+				value.SetApartmentState( System.Threading.ApartmentState.STA );
 				value.Start();
 				return value;
 			}
 		}
+		#region ThreadPriority
+		private System.Threading.ThreadPriority _ThreadPriority = System.Threading.ThreadPriority.Normal;
+
+		/// <summary>
+		/// The thread's priority.
+		/// </summary>
+		public System.Threading.ThreadPriority ThreadPriority
+		{
+			get
+			{
+				var thread = this._Thread;
+				if ( thread != null )
+				{
+					_ThreadPriority = thread.Priority;
+				}
+				return _ThreadPriority;
+			}
+			set
+			{
+				if ( _ThreadPriority != value )
+				{
+					_ThreadPriority = value;
+					var thread = this._Thread;
+					if ( thread != null )
+					{
+						thread.Priority = value;
+					}
+				}
+			}
+		}
+
+		#endregion ThreadPriority
 
 		#endregion Thread
 
@@ -400,6 +433,15 @@ namespace zeroflag.Forms
 				{
 					Console.WriteLine( exc );
 				}
+			if ( this.ThreadPriority != System.Threading.Thread.CurrentThread.Priority )
+				try
+				{
+					System.Threading.Thread.CurrentThread.Priority = this.ThreadPriority;
+				}
+				catch ( Exception exc )
+				{
+					Console.WriteLine( exc );
+				}
 			try
 			{
 				Action current;
@@ -413,10 +455,11 @@ namespace zeroflag.Forms
 					{
 						Console.WriteLine( "TaskProcessor(" + this.Name + ") restarting..." );
 						this.Thread = null;
-						this.Thread.GetType();
+						_Working = 0;
+						this.Thread = this.ThreadCreate;
 						return;
 					}
-					if ( this.Cancel && ( DateTime.Now - this.CancelRequestTime ).Value.TotalMilliseconds > this.CancelTimeout.TotalMilliseconds * 0.85 )
+					if ( this.Cancel && ( ( DateTime.Now - this.CancelRequestTime ) ?? TimeSpan.MaxValue ).TotalMilliseconds > this.CancelTimeout.TotalMilliseconds * 0.85 )
 					{
 						Console.WriteLine( "TaskProcessor(" + this.Name + ") canceled..." );
 						break;
@@ -425,6 +468,7 @@ namespace zeroflag.Forms
 					{
 						//current = this.Tasks[0];
 						current = this.Tasks.Read();
+						_Current = current;
 						if ( current != null )
 						{
 							try
@@ -470,9 +514,42 @@ namespace zeroflag.Forms
 			}
 			finally
 			{
-				System.Threading.Interlocked.Decrement( ref _Working );
+				//System.Threading.Interlocked.Decrement( ref _Working );
+				_Working = 0;
 			}
 		}
+
+		#region Current
+		private Action _Current;
+
+		/// <summary>
+		/// The action currently executing.
+		/// </summary>
+		public Action CurrentAction
+		{
+			get { return _Current; }
+			//set
+			//{
+			//    if ( _Current != value )
+			//    {
+			//        _Current = value;
+			//    }
+			//}
+		}
+
+		public string Current
+		{
+			get
+			{
+				Action current = _Current;
+				if ( current == null )
+					return "<null>";
+				return current.Method.ToString();
+			}
+		}
+
+		#endregion Current
+
 
 		public override string ToString()
 		{

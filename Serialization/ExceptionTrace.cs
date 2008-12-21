@@ -116,17 +116,30 @@ namespace zeroflag.Serialization
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.Append( "ExceptionTrace: " );
-			if ( this.Exception != null )
-				sb.Append( this.Exception.Message ).Append( "\n\t" )
-					.Append( "Stacktrace:\n\t\t" )
-					.Append( this.Exception.StackTrace.Replace( "\n", "\n\t" ) ).Append( "\n\t" );
-			else
-				sb.AppendLine( "<trace>\n\t" );
-			sb.Append( "Descriptor: " ).Append( this.Descriptor ).Append( "\n\t" )
-				.Append( "Value: " ).Append( this.Value ?? (object)"<null>" ).Append( "\n\t" )
-				.Append( "Type: " ).Append( this.Type ).Append( "\n\t" )
-				.Append( "Xml:\n\t\t" )
-				.Append( this.Node.OuterXml.Replace( "\n", "\n\t" ) ).Append( "\n" );
+			try
+			{
+				if ( this.Exception != null )
+					sb.Append( this.Exception.Message ).Append( "\n\t" )
+						.Append( "Stacktrace:\n\t\t" )
+						.Append( this.Exception.StackTrace.Replace( "\n", "\n\t" ) ).Append( "\n\t" );
+				else
+				{
+					sb.AppendLine( "<trace>\n\t" );
+				}
+				sb.Append( "Descriptor: " ).Append( this.Descriptor ).Append( "\n\t" );
+				if ( this.Descriptor != null && this.Descriptor.Property != null )
+				{
+					sb.Append( "Property: " ).Append( this.Descriptor.Property ).Append( "\n\t" );
+				}
+				sb.Append( "Value: " ).Append( this.Value ?? (object)"<null>" ).Append( "\n\t" );
+				sb.Append( "Type: " ).Append( this.Type ?? (object)"<null>" ).Append( "\n\t" );
+				if ( Node != null && Node.OuterXml != null )
+					sb.Append( "Xml:\n\t\t" ).Append( this.Node.OuterXml.Replace( "\n", "\n\t" ) ).Append( "\n" );
+			}
+			catch ( Exception exc )
+			{
+				sb.Append( exc );
+			}
 			return sb.ToString();
 		}
 	}
