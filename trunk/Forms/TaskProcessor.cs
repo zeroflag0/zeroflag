@@ -90,6 +90,54 @@ namespace zeroflag.Forms
 		#endregion Thread
 
 
+		#region Disposing
+
+		private bool _Disposing;
+
+		/// <summary>
+		/// When this processor is disposing.
+		/// </summary>
+		public bool Disposing
+		{
+			get { return _Disposing; }
+			set
+			{
+				if ( _Disposing != value )
+				{
+					this.OnDisposingChanged( _Disposing, _Disposing = value );
+				}
+			}
+		}
+
+		#region DisposingChanged event
+		public delegate void DisposingChangedHandler( object sender, bool oldvalue, bool newvalue );
+
+		private event DisposingChangedHandler _DisposingChanged;
+		/// <summary>
+		/// Occurs when Disposing changes.
+		/// </summary>
+		public event DisposingChangedHandler DisposingChanged
+		{
+			add { this._DisposingChanged += value; }
+			remove { this._DisposingChanged -= value; }
+		}
+
+		/// <summary>
+		/// Raises the DisposingChanged event.
+		/// </summary>
+		protected virtual void OnDisposingChanged( bool oldvalue, bool newvalue )
+		{
+			// if there are event subscribers...
+			if ( this._DisposingChanged != null )
+			{
+				// call them...
+				this._DisposingChanged( this, oldvalue, newvalue );
+			}
+		}
+		#endregion DisposingChanged event
+		#endregion Disposing
+
+
 		bool _Cancel = false;
 		public bool Cancel
 		{
@@ -457,9 +505,10 @@ namespace zeroflag.Forms
 						this.Thread = null;
 						_Working = 0;
 						this.Thread = this.ThreadCreate;
+						this.Wait.Set();
 						return;
 					}
-					if ( this.Cancel && ( ( DateTime.Now - this.CancelRequestTime ) ?? TimeSpan.MaxValue ).TotalMilliseconds > this.CancelTimeout.TotalMilliseconds * 0.85 )
+					if ( ( this.Cancel || this.Disposing ) && ( ( DateTime.Now - this.CancelRequestTime ) ?? TimeSpan.MaxValue ).TotalMilliseconds > this.CancelTimeout.TotalMilliseconds * 0.85 )
 					{
 						Console.WriteLine( "TaskProcessor(" + this.Name + ") canceled..." );
 						break;
@@ -491,7 +540,7 @@ namespace zeroflag.Forms
 #if DEBUG
 							Console.WriteLine( "TaskProcessor(" + this.Name + ") idle timeout." );
 #endif
-							this.Wait.WaitOne( 15000, true );
+							this.Wait.WaitOne( this.IdleThreadTimeout, true );
 #if DEBUG
 							Console.WriteLine( "TaskProcessor(" + this.Name + ") resuming..." );
 #endif
@@ -544,7 +593,7 @@ namespace zeroflag.Forms
 				Action current = _Current;
 				if ( current == null )
 					return "<null>";
-				return current.Method.ToString();
+				return current.Method.ToString() + " from " + current.Method.DeclaringType;
 			}
 		}
 
@@ -555,14 +604,23 @@ namespace zeroflag.Forms
 		{
 			return ( (object)this.Name ?? base.ToString() ).ToString();
 		}
+
+		public virtual void Finish()
+		{
+			Console.WriteLine( this + ".Finish() " + Current );
+			this.Cancel = true;
+			this.Wait.Set();
+		}
 		protected virtual void OnDispose()
 		{
 			Console.WriteLine( this + ".OnDispose()" );
+			this.Wait.Set();
+			this.Disposing = true;
 			this.Cancel = true;
 			while ( this.IsRunning )
 			{
 				Wait.Set();
-				System.Threading.Thread.Sleep( 50 );
+				System.Threading.Thread.Sleep( 10 );
 				if ( DateTime.Now - this.CancelRequestTime > this.CancelTimeout )
 				{
 					Console.WriteLine( ( this.Name ?? this.ToString() ) + "CancelTimeout" );
