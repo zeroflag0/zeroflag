@@ -15,7 +15,7 @@ public class SerializerIgnoreAttribute : zeroflag.Serialization.Attributes.Attri
 		this.Ignore = ignore;
 	}
 
-	bool _Ignore;
+	bool _Ignore = true;
 
 	public bool Ignore
 	{
