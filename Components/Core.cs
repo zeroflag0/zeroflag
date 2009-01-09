@@ -62,11 +62,6 @@ namespace zeroflag.Components
 			protected set { _Modules = value; }
 		}
 
-		protected virtual void CreateDefaultModules()
-		{
-			this.LogModule = new zeroflag.Components.Logging.LogModule();
-		}
-
 		/// <summary>
 		/// Creates the default/initial value for Modules.
 		/// All modules used by this core.
@@ -84,7 +79,7 @@ namespace zeroflag.Components
 				{
 					modules.Sort( ( mod1, mod2 ) => object.ReferenceEquals( mod1, mod2 ) ? 0 : mod2.CompareTo( mod1 ) );
 				};
-				this.CreateDefaultModules();
+				this.LogModule = new zeroflag.Components.Logging.LogModule();
 				return modules;
 			}
 		}
