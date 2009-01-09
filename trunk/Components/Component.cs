@@ -46,7 +46,7 @@ using System.Text;
 
 namespace zeroflag.Components
 {
-	public abstract class Component : IDisposable, IComponent<Core>
+	public abstract class Component : IDisposable, IComponent<Core>, IEquatable<Component>
 	{
 
 		#region Outer
@@ -291,6 +291,15 @@ namespace zeroflag.Components
 		#endregion CoreChanged event
 		#endregion Core
 
+
+		#endregion
+
+		#region IEquatable<Component> Members
+
+		public bool Equals( Component other )
+		{
+			return object.ReferenceEquals( this, other );
+		}
 
 		#endregion
 	}

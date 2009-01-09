@@ -60,7 +60,7 @@ namespace zeroflag.Components
 		{
 			get
 			{
-				var modules = new ComponentCollection<Module, Self>( this ) { Core = this as Self };
+				var modules = base.Modules = new ComponentCollection<Module, Self>( this ) { Core = this as Self };
 				//modules.ItemAdded += item => item.Core = this;
 				//modules.ItemRemoved += item =>
 				//{
@@ -70,7 +70,6 @@ namespace zeroflag.Components
 				//{
 				//    modules.Sort( ( mod1, mod2 ) => object.ReferenceEquals( mod1, mod2 ) ? 0 : mod2.CompareTo( mod1 ) );
 				//};
-				this.CreateDefaultModules();
 				return modules;
 			}
 		}
