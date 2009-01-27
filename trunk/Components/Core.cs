@@ -148,7 +148,10 @@ namespace zeroflag.Components
 		public void Shutdown()
 		{
 			if ( this.State != ModuleStates.Disposed )
+			{
+				this.Log.Message( "Requesting shutdown..." );
 				this.State = ModuleStates.Shutdown;
+			}
 		}
 
 		protected internal override bool OnShutdown()
