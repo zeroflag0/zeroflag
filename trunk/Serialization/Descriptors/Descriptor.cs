@@ -577,16 +577,43 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			//List<System.Reflection.PropertyInfo> props = new List<System.Reflection.PropertyInfo>();
 			Dictionary<string, System.Reflection.PropertyInfo> props = new Dictionary<string, System.Reflection.PropertyInfo>();
-			do
+			foreach ( var t in GetBaseTypes( type ) )
 			{
 				//break;
 				//props.AddRange(type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.));
-				foreach ( var prop in type.GetProperties() )
+				foreach ( var prop in t.GetProperties() )
+				{
 					if ( !props.ContainsKey( prop.Name ) )
+					{
 						props.Add( prop.Name, prop );
+					}
+				}
 			}
-			while ( ( type = type.BaseType ) != null );
+			//while ( ( type = type.BaseType ) != null );
 			return new List<System.Reflection.PropertyInfo>( props.Values );
+		}
+
+		IEnumerable<Type> GetBaseTypes( Type type )
+		{
+			if ( type == null )
+				yield break;
+			yield return type;
+			if ( !type.IsInterface )
+			{
+				if ( type.BaseType != null )
+				{
+					foreach ( Type t in GetBaseTypes( type.BaseType ) )
+						yield return t;
+				}
+			}
+			else
+			{
+				foreach ( Type t in type.GetInterfaces() )
+				{
+					foreach ( Type ty in GetBaseTypes( t ) )
+						yield return ty;
+				}
+			}
 		}
 
 		public override string ToString()
