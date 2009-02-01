@@ -107,6 +107,14 @@ namespace zeroflag.Serialization.Descriptors
 			{
 				var fallbackDescriptor = _FallbackDescriptor = new ObjectDescriptor();
 
+				fallbackDescriptor.Name = this.Name;
+				fallbackDescriptor.Type = this.Type;
+				fallbackDescriptor.Value = this.Value;
+				fallbackDescriptor.Context = this.Context;
+				fallbackDescriptor.Id = this.Id;
+				fallbackDescriptor.IsNull = this.IsNull;
+				fallbackDescriptor.IsReferenced = this.IsReferenced;
+
 				return fallbackDescriptor;
 			}
 		}
@@ -116,6 +124,7 @@ namespace zeroflag.Serialization.Descriptors
 		bool ranCustomization = false;
 		protected override void OnContextChanged( Context oldvalue, Context newvalue )
 		{
+			_IsLinked = false;
 			if ( oldvalue != null )
 			{
 				oldvalue.NamedObjects.ItemRemoved -= NamedObjects_ItemRemoved;
@@ -129,12 +138,21 @@ namespace zeroflag.Serialization.Descriptors
 					this.Provider.DescriptorCustomizationHandle( this );
 					ranCustomization = true;
 				}
+				string propname = this.Provider.NameProperty;
+				Descriptor propnameinfo = null;
 				foreach ( var desc in this.Inner )
 				{
+					if ( desc.Name == propname )
+					{
+						propnameinfo = desc;
+						continue;
+					}
 					desc.Context = this.Context;
 					//desc.Name = this.Provider.NameProperty;
 				}
-				this.NameDescriptor.Name = this.Provider.NameProperty;
+				if ( propnameinfo != null )
+					this.Inner.Remove( propnameinfo );
+				this.NameDescriptor.Name = propname;
 				this.NameDescriptor.Property = this.Provider.GetType().GetProperty( "NameProperty" );
 			}
 			base.OnContextChanged( oldvalue, newvalue );
@@ -171,6 +189,7 @@ namespace zeroflag.Serialization.Descriptors
 
 		public override void Parse()
 		{
+			_IsLinked = false;
 			T value = this.GetValue();
 			try
 			{
@@ -225,9 +244,15 @@ namespace zeroflag.Serialization.Descriptors
 			}
 		}
 
+		bool _IsLinked = false;
 		public override object GenerateLink()
 		{
 			object value = null;
+			if ( _IsLinked )
+			{
+				value = this.Value;
+				return value;
+			}
 			try
 			{
 				if ( !ranCustomization && this.Provider.DescriptorCustomizationHandle != null )
@@ -236,7 +261,8 @@ namespace zeroflag.Serialization.Descriptors
 					ranCustomization = true;
 				}
 
-				this.Value = value = this.Provider.ObjectCreationHandler( this.Inner.Find( inn => this.Provider.NameProperty == inn.Name ).Value + "" );
+				if ( value == null )
+					this.Value = value = this.Provider.ObjectCreationHandler( this.Inner.Find( inn => this.Provider.NameProperty == inn.Name ).Value + "" );
 
 				foreach ( var desc in this.Inner )
 				{
@@ -267,6 +293,7 @@ namespace zeroflag.Serialization.Descriptors
 						desc.Property.SetValue( desc.Value, result, null );
 					}
 				}
+				_IsLinked = true;
 			}
 			catch ( Exception exc )
 			{

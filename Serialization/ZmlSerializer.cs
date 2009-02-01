@@ -235,8 +235,12 @@ namespace zeroflag.Serialization
 							{
 								if ( this.HideUnused && inner.Name != null )
 								{
-									if ( !( desc is IListDescriptor ) && !desc.FindProperty( inner.Name ).CanWrite && inner.NeedsWriteAccess )
-										continue;
+									if ( !( desc is IListDescriptor ) )
+									{
+										var n = desc.FindProperty( inner.Name );
+										if ( n != null && !n.CanWrite && inner.NeedsWriteAccess )
+											continue;
+									}
 									if ( inner is IListDescriptor && inner.Value != null &&
 										( ( inner.Value is System.Collections.ICollection && ( (System.Collections.ICollection)inner.Value ).Count <= 0 )
 										) )
