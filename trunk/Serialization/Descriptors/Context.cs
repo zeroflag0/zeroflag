@@ -388,7 +388,11 @@ namespace zeroflag.Serialization.Descriptors
 		}
 
 		int _depth = 0;
-		public virtual Descriptor Parse( string name, Type type, object instance, object owner, System.Reflection.PropertyInfo info )
+		public Descriptor Parse( string name, Type type, object instance, object owner, System.Reflection.PropertyInfo info )
+		{
+			return this.Parse( name, type, instance, null, owner, info );
+		}
+		public virtual Descriptor Parse( string name, Type type, object instance, Descriptor desc, object owner, System.Reflection.PropertyInfo info )
 		{
 			if ( _depth > 500 )
 			{
@@ -398,7 +402,7 @@ namespace zeroflag.Serialization.Descriptors
 			try
 			{
 				_depth++;
-				return this._Parse( name, type, instance, owner, info );
+				return this._Parse( name, type, instance, desc, owner, info );
 			}
 			finally
 			{
@@ -421,6 +425,10 @@ namespace zeroflag.Serialization.Descriptors
 			return b.Append( "}" ).ToString();
 		}
 		Descriptor _Parse( string name, Type type, object instance, object owner, System.Reflection.PropertyInfo info )
+		{
+			return _Parse( name, type, instance, null, owner, info );
+		}
+		Descriptor _Parse( string name, Type type, object instance, Descriptor desc, object owner, System.Reflection.PropertyInfo info )
 		{
 			if ( type == null && instance != null )
 				type = instance.GetType();
@@ -546,44 +554,44 @@ namespace zeroflag.Serialization.Descriptors
 				}
 			}
 
-			Descriptor desc = null;
 
-			if ( !type.IsValueType && type != typeof( string ) )
-				if ( instance != null )
-				{
-					// there's an instance to parse, so search for a value-descriptor...
-					if ( this.ParsedObjects.ContainsKey( instance ) )
+			if ( desc == null )
+				if ( !type.IsValueType && type != typeof( string ) )
+					if ( instance != null )
 					{
-						this.ParsedObjects[instance].IsReferenced = true;
-						var t = this.ParsedObjects[instance];
-						var d = new ObjectDescriptor() { Value = t.Value, Id = t.Id, IsReferenced = t.IsReferenced, Type = t.Type, Context = this, Property = info };
-						if ( info != null )
-							d.Name = info.Name;
-						return d;
-					}
-					else if ( type.IsAssignableFrom( instance.GetType() ) )
-						type = instance.GetType();
-				}
-				else
-				{
-					// there's no instance, so search for a type-descriptor...
-					if ( owner == null )
-					{
-						while ( this.ParsedTypes.ContainsKey( type ) )
+						// there's an instance to parse, so search for a value-descriptor...
+						if ( this.ParsedObjects.ContainsKey( instance ) )
 						{
-							desc = this.ParsedTypes[type];
-							if ( desc.Value != null )
+							this.ParsedObjects[instance].IsReferenced = true;
+							var t = this.ParsedObjects[instance];
+							var d = new ObjectDescriptor() { Value = t.Value, Id = t.Id, IsReferenced = t.IsReferenced, Type = t.Type, Context = this, Property = info };
+							if ( info != null )
+								d.Name = info.Name;
+							return d;
+						}
+						else if ( type.IsAssignableFrom( instance.GetType() ) )
+							type = instance.GetType();
+					}
+					else
+					{
+						// there's no instance, so search for a type-descriptor...
+						if ( owner == null )
+						{
+							while ( this.ParsedTypes.ContainsKey( type ) )
 							{
-								while ( this.ParsedTypes.Remove( type ) ) ;
-								if ( !this.ParsedObjects.ContainsKey( desc.Value ) )
-									this.ParsedObjects.Add( desc.Value, desc );
-								desc = null;
+								desc = this.ParsedTypes[type];
+								if ( desc.Value != null )
+								{
+									while ( this.ParsedTypes.Remove( type ) ) ;
+									if ( !this.ParsedObjects.ContainsKey( desc.Value ) )
+										this.ParsedObjects.Add( desc.Value, desc );
+									desc = null;
+								}
+								else
+									return desc;
 							}
-							else
-								return desc;
 						}
 					}
-				}
 
 			if ( desc == null )
 			// we don't have a descriptor yet => find one...

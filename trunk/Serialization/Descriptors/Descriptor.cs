@@ -524,55 +524,69 @@ namespace zeroflag.Serialization.Descriptors
 
 		public virtual System.Reflection.PropertyInfo FindProperty( string property, bool byType )
 		{
-			var props = this.GetPropertyNames( this.Type );
+			var props = this.GetProperties( this.Type );
 			// search by name, case sensitive (fast)...
-			if ( props.ContainsKey( property ) )
-				return props[property];
-			var names = new List<string>( props.Keys );
+			//if ( props.Find( p => p.Name == property ) != null )
+			//    return props[property];
+			System.Reflection.PropertyInfo result = null;
+			result = props.Find( p => p.Name == property );
+			if ( result != null )
+				return result;
+
 			// search by name, case insensitive...
-			string key = names.Find( n => n.ToLower() == property.ToLower() );
-			if ( key != null )
-				return props[key];
+			result = props.Find( p => p.Name.ToLower() == property.ToLower() );
+			if ( result != null )
+				return result;
 
 			if ( !byType )
-				return null;
+				return result;
 
 			// get all property types...
 			Dictionary<Type, string> types = new Dictionary<Type, string>();
-			foreach ( string name in props.Keys )
+			foreach ( var p in props )
 			{
-				if ( !types.ContainsKey( props[name].PropertyType ) )
-					types.Add( props[name].PropertyType, name );
+				if ( !types.ContainsKey( p.PropertyType ) )
+					types.Add( p.PropertyType, p.Name );
 			}
 
 			// search types, case insensitive...
 			List<Type> typeSearch = new List<Type>( types.Keys );
 			Type type = typeSearch.Find( t => t.Name != null && t.Name.ToLower() == property.ToLower() );
-			if ( type != null && types.ContainsKey( type ) && props.ContainsKey( types[type] ) )
-				return props[types[type]];
+			if ( type != null && types.ContainsKey( type ) )
+			{
+				result = props.Find( p => p.Name == types[type] );
+
+				if ( result != null )
+					return result;
+			}
 
 			type = typeSearch.Find( t => t.Name != null && ( t.Name.ToLower().Contains( property.ToLower() ) || property.ToLower().Contains( t.Name.ToLower() ) ) );
-			if ( type != null && types.ContainsKey( type ) && props.ContainsKey( types[type] ) )
-				return props[types[type]];
-
-			return null;
-		}
-
-		public Dictionary<string, System.Reflection.PropertyInfo> GetPropertyNames( Type type )
-		{
-			//List<System.Reflection.PropertyInfo> props = new List<System.Reflection.PropertyInfo>();
-			Dictionary<string, System.Reflection.PropertyInfo> props = new Dictionary<string, System.Reflection.PropertyInfo>();
-			do
+			if ( type != null && types.ContainsKey( type ) )
 			{
-				//break;
-				//props.AddRange(type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.));
-				foreach ( var prop in type.GetProperties() )
-					if ( !props.ContainsKey( prop.Name ) )
-						props.Add( prop.Name, prop );
+				result = props.Find( p => p.Name == types[type] );
+
+				if ( result != null )
+					return result;
 			}
-			while ( ( type = type.BaseType ) != null );
-			return props;
+
+			return result;
 		}
+
+		//public Dictionary<string, System.Reflection.PropertyInfo> GetPropertyNames( Type type )
+		//{
+		//    //List<System.Reflection.PropertyInfo> props = new List<System.Reflection.PropertyInfo>();
+		//    Dictionary<string, System.Reflection.PropertyInfo> props = new Dictionary<string, System.Reflection.PropertyInfo>();
+		//    do
+		//    {
+		//        //break;
+		//        //props.AddRange(type.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.));
+		//        foreach ( var prop in type.GetProperties() )
+		//            if ( !props.ContainsKey( prop.Name ) )
+		//                props.Add( prop.Name, prop );
+		//    }
+		//    while ( ( type = type.BaseType ) != null );
+		//    return props;
+		//}
 		public List<System.Reflection.PropertyInfo> GetProperties( Type type )
 		{
 			//List<System.Reflection.PropertyInfo> props = new List<System.Reflection.PropertyInfo>();
