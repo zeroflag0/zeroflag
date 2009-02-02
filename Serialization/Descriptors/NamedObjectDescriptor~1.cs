@@ -166,19 +166,21 @@ namespace zeroflag.Serialization.Descriptors
 
 		public override System.Reflection.PropertyInfo FindProperty( string property, bool byType )
 		{
+			//return base.FindProperty( property, byType );
+
 			Descriptor desc;
 			if ( !byType )
 			{
-				desc = this.Inner.Find( d => d.Name == property ) ?? this.Inner.Find( d => d.Name.ToLower() == property.ToLower() );
+				desc = this.Inner.Find( d => d.Name == property ) ?? this.Inner.Find( d => d.Name != null && d.Name.ToLower() == property.ToLower() );
 			}
 			else
 			{
-				desc = this.Inner.Find( d => d.Type.Name == property ) ?? this.Inner.Find( d => d.Type.Name.ToLower() == property.ToLower() );
+				desc = this.Inner.Find( d => d.Type.Name == property ) ?? this.Inner.Find( d => d.Name != null && d.Type.Name.ToLower() == property.ToLower() );
 			}
 			if ( desc != null )
 				return desc.Property;
 			else
-				return null;
+				return base.FindProperty( property, byType );
 			//if ( !byType )
 			//{
 			//    if ( property == this.Provider.NameProperty )
@@ -203,6 +205,7 @@ namespace zeroflag.Serialization.Descriptors
 					this.Name = this.Provider.TypeNameProvider( value );
 				}
 				//this.Inner.Add( new StringDescriptor() { Context = this.Context, Name = this.Provider.NameProperty, Value = this.Provider.NameProvider( value ) } );
+
 				foreach ( var desc in this.Inner )
 				{
 					desc.Context = this.Context;
@@ -210,6 +213,10 @@ namespace zeroflag.Serialization.Descriptors
 						desc.Value = this.Provider.NameProvider( value );
 					else
 					{
+						if ( desc.Property == null && desc.Name != null )
+						{
+							desc.Property = this.Type.GetProperty( desc.Name );
+						}
 						if ( desc.Property != null )
 						{
 							if ( desc.Value == null )
@@ -221,7 +228,8 @@ namespace zeroflag.Serialization.Descriptors
 								desc.Name = desc.Property.Name;
 							}
 						}
-						desc.Parse();
+						this.Context.Parse( desc.Name, desc.Type, desc.Value, desc, this.Value, desc.Property );
+						//desc.Parse();
 					}
 				}
 			}
@@ -290,7 +298,7 @@ namespace zeroflag.Serialization.Descriptors
 					var result = desc.GenerateLink();
 					if ( desc.Property != null && desc.Property.CanWrite )
 					{
-						desc.Property.SetValue( desc.Value, result, null );
+						desc.Property.SetValue( this.Value, result, null );
 					}
 				}
 				_IsLinked = true;

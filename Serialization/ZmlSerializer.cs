@@ -328,7 +328,7 @@ namespace zeroflag.Serialization
 			}
 		}
 #if DEBUGTYPE
-		const string BreakOnType = "";
+		const string BreakOnType = "ITexture";
 #endif
 		int depth = 0;
 		protected virtual object Deserialize( object value, Descriptor desc, Descriptor outer, XmlReader node )
@@ -437,6 +437,10 @@ namespace zeroflag.Serialization
 				tree = node.ReadSubtree();
 				tree.Read();
 			}
+#if DEBUGTYPE
+			if ( desc.Type.Name == BreakOnType )
+				Console.WriteLine( desc ); ;//<-- break here...
+#endif
 			foreach ( XmlReader sub in this.ReadElements( tree ) )
 			//while ( sub.Read() )
 			{
