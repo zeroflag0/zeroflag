@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="zeroflag.Components.TaskProcessor">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <Members>
+      <Field Name="_Cancel" Hidden="true" />
+      <Field Name="_CancelRequestTime" Hidden="true" />
+      <Field Name="_CancelTimeout" Hidden="true" />
+      <Field Name="_Current" Hidden="true" />
+      <Field Name="_Disposing" Hidden="true" />
+      <Field Name="_IdleThreadTimeout" Hidden="true" />
+      <Field Name="_LastWork" Hidden="true" />
+      <Field Name="_Name" Hidden="true" />
+      <Field Name="_Restart" Hidden="true" />
+      <Field Name="_Site" Hidden="true" />
+      <Field Name="_Tasks" Hidden="true" />
+      <Field Name="_Thread" Hidden="true" />
+      <Field Name="_ThreadPriority" Hidden="true" />
+      <Field Name="_Wait" Hidden="true" />
+      <Field Name="_Working" Hidden="true" />
+      <Field Name="components" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Delegate Name="zeroflag.Components.TaskProcessor.DisposingChangedHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Components\TaskProcessor.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="zeroflag.Components.TaskProcessor.ErrorHandlingHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Components\TaskProcessor.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAIlEACAQSFBgAAEAAiKYhSKAQwAARIASAAIAABKBjo=</HashCode>
+      <FileName>Components\TaskProcessor.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="zeroflag.Forms.TaskProcessor">
+    <Position X="6.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\TaskProcessor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Comic Sans MS" Size="9" />
+</ClassDiagram>
