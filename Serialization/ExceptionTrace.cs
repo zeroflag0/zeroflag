@@ -134,8 +134,8 @@ namespace zeroflag.Serialization
 				}
 				sb.Append( "Value: " ).Append( this.Value ?? (object)"<null>" ).Append( "\n\t" );
 				sb.Append( "Type: " ).Append( this.Type ?? (object)"<null>" ).Append( "\n\t" );
-				if ( Node != null && Node.OuterXml != null )
-					sb.Append( "Xml:\n\t\t" ).Append( this.Node.OuterXml.Replace( "\n", "\n\t" ) ).Append( "\n" );
+				//if ( Node != null && Node.OuterXml != null )
+				//    sb.Append( "Xml:\n\t\t" ).Append( this.Node.OuterXml.Replace( "\n", "\n\t" ) ).Append( "\n" );
 			}
 			catch ( Exception exc )
 			{
