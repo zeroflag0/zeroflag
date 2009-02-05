@@ -7,13 +7,16 @@ using System.Text;
 namespace zeroflag.Components
 {
 	public partial class TaskProcessor : Component
+#if !SILVERLIGHT
+, System.ComponentModel.IComponent
+#endif
 	{
 		public TaskProcessor()
 		{
 			InitializeComponent();
 		}
 #if !SILVERLIGHT
-		public TaskProcessor( IContainer container )
+		public TaskProcessor( System.ComponentModel.IContainer container )
 		{
 			container.Add( this );
 
@@ -663,11 +666,55 @@ namespace zeroflag.Components
 			//}
 		}
 
+
+
+		#region IComponent Members
+#if !SILVERLIGHT
+		public event EventHandler Disposed
+		{
+			add { }
+			remove { }
+		}
+
+		#region Site
+		private ISite _Site;
+
+		/// <summary>
+		/// Site
+		/// </summary>
+		public ISite Site
+		{
+			get { return _Site; }
+			set
+			{
+				if ( _Site != value )
+				{
+					_Site = value;
+				}
+			}
+		}
+
+		#endregion Site
+
+#endif
+		#endregion
 	}
 }
 namespace zeroflag.Forms
 {
 	public class TaskProcessor : zeroflag.Components.TaskProcessor
 	{
+		public TaskProcessor()
+			: base()
+		{
+
+		}
+
+#if !SILVERLIGHT
+		public TaskProcessor( System.ComponentModel.IContainer container )
+			: base( container )
+		{
+		}
+#endif
 	}
 }

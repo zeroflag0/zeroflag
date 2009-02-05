@@ -147,6 +147,10 @@
     <Compile Include="Components\Logging\LogModule.cs" />
     <Compile Include="Components\Logging\LogWriter.cs" />
     <Compile Include="Components\Module.cs" />
+    <Compile Include="Components\TaskProcessor.cs" />
+    <Compile Include="Components\TaskProcessor.designer.cs">
+      <DependentUpon>TaskProcessor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="Forms\DebugForm.cs">
       <SubType>Form</SubType>
@@ -225,12 +229,6 @@
     <Compile Include="Forms\SplitContainer.Designer.cs">
       <DependentUpon>SplitContainer.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\TaskProcessor.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Forms\TaskProcessor.Designer.cs">
-      <DependentUpon>TaskProcessor.cs</DependentUpon>
-    </Compile>
     <Compile Include="GetHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\InstanceProvider.cs" />
@@ -305,6 +303,7 @@
     <Content Include="Serialization\BinarySerialization.concept.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="_ClassDiagram.cd" />
     <None Include="Collections\_ClassDiagram.cd" />
     <None Include="Components\Logging\_ClassDiagram.cd" />
     <None Include="Serialization\Converters\_ClassDiagram.cd" />
@@ -351,10 +350,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SplitContainer.resx">
       <DependentUpon>SplitContainer.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\TaskProcessor.resx">
-      <DependentUpon>TaskProcessor.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
