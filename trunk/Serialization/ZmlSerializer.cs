@@ -57,9 +57,9 @@ namespace zeroflag.Serialization
 					)
 				)
 			{
-				using ( XmlWriter doc = new XmlWriter( writer ) )
+				using ( XmlWriter doc = new XmlTextWriter( writer ) { Formatting = Formatting.Indented } )
 				{
-					doc.Formatting = Formatting.Indented;
+					//doc.Formatting = Formatting.Indented;
 					//if ( this.FileName != null )
 					//    doc = new XmlWriter( new System.IO.StreamWriter( this.FileName ) );
 					//else if ( this.Stream != null )
