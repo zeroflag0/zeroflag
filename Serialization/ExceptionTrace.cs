@@ -6,7 +6,7 @@ namespace zeroflag.Serialization
 {
 	public class ExceptionTrace
 	{
-		public ExceptionTrace( Exception exc, System.Xml.XmlNode node, Descriptors.Descriptor desc )
+		public ExceptionTrace( Exception exc, object node, Descriptors.Descriptor desc )
 			: this( exc, node, desc, null, null )
 		{
 		}
@@ -14,7 +14,7 @@ namespace zeroflag.Serialization
 			: this( exc, null, desc, type, value )
 		{
 		}
-		public ExceptionTrace( Exception exc, System.Xml.XmlNode node, Descriptors.Descriptor desc, Type type, object value )
+		public ExceptionTrace( Exception exc, object node, Descriptors.Descriptor desc, Type type, object value )
 		{
 			this.Exception = exc;
 			//this.Node = node.rea;
@@ -42,10 +42,11 @@ namespace zeroflag.Serialization
 
 		#region Node
 
-		private System.Xml.XmlNode _Node = default( System.Xml.XmlNode );
-
+		private object _Node;
+#if !SILVERLIGHT
 		[System.ComponentModel.TypeConverter( typeof( System.ComponentModel.ExpandableObjectConverter ) )]
-		public System.Xml.XmlNode Node
+#endif
+		public object Node
 		{
 			get { return _Node; }
 			set

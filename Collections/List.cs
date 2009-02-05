@@ -301,7 +301,22 @@ namespace zeroflag.Collections
 		/// <returns>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type T.</returns>
 		public T Find( Predicate<T> match )
 		{
+#if !SILVERLIGHT
 			return this.Items.Find( match );
+#else
+			if ( match == null )
+			{
+				throw new ArgumentNullException( "match" );
+			}
+			for ( int i = 0; i < this.Count; i++ )
+			{
+				if ( match( this.Items[i] ) )
+				{
+					return this.Items[i];
+				}
+			}
+			return default( T );
+#endif
 		}
 
 		/// <summary>
@@ -311,7 +326,23 @@ namespace zeroflag.Collections
 		/// <returns>A System.Collections.Generic.List<T> containing all the elements that match the conditions defined by the specified predicate, if found; otherwise, an empty System.Collections.Generic.List<T>.</returns>
 		public List<T> FindAll( Predicate<T> match )
 		{
+#if !SILVERLIGHT
 			return new List<T>( this.Items.FindAll( match ) );
+#else
+			if ( match == null )
+			{
+				throw new ArgumentNullException( "match" );
+			}
+			List<T> list = new List<T>();
+			for ( int i = 0; i < this.Count; i++ )
+			{
+				if ( match( this.Items[i] ) )
+				{
+					list.Add( this.Items[i] );
+				}
+			}
+			return list;
+#endif
 		}
 
 		/// <summary>
@@ -341,7 +372,7 @@ namespace zeroflag.Collections
 			where S : T
 		{
 			var results = new List<S>();
-			foreach ( T val in this.Items.FindAll( m => m != null && typeof( S ).IsAssignableFrom( m.GetType() ) ) )
+			foreach ( T val in this.FindAll( m => m != null && typeof( S ).IsAssignableFrom( m.GetType() ) ) )
 			{
 				try
 				{

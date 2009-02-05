@@ -4,7 +4,8 @@ using System.Text;
 
 namespace zeroflag.Serialization.Converters
 {
-	public class ConverterCollection : ICollection<Converter>, ICloneable
+	public class ConverterCollection : ICollection<Converter>
+		, System.ICloneable
 	{
 
 		public ConverterCollection()
