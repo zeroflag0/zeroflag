@@ -9,7 +9,9 @@ namespace zeroflag.Collections
 		where Self : Parent<ChildType, Self>
 	{
 		private List<ChildType> _Children = new List<ChildType>();
+#if !SILVERLIGHT
 		[System.ComponentModel.Browsable(false)]
+#endif
 		public List<ChildType> Children
 		{
 			get { return _Children; }

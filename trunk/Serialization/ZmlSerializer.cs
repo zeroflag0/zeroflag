@@ -57,13 +57,13 @@ namespace zeroflag.Serialization
 					)
 				)
 			{
-				using ( XmlTextWriter doc = new XmlTextWriter( writer ) )
+				using ( XmlWriter doc = new XmlWriter( writer ) )
 				{
 					doc.Formatting = Formatting.Indented;
 					//if ( this.FileName != null )
-					//    doc = new XmlTextWriter( new System.IO.StreamWriter( this.FileName ) );
+					//    doc = new XmlWriter( new System.IO.StreamWriter( this.FileName ) );
 					//else if ( this.Stream != null )
-					//    doc = new XmlTextWriter( new System.IO.StreamWriter( this.Stream ) );
+					//    doc = new XmlWriter( new System.IO.StreamWriter( this.Stream ) );
 
 					//XmlDocument doc = new XmlDocument();
 					doc.WriteStartDocument();
@@ -83,7 +83,7 @@ namespace zeroflag.Serialization
 			}
 		}
 
-		protected virtual void Serialize( zeroflag.Serialization.Descriptors.Descriptor desc, XmlTextWriter doc, zeroflag.Serialization.Descriptors.Descriptor valueParent, List<int> ids )
+		protected virtual void Serialize( zeroflag.Serialization.Descriptors.Descriptor desc, XmlWriter doc, zeroflag.Serialization.Descriptors.Descriptor valueParent, List<int> ids )
 		{
 			if ( desc == null || desc.IsNull )
 				return;
@@ -283,7 +283,7 @@ namespace zeroflag.Serialization
 			}
 		}
 
-		//protected void WriteAttribute( string name, string value, XmlTextWriter doc )
+		//protected void WriteAttribute( string name, string value, XmlWriter doc )
 		//{
 		//    doc.WriteAttributeString( name, value ?? "" );
 		//    //XmlAttribute att = doc.CreateAttribute( name );
