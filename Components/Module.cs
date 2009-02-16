@@ -95,9 +95,16 @@ namespace zeroflag.Components
 		{
 			get
 			{
-				Logging.LogModule logmod = this.CoreBase.Modules.Find( m => m is Logging.LogModule ) as Logging.LogModule;
 				Logging.Log log = null;
-				log = new zeroflag.Components.Logging.Log( logmod, this.Name );
+				try
+				{
+					Logging.LogModule logmod = this.CoreBase.Modules.Find( m => m is Logging.LogModule ) as Logging.LogModule;
+					log = new zeroflag.Components.Logging.Log( logmod, this.Name );
+				}
+				catch ( NullReferenceException exc )
+				{
+					log = new zeroflag.Components.Logging.Log( this.Name );
+				}
 				return log;
 			}
 		}
@@ -162,6 +169,8 @@ namespace zeroflag.Components
 		protected virtual void OnStateChanged( ModuleStates oldvalue, ModuleStates newvalue )
 		{
 			this.Log.Verbose( newvalue + " ( previously " + oldvalue + " )" );
+			if ( (int)newvalue - (int)oldvalue > 1 )
+				this.Log.Warning( newvalue + " ( previously " + oldvalue + " ) out of order." );
 			// if there are event subscribers...
 			if ( this._StateChanged != null )
 			{
@@ -176,6 +185,7 @@ namespace zeroflag.Components
 
 		protected override void OnInitialize()
 		{
+			this.Log.Message( "OnInitialize()..." );
 			base.OnInitialize();
 			this.OnInitializing();
 		}

@@ -334,6 +334,9 @@ namespace zeroflag.Components.Logging
 
 		protected virtual void WriteError( DateTime time, string value )
 		{
+#if LOG_DIRECT || LOG_DIRECT_ERROR
+			System.Console.WriteLine( new StringBuilder( time.ToString( "HH:mm:ss.fff" ) ).Append( " [" ).Append( this.Owner.PadRight( 15 ) ).Append( "]** " ).Append( value ) );
+#endif
 			this.Queue.Write( new KeyValuePair<DateTime, string>( time, value ) );
 		}
 
@@ -434,5 +437,13 @@ namespace zeroflag.Components.Logging
 		}
 
 		#endregion Verbose
+
+		public static implicit operator Action<object>( Log log )
+		{
+			if ( log != null )
+				return log.Message;
+			else
+				return null;
+		}
 	}
 }

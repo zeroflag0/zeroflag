@@ -138,7 +138,7 @@ namespace zeroflag.Components.Logging
 
 		protected override string NameCreate
 		{
-			get { return this.GetType().Namespace; }
+			get { return ( CoreBase ?? (object)"<corelesss>" ) + ".Log"; }
 		}
 		protected override bool OnInitializing()
 		{
@@ -148,6 +148,7 @@ namespace zeroflag.Components.Logging
 			return base.OnInitializing();
 		}
 
+		private int _MessagesProcessed = 0;
 		protected override bool OnUpdating( TimeSpan timeSinceLastUpdate )
 		{
 			this.TaskProcessor.Add( () =>
@@ -169,6 +170,7 @@ namespace zeroflag.Components.Logging
 						this.Write( msg.Time, msg.Sender, msg.Message );
 					foreach ( LogWriter writer in this.Writers )
 						writer.Flush();
+					_MessagesProcessed = messages.Count;
 					//if ( this.State != ModuleStates.Disposed )
 					//    this.TaskProcessor.Add( () => { System.Threading.Thread.Sleep( 100 ); this.OnUpdating( TimeSpan.Zero ); } );
 				} );
@@ -181,6 +183,18 @@ namespace zeroflag.Components.Logging
 			{
 				writer.Write( time, owner, value );
 			}
+		}
+
+		protected override void OnStateChanged( ModuleStates oldvalue, ModuleStates newvalue )
+		{
+			if ( newvalue == ModuleStates.Disposed &&
+				 oldvalue != ModuleStates.Shutdown )
+			{
+				this.Log.Message( "Supressing log shutdown..." );
+				this.OnShutdown();
+			}
+
+			base.OnStateChanged( oldvalue, newvalue );
 		}
 
 		protected internal override bool OnShutdown()
@@ -204,7 +218,15 @@ namespace zeroflag.Components.Logging
 			{
 				//this.Write( DateTime.Now, this.Name, "Waiting for core to shut down..." );
 				this.TaskProcessor.Add( () => OnUpdating( TimeSpan.Zero ) );
-				this.TaskProcessor.Add( () => OnShutdown() );
+				//this.TaskProcessor.Add( () => OnShutdown() );
+				this.TaskProcessor.Add(
+						() =>
+							{
+								if ( this._MessagesProcessed == 0 )
+								{
+									this.TaskProcessor.Dispose();
+								}
+							} );
 			}
 			return base.OnShutdown();
 		}
@@ -224,7 +246,10 @@ namespace zeroflag.Components.Logging
 		{
 			if ( other == this )
 				return 0;
-			return -1;
+			if ( this.State == ModuleStates.Initializing )
+				return 1;
+			else
+				return -1;
 		}
 	}
 }
