@@ -75,11 +75,8 @@ namespace zeroflag.Components
 				//modules.ItemRemoved += item =>
 				//{
 				//};
-				modules.ItemChanged += ( sender, oldModule, newModule ) =>
-				{
-					modules.Sort( ( mod1, mod2 ) => object.ReferenceEquals( mod1, mod2 ) ? 0 : mod2.CompareTo( mod1 ) );
-				};
-				this.LogModule = new zeroflag.Components.Logging.LogModule();
+				modules.ItemChanged += ( sender, oldModule, newModule ) => modules.Sort( ( mod1, mod2 ) => object.ReferenceEquals( mod1, mod2 ) ? 0 : mod2.CompareTo( mod1 ) );
+				//this.LogModule = new zeroflag.Components.Logging.LogModule();
 				return modules;
 			}
 		}
@@ -94,10 +91,10 @@ namespace zeroflag.Components
 		/// </summary>
 		public Logging.LogModule LogModule
 		{
-			get { return _LogModule ?? ( _LogModule = this.LogModuleFind ); }
+			get { return _LogModule ?? ( _LogModule = this.LogModuleCreate ); }
 			set
 			{
-				var current = this.LogModule;
+				var current = _LogModule ?? this.LogModuleFind;
 				if ( value != current )
 				{
 					if ( current != null )
@@ -109,7 +106,7 @@ namespace zeroflag.Components
 		}
 
 		/// <summary>
-		/// Creates the default/initial value for LogModule.
+		/// Searches the default/initial value for LogModule.
 		/// The core's logging module.
 		/// </summary>
 		protected virtual Logging.LogModule LogModuleFind
@@ -120,6 +117,18 @@ namespace zeroflag.Components
 			}
 		}
 
+		/// <summary>
+		/// Creates the default/initial value for LogModule.
+		/// The core's logging module.
+		/// </summary>
+		protected virtual Logging.LogModule LogModuleCreate
+		{
+			get
+			{
+				return this.LogModuleFind ?? ( this.LogModule = new zeroflag.Components.Logging.LogModule() );
+			}
+		}
+
 		#endregion LogModule
 
 
@@ -127,22 +136,50 @@ namespace zeroflag.Components
 
 		protected override bool OnInitializing()
 		{
-			bool success = true;
+			this.Log.Message( "Initializing..." );
 			this.Modules.Sort();
-			foreach ( Module module in this.Modules )
-				module.Initialize();
+			for ( int retry = 0; ; retry++ )
+			{
+				try
+				{
+					foreach ( Module module in this.Modules )
+					{
+						if ( module.State == ModuleStates.Initializing )
+							module.Initialize();
+					}
+					break;
+				}
+				catch ( Exception exc )
+				{
+					if ( retry < 4 )
+						this.Log.Warning( exc );
+					else
+					{
+						this.Log.Error( exc );
+						throw;
+					}
+				}
+			}
 			this.Modules.Sort();
-			return success && base.OnInitializing();
+			return base.OnInitializing();
 		}
 
 		protected override bool OnUpdating( TimeSpan timeSinceLastUpdate )
 		{
-			bool success = true;
+			try
+			{
+				bool success = true;
+				foreach ( Module module in this.Modules )
+					success &= module.Run();
 
-			foreach ( Module module in this.Modules )
-				success &= module.Run();
-
-			return success && base.OnUpdating( timeSinceLastUpdate );
+				return success && base.OnUpdating( timeSinceLastUpdate );
+			}
+			catch ( Exception exc )
+			{
+				this.Log.Error( exc );
+				this.State = ModuleStates.Shutdown;
+				return false;
+			}
 		}
 
 		public void Shutdown()

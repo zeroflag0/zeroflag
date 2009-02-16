@@ -111,6 +111,13 @@ namespace zeroflag.Components
 			{
 				if ( _Disposing != value )
 				{
+#if DEBUG
+					if ( _Disposing && !value )
+					{
+						Console.WriteLine( ( this.Name ?? this.ToString() ) + ".Disposing = " + value );
+						Console.WriteLine( new System.Diagnostics.StackTrace( 1 ) );
+					}
+#endif
 					this.OnDisposingChanged( _Disposing, _Disposing = value );
 				}
 			}
@@ -479,103 +486,114 @@ namespace zeroflag.Components
 		//void backgroundWorker_DoWork( object sender, DoWorkEventArgs e )
 		protected virtual void Run()
 		{
-			if ( this._Name != null )
-				try
-				{
-					System.Threading.Thread.CurrentThread.Name = this.Name;
-				}
-				catch ( Exception exc )
-				{
-					Console.WriteLine( exc );
-				}
-#if !SILVERLIGHT
-			if ( this.ThreadPriority != System.Threading.Thread.CurrentThread.Priority )
-				try
-				{
-					System.Threading.Thread.CurrentThread.Priority = this.ThreadPriority;
-				}
-				catch ( Exception exc )
-				{
-					Console.WriteLine( exc );
-				}
-#endif
-			try
+			if ( System.Threading.Interlocked.CompareExchange( ref _Working, 1, 0 ) == 0 )
 			{
-				Action current;
-				System.Threading.Interlocked.Increment( ref _Working );
-				if ( _Working > 1 )
-					return;
-				Console.WriteLine( "TaskProcessor(" + this.Name + ") started..." );
-				while ( !this.Cancel || !this.Tasks.IsEmpty )
+				if ( this._Name != null )
+					try
+					{
+						System.Threading.Thread.CurrentThread.Name = this.Name;
+					}
+					catch ( Exception exc )
+					{
+						Console.WriteLine( exc );
+					}
+#if !SILVERLIGHT
+				if ( this.ThreadPriority !=
+					 System.Threading.Thread.CurrentThread.Priority )
+					try
+					{
+						System.Threading.Thread.CurrentThread.Priority = this.ThreadPriority;
+					}
+					catch ( Exception exc )
+					{
+						Console.WriteLine( exc );
+					}
+#endif
+				try
 				{
-					if ( System.Threading.Interlocked.CompareExchange( ref _Restart, 0, 1 ) != 0 )
+					Action current;
+					//System.Threading.Interlocked.Increment( ref _Working );
+					//if ( _Working > 1 )
+					//    return;
+					Console.WriteLine( "TaskProcessor(" + this.Name + ") started..." );
+					while ( !this.Cancel ||
+							!this.Tasks.IsEmpty )
 					{
-						Console.WriteLine( "TaskProcessor(" + this.Name + ") restarting..." );
-						this.Thread = null;
-						_Working = 0;
-						this.Thread = this.ThreadCreate;
-						this.Wait.Set();
-						return;
-					}
-					if ( ( this.Cancel || this.Disposing ) && ( ( DateTime.Now - this.CancelRequestTime ) ?? TimeSpan.MaxValue ).TotalMilliseconds > this.CancelTimeout.TotalMilliseconds * 0.85 )
-					{
-						Console.WriteLine( "TaskProcessor(" + this.Name + ") canceled..." );
-						break;
-					}
-					if ( this.Tasks.Count > 0 )
-					{
-						//current = this.Tasks[0];
-						current = this.Tasks.Read();
-						_Current = current;
-						if ( current != null )
+						if ( System.Threading.Interlocked.CompareExchange( ref _Restart, 0, 1 ) != 0 )
 						{
-							try
-							{
-								current();
-							}
-							catch ( Exception exc )
-							{
-								Console.WriteLine( exc );
-								this.OnErrorHandling( current, exc );
-							}
+							Console.WriteLine( "TaskProcessor(" + this.Name + ") restarting..." );
+							this.Thread = null;
+							_Working = 0;
+							this.Thread = this.ThreadCreate;
+							this.Wait.Set();
+							return;
 						}
-						_LastWork = DateTime.Now;
-						//this.Tasks.RemoveAt( 0 );
-					}
-					else
-					{
-						if ( DateTime.Now - _LastWork > this.IdleThreadTimeout && !this.Cancel )
+						if ( ( this.Cancel || this.Disposing ) &&
+							 ( ( DateTime.Now - this.CancelRequestTime ) ?? TimeSpan.MaxValue ).TotalMilliseconds >
+							 this.CancelTimeout.TotalMilliseconds * 0.85 )
 						{
-#if DEBUG
-							Console.WriteLine( "TaskProcessor(" + this.Name + ") idle timeout." );
-#endif
-							//this.Wait.WaitOne( this.IdleThreadTimeout, true );
-							this.Wait.WaitOne( this.IdleThreadTimeout );
-#if DEBUG
-							Console.WriteLine( "TaskProcessor(" + this.Name + ") resuming..." );
-#endif
+							Console.WriteLine( "TaskProcessor(" + this.Name + ") canceled..." );
+							break;
+						}
+						if ( this.Tasks.Count > 0 )
+						{
+							//current = this.Tasks[0];
+							current = this.Tasks.Read();
+							_Current = current;
+							if ( current != null )
+							{
+								try
+								{
+									current();
+								}
+								catch ( Exception exc )
+								{
+									Console.WriteLine( exc );
+									this.OnErrorHandling( current, exc );
+								}
+							}
 							_LastWork = DateTime.Now;
-							//return;
+							//this.Tasks.RemoveAt( 0 );
 						}
 						else
-							//this.Wait.WaitOne( 200, true );
-							this.Wait.WaitOne( 200 );
-					}
+						{
+							if ( DateTime.Now - _LastWork > this.IdleThreadTimeout &&
+								 !this.Cancel )
+							{
 #if DEBUG
-					if ( DebugTrace )
-						Console.WriteLine( new System.Diagnostics.StackTrace() );
+								Console.WriteLine( "TaskProcessor(" + this.Name + ") idle timeout." );
 #endif
+								//this.Wait.WaitOne( this.IdleThreadTimeout, true );
+								this.Wait.WaitOne( this.IdleThreadTimeout );
+#if DEBUG
+								Console.WriteLine( "TaskProcessor(" + this.Name + ") resuming..." );
+#endif
+								_LastWork = DateTime.Now;
+								//return;
+							}
+							else
+								//this.Wait.WaitOne( 200, true );
+								this.Wait.WaitOne( 200 );
+						}
+#if DEBUG
+						if ( DebugTrace )
+						{
+							Console.WriteLine( this + " " + this.Cancel + " " + this.Disposing + " " + this.Tasks.Count );
+							Console.WriteLine( new System.Diagnostics.StackTrace() );
+						}
+#endif
+					}
+					Console.WriteLine( "TaskProcessor(" + this.Name + ") halted." );
 				}
-				Console.WriteLine( "TaskProcessor(" + this.Name + ") halted." );
-			}
-			catch ( System.Threading.ThreadAbortException )
-			{
-				Console.WriteLine( "TaskProcessor(" + this.Name + ") aborted!" );
-			}
-			finally
-			{
-				//System.Threading.Interlocked.Decrement( ref _Working );
-				_Working = 0;
+				catch ( System.Threading.ThreadAbortException )
+				{
+					Console.WriteLine( "TaskProcessor(" + this.Name + ") aborted!" );
+				}
+				finally
+				{
+					//System.Threading.Interlocked.Decrement( ref _Working );
+					_Working = 0;
+				}
 			}
 		}
 
@@ -622,12 +640,14 @@ namespace zeroflag.Components
 			this.Cancel = true;
 			this.Wait.Set();
 		}
-		protected virtual void OnDispose()
+		protected override void OnDispose()
 		{
 			Console.WriteLine( this + ".OnDispose()" );
 			this.Wait.Set();
 			this.Disposing = true;
 			this.Cancel = true;
+			if ( System.Threading.Thread.CurrentThread == this.Thread )
+				return;
 			while ( this.IsRunning )
 			{
 				Wait.Set();
