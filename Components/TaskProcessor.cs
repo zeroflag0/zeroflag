@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define DEBUG_TRACE
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -410,7 +411,7 @@ namespace zeroflag.Components
 
 		#endregion IdleThreadTimeout
 
-#if DEBUG
+#if DEBUG_TRACE
 		#region DebugTrace
 
 		private static bool _DebugTrace;
@@ -575,7 +576,7 @@ namespace zeroflag.Components
 								//this.Wait.WaitOne( 200, true );
 								this.Wait.WaitOne( 200 );
 						}
-#if DEBUG
+#if DEBUG_TRACE
 						if ( DebugTrace )
 						{
 							Console.WriteLine( this + " " + this.Cancel + " " + this.Disposing + " " + this.Tasks.Count );
