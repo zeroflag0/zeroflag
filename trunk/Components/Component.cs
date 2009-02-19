@@ -64,7 +64,6 @@ namespace zeroflag.Components
 			{
 				if ( _Outer != value )
 				{
-					this.OnOuterChanged( _Outer, value );
 					this.OnOuterChanged( _Outer, _Outer = value );
 				}
 			}
@@ -101,6 +100,7 @@ namespace zeroflag.Components
 		/// </summary>
 		protected virtual void OnOuterChanged( Component oldvalue, Component newvalue )
 		{
+			this.RegisterOuter( oldvalue, newvalue );
 			// if there are event subscribers...
 			if ( this._OuterChanged != null )
 			{
@@ -147,7 +147,7 @@ namespace zeroflag.Components
 
 		protected virtual void InnerItemAdded( Component item )
 		{
-			if ( item != null )
+			if ( item != null && item.Outer == null )
 			{
 				item.Outer = this;
 			}
@@ -155,7 +155,7 @@ namespace zeroflag.Components
 
 		protected virtual void InnerItemRemoved( Component item )
 		{
-			if ( item != null )
+			if ( item != null && item.Outer == this )
 			{
 				item.Outer = null;
 			}

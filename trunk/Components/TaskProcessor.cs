@@ -641,6 +641,20 @@ namespace zeroflag.Components
 			this.Cancel = true;
 			this.Wait.Set();
 		}
+
+		protected override void OnOuterChanged( Component oldvalue, Component newvalue )
+		{
+			base.OnOuterChanged( oldvalue, newvalue );
+			if ( newvalue == null )
+			{
+				Console.WriteLine( this + " Outer is null" );
+				this.Dispose();
+			}
+			else
+			{
+				Console.WriteLine( this + " Outer is " + newvalue );
+			}
+		}
 		protected override void OnDispose()
 		{
 			Console.WriteLine( this + ".OnDispose()" );
