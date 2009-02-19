@@ -219,7 +219,7 @@ namespace zeroflag.Components
 
 		#region Core
 
-		protected internal virtual Core CoreBase
+		public virtual Core CoreBase
 		{
 			get
 			{
