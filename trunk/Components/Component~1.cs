@@ -51,7 +51,7 @@ namespace zeroflag.Components
 	{
 		public delegate void CoreChangedHandler( object sender, CoreT oldvalue, CoreT newvalue );
 
-		protected internal override Core CoreBase
+		public override Core CoreBase
 		{
 			get
 			{
