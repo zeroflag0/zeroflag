@@ -164,6 +164,8 @@ namespace zeroflag.Components
 			return base.OnInitializing();
 		}
 
+
+
 		protected override bool OnUpdating( TimeSpan timeSinceLastUpdate )
 		{
 			try

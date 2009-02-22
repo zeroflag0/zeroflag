@@ -182,6 +182,7 @@ namespace zeroflag.Components
 				comp.Initialize();
 			}
 			this.PostInitialize();
+			this.OnInitialized( this );
 		}
 		/// <summary>
 		/// After this and any inner componets are initialized. (after any inner components were initialized; use <see cref="OnInitialize"/> if you need to act earlier)
@@ -191,6 +192,34 @@ namespace zeroflag.Components
 		/// Initializing. (before any inner components are initalized. (before any inner components were initialized; use <see cref="PostInitialize"/> if you need to wait for inner components to initialize)
 		/// </summary>
 		protected virtual void OnInitialize() { }
+
+		#region event Initialized
+		public delegate void InitializedHandler( Component core );
+
+		private event InitializedHandler _Initialized;
+		/// <summary>
+		/// After the core finished initialization.
+		/// </summary>
+		public event InitializedHandler Initialized
+		{
+			add { this._Initialized += value; }
+			remove { this._Initialized -= value; }
+		}
+		/// <summary>
+		/// Call to raise the Initialized event:
+		/// After the core finished initialization.
+		/// </summary>
+		protected virtual void OnInitialized( Component core )
+		{
+			// if there are event subscribers...
+			if ( this._Initialized != null )
+			{
+				// call them...
+				this._Initialized( core );
+			}
+		}
+		#endregion event Initialized
+
 
 		#region IDisposable Members
 
