@@ -1,6 +1,6 @@
 ﻿namespace zeroflag.Components
 {
-	partial class TaskProcessor
+	partial class TaskProcessorGroup
 	{
 #if !SILVERLIGHT
 		/// <summary>
@@ -14,7 +14,6 @@
 		/// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
 		protected override void Dispose( bool disposing )
 		{
-			this.Cancel = true;
 			this.OnDispose();
 #if !SILVERLIGHT
 			if ( disposing && ( components != null ) )
@@ -33,6 +32,7 @@
 		/// </summary>
 		private void InitializeComponent()
 		{
+			components = new System.ComponentModel.Container();
 		}
 
 		#endregion
