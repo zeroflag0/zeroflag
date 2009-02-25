@@ -46,7 +46,13 @@ using System.Text;
 
 namespace zeroflag.Components
 {
-	public abstract class Component : IDisposable, IComponent<Core>, IEquatable<Component>
+	public abstract class Component
+		: IDisposable
+		, IComponent<Core>
+		, IEquatable<Component>
+#if !SILVERLIGHT
+		, System.ComponentModel.IComponent
+#endif
 	{
 
 		#region Outer
@@ -235,6 +241,7 @@ namespace zeroflag.Components
 		public void Dispose()
 		{
 			this.PreDispose();
+			this.Dispose( true );
 			foreach ( var comp in this.Inner )
 			{
 				comp.Dispose();
@@ -242,6 +249,9 @@ namespace zeroflag.Components
 			this.OnDispose();
 		}
 
+		protected virtual void Dispose( bool disposing )
+		{
+		}
 		#endregion
 
 		#region IComponent<ICore> Members
@@ -331,5 +341,37 @@ namespace zeroflag.Components
 		}
 
 		#endregion
+
+		#region IComponent Members
+#if !SILVERLIGHT
+		public event EventHandler Disposed
+		{
+			add { }
+			remove { }
+		}
+		
+		#region Site
+		private System.ComponentModel.ISite _Site;
+
+		/// <summary>
+		/// Site
+		/// </summary>
+		public System.ComponentModel.ISite Site
+		{
+			get { return _Site; }
+			set
+			{
+				if ( _Site != value )
+				{
+					_Site = value;
+				}
+			}
+		}
+
+		#endregion Site
+
+#endif
+		#endregion
+
 	}
 }

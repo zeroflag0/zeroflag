@@ -89,9 +89,15 @@
     <Compile Include="Components\Logging\LogModule.cs" />
     <Compile Include="Components\Logging\LogWriter.cs" />
     <Compile Include="Components\Module.cs" />
+    <Compile Include="Components\Task.cs" />
     <Compile Include="Components\TaskProcessor.cs" />
     <Compile Include="Components\TaskProcessor.designer.cs">
       <DependentUpon>TaskProcessor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Components\TaskProcessorGroup.cs">
+    </Compile>
+    <Compile Include="Components\TaskProcessorGroup.Designer.cs">
+      <DependentUpon>TaskProcessorGroup.cs</DependentUpon>
     </Compile>
     <Compile Include="Extensions.cs" />
     <Compile Include="Forms\DebugForm.cs">
