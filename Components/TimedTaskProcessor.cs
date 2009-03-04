@@ -309,7 +309,7 @@ namespace zeroflag.Components
 
 		public void Add<T1, T2, T3, T4>( DateTime time, Action<T1, T2, T3, T4> task, T1 p1, T2 p2, T3 p3, T4 p4 )
 		{
-			this.Add( Task.Create<T1, T2, T3, T4>( task, p1, p2, p3, p4 ) );
+			this.Add( Task.Create<T1, T2, T3, T4>( time, task, p1, p2, p3, p4 ) );
 		}
 
 		public int Count
@@ -600,21 +600,45 @@ namespace zeroflag.Components
 							Console.WriteLine( "TaskProcessor(" + this.Name + ") canceled..." );
 							break;
 						}
-						if ( this.Tasks.Count > 0 )
+						if ( this.Tasks.Count > 0 || this._ScheduledTasks.Count > 0 )
 						{
 							//current = this.Tasks[0];
-							current = this.Tasks.Read();
+							current = null;
+							if ( this.ScheduledTasks.Count > 0 )
+							{
+								current = this.ScheduledTasks[0];
+								//verbose( "Testing " + current.Value );
+								if ( current.Value.Time < DateTime.Now )
+								{
+									verbose( "Using " + current );
+									this.ScheduledTasks.RemoveAt( 0 );
+								}
+								else
+									current = null;
+							}
+							current = current ?? this.Tasks.Read();
 							_Current = current;
 							if ( current != null )
 							{
-								try
+								verbose( "Current = " + current );
+								if ( current.Value.Time == DateTime.MinValue || current.Value.Time < DateTime.Now )
 								{
-									current.Value.Action();
+									try
+									{
+										verbose( "Executing " + current );
+										current.Value.Action();
+									}
+									catch ( Exception exc )
+									{
+										Console.WriteLine( exc );
+										this.OnErrorHandling( current.Value, exc );
+									}
 								}
-								catch ( Exception exc )
+								else
 								{
-									Console.WriteLine( exc );
-									this.OnErrorHandling( current.Value, exc );
+									verbose( "Scheduling " + current );
+									this.ScheduledTasks.Add( current );
+									this.ScheduledTasks.Sort( ( a, b ) => a.Value.Time.CompareTo( b.Value.Time ) );
 								}
 							}
 							_LastWork = DateTime.Now;
@@ -766,6 +790,19 @@ namespace zeroflag.Components
 		}
 
 
+		[Conditional( "DEBUG" )]
+		public static void dbg( object msg )
+		{
+			Console.WriteLine( msg );
+		}
+
+		[Conditional( "DEBUG" ), Conditional( "VERBOSE" )]
+		public static void verbose( object msg )
+		{
+			msg = DateTime.Now.ToString( "HH:mm:ss" ) + " " + msg;
+			Console.WriteLine( msg );
+			System.Diagnostics.Debug.WriteLine( msg );
+		}
 
 	}
 }
