@@ -199,34 +199,43 @@ namespace zeroflag.Components.Logging
 
 		protected internal override bool OnShutdown()
 		{
-			if ( this.CoreBase.State == ModuleStates.Disposed )
+			if ( this.CoreBase == null || this.CoreBase.State == ModuleStates.Disposed )
 			{
 				this.OnUpdating( TimeSpan.Zero );
 				this.Write( DateTime.Now, this.Name, "Shutdown" );
 				this.OnUpdating( TimeSpan.Zero );
 				this.TaskProcessor.Finish();
-				for ( int i = 0; i < 5 && this.TaskProcessor.Count > 0; i++ )
+				if ( this.TaskProcessor.Count > 0 )
 				{
-					//Console.WriteLine( " *** " + this.TaskProcessor.Count + " messages left." );
-					System.Threading.Thread.Sleep( 10 );
+					Console.WriteLine( " *** " + this.TaskProcessor.Count + " messages left." );
+					for ( int i = 0; i < 5 && this.TaskProcessor.Count > 0; i++ )
+					{
+						System.Threading.Thread.Sleep( 10 );
+					}
+					if ( this.TaskProcessor.Count > 0 )
+						Console.WriteLine( " *** " + this.TaskProcessor.Count + " messages left." );
+					else
+						Console.WriteLine( "Queue cleared." );
 				}
 				this.TaskProcessor.Clear();
 				this.TaskProcessor.Cancel = true;
-				//this.TaskProcessor.Dispose();
+				this.TaskProcessor.Dispose();
 			}
 			else
 			{
-				//this.Write( DateTime.Now, this.Name, "Waiting for core to shut down..." );
+				this.Write( DateTime.Now, this.Name, "Waiting for core to shut down..." );
+				this.OnUpdating( TimeSpan.Zero );
 				this.TaskProcessor.Add( () => OnUpdating( TimeSpan.Zero ) );
-				//this.TaskProcessor.Add( () => OnShutdown() );
-				this.TaskProcessor.Add(
-						() =>
-						{
-							if ( this._MessagesProcessed == 0 )
-							{
-								this.TaskProcessor.Dispose();
-							}
-						} );
+				this.TaskProcessor.Add( () => OnShutdown() );
+				//this.TaskProcessor.Add(
+				//        () =>
+				//        {
+				//            if ( this._MessagesProcessed == 0 )
+				//            {
+				//                this.OnShutdown();
+				//                this.TaskProcessor.Dispose();
+				//            }
+				//        } );
 			}
 			return base.OnShutdown();
 		}
@@ -258,8 +267,9 @@ namespace zeroflag.Components.Logging
 			base.OnOuterChanged( oldvalue, newvalue );
 			if ( oldvalue != null && newvalue == null )
 			{
-				this.Log.Message( "Disposing because parent is missing" );
-				this.Dispose();
+				//this.Log.Message( "Disposing because parent is missing" );
+				//Console.WriteLine( this.Name + " Disposing because parent is missing" );
+				//this.Dispose();
 			}
 		}
 	}
