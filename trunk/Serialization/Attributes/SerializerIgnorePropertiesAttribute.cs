@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace zeroflag.Serialization.Attributes
-{
+//namespace zeroflag.Serialization.Attributes
+//{
 	public class SerializerIgnorePropertiesAttribute : zeroflag.Serialization.Attributes.Attribute
 	{
 		#region PropertyNames
@@ -32,4 +32,4 @@ namespace zeroflag.Serialization.Attributes
 			this.PropertyNames = properties;
 		}
 	}
-}
+//}

@@ -80,7 +80,7 @@ namespace zeroflag.Components
 		/// <summary>
 		/// This module's log.
 		/// </summary>
-		[zeroflag.Serialization.SerializerIgnore]
+		[SerializerIgnore]
 		public Logging.Log Log
 		{
 			get { return _Log ?? ( _Log = this.LogCreate ); }
