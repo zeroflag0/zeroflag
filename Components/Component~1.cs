@@ -69,7 +69,7 @@ namespace zeroflag.Components
 		/// <summary>
 		/// The core this module belongs to.
 		/// </summary>
-		[zeroflag.Serialization.SerializerIgnore]
+		[SerializerIgnore]
 		public CoreT Core
 		{
 			get { return _Core ?? this as CoreT ?? ( this.Outer != null ? this.Outer.CoreBase as CoreT : null ); }
