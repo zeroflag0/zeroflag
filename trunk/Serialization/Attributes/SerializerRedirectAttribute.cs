@@ -2,41 +2,41 @@
 using System.Collections.Generic;
 using System.Text;
 
-//namespace zeroflag.Serialization
-//{
-/// <summary>
-/// Redirect the serialization of a property to another property.
-/// </summary>
-public class SerializerRedirectAttribute : zeroflag.Serialization.Attributes.Attribute
+namespace zeroflag.Serialization
 {
-	#region Target
-	private string _Target;
-
 	/// <summary>
-	/// The target property for redirection.
+	/// Redirect the serialization of a property to another property.
 	/// </summary>
-	public string Target
+	public class SerializerRedirectAttribute : zeroflag.Serialization.Attributes.Attribute
 	{
-		get { return _Target; }
-		set
+		#region Target
+		private string _Target;
+
+		/// <summary>
+		/// The target property for redirection.
+		/// </summary>
+		public string Target
 		{
-			if ( _Target != value )
+			get { return _Target; }
+			set
 			{
-				_Target = value;
+				if ( _Target != value )
+				{
+					_Target = value;
+				}
 			}
 		}
-	}
 
-	#endregion Target
+		#endregion Target
 
-	public SerializerRedirectAttribute()
-		: this( null )
-	{
-	}
-	public SerializerRedirectAttribute( string target )
-	{
-		this.Target = target;
-	}
+		public SerializerRedirectAttribute()
+			: this( null )
+		{
+		}
+		public SerializerRedirectAttribute( string target )
+		{
+			this.Target = target;
+		}
 
+	}
 }
-//}

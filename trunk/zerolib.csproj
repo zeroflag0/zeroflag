@@ -77,6 +77,10 @@
     <Compile Include="Components\ComponentCollection.cs" />
     <Compile Include="Components\Component~1.cs" />
     <Compile Include="Components\ComponentCollection~2.cs" />
+    <Compile Include="Components\TimedTaskProcessor.cs" />
+    <Compile Include="Components\TimedTaskProcessor.designer.cs">
+      <DependentUpon>TimedTaskProcessor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Components\Core.cs" />
     <Compile Include="Components\IComponent.cs" />
     <Compile Include="Components\ICore.cs" />
@@ -100,84 +104,7 @@
       <DependentUpon>TaskProcessorGroup.cs</DependentUpon>
     </Compile>
     <Compile Include="Extensions.cs" />
-    <Compile Include="Forms\DebugForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\DebugForm.Designer.cs">
-      <DependentUpon>DebugForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\Filtering.cs" />
-    <Compile Include="Forms\Reflected\IListEditor.cs" />
-    <Compile Include="Forms\Reflected\IListView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListEditor.Designer.cs">
-      <DependentUpon>ListEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListPropertyEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListPropertyEditor.Designer.cs">
-      <DependentUpon>ListPropertyEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListView.Designer.cs">
-      <DependentUpon>ListView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListViewItem.cs" />
-    <Compile Include="Forms\Reflected\ListViewMagic.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListViewMagic.designer.cs">
-      <DependentUpon>ListViewMagic.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\PropertyDescription.cs" />
-    <Compile Include="Forms\Reflected\PropertyTreeView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\PropertyTreeView.Designer.cs">
-      <DependentUpon>PropertyTreeView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\PropertyTreeViewItem.cs" />
-    <Compile Include="Forms\Reflected\TreeEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\TreeEditor.Designer.cs">
-      <DependentUpon>TreeEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\TreeView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\TreeView.Designer.cs">
-      <DependentUpon>TreeView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\TreeViewItem.cs" />
-    <Compile Include="Forms\Reflected\TypeDescription.cs" />
-    <Compile Include="Forms\Reflected\TypeDescriptionEditor.cs" />
-    <Compile Include="Forms\Reflected\TypeDescriptionEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\TypeDescriptionEditorControl.Designer.cs">
-      <DependentUpon>TypeDescriptionEditorControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\TypeList.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\TypeList.Designer.cs">
-      <DependentUpon>TypeList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\SplitContainer.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Forms\SplitContainer.Designer.cs">
-      <DependentUpon>SplitContainer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GetHandler.cs" />
+    <Compile Include="Forms\DebugForm.cs">      <SubType>Form</SubType>    </Compile>    <Compile Include="Forms\DebugForm.Designer.cs">      <DependentUpon>DebugForm.cs</DependentUpon>    </Compile>    <Compile Include="Forms\Reflected\Filtering.cs" />    <Compile Include="Forms\Reflected\IListEditor.cs" />    <Compile Include="Forms\Reflected\IListView.cs">      <SubType>UserControl</SubType>    </Compile>    <Compile Include="Forms\Reflected\ListEditor.cs">      <SubType>UserControl</SubType>    </Compile>    <Compile Include="Forms\Reflected\ListEditor.Designer.cs">      <DependentUpon>ListEditor.cs</DependentUpon>    </Compile>    <Compile Include="Forms\Reflected\ListPropertyEditor.cs">      <SubType>UserControl</SubType>    </Compile>    <Compile Include="Forms\Reflected\ListPropertyEditor.Designer.cs">      <DependentUpon>ListPropertyEditor.cs</DependentUpon>    </Compile>    <Compile Include="Forms\Reflected\ListView.cs">      <SubType>UserControl</SubType>    </Compile>    <Compile Include="Forms\Reflected\ListView.Designer.cs">      <DependentUpon>ListView.cs</DependentUpon>    </Compile>    <Compile Include="Forms\Reflected\ListViewItem.cs" />    <Compile Include="Forms\Reflected\ListViewMagic.cs">      <SubType>UserControl</SubType>    </Compile>    <Compile Include="Forms\Reflected\ListViewMagic.designer.cs">      <DependentUpon>ListViewMagic.cs</DependentUpon>    </Compile>    <Compile Include="Forms\Reflected\PropertyDescription.cs" />    <Compile Include="Forms\Reflected\PropertyTreeView.cs">      <SubType>UserControl</SubType>    </Compile>    <Compile Include="Forms\Reflected\PropertyTreeView.Designer.cs">      <DependentUpon>PropertyTreeView.cs</DependentUpon>    </Compile>    <Compile Include="Forms\Reflected\PropertyTreeViewItem.cs" />    <Compile Include="Forms\Reflected\TreeEditor.cs">      <SubType>UserControl</SubType>    </Compile>    <Compile Include="Forms\Reflected\TreeEditor.Designer.cs">      <DependentUpon>TreeEditor.cs</DependentUpon>    </Compile>    <Compile Include="Forms\Reflected\TreeView.cs">      <SubType>UserControl</SubType>    </Compile>    <Compile Include="Forms\Reflected\TreeView.Designer.cs">      <DependentUpon>TreeView.cs</DependentUpon>    </Compile>    <Compile Include="Forms\Reflected\TreeViewItem.cs" />    <Compile Include="Forms\Reflected\TypeDescription.cs" />    <Compile Include="Forms\Reflected\TypeDescriptionEditor.cs" />    <Compile Include="Forms\Reflected\TypeDescriptionEditorControl.cs">      <SubType>UserControl</SubType>    </Compile>    <Compile Include="Forms\Reflected\TypeDescriptionEditorControl.Designer.cs">      <DependentUpon>TypeDescriptionEditorControl.cs</DependentUpon>    </Compile>    <Compile Include="Forms\Reflected\TypeList.cs">      <SubType>Component</SubType>    </Compile>    <Compile Include="Forms\Reflected\TypeList.Designer.cs">      <DependentUpon>TypeList.cs</DependentUpon>    </Compile>    <Compile Include="Forms\SplitContainer.cs">      <SubType>Component</SubType>    </Compile>    <Compile Include="Forms\SplitContainer.Designer.cs">      <DependentUpon>SplitContainer.cs</DependentUpon>    </Compile>    <Compile Include="GetHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\InstanceProvider.cs" />
     <Compile Include="Reflection\TypeHelper.cs" />
@@ -235,16 +162,7 @@
     <Compile Include="Serialization\UpgradeAttribute.cs" />
     <Compile Include="Serialization\XmlSerializer.cs" />
     <Compile Include="Serialization\ZmlSerializer.cs" />
-    <Compile Include="Threading\Do.cs" />
-    <Compile Include="Threading\For.cs" />
-    <Compile Include="Threading\Foreach.cs" />
-    <Compile Include="Threading\IDList~1.cs" />
     <Compile Include="Threading\LocklessQueue.cs" />
-    <Compile Include="Threading\Task.cs" />
-    <Compile Include="Threading\Task~1.cs" />
-    <Compile Include="Threading\Task~2.cs" />
-    <Compile Include="Threading\Thread.cs" />
-    <Compile Include="Threading\ThreadManager.cs" />
     <Compile Include="Translated.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -257,52 +175,9 @@
     <None Include="Serialization\Converters\_ClassDiagram.cd" />
     <None Include="Serialization\Descriptors\_ClassDiagram.cd" />
     <None Include="Serialization\_ClassDiagram.cd" />
-    <None Include="Threading\_ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Forms\DebugForm.resx">
-      <DependentUpon>DebugForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\ListEditor.resx">
-      <DependentUpon>ListEditor.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\ListPropertyEditor.resx">
-      <DependentUpon>ListPropertyEditor.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\ListView.resx">
-      <DependentUpon>ListView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\ListViewMagic.resx">
-      <DependentUpon>ListViewMagic.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\PropertyTreeView.resx">
-      <DependentUpon>PropertyTreeView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\TreeEditor.resx">
-      <DependentUpon>TreeEditor.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\TreeView.resx">
-      <DependentUpon>TreeView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\TypeDescriptionEditorControl.resx">
-      <DependentUpon>TypeDescriptionEditorControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SplitContainer.resx">
-      <DependentUpon>SplitContainer.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Reflection\Descriptors\" />
+    <EmbeddedResource Include="Forms\DebugForm.resx">      <DependentUpon>DebugForm.cs</DependentUpon>      <SubType>Designer</SubType>    </EmbeddedResource>    <EmbeddedResource Include="Forms\Reflected\ListEditor.resx">      <DependentUpon>ListEditor.cs</DependentUpon>      <SubType>Designer</SubType>    </EmbeddedResource>    <EmbeddedResource Include="Forms\Reflected\ListPropertyEditor.resx">      <DependentUpon>ListPropertyEditor.cs</DependentUpon>      <SubType>Designer</SubType>    </EmbeddedResource>    <EmbeddedResource Include="Forms\Reflected\ListView.resx">      <DependentUpon>ListView.cs</DependentUpon>      <SubType>Designer</SubType>    </EmbeddedResource>    <EmbeddedResource Include="Forms\Reflected\ListViewMagic.resx">      <DependentUpon>ListViewMagic.cs</DependentUpon>      <SubType>Designer</SubType>    </EmbeddedResource>    <EmbeddedResource Include="Forms\Reflected\PropertyTreeView.resx">      <DependentUpon>PropertyTreeView.cs</DependentUpon>      <SubType>Designer</SubType>    </EmbeddedResource>    <EmbeddedResource Include="Forms\Reflected\TreeEditor.resx">      <DependentUpon>TreeEditor.cs</DependentUpon>      <SubType>Designer</SubType>    </EmbeddedResource>    <EmbeddedResource Include="Forms\Reflected\TreeView.resx">      <DependentUpon>TreeView.cs</DependentUpon>      <SubType>Designer</SubType>    </EmbeddedResource>    <EmbeddedResource Include="Forms\Reflected\TypeDescriptionEditorControl.resx">      <DependentUpon>TypeDescriptionEditorControl.cs</DependentUpon>      <SubType>Designer</SubType>    </EmbeddedResource>    <EmbeddedResource Include="Forms\SplitContainer.resx">      <DependentUpon>SplitContainer.cs</DependentUpon>      <SubType>Designer</SubType>    </EmbeddedResource>  </ItemGroup>  <ItemGroup>    <Folder Include="Reflection\Descriptors\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
