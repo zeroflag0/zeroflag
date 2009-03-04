@@ -14,7 +14,7 @@ namespace zeroflag.Components
 			InitializeComponent();
 		}
 #if !SILVERLIGHT
-		public TaskProcessor( System.ComponentModel.IContainer container )
+		public TaskProcessorGroup( System.ComponentModel.IContainer container )
 		{
 			container.Add( this );
 
