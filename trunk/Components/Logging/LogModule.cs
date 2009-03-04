@@ -145,7 +145,7 @@ namespace zeroflag.Components.Logging
 			if ( this.Writers.Count <= 0 )
 				// add a default writer...
 				this.Writers.Add( new ConsoleWriter() );
-			return base.OnInitializing();
+			return base.OnInitializing() && this.OnUpdating( TimeSpan.MinValue );
 		}
 
 		private int _MessagesProcessed = 0;
@@ -221,12 +221,12 @@ namespace zeroflag.Components.Logging
 				//this.TaskProcessor.Add( () => OnShutdown() );
 				this.TaskProcessor.Add(
 						() =>
+						{
+							if ( this._MessagesProcessed == 0 )
 							{
-								if ( this._MessagesProcessed == 0 )
-								{
-									this.TaskProcessor.Dispose();
-								}
-							} );
+								this.TaskProcessor.Dispose();
+							}
+						} );
 			}
 			return base.OnShutdown();
 		}
@@ -245,11 +245,22 @@ namespace zeroflag.Components.Logging
 		public override int CompareTo( Module other )
 		{
 			if ( other == this )
-				return 0;
+				return base.CompareTo( other );
 			if ( this.State == ModuleStates.Initializing )
 				return 1;
-			else
-				return -1;
+			//else
+			//    return -1;
+			return base.CompareTo( other );
+		}
+
+		protected override void OnOuterChanged( Component oldvalue, Component newvalue )
+		{
+			base.OnOuterChanged( oldvalue, newvalue );
+			if ( oldvalue != null && newvalue == null )
+			{
+				this.Log.Message( "Disposing because parent is missing" );
+				this.Dispose();
+			}
 		}
 	}
 }
