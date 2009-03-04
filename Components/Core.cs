@@ -161,10 +161,19 @@ namespace zeroflag.Components
 				}
 			}
 			this.Modules.Sort();
-			return base.OnInitializing();
+			return base.OnInitializing() && this.Resort();
 		}
 
+		bool Resort()
+		{
+			string dbg = "Resort()\n";
 
+			this.Modules.Sort();
+			foreach ( Module module in this.Modules )
+				dbg += "\t" + module.Name + "\n";
+			this.Log.Message( dbg );
+			return true;
+		}
 
 		protected override bool OnUpdating( TimeSpan timeSinceLastUpdate )
 		{
@@ -172,7 +181,9 @@ namespace zeroflag.Components
 			{
 				bool success = true;
 				foreach ( Module module in this.Modules )
-					success &= module.Run();
+					success &= module.Update( timeSinceLastUpdate );
+
+				//success &= module.Run();
 
 				return success && base.OnUpdating( timeSinceLastUpdate );
 			}

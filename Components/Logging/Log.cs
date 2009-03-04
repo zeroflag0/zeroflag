@@ -203,6 +203,9 @@ namespace zeroflag.Components.Logging
 
 		protected virtual void WriteMessage( DateTime time, string value )
 		{
+#if LOG_DIRECT || LOG_DIRECT_MESSAGE
+			System.Console.WriteLine( new StringBuilder( time.ToString( "HH:mm:ss.fff" ) ).Append( " [" ).Append( this.Owner.PadRight( 15 ) ).Append( "]** " ).Append( value ) );
+#endif
 			this.Queue.Write( new KeyValuePair<DateTime, string>( time, value ) );
 		}
 
@@ -268,6 +271,9 @@ namespace zeroflag.Components.Logging
 
 		protected virtual void WriteWarning( DateTime time, string value )
 		{
+#if LOG_DIRECT || LOG_DIRECT_WARNING
+			System.Console.WriteLine( new StringBuilder( time.ToString( "HH:mm:ss.fff" ) ).Append( " [" ).Append( this.Owner.PadRight( 15 ) ).Append( "]** " ).Append( value ) );
+#endif
 			this.Queue.Write( new KeyValuePair<DateTime, string>( time, value ) );
 		}
 
