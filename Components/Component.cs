@@ -62,7 +62,7 @@ namespace zeroflag.Components
 		/// <summary>
 		/// The parent component containing this component.
 		/// </summary>
-		[SerializerIgnore]
+		[zeroflag.Serialization.SerializerIgnore]
 		public Component Outer
 		{
 			get { return _Outer; }
@@ -275,7 +275,7 @@ namespace zeroflag.Components
 		/// <summary>
 		/// The core this module belongs to.
 		/// </summary>
-		[SerializerIgnore]
+		[zeroflag.Serialization.SerializerIgnore]
 		Core IComponent<Core>.Core
 		{
 			get { return _Core ?? this as Core ?? ( this.Outer != null ? this.Outer.CoreBase : null ); }
