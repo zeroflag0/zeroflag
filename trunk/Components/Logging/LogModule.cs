@@ -80,12 +80,12 @@ namespace zeroflag.Components.Logging
 
 
 		#region TaskProcessor
-		private zeroflag.Forms.TaskProcessor _TaskProcessor;
+		private zeroflag.Components.TimedTaskProcessor _TaskProcessor;
 
 		/// <summary>
 		/// A task processor (threaded) for background logging...
 		/// </summary>
-		public zeroflag.Forms.TaskProcessor TaskProcessor
+		public zeroflag.Components.TimedTaskProcessor TaskProcessor
 		{
 			get { return _TaskProcessor ?? ( _TaskProcessor = this.TaskProcessorCreate ); }
 			//set { _TaskProcessor = value; }
@@ -95,11 +95,11 @@ namespace zeroflag.Components.Logging
 		/// Creates the default/initial value for TaskProcessor.
 		/// A task processor (threaded) for background logging...
 		/// </summary>
-		protected virtual zeroflag.Forms.TaskProcessor TaskProcessorCreate
+		protected virtual zeroflag.Components.TimedTaskProcessor TaskProcessorCreate
 		{
 			get
 			{
-				var tp = _TaskProcessor = new zeroflag.Forms.TaskProcessor();
+				var tp = _TaskProcessor = new zeroflag.Components.TimedTaskProcessor();
 				tp.CancelTimeout = TimeSpan.FromSeconds( 10 );
 				tp.Name = this.Name;
 				return tp;
@@ -208,18 +208,19 @@ namespace zeroflag.Components.Logging
 				if ( this.TaskProcessor.Count > 0 )
 				{
 					Console.WriteLine( " *** " + this.TaskProcessor.Count + " messages left." );
-					for ( int i = 0; i < 5 && this.TaskProcessor.Count > 0; i++ )
-					{
-						System.Threading.Thread.Sleep( 10 );
-					}
-					if ( this.TaskProcessor.Count > 0 )
-						Console.WriteLine( " *** " + this.TaskProcessor.Count + " messages left." );
-					else
-						Console.WriteLine( "Queue cleared." );
+					this.TaskProcessor.Add( DateTime.Now.AddSeconds( 5 ), () =>
+						{
+							this.TaskProcessor.Clear();
+							this.TaskProcessor.Cancel = true;
+							this.TaskProcessor.Dispose();
+						} );
 				}
-				this.TaskProcessor.Clear();
-				this.TaskProcessor.Cancel = true;
-				this.TaskProcessor.Dispose();
+				else
+				{
+					this.TaskProcessor.Clear();
+					this.TaskProcessor.Cancel = true;
+					this.TaskProcessor.Dispose();
+				}
 			}
 			else
 			{
