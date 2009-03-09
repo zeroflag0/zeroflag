@@ -64,6 +64,19 @@ using zeroflag.Collections;
 
 namespace zeroflag.Components
 {
+	public class TaskProcessor : TimedTaskProcessor
+	{
+		public TaskProcessor()
+			: base()
+		{
+		}
+#if !SILVERLIGHT
+		public TaskProcessor( System.ComponentModel.IContainer container )
+			: base( container )
+		{
+		}
+#endif
+	}
 	public partial class TimedTaskProcessor : Component
 	{
 		public TimedTaskProcessor()
