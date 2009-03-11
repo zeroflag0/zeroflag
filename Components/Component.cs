@@ -262,6 +262,8 @@ namespace zeroflag.Components
 		#region Initialize
 		public virtual void Initialize()
 		{
+			if ( this.State == ModuleStates.Ready || this.State == ModuleStates.Running )
+				return;
 			this.OnInitialize();
 
 			this.OnInitializeInner();
@@ -269,6 +271,8 @@ namespace zeroflag.Components
 			this.OnInitializePost();
 
 			this.OnInitialized( this );
+
+			this.State = ModuleStates.Ready;
 		}
 
 		protected virtual void OnInitializeInner()
@@ -376,6 +380,7 @@ namespace zeroflag.Components
 		{
 			foreach ( var comp in this.Inner )
 			{
+				//if ( comp.State != ModuleStates.Disposed )
 				comp.Update( timeSinceLastUpdate );
 			}
 		}
@@ -427,10 +432,13 @@ namespace zeroflag.Components
 
 		public virtual void Dispose()
 		{
+			if ( this.State == ModuleStates.Disposed )
+				return;
 			this.OnDispose();
 			this.Dispose( true );
 			this.OnDisposeInner();
 			this.OnDisposePost();
+			this.State = ModuleStates.Disposed;
 			this.IsDisposed = true;
 		}
 

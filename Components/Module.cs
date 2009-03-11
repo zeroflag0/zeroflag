@@ -269,8 +269,6 @@ namespace zeroflag.Components
 
 		public override void Update( TimeSpan timeSinceLastUpdate )
 		{
-			if ( this.State == ModuleStates.Ready )
-				this.State = ModuleStates.Running;
 			if ( this.State == ModuleStates.Running )
 				try
 				{
@@ -281,6 +279,8 @@ namespace zeroflag.Components
 					this.Log.Error( exc );
 					this.State = ModuleStates.Shutdown;
 				}
+			else if ( this.State == ModuleStates.Ready )
+				this.State = ModuleStates.Running;
 			else if ( this.State == ModuleStates.Shutdown )
 				this.Dispose();
 			else
@@ -298,12 +298,6 @@ namespace zeroflag.Components
 			this.Resort();
 			base.Dispose();
 			this.Log.Message( "Disposed." );
-		}
-
-		protected override void OnDisposePost()
-		{
-			base.OnDisposePost();
-			this.State = ModuleStates.Disposed;
 		}
 
 		#region IComparable<Module> Members
