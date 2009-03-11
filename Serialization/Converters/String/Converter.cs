@@ -1,9 +1,9 @@
 #region LGPL License
 //********************************************************************
 //	author:         Thomas "zeroflag" Kraemer
-//	author email:   zeroflag@zeroflag.de
+//	author email:   zeroflag >>at<< zeroflag >>dot<< de
 //	
-//	Copyright (C) 2006-2008  Thomas "zeroflag" Kraemer
+//	Copyright (C) 2006-2009  Thomas "zeroflag" Kraemer
 //	
 //	license:	(LGPL)
 //	
