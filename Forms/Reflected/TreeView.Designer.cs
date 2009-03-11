@@ -30,7 +30,7 @@
 		{
 			this.components = new System.ComponentModel.Container();
 			this._Control = new System.Windows.Forms.TreeView();
-			this.taskProcessor = new zeroflag.Components.TimedTaskProcessor( this.components );
+			this.taskProcessor = new zeroflag.Components.TaskProcessor( this.components );
 			this.timer = new System.Windows.Forms.Timer( this.components );
 			this.SuspendLayout();
 			// 
@@ -64,7 +64,7 @@
 		#endregion
 
 		private System.Windows.Forms.TreeView _Control;
-		private zeroflag.Components.TimedTaskProcessor taskProcessor;
+		private zeroflag.Components.TaskProcessor taskProcessor;
 		private System.Windows.Forms.Timer timer;
 	}
 }

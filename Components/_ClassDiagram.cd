@@ -1,34 +1,140 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="zeroflag.Components.BasicComponent">
-    <Position X="4.75" Y="1.75" Width="1.5" />
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access" MembersFormat="NameAndType">
+  <Class Name="zeroflag.Components.Component">
+    <Position X="3.25" Y="2.75" Width="2.25" />
     <Members>
-      <Field Name="_IsDisposed" Hidden="true" />
-      <Field Name="Component" Hidden="true" />
+      <Field Name="_Core" Hidden="true" />
+      <Event Name="_CoreChanged" Hidden="true" />
+      <Event Name="_Initialized" Hidden="true" />
+      <Field Name="_Inner" Hidden="true" />
+      <Field Name="_Outer" Hidden="true" />
+      <Event Name="_OuterChanged" Hidden="true" />
+      <Field Name="_Site" Hidden="true" />
+      <Event Name="CoreChanged" Hidden="true" />
+      <Method Name="Dispose" Hidden="true" />
+      <Property Name="HasInner" Hidden="true" />
+      <Property Name="IComponent&lt;Core&gt;.Core" Hidden="true" />
+      <Property Name="InnerCreate" Hidden="true" />
+      <Method Name="InnerItemAdded" Hidden="true" />
+      <Method Name="InnerItemRemoved" Hidden="true" />
+      <Method Name="OnCoreChanged" Hidden="true" />
+      <Method Name="OnDisposePost" Hidden="true" />
+      <Method Name="OnInitialize" Hidden="true" />
+      <Method Name="OnInitialized" Hidden="true" />
+      <Method Name="OnInitializeInner" Hidden="true" />
+      <Method Name="OnInitializePost" Hidden="true" />
+      <Method Name="OnOuterChanged" Hidden="true" />
+      <Method Name="OuterSearch" Hidden="true" />
+      <Method Name="RegisterOuter" Hidden="true" />
     </Members>
+    <NestedTypes>
+      <Delegate Name="zeroflag.Components.Component.OuterChangedHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Components\Component.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Delegate Name="zeroflag.Components.Component.DisposedHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Components\Component.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAAAAASAACAAwAAEgAAIABAAAAAAAIAAAABAAAACAAA=</HashCode>
-      <FileName>BasicComponent.cs</FileName>
+      <HashCode>AAwAmECAwKIDwQAEqAQIGhAAQAJCAAAEyCIAkAWCEEA=</HashCode>
+      <FileName>Components\Component.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="zeroflag.Components.ContainerComponent">
-    <Position X="1.5" Y="1.75" Width="1.5" />
+  <Class Name="zeroflag.Components.Component&lt;CoreT&gt;">
+    <Position X="1" Y="6.75" Width="1.75" />
     <Members>
-      <Field Name="_Container" Hidden="true" />
+      <Field Name="_Core" Hidden="true" />
+      <Event Name="_CoreChanged" Hidden="true" />
+      <Method Name="InnerItemAdded" Hidden="true" />
+      <Method Name="OnCoreChanged" Hidden="true" />
     </Members>
+    <NestedTypes>
+      <Delegate Name="zeroflag.Components.Component&lt;CoreT&gt;.CoreChangedHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Components\Component~1.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAIACAQAACAAAIAAAAAABAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ContainerComponent.cs</FileName>
+      <HashCode>AAAACAAAAAAAAAAEAAQgAAAAQAAAAAAAAAIAAACAAAA=</HashCode>
+      <FileName>Components\Component~1.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="zeroflag.Components.IBasicComponent">
-    <Position X="7.25" Y="1.75" Width="1.5" />
+  <Class Name="zeroflag.Components.Module">
+    <Position X="4.75" Y="6.75" Width="1.75" />
+    <Members>
+      <Field Name="_Log" Hidden="true" />
+      <Field Name="_Name" Hidden="true" />
+      <Field Name="_State" Hidden="true" />
+      <Event Name="_StateChanged" Hidden="true" />
+      <Method Name="Initialize" Hidden="true" />
+      <Property Name="LogCreate" Hidden="true" />
+      <Property Name="NameCreate" Hidden="true" />
+      <Method Name="OnDispose" Hidden="true" />
+      <Method Name="OnStateChanged" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Enum Name="zeroflag.Components.Module.ModuleStates" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Components\Module.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Delegate Name="zeroflag.Components.Module.StateChangedHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Components\Module.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>IBasicComponent.cs</FileName>
+      <HashCode>AAQAAgQABCQAQQQCABAAIQQQAAgAAECAAAAAFCAgBCA=</HashCode>
+      <FileName>Components\Module.cs</FileName>
     </TypeIdentifier>
-  </Interface>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="zeroflag.Components.Module&lt;CoreT&gt;">
+    <Position X="3.5" Y="11" Width="1.75" />
+    <Members>
+      <Field Name="_Core" Hidden="true" />
+      <Event Name="_CoreChanged" Hidden="true" />
+      <Method Name="OnCoreChanged" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQEAAQgAAAAQAAAAAAAAAIAAAAAAAA=</HashCode>
+      <FileName>Components\Module~1.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="zeroflag.Components.Core">
+    <Position X="6" Y="11" Width="1.75" />
+    <Members>
+      <Field Name="_LogModule" Hidden="true" />
+      <Field Name="_Modules" Hidden="true" />
+      <Property Name="LogModuleCreate" Hidden="true" />
+      <Property Name="LogModuleFind" Hidden="true" />
+      <Property Name="ModulesCreate" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAQAQAAAAAgAAAAAAIAAAQAAEAAACABAAAAAAAAAI=</HashCode>
+      <FileName>Components\Core.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="zeroflag.Components.Core&lt;Self&gt;">
+    <Position X="6" Y="13.75" Width="1.75" />
+    <Members>
+      <Method Name="ModuleChanged" Hidden="true" />
+      <Method Name="ModuleComparison" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAACAAAAAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>Components\Core~1.cs</FileName>
+    </TypeIdentifier>
+  </Class>
   <Font Name="Lucida Sans Unicode" Size="9" />
 </ClassDiagram>

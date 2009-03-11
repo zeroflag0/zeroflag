@@ -40,8 +40,7 @@
 #endregion SVN Version Information
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using zeroflag.Collections;
 using System.Text;
 
 namespace zeroflag.Components.Logging
@@ -80,12 +79,12 @@ namespace zeroflag.Components.Logging
 
 
 		#region TaskProcessor
-		private zeroflag.Components.TimedTaskProcessor _TaskProcessor;
+		private zeroflag.Components.TaskProcessor _TaskProcessor;
 
 		/// <summary>
 		/// A task processor (threaded) for background logging...
 		/// </summary>
-		public zeroflag.Components.TimedTaskProcessor TaskProcessor
+		public zeroflag.Components.TaskProcessor TaskProcessor
 		{
 			get { return _TaskProcessor ?? ( _TaskProcessor = this.TaskProcessorCreate ); }
 			//set { _TaskProcessor = value; }
@@ -95,11 +94,11 @@ namespace zeroflag.Components.Logging
 		/// Creates the default/initial value for TaskProcessor.
 		/// A task processor (threaded) for background logging...
 		/// </summary>
-		protected virtual zeroflag.Components.TimedTaskProcessor TaskProcessorCreate
+		protected virtual zeroflag.Components.TaskProcessor TaskProcessorCreate
 		{
 			get
 			{
-				var tp = _TaskProcessor = new zeroflag.Components.TimedTaskProcessor();
+				var tp = _TaskProcessor = new zeroflag.Components.TaskProcessor();
 				tp.CancelTimeout = TimeSpan.FromSeconds( 10 );
 				tp.Name = this.Name;
 				return tp;
@@ -140,16 +139,17 @@ namespace zeroflag.Components.Logging
 		{
 			get { return ( CoreBase ?? (object)"<corelesss>" ) + ".Log"; }
 		}
-		protected override bool OnInitializing()
+		protected override void OnInitialize()
 		{
 			if ( this.Writers.Count <= 0 )
 				// add a default writer...
 				this.Writers.Add( new ConsoleWriter() );
-			return base.OnInitializing() && this.OnUpdating( TimeSpan.MinValue );
+			base.OnInitialize();
+			this.OnUpdate( TimeSpan.MinValue );
 		}
 
 		private int _MessagesProcessed = 0;
-		protected override bool OnUpdating( TimeSpan timeSinceLastUpdate )
+		protected override void OnUpdate( TimeSpan timeSinceLastUpdate )
 		{
 			this.TaskProcessor.Add( () =>
 				{
@@ -158,7 +158,7 @@ namespace zeroflag.Components.Logging
 
 					foreach ( Log log in this.Logs )
 					{
-						KeyValuePair<DateTime, string> msg;
+						System.Collections.Generic.KeyValuePair<DateTime, string> msg;
 						while ( log.Queue.First != null )
 						{
 							msg = log.Queue.Read();
@@ -172,9 +172,9 @@ namespace zeroflag.Components.Logging
 						writer.Flush();
 					_MessagesProcessed = messages.Count;
 					//if ( this.State != ModuleStates.Disposed )
-					//    this.TaskProcessor.Add( () => { System.Threading.Thread.Sleep( 100 ); this.OnUpdating( TimeSpan.Zero ); } );
+					//    this.TaskProcessor.Add( () => { System.Threading.Thread.Sleep( 100 ); this.OnUpdate( TimeSpan.Zero ); } );
 				} );
-			return base.OnUpdating( timeSinceLastUpdate );
+			base.OnUpdate( timeSinceLastUpdate );
 		}
 
 		protected void Write( DateTime time, string owner, string value )
@@ -185,49 +185,49 @@ namespace zeroflag.Components.Logging
 			}
 		}
 
-		protected override void OnStateChanged( ModuleStates oldvalue, ModuleStates newvalue )
-		{
-			if ( newvalue == ModuleStates.Disposed &&
-				 oldvalue != ModuleStates.Shutdown )
-			{
-				this.Log.Message( "Supressing log shutdown..." );
-				this.OnShutdown();
-			}
+		#region DisposeDelay
+		private TimeSpan? _DisposeDelay;
 
-			base.OnStateChanged( oldvalue, newvalue );
+		/// <summary>
+		/// A delay for the log dispose. (important to get messages from other modules disposing, 5seconds by default)
+		/// </summary>
+		public TimeSpan DisposeDelay
+		{
+			get { return _DisposeDelay ?? ( _DisposeDelay = this.DisposeDelayCreate ) ?? TimeSpan.FromSeconds( 1 ); }
+			set
+			{
+				if ( _DisposeDelay != value )
+				{
+					_DisposeDelay = value;
+				}
+			}
 		}
 
-		protected internal override bool OnShutdown()
+		/// <summary>
+		/// Creates the default/initial value for DisposeDelay.
+		/// A delay for the log dispose. (important to get messages from other modules disposing)
+		/// </summary>
+		protected virtual TimeSpan? DisposeDelayCreate
 		{
-			if ( this.CoreBase == null || this.CoreBase.State == ModuleStates.Disposed )
+			get
 			{
-				this.OnUpdating( TimeSpan.Zero );
-				this.Write( DateTime.Now, this.Name, "Shutdown" );
-				this.OnUpdating( TimeSpan.Zero );
-				this.TaskProcessor.Finish();
-				if ( this.TaskProcessor.Count > 0 )
-				{
-					Console.WriteLine( " *** " + this.TaskProcessor.Count + " messages left." );
-					this.TaskProcessor.Add( DateTime.Now.AddSeconds( 5 ), () =>
-						{
-							this.TaskProcessor.Clear();
-							this.TaskProcessor.Cancel = true;
-							this.TaskProcessor.Dispose();
-						} );
-				}
-				else
-				{
-					this.TaskProcessor.Clear();
-					this.TaskProcessor.Cancel = true;
-					this.TaskProcessor.Dispose();
-				}
+				TimeSpan? value = _DisposeDelay = TimeSpan.FromSeconds( 5 );
+				return value;
 			}
-			else
+		}
+
+		#endregion DisposeDelay
+
+
+		protected override void OnDispose()
+		{
+			if ( this.CoreBase != null || this.CoreBase.State != ModuleStates.Disposed || this.TaskProcessor.Count > 0 )
 			{
-				this.Write( DateTime.Now, this.Name, "Waiting for core to shut down..." );
-				this.OnUpdating( TimeSpan.Zero );
-				this.TaskProcessor.Add( () => OnUpdating( TimeSpan.Zero ) );
-				this.TaskProcessor.Add( () => OnShutdown() );
+				this.Log.Message( "Supressing log shutdown..." );
+				//this.Write( DateTime.Now, this.Name, "Waiting for core to shut down..." );
+				this.OnUpdate( TimeSpan.Zero );
+				this.TaskProcessor.Add( () => OnUpdate( TimeSpan.Zero ) );
+				this.TaskProcessor.Add( DateTime.Now.Add( this.DisposeDelay ), DoDispose );
 				//this.TaskProcessor.Add(
 				//        () =>
 				//        {
@@ -238,14 +238,42 @@ namespace zeroflag.Components.Logging
 				//            }
 				//        } );
 			}
-			return base.OnShutdown();
+			else
+				this.DoDispose();
+		}
+		void DoDispose()
+		{
+			this.OnUpdate( TimeSpan.Zero );
+			this.Write( DateTime.Now, this.Name, "Shutdown" );
+			this.OnUpdate( TimeSpan.Zero );
+			this.TaskProcessor.Finish();
+			if ( this.TaskProcessor.Count > 0 )
+			{
+				Console.WriteLine( " *** " + this.TaskProcessor.Count + " messages left." );
+				this.TaskProcessor.Add( DateTime.Now.AddSeconds( 5 ), () =>
+				{
+					if ( this.TaskProcessor.Count > 0 )
+						Console.WriteLine( " *** " + this.TaskProcessor.Count + " messages left." );
+					this.TaskProcessor.Clear();
+					this.TaskProcessor.Cancel = true;
+					this.TaskProcessor.Dispose();
+					base.OnDispose();
+				} );
+			}
+			else
+			{
+				this.TaskProcessor.Clear();
+				this.TaskProcessor.Cancel = true;
+				this.TaskProcessor.Dispose();
+				base.OnDispose();
+			}
 		}
 		//protected override void OnDisposing()
 		//{
-		//    this.OnUpdating( TimeSpan.Zero );
+		//    this.OnUpdate( TimeSpan.Zero );
 		//    base.OnDisposing();
 		//    this.Write( DateTime.Now, this.Name, "Disposed" );
-		//    this.OnUpdating( TimeSpan.Zero );
+		//    this.OnUpdate( TimeSpan.Zero );
 		//    while ( this.TaskProcessor.IsRunning )
 		//        System.Threading.Thread.Sleep( 100 );
 		//    this.TaskProcessor.Cancel = true;

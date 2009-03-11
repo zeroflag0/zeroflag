@@ -1,6 +1,6 @@
 ﻿namespace zeroflag.Components
 {
-	partial class TimedTaskProcessor
+	partial class TaskProcessor
 	{
 #if !SILVERLIGHT
 		/// <summary>

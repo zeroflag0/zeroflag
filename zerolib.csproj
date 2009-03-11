@@ -77,10 +77,11 @@
     <Compile Include="Components\ComponentCollection.cs" />
     <Compile Include="Components\Component~1.cs" />
     <Compile Include="Components\ComponentCollection~2.cs" />
-    <Compile Include="Components\TimedTaskProcessor.cs">
+    <Compile Include="Components\ITaskProcessor.cs" />
+    <Compile Include="Components\TaskProcessor.cs">
     </Compile>
-    <Compile Include="Components\TimedTaskProcessor.designer.cs">
-      <DependentUpon>TimedTaskProcessor.cs</DependentUpon>
+    <Compile Include="Components\TaskProcessor.designer.cs">
+      <DependentUpon>TaskProcessor.cs</DependentUpon>
     </Compile>
     <Compile Include="Components\Core.cs" />
     <Compile Include="Components\IComponent.cs" />
@@ -243,6 +244,7 @@
     <Content Include="Serialization\BinarySerialization.concept.txt" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Components\_ClassDiagram.cd" />
     <None Include="_ClassDiagram.cd" />
     <None Include="Collections\_ClassDiagram.cd" />
     <None Include="Components\Logging\_ClassDiagram.cd" />

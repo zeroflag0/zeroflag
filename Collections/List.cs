@@ -323,7 +323,7 @@ namespace zeroflag.Collections
 		/// Retrieves all the elements that match the conditions defined by the specified predicate.
 		/// </summary>
 		/// <param name="match">The System.Predicate<T> delegate that defines the conditions of the elements to search for.</param>
-		/// <returns>A System.Collections.Generic.List<T> containing all the elements that match the conditions defined by the specified predicate, if found; otherwise, an empty System.Collections.Generic.List<T>.</returns>
+		/// <returns>A System.Collections.Generic.List<T> containing all the elements that match the conditions defined by the specified predicate, if found; otherwise, an empty List<T>.</returns>
 		public List<T> FindAll( Predicate<T> match )
 		{
 #if !SILVERLIGHT
@@ -363,11 +363,13 @@ namespace zeroflag.Collections
 			}
 		}
 
+		
+
 		/// <summary>
 		/// Retrieves all the elements that match the the type specified.
 		/// </summary>
-		/// <param name="match">The System.Predicate<T> delegate that defines the conditions of the elements to search for.</param>
-		/// <returns>A System.Collections.Generic.List<T> containing all the elements that match the conditions defined by the specified predicate, if found; otherwise, an empty System.Collections.Generic.List<T>.</returns>
+		/// <typeparam name="S">The base-type to search for.</typeparam>
+		/// <returns>A System.Collections.Generic.List<T> containing all the elements that match the conditions defined by the specified predicate, if found; otherwise, an empty List<T>.</returns>
 		public List<S> FindAll<S>()
 			where S : T
 		{
