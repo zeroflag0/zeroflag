@@ -164,7 +164,7 @@ namespace zeroflag.Components
 					this.Log.Error( exc );
 				}
 
-				this.OnDispose();
+				this.Dispose();
 			}
 			catch ( Exception exc )
 			{

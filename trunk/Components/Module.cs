@@ -111,90 +111,17 @@ namespace zeroflag.Components
 
 		#endregion Log
 
-		#region State
-
-		public enum ModuleStates
-		{
-			/// <summary>
-			/// The module hasn't been initialized yet.
-			/// </summary>
-			Initializing,
-			/// <summary>
-			/// The module is ready to run.
-			/// </summary>
-			Ready,
-			/// <summary>
-			/// The module is running.
-			/// </summary>
-			Running,
-			/// <summary>
-			/// The module is shutting down.
-			/// </summary>
-			Shutdown,
-			/// <summary>
-			/// The module has completely shut down.
-			/// </summary>
-			Disposed,
-		}
-
-		private ModuleStates _State;
-
-		/// <summary>
-		/// This module's state.
-		/// </summary>
-		public ModuleStates State
-		{
-			get { return _State; }
-			set
-			{
-				if ( _State != value )
-				{
-					this.OnStateChanged( _State, _State = value );
-					this.StateChangeInner( value );
-				}
-			}
-		}
-
-		protected virtual void StateChangeInner( ModuleStates value )
-		{
-			foreach ( Module mod in this.Modules )
-			{
-				mod.State = value;
-			}
-		}
-
-		#region StateChanged event
-		public delegate void StateChangedHandler( object sender, ModuleStates oldvalue, ModuleStates newvalue );
-
-		private event StateChangedHandler _StateChanged;
-		/// <summary>
-		/// Occurs when State changes.
-		/// </summary>
-		public event StateChangedHandler StateChanged
-		{
-			add { this._StateChanged += value; }
-			remove { this._StateChanged -= value; }
-		}
-
-		/// <summary>
-		/// Raises the StateChanged event.
-		/// </summary>
-		protected virtual void OnStateChanged( ModuleStates oldvalue, ModuleStates newvalue )
-		{
-			this.Log.Verbose( newvalue + " ( previously " + oldvalue + " )" );
-			if ( (int)newvalue - (int)oldvalue > 1 )
-				this.Log.Warning( newvalue + " ( previously " + oldvalue + " ) out of order." );
-			// if there are event subscribers...
-			if ( this._StateChanged != null )
-			{
-				// call them...
-				this._StateChanged( this, oldvalue, newvalue );
-			}
-		}
-		#endregion StateChanged event
-		#endregion State
-
 		#region Modules
+
+		protected override Collection<Component> InnerCreate
+		{
+			get
+			{
+				var inner = base.InnerCreate;
+				inner.ItemChanged += ( s, o, n ) => this.Modules = null;
+				return inner;
+			}
+		}
 		private List<Module> _Modules;
 
 		/// <summary>
@@ -231,6 +158,14 @@ namespace zeroflag.Components
 
 		#endregion
 
+		protected override void OnStateChanged( Component.ModuleStates oldvalue, Component.ModuleStates newvalue )
+		{
+			this.Log.Verbose( newvalue + " ( previously " + oldvalue + " )" );
+			if ( (int)newvalue - (int)oldvalue > 1 )
+				this.Log.Warning( newvalue + " ( previously " + oldvalue + " ) out of order." );
+
+			base.OnStateChanged( oldvalue, newvalue );
+		}
 		public void Shutdown()
 		{
 			if ( this.State != ModuleStates.Disposed )
@@ -242,6 +177,11 @@ namespace zeroflag.Components
 
 		public override void Initialize()
 		{
+			if ( this.State == ModuleStates.Ready || this.State == ModuleStates.Running )
+			{
+				this.Log.Warning( "Already initialized." );
+				return;
+			}
 			this.Log.Message( "Initializing..." );
 			for ( int retry = 0; ; retry++ )
 			{
@@ -263,6 +203,7 @@ namespace zeroflag.Components
 					}
 				}
 			}
+			this.Log.Message( "Initialized." );
 		}
 
 		bool Resort()
@@ -281,12 +222,49 @@ namespace zeroflag.Components
 			this.Log.Verbose( dbg );
 		}
 
+		protected override void OnInitializeInner()
+		{
+			bool all;
+			List<Component> done = new List<Component>();
+			int retry = 0;
+			do
+			{
+				all = true;
+
+				var components = this.Inner.ToArray();
+				foreach ( var comp in components )
+				{
+					try
+					{
+						comp.Initialize();
+						done.Add( comp );
+					}
+					catch ( Exception exc )
+					{
+						if ( retry < 4 )
+							this.Log.Warning( exc );
+						else
+						{
+							this.Log.Error( exc );
+							throw;
+						}
+					}
+				}
+				foreach ( var comp in this.Inner )
+					if ( !done.Contains( comp ) )
+					{
+						all = false;
+						break;
+					}
+			}
+			while ( !all );
+		}
+
 		protected override void OnInitializePost()
 		{
 			base.OnInitializePost();
 			this.Resort();
 			this.State = ModuleStates.Ready;
-			this.Log.Message( "Initialized." );
 		}
 
 		public override void Update( TimeSpan timeSinceLastUpdate )
@@ -309,18 +287,23 @@ namespace zeroflag.Components
 				this.Log.Warning( "Running in invalid state " + this.State + "." );
 		}
 
-		protected override void OnDispose()
+		public override void Dispose()
 		{
+			if ( this.State == ModuleStates.Disposed )
+			{
+				this.Log.Warning( "Already disposed." );
+				return;
+			}
 			this.Log.Message( "Disposing..." );
 			this.Resort();
-			base.OnDispose();
+			base.Dispose();
+			this.Log.Message( "Disposed." );
 		}
 
 		protected override void OnDisposePost()
 		{
 			base.OnDisposePost();
 			this.State = ModuleStates.Disposed;
-			this.Log.Message( "Disposed." );
 		}
 
 		#region IComparable<Module> Members
