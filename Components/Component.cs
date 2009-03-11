@@ -179,6 +179,86 @@ namespace zeroflag.Components
 
 		#endregion Inner
 
+		#region State
+
+		public enum ModuleStates
+		{
+			/// <summary>
+			/// The module hasn't been initialized yet.
+			/// </summary>
+			Initializing,
+			/// <summary>
+			/// The module is ready to run.
+			/// </summary>
+			Ready,
+			/// <summary>
+			/// The module is running.
+			/// </summary>
+			Running,
+			/// <summary>
+			/// The module is shutting down.
+			/// </summary>
+			Shutdown,
+			/// <summary>
+			/// The module has completely shut down.
+			/// </summary>
+			Disposed,
+		}
+
+		private ModuleStates _State;
+
+		/// <summary>
+		/// This module's state.
+		/// </summary>
+		public ModuleStates State
+		{
+			get { return _State; }
+			set
+			{
+				if ( _State != value )
+				{
+					this.OnStateChanged( _State, _State = value );
+					this.StateChangeInner( value );
+				}
+			}
+		}
+
+		protected virtual void StateChangeInner( ModuleStates value )
+		{
+			foreach ( Component comp in this.Inner )
+			{
+				comp.State = value;
+			}
+		}
+
+		#region StateChanged event
+		public delegate void StateChangedHandler( object sender, ModuleStates oldvalue, ModuleStates newvalue );
+
+		private event StateChangedHandler _StateChanged;
+		/// <summary>
+		/// Occurs when State changes.
+		/// </summary>
+		public event StateChangedHandler StateChanged
+		{
+			add { this._StateChanged += value; }
+			remove { this._StateChanged -= value; }
+		}
+
+		/// <summary>
+		/// Raises the StateChanged event.
+		/// </summary>
+		protected virtual void OnStateChanged( ModuleStates oldvalue, ModuleStates newvalue )
+		{
+			// if there are event subscribers...
+			if ( this._StateChanged != null )
+			{
+				// call them...
+				this._StateChanged( this, oldvalue, newvalue );
+			}
+		}
+		#endregion StateChanged event
+		#endregion State
+
 		#region Initialize
 		public virtual void Initialize()
 		{
@@ -193,10 +273,26 @@ namespace zeroflag.Components
 
 		protected virtual void OnInitializeInner()
 		{
-			foreach ( var comp in this.Inner )
+			bool all;
+			List<Component> done = new List<Component>();
+			do
 			{
-				comp.Initialize();
+				all = true;
+
+				var components = this.Inner.ToArray();
+				foreach ( var comp in components )
+				{
+					comp.Initialize();
+					done.Add( comp );
+				}
+				foreach ( var comp in this.Inner )
+					if ( !done.Contains( comp ) )
+					{
+						all = false;
+						break;
+					}
 			}
+			while ( !all );
 		}
 		/// <summary>
 		/// Initializing. (before any inner components are initalized. (before any inner components are initialized; use <see cref="PostInitialize"/> if you need to wait for inner components to initialize)

@@ -723,7 +723,7 @@ namespace zeroflag.Components
 #if DEBUG_TRACE
 						if ( DebugTrace )
 						{
-							Console.WriteLine( this + " " + this.Cancel + " " + this.Disposing + " " + this.Tasks.Count );
+							Console.WriteLine( this + " " + ( this.Cancel || this.Disposing ) + " outer=" + ( this.Outer == null ? "<null>" : this.Outer + " " + this.Outer.State ) + " core=" + ( this.CoreBase == null ? "<null>" : this.CoreBase + " " + this.CoreBase.State ) + " " + this.Tasks.Count + ": " + this.Current );
 							Console.WriteLine( new System.Diagnostics.StackTrace() );
 						}
 #endif

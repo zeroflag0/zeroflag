@@ -221,12 +221,12 @@ namespace zeroflag.Components.Logging
 
 		protected override void OnDispose()
 		{
-			if ( this.CoreBase != null || this.CoreBase.State != ModuleStates.Disposed || this.TaskProcessor.Count > 0 )
+			if ( this.CoreBase != null && this.CoreBase.State != ModuleStates.Disposed || this.Outer != null && this.Outer.State != ModuleStates.Disposed || this.TaskProcessor.Count > 1  )
 			{
 				this.Log.Message( "Supressing log shutdown..." );
 				//this.Write( DateTime.Now, this.Name, "Waiting for core to shut down..." );
 				this.OnUpdate( TimeSpan.Zero );
-				this.TaskProcessor.Add( () => OnUpdate( TimeSpan.Zero ) );
+				//this.TaskProcessor.Add( () => OnUpdate( TimeSpan.Zero ) );
 				this.TaskProcessor.Add( DateTime.Now.Add( this.DisposeDelay ), DoDispose );
 				//this.TaskProcessor.Add(
 				//        () =>
@@ -247,12 +247,12 @@ namespace zeroflag.Components.Logging
 			this.Write( DateTime.Now, this.Name, "Shutdown" );
 			this.OnUpdate( TimeSpan.Zero );
 			this.TaskProcessor.Finish();
-			if ( this.TaskProcessor.Count > 0 )
+			if ( this.TaskProcessor.Count > 1 )
 			{
 				Console.WriteLine( " *** " + this.TaskProcessor.Count + " messages left." );
 				this.TaskProcessor.Add( DateTime.Now.AddSeconds( 5 ), () =>
 				{
-					if ( this.TaskProcessor.Count > 0 )
+					if ( this.TaskProcessor.Count > 1 )
 						Console.WriteLine( " *** " + this.TaskProcessor.Count + " messages left." );
 					this.TaskProcessor.Clear();
 					this.TaskProcessor.Cancel = true;
