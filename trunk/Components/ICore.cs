@@ -4,7 +4,7 @@ namespace zeroflag.Components
 	public interface ICore
 	{
 		ComponentCollection<Module> Modules { get; }
-		bool Run();
+		void Run();
 		void Shutdown();
 	}
 }

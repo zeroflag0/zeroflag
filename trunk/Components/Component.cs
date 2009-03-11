@@ -51,7 +51,7 @@ namespace zeroflag.Components
 		, IComponent<Core>
 		, IEquatable<Component>
 #if !SILVERLIGHT
-		, System.ComponentModel.IComponent
+, System.ComponentModel.IComponent
 #endif
 	{
 
@@ -123,7 +123,6 @@ namespace zeroflag.Components
 		}
 		#endregion Outer
 
-
 		#region Inner
 		private zeroflag.Collections.Collection<Component> _Inner;
 
@@ -180,79 +179,232 @@ namespace zeroflag.Components
 
 		#endregion Inner
 
-		public void Initialize()
+		#region Initialize
+		public virtual void Initialize()
 		{
 			this.OnInitialize();
+
+			this.OnInitializeInner();
+
+			this.OnInitializePost();
+
+			this.OnInitialized( this );
+		}
+
+		protected virtual void OnInitializeInner()
+		{
 			foreach ( var comp in this.Inner )
 			{
 				comp.Initialize();
 			}
-			this.PostInitialize();
-			this.OnInitialized( this );
 		}
+		/// <summary>
+		/// Initializing. (before any inner components are initalized. (before any inner components are initialized; use <see cref="PostInitialize"/> if you need to wait for inner components to initialize)
+		/// </summary>
+		protected virtual void OnInitialize() { }
 		/// <summary>
 		/// After this and any inner componets are initialized. (after any inner components were initialized; use <see cref="OnInitialize"/> if you need to act earlier)
 		/// </summary>
-		protected virtual void PostInitialize() { }
-		/// <summary>
-		/// Initializing. (before any inner components are initalized. (before any inner components were initialized; use <see cref="PostInitialize"/> if you need to wait for inner components to initialize)
-		/// </summary>
-		protected virtual void OnInitialize() { }
+		protected virtual void OnInitializePost() { }
 
 		#region event Initialized
-		public delegate void InitializedHandler( Component core );
-
-		private event InitializedHandler _Initialized;
+		private event Action<Component> _Initialized;
 		/// <summary>
-		/// After the core finished initialization.
+		/// After the component finished initialization.
 		/// </summary>
-		public event InitializedHandler Initialized
+		public event Action<Component> Initialized
 		{
 			add { this._Initialized += value; }
 			remove { this._Initialized -= value; }
 		}
 		/// <summary>
 		/// Call to raise the Initialized event:
-		/// After the core finished initialization.
+		/// After the component finished initialization.
 		/// </summary>
-		protected virtual void OnInitialized( Component core )
+		protected virtual void OnInitialized( Component component )
 		{
 			// if there are event subscribers...
 			if ( this._Initialized != null )
 			{
 				// call them...
-				this._Initialized( core );
+				this._Initialized( component );
 			}
 		}
 		#endregion event Initialized
+		#endregion Initialize
 
+		#region Update
+		#region LastRun
 
-		#region IDisposable Members
+		private DateTime _LastUpdate = DateTime.Now;
+
+		/// <summary>
+		/// When the module was last updated...
+		/// </summary>
+		public DateTime LastUpdate
+		{
+			get { return _LastUpdate; }
+			set
+			{
+				if ( _LastUpdate != value )
+				{
+					_LastUpdate = value;
+				}
+			}
+		}
+
+		#endregion LastRun
+
+		public virtual void Update()
+		{
+			this.Update( DateTime.Now - this.LastUpdate );
+		}
+
+		public virtual void Update( TimeSpan timeSinceLastUpdate )
+		{
+			DateTime now = DateTime.Now;
+			try
+			{
+				this.OnUpdate( timeSinceLastUpdate );
+				this.OnUpdateInner( timeSinceLastUpdate );
+			}
+			finally
+			{
+				this.LastUpdate = now;
+			}
+			this.OnUpdatePost( timeSinceLastUpdate );
+			this.OnUpdated( this, timeSinceLastUpdate );
+		}
+
+		protected virtual void OnUpdateInner( TimeSpan timeSinceLastUpdate )
+		{
+			foreach ( var comp in this.Inner )
+			{
+				comp.Update( timeSinceLastUpdate );
+			}
+		}
+		/// <summary>
+		/// Updating. (before any inner components are initalized. (before any inner components are updated; use <see cref="PostUpdate"/> if you need to wait for inner components to update)
+		/// </summary>
+		protected virtual void OnUpdate( TimeSpan timeSinceLastUpdate ) { }
+		/// <summary>
+		/// After this and any inner componets are updated. (after any inner components were updated; use <see cref="OnUpdate"/> if you need to act earlier)
+		/// </summary>
+		protected virtual void OnUpdatePost( TimeSpan timeSinceLastUpdate ) { }
+
+		#region event Updated
+		private event Action<Component, TimeSpan> _Updated;
+		/// <summary>
+		/// After the component completes an update.
+		/// </summary>
+		public event Action<Component, TimeSpan> Updated
+		{
+			add { this._Updated += value; }
+			remove { this._Updated -= value; }
+		}
+		/// <summary>
+		/// Call to raise the Updated event:
+		/// After the component completes an update.
+		/// </summary>
+		protected virtual void OnUpdated( Component component, TimeSpan timeSinceLastUpdate )
+		{
+			// if there are event subscribers...
+			if ( this._Updated != null )
+			{
+				// call them...
+				this._Updated( component, timeSinceLastUpdate );
+			}
+		}
+		#endregion event Updated
+		#endregion Update
+
+		#region Dispose
 
 		/// <summary>
 		/// Disposing! (after any inner components were disposed; use <see cref="PreDispose"/> if you need to act earlier)
 		/// </summary>
-		protected virtual void OnDispose() { }
+		protected virtual void OnDisposePost() { }
 		/// <summary>
 		/// Before this or any inner components get disposed.
 		/// </summary>
-		protected virtual void PreDispose() { }
+		protected virtual void OnDispose() { }
 
-		public void Dispose()
+		public virtual void Dispose()
 		{
-			this.PreDispose();
+			this.OnDispose();
 			this.Dispose( true );
+			this.OnDisposeInner();
+			this.OnDisposePost();
+			this.IsDisposed = true;
+		}
+
+		protected virtual void OnDisposeInner()
+		{
 			foreach ( var comp in this.Inner )
 			{
 				comp.Dispose();
 			}
-			this.OnDispose();
 		}
 
+		/// <summary>
+		/// Dummy dispose to make components compatible to System.ComponentModel.
+		/// </summary>
+		/// <param name="disposing"></param>
 		protected virtual void Dispose( bool disposing )
 		{
 		}
-		#endregion
+
+
+		#region IsDisposed
+
+		private bool _IsDisposed = false;
+
+		/// <summary>
+		/// Whether this component is disposed or not.
+		/// </summary>
+		public bool IsDisposed
+		{
+			get { return _IsDisposed; }
+			set
+			{
+				if ( _IsDisposed != value )
+				{
+					this.OnHasDisposed( _IsDisposed, _IsDisposed = value );
+				}
+			}
+		}
+
+		#region Disposed event
+		public delegate void DisposedHandler( object sender, bool oldvalue, bool newvalue );
+
+		private event DisposedHandler _HasDisposed;
+		/// <summary>
+		/// Occurs when IsDisposed changes.
+		/// </summary>
+		public event DisposedHandler HasDisposed
+		{
+			add { this._HasDisposed += value; }
+			remove { this._HasDisposed -= value; }
+		}
+
+		/// <summary>
+		/// Raises the Disposed event.
+		/// </summary>
+		protected virtual void OnHasDisposed( bool oldvalue, bool newvalue )
+		{
+			// if there are event subscribers...
+			if ( this._HasDisposed != null )
+			{
+				// call them...
+				this._HasDisposed( this, oldvalue, newvalue );
+			}
+		}
+
+
+		#endregion Disposed event
+		#endregion IsDisposed
+
+		#endregion Dispose
 
 		#region IComponent<ICore> Members
 
@@ -349,7 +501,7 @@ namespace zeroflag.Components
 			add { }
 			remove { }
 		}
-		
+
 		#region Site
 		private System.ComponentModel.ISite _Site;
 

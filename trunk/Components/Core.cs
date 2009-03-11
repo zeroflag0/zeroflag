@@ -134,108 +134,65 @@ namespace zeroflag.Components
 
 		#endregion
 
-		protected override bool OnInitializing()
-		{
-			this.Log.Message( "Initializing..." );
-			this.Modules.Sort();
-			for ( int retry = 0; ; retry++ )
-			{
-				try
-				{
-					foreach ( Module module in this.Modules )
-					{
-						if ( module.State == ModuleStates.Initializing )
-							module.Initialize();
-					}
-					break;
-				}
-				catch ( Exception exc )
-				{
-					if ( retry < 4 )
-						this.Log.Warning( exc );
-					else
-					{
-						this.Log.Error( exc );
-						throw;
-					}
-				}
-			}
-			this.Modules.Sort();
-			return base.OnInitializing() && this.Resort();
-		}
-
-		bool Resort()
-		{
-			string dbg = "Resort()\n";
-
-			this.Modules.Sort();
-			foreach ( Module module in this.Modules )
-				dbg += "\t" + module.Name + "\n";
-			this.Log.Message( dbg );
-			return true;
-		}
-
-		protected override bool OnUpdating( TimeSpan timeSinceLastUpdate )
+		#region Run
+		public void Run()
 		{
 			try
 			{
-				bool success = true;
-				foreach ( Module module in this.Modules )
-					success &= module.Update( timeSinceLastUpdate );
+				try
+				{
+					if ( this.State == ModuleStates.Initializing )
+					{
+						this.Initialize();
 
-				//success &= module.Run();
+						this.State = ModuleStates.Ready;
+					}
+					try
+					{
+						if ( this.State == ModuleStates.Ready || this.State == ModuleStates.Running )
+							this.OnRun();
+					}
+					catch ( Exception exc )
+					{
+						this.Log.Error( exc );
+					}
+					this.State = ModuleStates.Shutdown;
 
-				return success && base.OnUpdating( timeSinceLastUpdate );
+				}
+				catch ( Exception exc )
+				{
+					this.Log.Error( exc );
+				}
+
+				this.OnDispose();
 			}
 			catch ( Exception exc )
 			{
 				this.Log.Error( exc );
-				this.State = ModuleStates.Shutdown;
-				return false;
 			}
+			this.State = ModuleStates.Disposed;
 		}
 
-		public void Shutdown()
+		/// <summary>
+		/// Run this core's main loop.
+		/// </summary>
+		protected virtual void OnRun()
 		{
-			if ( this.State != ModuleStates.Disposed )
+			DateTime last = DateTime.Now;
+			DateTime now;
+			System.Threading.AutoResetEvent wait = new System.Threading.AutoResetEvent( false );
+			while ( this.State == ModuleStates.Running || this.State == ModuleStates.Ready )
 			{
-				this.Log.Message( "Requesting shutdown..." );
-				this.State = ModuleStates.Shutdown;
+				now = DateTime.Now;
+				this.Update( last - now );
+				last = now;
+				wait.WaitOne( 1 );
 			}
 		}
 
-		protected internal override bool OnShutdown()
-		{
-			bool success = true;
+		#endregion Run
 
-			this.Modules.Sort();
-			foreach ( Module module in this.Modules )
-				success &= module.OnShutdown();
 
-			return base.OnShutdown() && success;
-		}
 
-		public override bool Run()
-		{
-			//TODO: use timer...
-
-			if ( this.State == ModuleStates.Initializing )
-			{
-				this.Initialize();
-				//this.State = ModuleStates.Initializing;
-			}
-
-			while ( this.State == ModuleStates.Running )
-			{
-				if ( !base.Run() )
-					this.State = ModuleStates.Shutdown;
-				System.Threading.Thread.Sleep( 1 );
-			}
-
-			if ( this.State == ModuleStates.Shutdown )
-				this.OnDispose();
-
-			return this.State != ModuleStates.Disposed;
-		}
 	}
 }

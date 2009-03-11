@@ -29,7 +29,7 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this.taskProcessor = new zeroflag.Components.TimedTaskProcessor( this.components );
+			this.taskProcessor = new zeroflag.Components.TaskProcessor( this.components );
 			//this = new zeroflag.Forms.Reflected.TreeView<T>();
 			this.contextMenu = new System.Windows.Forms.ContextMenuStrip( this.components );
 			this.contextAdd = new System.Windows.Forms.ToolStripMenuItem();
@@ -105,7 +105,7 @@
 
 		#endregion
 
-		private zeroflag.Components.TimedTaskProcessor taskProcessor;
+		private zeroflag.Components.TaskProcessor taskProcessor;
 		private System.Windows.Forms.ContextMenuStrip contextMenu;
 		private System.Windows.Forms.ToolStripMenuItem contextAdd;
 		private System.Windows.Forms.ToolStripMenuItem loadingToolStripMenuItem;

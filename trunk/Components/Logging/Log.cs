@@ -161,6 +161,7 @@ namespace zeroflag.Components.Logging
 		//    else
 		//        return;
 		//}
+		static Func<string> empty = () => "";
 
 		#region Message
 		public virtual void Message( object value )
@@ -197,7 +198,7 @@ namespace zeroflag.Components.Logging
 		{
 			if ( !this.Quiet )
 			{
-				this.WriteMessage( DateTime.Now, new StringBuilder( this.MessageIndentBuffer ).Append( this.MessagePrefix ).Append( value ).Append( this.MessagePostfix ).ToString() );
+				this.WriteMessage( DateTime.Now, new StringBuilder( this.MessageIndentBuffer ).Append( ( this.MessagePrefix ?? empty )() ).Append( value ).Append( ( this.MessagePostfix ?? empty )() ).ToString() );
 			}
 		}
 
@@ -217,17 +218,17 @@ namespace zeroflag.Components.Logging
 			set { _MessageIndent = value; }
 		}
 
-		string _MessagePrefix = "";
+		Func<string> _MessagePrefix;
 
-		public virtual string MessagePrefix
+		public virtual Func<string> MessagePrefix
 		{
 			get { return _MessagePrefix; }
 			set { _MessagePrefix = value; }
 		}
 
-		string _MessagePostfix = "";
+		Func<string> _MessagePostfix;
 
-		public virtual string MessagePostfix
+		public virtual Func<string> MessagePostfix
 		{
 			get { return _MessagePostfix; }
 			set { _MessagePostfix = value; }
@@ -266,7 +267,7 @@ namespace zeroflag.Components.Logging
 
 		public virtual void Warning( string value )
 		{
-			this.WriteWarning( DateTime.Now, new StringBuilder( this.WarningIndentBuffer ).Append( this.WarningPrefix ).Append( value ).Append( this.WarningPostfix ).ToString() );
+			this.WriteWarning( DateTime.Now, new StringBuilder( this.WarningIndentBuffer ).Append( ( this.WarningPrefix ?? empty )() ).Append( value ).Append( ( this.WarningPostfix ?? empty )() ).ToString() );
 		}
 
 		protected virtual void WriteWarning( DateTime time, string value )
@@ -286,17 +287,17 @@ namespace zeroflag.Components.Logging
 			set { _WarningIndent = value; }
 		}
 
-		string _WarningPrefix = "[Warning] ";
+		Func<string> _WarningPrefix = () => "[Warning] ";
 
-		public virtual string WarningPrefix
+		public virtual Func<string> WarningPrefix
 		{
 			get { return _WarningPrefix; }
 			set { _WarningPrefix = value; }
 		}
 
-		string _WarningPostfix = "";
+		Func<string> _WarningPostfix;
 
-		public string WarningPostfix
+		public Func<string> WarningPostfix
 		{
 			get { return _WarningPostfix; }
 			set { _WarningPostfix = value; }
@@ -335,7 +336,7 @@ namespace zeroflag.Components.Logging
 
 		public virtual void Error( string value )
 		{
-			this.WriteError( DateTime.Now, new StringBuilder( this.ErrorIndentBuffer ).Append( this.ErrorPrefix ).Append( value ).Append( this.ErrorPostfix ).ToString() );
+			this.WriteError( DateTime.Now, new StringBuilder( this.ErrorIndentBuffer ).Append( ( this.ErrorPrefix ?? empty )() ).Append( value ).Append( ( this.ErrorPostfix ?? empty )() ).ToString() );
 		}
 
 		protected virtual void WriteError( DateTime time, string value )
@@ -354,18 +355,18 @@ namespace zeroflag.Components.Logging
 			set { _ErrorIndent = value; }
 		}
 
-		string _ErrorPrefix = "[ERROR] ";
+		Func<string> _ErrorPrefix = () => "[ERROR] ";
 
-		public string ErrorPrefix
+		public Func<string> ErrorPrefix
 		{
 			get { return _ErrorPrefix; }
 			set { _ErrorPrefix = value; }
 		}
 
 
-		string _ErrorPostfix = "";
+		Func<string> _ErrorPostfix;
 
-		public string ErrorPostfix
+		public Func<string> ErrorPostfix
 		{
 			get { return _ErrorPostfix; }
 			set { _ErrorPostfix = value; }
@@ -409,7 +410,7 @@ namespace zeroflag.Components.Logging
 		{
 			if ( !this.Quiet )
 			{
-				this.WriteVerbose( DateTime.Now, new StringBuilder( this.VerboseIndentBuffer ).Append( this.VerbosePrefix ).Append( value ).Append( this.VerbosePostfix ).ToString() );
+				this.WriteVerbose( DateTime.Now, new StringBuilder( this.VerboseIndentBuffer ).Append( ( this.VerbosePrefix ?? empty )() ).Append( value ).Append( ( this.VerbosePostfix ?? empty )() ).ToString() );
 			}
 		}
 		[System.Diagnostics.Conditional( "VERBOSE" )]
@@ -426,17 +427,17 @@ namespace zeroflag.Components.Logging
 			set { _VerboseIndent = value; }
 		}
 
-		string _VerbosePrefix = "";
+		Func<string> _VerbosePrefix;
 
-		public virtual string VerbosePrefix
+		public virtual Func<string> VerbosePrefix
 		{
 			get { return _VerbosePrefix; }
 			set { _VerbosePrefix = value; }
 		}
 
-		string _VerbosePostfix = "";
+		Func<string> _VerbosePostfix;
 
-		public virtual string VerbosePostfix
+		public virtual Func<string> VerbosePostfix
 		{
 			get { return _VerbosePostfix; }
 			set { _VerbosePostfix = value; }

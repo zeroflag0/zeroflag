@@ -40,7 +40,7 @@
 #endregion SVN Version Information
 
 using System;
-using System.Collections.Generic;
+using zeroflag.Collections;
 using System.Linq;
 using System.Text;
 
@@ -122,6 +122,10 @@ namespace zeroflag.Components
 			/// <summary>
 			/// The module is ready to run.
 			/// </summary>
+			Ready,
+			/// <summary>
+			/// The module is running.
+			/// </summary>
 			Running,
 			/// <summary>
 			/// The module is shutting down.
@@ -146,7 +150,16 @@ namespace zeroflag.Components
 				if ( _State != value )
 				{
 					this.OnStateChanged( _State, _State = value );
+					this.StateChangeInner( value );
 				}
+			}
+		}
+
+		protected virtual void StateChangeInner( ModuleStates value )
+		{
+			foreach ( Module mod in this.Modules )
+			{
+				mod.State = value;
 			}
 		}
 
@@ -181,171 +194,133 @@ namespace zeroflag.Components
 		#endregion StateChanged event
 		#endregion State
 
-		#endregion
+		#region Modules
+		private List<Module> _Modules;
 
-		protected override void OnInitialize()
-		{
-			this.Log.Message( "OnInitialize()..." );
-			base.OnInitialize();
-			this.OnInitializing();
-		}
-
-		#region event Initializing
-		public delegate void InitializingHandler();
-
-		private event InitializingHandler _Initializing;
 		/// <summary>
-		/// While this module is initializing...
+		/// Modules contained in this module.
 		/// </summary>
-		public event InitializingHandler Initializing
+		public List<Module> Modules
 		{
-			add { this._Initializing += value; }
-			remove { this._Initializing -= value; }
-		}
-		/// <summary>
-		/// Call to raise the Initializing event:
-		/// While this module is initializing...
-		/// </summary>
-		protected virtual bool OnInitializing()
-		{
-			// if there are event subscribers...
-			if ( this._Initializing != null )
+			get { return _Modules ?? ( _Modules = this.ModulesCreate ); }
+			protected set
 			{
-				// call them...
-				this._Initializing();
-			}
-			return ( this.State = ModuleStates.Running ) == ModuleStates.Running;
-		}
-		#endregion event Initializing
-
-		public bool Run( TimeSpan timeSinceLastUpdate )
-		{
-			if ( this.State == ModuleStates.Initializing )
-				if ( !this.OnInitializing() )
-					this.State = ModuleStates.Initializing;
-
-			if ( this.State == ModuleStates.Running )
-				if ( !this.Update( timeSinceLastUpdate ) )
-					this.State = ModuleStates.Shutdown;
-
-			if ( this.State == ModuleStates.Shutdown )
-				this.OnDispose();
-
-			return this.State != ModuleStates.Disposed;
-		}
-
-		public bool Update( TimeSpan timeSinceLastUpdate )
-		{
-			return this.OnUpdating( timeSinceLastUpdate );
-		}
-
-		#region event Updating
-		public delegate void UpdatingHandler( TimeSpan timeSinceLastUpdate );
-
-		private event UpdatingHandler _Updating;
-		/// <summary>
-		/// While this module is updating...
-		/// </summary>
-		public event UpdatingHandler Updating
-		{
-			add { this._Updating += value; }
-			remove { this._Updating -= value; }
-		}
-		/// <summary>
-		/// Call to raise the Updating event:
-		/// While this module is updating...
-		/// </summary>
-		protected virtual bool OnUpdating( TimeSpan timeSinceLastUpdate )
-		{
-			// if there are event subscribers...
-			if ( this._Updating != null )
-			{
-				// call them...
-				this._Updating( timeSinceLastUpdate );
-			}
-			return this.State == ModuleStates.Running;
-		}
-		#endregion event Updating
-
-		protected internal virtual bool OnShutdown()
-		{
-			return ( this.State = ModuleStates.Disposed ) == ModuleStates.Disposed;
-		}
-
-		protected override void OnDispose()
-		{
-			if ( this.State != ModuleStates.Disposed )
-			{
-#if DISPOSING
-				this.OnDisposing();
-#endif
-				if ( this.OnShutdown() )
-					this.State = ModuleStates.Disposed;
-			}
-		}
-
-		#region event Disposing
-#if DISPOSING
-		public delegate void DisposingHandler();
-
-		private event DisposingHandler _Disposing;
-		/// <summary>
-		/// While this module is being disposed...
-		/// </summary>
-		public event DisposingHandler Disposing
-		{
-			add { this._Disposing += value; }
-			remove { this._Disposing -= value; }
-		}
-		/// <summary>
-		/// Call to raise the Disposing event:
-		/// While this module is being disposed...
-		/// </summary>
-		protected virtual void OnDisposing()
-		{
-			// if there are event subscribers...
-			if ( this._Disposing != null )
-			{
-				// call them...
-				this._Disposing();
-			}
-		}
-#endif
-		#endregion event Disposing
-
-		#region LastRun
-
-		private DateTime _LastRun = DateTime.Now;
-
-		/// <summary>
-		/// When the module was last updated...
-		/// </summary>
-		public DateTime LastRun
-		{
-			get { return _LastRun; }
-			set
-			{
-				if ( _LastRun != value )
+				if ( _Modules != value )
 				{
-					_LastRun = value;
+					//if (_Modules != null) { }
+					_Modules = value;
+					//if (_Modules != null) { }
 				}
 			}
 		}
 
-		#endregion LastRun
-
-		public virtual bool Run()
+		/// <summary>
+		/// Creates the default/initial value for Modules.
+		/// Modules contained in this module.
+		/// </summary>
+		protected virtual List<Module> ModulesCreate
 		{
-			DateTime now = DateTime.Now;
-			try
+			get
 			{
-				return this.Run( this.LastRun - now );
+				return base.Inner.FindAll<Module>();
 			}
-			finally
-			{
-				this.LastRun = now;
-			}
+		}
 
+		#endregion Modules
+
+
+		#endregion
+
+		public void Shutdown()
+		{
+			if ( this.State != ModuleStates.Disposed )
+			{
+				this.Log.Message( "Requesting shutdown..." );
+				this.State = ModuleStates.Shutdown;
+			}
+		}
+
+		public override void Initialize()
+		{
+			this.Log.Message( "Initializing..." );
+			for ( int retry = 0; ; retry++ )
+			{
+				try
+				{
+					this.Resort();
+					base.Initialize();
+					this.Resort();
+					break;
+				}
+				catch ( Exception exc )
+				{
+					if ( retry < 4 )
+						this.Log.Warning( exc );
+					else
+					{
+						this.Log.Error( exc );
+						throw;
+					}
+				}
+			}
+		}
+
+		bool Resort()
+		{
+			this.Modules.Sort();
+			this.ResortOut();
+			return true;
+		}
+		[System.Diagnostics.Conditional( "VERBOSE" )]
+		void ResortOut()
+		{
+			string dbg = "Resort()\n";
+
+			foreach ( Module module in this.Modules )
+				dbg += "\t" + module.Name + "\n";
+			this.Log.Verbose( dbg );
+		}
+
+		protected override void OnInitializePost()
+		{
+			base.OnInitializePost();
+			this.Resort();
+			this.State = ModuleStates.Ready;
+			this.Log.Message( "Initialized." );
+		}
+
+		public override void Update( TimeSpan timeSinceLastUpdate )
+		{
+			if ( this.State == ModuleStates.Ready )
+				this.State = ModuleStates.Running;
+			if ( this.State == ModuleStates.Running )
+				try
+				{
+					base.Update( timeSinceLastUpdate );
+				}
+				catch ( Exception exc )
+				{
+					this.Log.Error( exc );
+					this.State = ModuleStates.Shutdown;
+				}
+			else if ( this.State == ModuleStates.Shutdown )
+				this.Dispose();
+			else
+				this.Log.Warning( "Running in invalid state " + this.State + "." );
+		}
+
+		protected override void OnDispose()
+		{
+			this.Log.Message( "Disposing..." );
+			this.Resort();
+			base.OnDispose();
+		}
+
+		protected override void OnDisposePost()
+		{
+			base.OnDisposePost();
+			this.State = ModuleStates.Disposed;
+			this.Log.Message( "Disposed." );
 		}
 
 		#region IComparable<Module> Members
