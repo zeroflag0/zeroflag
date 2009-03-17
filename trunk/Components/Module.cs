@@ -160,8 +160,8 @@ namespace zeroflag.Components
 
 		protected override void OnStateChanged( Component.ModuleStates oldvalue, Component.ModuleStates newvalue )
 		{
-			this.Log.Verbose( newvalue + " ( previously " + oldvalue + " )" );
-			if ( (int)newvalue - (int)oldvalue > 1 )
+			this.Log.Message( newvalue + " ( previously " + oldvalue + " )" );
+			if ( (int)newvalue - (int)oldvalue > 1 || (int)newvalue < (int)oldvalue)
 				this.Log.Warning( newvalue + " ( previously " + oldvalue + " ) out of order." );
 
 			base.OnStateChanged( oldvalue, newvalue );
@@ -206,14 +206,17 @@ namespace zeroflag.Components
 			this.Log.Message( "Initialized." );
 		}
 
-		bool Resort()
+		protected virtual bool Resort()
 		{
-			this.Modules.Sort();
-			this.ResortOut();
+			if ( this.Modules.Count > 0 )
+			{
+				this.Modules.Sort();
+				this.ResortOut();
+			}
 			return true;
 		}
 		[System.Diagnostics.Conditional( "VERBOSE" )]
-		void ResortOut()
+		protected void ResortOut()
 		{
 			string dbg = "Resort()\n";
 

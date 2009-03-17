@@ -71,10 +71,16 @@ namespace zeroflag.Components
 			get
 			{
 				var modules = _Modules = new ComponentCollection<Module>( this ) { CoreBase = this };
-				//modules.ItemAdded += item => item.Core = this;
-				//modules.ItemRemoved += item =>
-				//{
-				//};
+				modules.ItemAdded += item =>
+					{
+						this.Log.Verbose( "Modules.Add(" + item + ")" );
+						this.Inner.Add( item );
+					};
+				modules.ItemRemoved += item =>
+				{
+					this.Log.Verbose( "Modules.Remove(" + item + ")" );
+					this.Inner.Remove( item );
+				};
 				modules.ItemChanged += ( sender, oldModule, newModule ) => modules.Sort( ( mod1, mod2 ) => object.ReferenceEquals( mod1, mod2 ) ? 0 : mod2.CompareTo( mod1 ) );
 				//this.LogModule = new zeroflag.Components.Logging.LogModule();
 				return modules;
