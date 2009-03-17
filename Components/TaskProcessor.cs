@@ -852,7 +852,7 @@ namespace zeroflag.Components
 			Console.WriteLine( msg );
 		}
 
-		[Conditional( "VERBOSE" )]
+		[Conditional( "VERBOSE_TASKPROCESSOR" )]
 		public static void verbose( object msg )
 		{
 			msg = DateTime.Now.ToString( "HH:mm:ss" ) + " " + msg;

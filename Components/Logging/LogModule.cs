@@ -145,6 +145,9 @@ namespace zeroflag.Components.Logging
 				// add a default writer...
 				this.Writers.Add( new ConsoleWriter() );
 			base.OnInitialize();
+#if VERBOSE
+			this.Log.Verbose( "VERBOSE logging active" );
+#endif
 			this.OnUpdate( TimeSpan.MinValue );
 		}
 
