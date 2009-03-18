@@ -98,7 +98,7 @@ namespace zeroflag.Components.Logging
 		{
 			get
 			{
-				var tp = _TaskProcessor = new zeroflag.Components.TaskProcessor();
+				var tp = _TaskProcessor = new zeroflag.Components.TaskProcessor() { Outer = this };
 				tp.CancelTimeout = TimeSpan.FromSeconds( 10 );
 				tp.Name = this.Name;
 				return tp;
@@ -154,6 +154,10 @@ namespace zeroflag.Components.Logging
 		private int _MessagesProcessed = 0;
 		protected override void OnUpdate( TimeSpan timeSinceLastUpdate )
 		{
+			base.OnUpdate( timeSinceLastUpdate );
+		}
+		protected void _OnUpdate()
+		{
 			this.TaskProcessor.Add( () =>
 				{
 					// this will be used to keep the messages in timely order (because the loop below takes modules in order first, times second)
@@ -174,10 +178,9 @@ namespace zeroflag.Components.Logging
 					foreach ( LogWriter writer in this.Writers )
 						writer.Flush();
 					_MessagesProcessed = messages.Count;
-					//if ( this.State != ModuleStates.Disposed )
-					//    this.TaskProcessor.Add( () => { System.Threading.Thread.Sleep( 100 ); this.OnUpdate( TimeSpan.Zero ); } );
+					if ( this.State != ModuleStates.Disposed )
+						this.TaskProcessor.Add( DateTime.Now.AddMilliseconds( 250 ), this._OnUpdate );
 				} );
-			base.OnUpdate( timeSinceLastUpdate );
 		}
 
 		protected void Write( DateTime time, string owner, string value )
@@ -224,7 +227,7 @@ namespace zeroflag.Components.Logging
 
 		protected override void OnDispose()
 		{
-			if ( this.CoreBase != null && this.CoreBase.State != ModuleStates.Disposed || this.Outer != null && this.Outer.State != ModuleStates.Disposed || this.TaskProcessor.Count > 1  )
+			if ( this.CoreBase != null && this.CoreBase.State != ModuleStates.Disposed || this.Outer != null && this.Outer.State != ModuleStates.Disposed || this.TaskProcessor.Count > 1 )
 			{
 				this.Log.Message( "Supressing log shutdown..." );
 				//this.Write( DateTime.Now, this.Name, "Waiting for core to shut down..." );
