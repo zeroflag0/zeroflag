@@ -225,10 +225,10 @@ namespace zeroflag.Components
 
 		protected virtual void StateChangeInner( ModuleStates value )
 		{
-			foreach ( Component comp in this.Inner )
-			{
-				comp.State = value;
-			}
+			//foreach ( Component comp in this.Inner )
+			//{
+			//    comp.State = value;
+			//}
 		}
 
 		#region StateChanged event

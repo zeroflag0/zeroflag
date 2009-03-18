@@ -161,7 +161,7 @@ namespace zeroflag.Components
 		protected override void OnStateChanged( Component.ModuleStates oldvalue, Component.ModuleStates newvalue )
 		{
 			this.Log.Message( newvalue + " ( previously " + oldvalue + " )" );
-			if ( (int)newvalue - (int)oldvalue > 1 || (int)newvalue < (int)oldvalue)
+			if ( (int)newvalue - (int)oldvalue > 1 || (int)newvalue < (int)oldvalue )
 				this.Log.Warning( newvalue + " ( previously " + oldvalue + " ) out of order." );
 
 			base.OnStateChanged( oldvalue, newvalue );
@@ -175,13 +175,28 @@ namespace zeroflag.Components
 			}
 		}
 
+#if VERBOSE
+		System.Diagnostics.StackTrace _InitializeTrace;
+		int _InitializeThread;
+#endif
 		public override void Initialize()
 		{
 			if ( this.State == ModuleStates.Ready || this.State == ModuleStates.Running )
 			{
-				this.Log.Warning( "Already initialized." );
+#if VERBOSE
+				this.Log.Warning( "Already initialized. " + System.Threading.Thread.CurrentThread.ManagedThreadId + "\n" + new System.Diagnostics.StackTrace() + " [" + this.State + "] from " + _InitializeThread + "\n" + _InitializeTrace );
+#else
+				this.Log.Warning( "Already initialized. [" + this.State + "]" );
+#endif
 				return;
 			}
+#if VERBOSE
+			else
+			{
+				_InitializeTrace = new System.Diagnostics.StackTrace();
+				_InitializeThread = System.Threading.Thread.CurrentThread.ManagedThreadId;
+			}
+#endif
 			this.Log.Message( "Initializing..." );
 			for ( int retry = 0; ; retry++ )
 			{

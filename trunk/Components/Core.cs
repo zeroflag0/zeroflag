@@ -58,7 +58,14 @@ namespace zeroflag.Components
 		/// </summary>
 		public ComponentCollection<Module> Modules
 		{
-			get { return _Modules ?? ( _Modules = this.ModulesCreate ); }
+			//get { return _Modules ?? ( ModulesInitialize( _Modules = this.ModulesCreate ) ); }
+			get
+			{
+				if ( _Modules != null )
+					return _Modules;
+				else
+					return ( ModulesInitialize( _Modules = this.ModulesCreate ) );
+			}
 			protected set { _Modules = value; }
 		}
 
@@ -71,22 +78,50 @@ namespace zeroflag.Components
 			get
 			{
 				var modules = _Modules = new ComponentCollection<Module>( this ) { CoreBase = this };
-				modules.ItemAdded += item =>
-					{
-						this.Log.Verbose( "Modules.Add(" + item + ")" );
-						this.Inner.Add( item );
-					};
-				modules.ItemRemoved += item =>
-				{
-					this.Log.Verbose( "Modules.Remove(" + item + ")" );
-					this.Inner.Remove( item );
-				};
-				modules.ItemChanged += ( sender, oldModule, newModule ) => modules.Sort( ( mod1, mod2 ) => object.ReferenceEquals( mod1, mod2 ) ? 0 : mod2.CompareTo( mod1 ) );
 				//this.LogModule = new zeroflag.Components.Logging.LogModule();
 				return modules;
 			}
 		}
 
+		protected virtual ComponentCollection<Module> ModulesInitialize( ComponentCollection<Module> modules )
+		{
+			modules.ItemAdded += item =>
+			{
+				this.Log.Message( "Modules.Add(" + item + ")" );
+				if ( !this.Inner.Contains( item ) )
+					this.Inner.Add( item );
+			};
+			modules.ItemRemoved += item =>
+			{
+				this.Log.Verbose( "Modules.Remove(" + item + ")" );
+				while ( this.Inner.Contains( item ) )
+					this.Inner.Remove( item );
+			};
+			modules.ItemChanged += ( sender, oldModule, newModule ) => modules.Sort( ( mod1, mod2 ) => object.ReferenceEquals( mod1, mod2 ) ? 0 : mod2.CompareTo( mod1 ) );
+			return modules;
+		}
+
+		protected override void InnerItemAdded( Component item )
+		{
+			base.InnerItemAdded( item );
+			Module mod = item as Module;
+			if ( mod != null )
+			{
+				if ( !this.Modules.Contains( mod ) )
+					this.Modules.Add( mod );
+			}
+		}
+		protected override void InnerItemRemoved( Component item )
+		{
+			base.InnerItemRemoved( item );
+
+			Module mod = item as Module;
+			if ( mod != null )
+			{
+				while ( this.Modules.Contains( mod ) )
+					this.Modules.Remove( mod );
+			}
+		}
 		#endregion Modules
 
 		#region LogModule

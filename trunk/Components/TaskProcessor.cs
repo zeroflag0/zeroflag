@@ -241,6 +241,27 @@ namespace zeroflag.Components
 			get { return this._Thread != null && this.Thread.IsAlive && this._Working > 0; }
 		}
 
+		#region Parentless
+		private bool _Parentless;
+
+		/// <summary>
+		/// Whether the TaskProcessor can run without a parent(outer/core) object. If false(default) it will exit when missing a parent.
+		/// </summary>
+		public bool Parentless
+		{
+			get { return _Parentless; }
+			set
+			{
+				if ( _Parentless != value )
+				{
+					_Parentless = value;
+				}
+			}
+		}
+
+		#endregion Parentless
+
+
 		#region Name
 
 		private string _Name;
@@ -602,6 +623,7 @@ namespace zeroflag.Components
 
 
 		DateTime _LastWork = DateTime.Now;
+		int _MissingParent = 0;
 		int _Working = 0;
 		int _Restart = 0;
 		//void backgroundWorker_DoWork( object sender, DoWorkEventArgs e )
@@ -640,6 +662,20 @@ namespace zeroflag.Components
 					while ( !this.Cancel ||
 							!this.Tasks.IsEmpty )
 					{
+						if ( !Parentless && this.Outer == null && this.CoreBase == null
+#if !SILVERLIGHT
+ && this.Site == null
+#endif
+ )
+						{
+							if ( _MissingParent++ > 10 )
+							{
+								Console.WriteLine( "TaskProcessor(" + this.Name + ") exiting, missing parent..." );
+								break;
+							}
+						}
+						else
+							_MissingParent = 0;
 						if ( System.Threading.Interlocked.CompareExchange( ref _Restart, 0, 1 ) != 0 )
 						{
 							Console.WriteLine( "TaskProcessor(" + this.Name + ") restarting..." );
@@ -706,12 +742,12 @@ namespace zeroflag.Components
 								 !this.Cancel )
 							{
 #if DEBUG
-								Console.WriteLine( "TaskProcessor(" + this.Name + ") idle timeout." );
+								//Console.WriteLine( "TaskProcessor(" + this.Name + ") idle timeout." );
 #endif
 								//this.Wait.WaitOne( this.IdleThreadTimeout, true );
 								this.Wait.WaitOne( this.IdleThreadTimeout );
 #if DEBUG
-								Console.WriteLine( "TaskProcessor(" + this.Name + ") resuming..." );
+								//Console.WriteLine( "TaskProcessor(" + this.Name + ") resuming..." );
 #endif
 								_LastWork = DateTime.Now;
 								//return;
@@ -723,8 +759,8 @@ namespace zeroflag.Components
 #if DEBUG_TRACE
 						if ( DebugTrace )
 						{
-							Console.WriteLine( this + " " + ( this.Cancel || this.Disposing ) + " outer=" + ( this.Outer == null ? "<null>" : this.Outer + " " + this.Outer.State ) + " core=" + ( this.CoreBase == null ? "<null>" : this.CoreBase + " " + this.CoreBase.State ) + " " + this.Tasks.Count + ": " + this.Current );
-							Console.WriteLine( new System.Diagnostics.StackTrace() );
+							Console.WriteLine( this + ( this.Cancel ? " Cancel" : "" ) + ( this.Disposing ? " Disposing" : "" ) + " \n\touter=" + ( this.Outer == null ? "<null>" : this.Outer + " " + this.Outer.State ) + " \n\tcore=" + ( this.CoreBase == null ? "<null>" : this.CoreBase + " " + this.CoreBase.State ) + " \n\t" + new Func<DateTime, string>( time => time.ToString( "HH:mm:ss." ) + time.Millisecond )( DateTime.Now ) + " - " + this.Tasks.Count + ": \n\t" + this.Current );
+							//Console.WriteLine( new System.Diagnostics.StackTrace() );
 						}
 #endif
 					}
