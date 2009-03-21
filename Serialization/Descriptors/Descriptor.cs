@@ -656,7 +656,7 @@ namespace zeroflag.Serialization.Descriptors
 			return builder;
 		}
 
-		[System.Diagnostics.Conditional( "VERBOSE" )]
+		[System.Diagnostics.Conditional( "VERBOSE_SERIALIZATION" )]
 		static internal void CWL( object value )
 		{
 			Console.WriteLine( value );
