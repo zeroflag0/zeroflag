@@ -378,7 +378,7 @@ namespace zeroflag.Components
 
 		protected virtual void OnUpdateInner( TimeSpan timeSinceLastUpdate )
 		{
-			foreach ( var comp in this.Inner )
+			foreach ( var comp in this.Inner.ToArray() )
 			{
 				//if ( comp.State != ModuleStates.Disposed )
 				comp.Update( timeSinceLastUpdate );
