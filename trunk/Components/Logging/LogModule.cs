@@ -49,7 +49,7 @@ namespace zeroflag.Components.Logging
 	{
 		public LogModule()
 		{
-			Console.WriteLine( "LogModule created.\n" + new System.Diagnostics.StackTrace() );
+			//Console.WriteLine( "LogModule created.\n" + new System.Diagnostics.StackTrace() );
 		}
 
 		#region Writers
@@ -153,6 +153,7 @@ namespace zeroflag.Components.Logging
 			this.Log.Verbose( "VERBOSE logging active" );
 #endif
 			this.OnUpdate( TimeSpan.MinValue );
+			this.TaskProcessor.Add( DateTime.Now.AddMilliseconds( 250 ), this._OnUpdate );
 		}
 
 		private int _MessagesProcessed = 0;
@@ -162,6 +163,7 @@ namespace zeroflag.Components.Logging
 		}
 		protected void _OnUpdate()
 		{
+			//Console.WriteLine( "Log Update..." );
 			this.TaskProcessor.Add( () =>
 				{
 					// this will be used to keep the messages in timely order (because the loop below takes modules in order first, times second)

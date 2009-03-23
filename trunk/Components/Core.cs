@@ -151,7 +151,7 @@ namespace zeroflag.Components
 				if ( value != current )
 				{
 					_LogModule = value;
-					Console.WriteLine( "New log module. (" + current + " => " + value + ")\n" + new System.Diagnostics.StackTrace() );
+					//Console.WriteLine( "New log module. (" + current + " => " + value + ")\n" + new System.Diagnostics.StackTrace() );
 					//this.Log.Verbose( "New log module. (" + current + " => " + value + ")" );
 					if ( current != null )
 						this.Modules.Remove( current );
@@ -183,7 +183,7 @@ namespace zeroflag.Components
 		{
 			get
 			{
-				Console.WriteLine( "Creating log module." );
+				//Console.WriteLine( "Creating log module." );
 				//this.Log.Verbose( "Creating log module." );
 				//var mod = this.LogModuleFind;
 				//if ( mod == null )
