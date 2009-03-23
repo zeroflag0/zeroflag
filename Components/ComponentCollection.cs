@@ -542,5 +542,19 @@ namespace zeroflag.Components
 
 		#endregion
 
+		protected override void OnInitializeInner()
+		{
+			//base.OnInitializeInner();
+		}
+
+		protected override void OnUpdateInner( TimeSpan timeSinceLastUpdate )
+		{
+			//base.OnUpdateInner( timeSinceLastUpdate );
+		}
+
+		protected override void OnDisposeInner()
+		{
+			//base.OnDisposeInner();
+		}
 	}
 }

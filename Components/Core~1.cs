@@ -49,6 +49,11 @@ namespace zeroflag.Components
 	public class Core<Self> : Core
 		where Self : Core<Self>
 	{
+		public Core()
+			: base()
+		{
+		}
+		
 		#region Properties
 
 		#region Modules

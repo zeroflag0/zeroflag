@@ -48,6 +48,11 @@ namespace zeroflag.Components
 {
 	public abstract class Core : Module, zeroflag.Components.ICore
 	{
+		public Core()
+		{
+			this.LogModule = new zeroflag.Components.Logging.LogModule();
+		}
+
 		#region Properties
 
 		#region Modules
@@ -132,16 +137,28 @@ namespace zeroflag.Components
 		/// </summary>
 		public Logging.LogModule LogModule
 		{
-			get { return _LogModule ?? ( _LogModule = this.LogModuleCreate ); }
+			get
+			{
+				//if ( _LogModule != null )
+					return _LogModule;
+				//else
+				//    return _LogModule = this.LogModuleCreate;
+				//return _LogModule ?? ( _LogModule = this.LogModuleCreate );
+			}
 			set
 			{
-				var current = _LogModule ?? this.LogModuleFind;
+				var current = _LogModule;// ?? this.LogModuleFind;
 				if ( value != current )
 				{
+					_LogModule = value;
+					Console.WriteLine( "New log module. (" + current + " => " + value + ")\n" + new System.Diagnostics.StackTrace() );
+					//this.Log.Verbose( "New log module. (" + current + " => " + value + ")" );
 					if ( current != null )
 						this.Modules.Remove( current );
 					if ( value != null )
+					{
 						this.Modules.Add( value );
+					}
 				}
 			}
 		}
@@ -166,7 +183,13 @@ namespace zeroflag.Components
 		{
 			get
 			{
-				return this.LogModuleFind ?? ( this.LogModule = new zeroflag.Components.Logging.LogModule() );
+				Console.WriteLine( "Creating log module." );
+				//this.Log.Verbose( "Creating log module." );
+				//var mod = this.LogModuleFind;
+				//if ( mod == null )
+				var mod = _LogModule = new zeroflag.Components.Logging.LogModule();
+				return mod;
+				//return this.LogModuleFind ?? ( this.LogModule = new zeroflag.Components.Logging.LogModule() );
 			}
 		}
 
