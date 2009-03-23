@@ -416,6 +416,9 @@ namespace zeroflag.Components.Logging
 		[System.Diagnostics.Conditional( "VERBOSE" )]
 		protected virtual void WriteVerbose( DateTime time, string value )
 		{
+#if LOG_DIRECT
+			System.Console.WriteLine( new StringBuilder( time.ToString( "HH:mm:ss.fff" ) ).Append( " [" ).Append( this.Owner.PadRight( 15 ) ).Append( "]** " ).Append( value ) );
+#endif
 			this.Queue.Write( new KeyValuePair<DateTime, string>( time, value ) );
 		}
 

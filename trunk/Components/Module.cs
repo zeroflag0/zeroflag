@@ -242,6 +242,7 @@ namespace zeroflag.Components
 
 		protected override void OnInitializeInner()
 		{
+			Console.WriteLine( this + ".OnInitializeInner()" ); 
 			bool all;
 			List<Component> done = new List<Component>();
 			int retry = 0;
@@ -254,6 +255,7 @@ namespace zeroflag.Components
 				{
 					try
 					{
+						this.Log.Verbose( "Initializing " + comp + "..." );
 						comp.Initialize();
 						done.Add( comp );
 					}

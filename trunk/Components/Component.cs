@@ -277,6 +277,7 @@ namespace zeroflag.Components
 
 		protected virtual void OnInitializeInner()
 		{
+			Console.WriteLine( this + ".OnInitializeInner()" );
 			bool all;
 			List<Component> done = new List<Component>();
 			do

@@ -47,6 +47,10 @@ namespace zeroflag.Components.Logging
 {
 	public class LogModule : Module
 	{
+		public LogModule()
+		{
+			Console.WriteLine( "LogModule created.\n" + new System.Diagnostics.StackTrace() );
+		}
 
 		#region Writers
 		private List<LogWriter> _Writers;
