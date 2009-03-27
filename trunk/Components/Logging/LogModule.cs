@@ -164,29 +164,29 @@ namespace zeroflag.Components.Logging
 		protected void _OnUpdate()
 		{
 			//Console.WriteLine( "Log Update..." );
-			this.TaskProcessor.Add( () =>
-				{
-					// this will be used to keep the messages in timely order (because the loop below takes modules in order first, times second)
-					List<LogMessage> messages = new List<LogMessage>();
+			//this.TaskProcessor.Add( () =>
+			//    {
+			// this will be used to keep the messages in timely order (because the loop below takes modules in order first, times second)
+			List<LogMessage> messages = new List<LogMessage>();
 
-					foreach ( Log log in this.Logs )
-					{
-						System.Collections.Generic.KeyValuePair<DateTime, string> msg;
-						while ( log.Queue.First != null )
-						{
-							msg = log.Queue.Read();
-							messages.Add( new LogMessage() { Sender = log.Owner, Time = msg.Key, Message = msg.Value } );
-						}
-					}
-					messages.Sort();
-					foreach ( var msg in messages )
-						this.Write( msg.Time, msg.Sender, msg.Message );
-					foreach ( LogWriter writer in this.Writers )
-						writer.Flush();
-					_MessagesProcessed = messages.Count;
-					if ( this.State != ModuleStates.Disposed )
-						this.TaskProcessor.Add( DateTime.Now.AddMilliseconds( 250 ), this._OnUpdate );
-				} );
+			foreach ( Log log in this.Logs )
+			{
+				System.Collections.Generic.KeyValuePair<DateTime, string> msg;
+				while ( log.Queue.First != null )
+				{
+					msg = log.Queue.Read();
+					messages.Add( new LogMessage() { Sender = log.Owner, Time = msg.Key, Message = msg.Value } );
+				}
+			}
+			messages.Sort();
+			foreach ( var msg in messages )
+				this.Write( msg.Time, msg.Sender, msg.Message );
+			foreach ( LogWriter writer in this.Writers )
+				writer.Flush();
+			_MessagesProcessed = messages.Count;
+			if ( this.State != ModuleStates.Disposed )
+				this.TaskProcessor.Add( DateTime.Now.AddMilliseconds( 250 ), this._OnUpdate );
+			//} );
 		}
 
 		protected void Write( DateTime time, string owner, string value )
@@ -237,7 +237,7 @@ namespace zeroflag.Components.Logging
 			{
 				this.Log.Message( "Supressing log shutdown..." );
 				//this.Write( DateTime.Now, this.Name, "Waiting for core to shut down..." );
-				this.OnUpdate( TimeSpan.Zero );
+				this._OnUpdate();
 				//this.TaskProcessor.Add( () => OnUpdate( TimeSpan.Zero ) );
 				this.TaskProcessor.Add( DateTime.Now.Add( this.DisposeDelay ), DoDispose );
 				//this.TaskProcessor.Add(
@@ -251,18 +251,26 @@ namespace zeroflag.Components.Logging
 				//        } );
 			}
 			else
+			{
+				this._OnUpdate();
 				this.DoDispose();
+			}
+		}
+
+		protected override void OnDisposeInner()
+		{
+			//base.OnDisposeInner();
 		}
 		void DoDispose()
 		{
-			this.OnUpdate( TimeSpan.Zero );
+			this._OnUpdate();
 			this.Write( DateTime.Now, this.Name, "Shutdown" );
-			this.OnUpdate( TimeSpan.Zero );
+			this._OnUpdate();
 			this.TaskProcessor.Finish();
 			if ( this.TaskProcessor.Count > 1 )
 			{
 				Console.WriteLine( " *** " + this.TaskProcessor.Count + " messages left." );
-				this.TaskProcessor.Add( DateTime.Now.AddSeconds( 5 ), () =>
+				this.TaskProcessor.Add( DateTime.Now.AddSeconds( 2 ), () =>
 				{
 					if ( this.TaskProcessor.Count > 1 )
 						Console.WriteLine( " *** " + this.TaskProcessor.Count + " messages left." );
@@ -270,6 +278,7 @@ namespace zeroflag.Components.Logging
 					this.TaskProcessor.Cancel = true;
 					this.TaskProcessor.Dispose();
 					base.OnDispose();
+					base.OnDisposeInner();
 				} );
 			}
 			else
@@ -278,6 +287,7 @@ namespace zeroflag.Components.Logging
 				this.TaskProcessor.Cancel = true;
 				this.TaskProcessor.Dispose();
 				base.OnDispose();
+				base.OnDisposeInner();
 			}
 		}
 		//protected override void OnDisposing()
