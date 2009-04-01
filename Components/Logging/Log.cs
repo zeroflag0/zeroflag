@@ -207,7 +207,7 @@ namespace zeroflag.Components.Logging
 #if LOG_DIRECT || LOG_DIRECT_MESSAGE
 			System.Console.WriteLine( new StringBuilder( time.ToString( "HH:mm:ss.fff" ) ).Append( " [" ).Append( this.Owner.PadRight( 15 ) ).Append( "]** " ).Append( value ) );
 #endif
-			this.Queue.Write( new KeyValuePair<DateTime, string>( time, value ) );
+			this.Queue.Add( new KeyValuePair<DateTime, string>( time, value ) );
 		}
 
 		int _MessageIndent = 0;
@@ -275,7 +275,7 @@ namespace zeroflag.Components.Logging
 #if LOG_DIRECT || LOG_DIRECT_WARNING
 			System.Console.WriteLine( new StringBuilder( time.ToString( "HH:mm:ss.fff" ) ).Append( " [" ).Append( this.Owner.PadRight( 15 ) ).Append( "]** " ).Append( value ) );
 #endif
-			this.Queue.Write( new KeyValuePair<DateTime, string>( time, value ) );
+			this.Queue.Add( new KeyValuePair<DateTime, string>( time, value ) );
 		}
 
 
@@ -344,7 +344,7 @@ namespace zeroflag.Components.Logging
 #if LOG_DIRECT || LOG_DIRECT_ERROR
 			System.Console.WriteLine( new StringBuilder( time.ToString( "HH:mm:ss.fff" ) ).Append( " [" ).Append( this.Owner.PadRight( 15 ) ).Append( "]** " ).Append( value ) );
 #endif
-			this.Queue.Write( new KeyValuePair<DateTime, string>( time, value ) );
+			this.Queue.Add( new KeyValuePair<DateTime, string>( time, value ) );
 		}
 
 		int _ErrorIndent = 0;
@@ -419,7 +419,7 @@ namespace zeroflag.Components.Logging
 #if LOG_DIRECT
 			System.Console.WriteLine( new StringBuilder( time.ToString( "HH:mm:ss.fff" ) ).Append( " [" ).Append( this.Owner.PadRight( 15 ) ).Append( "]** " ).Append( value ) );
 #endif
-			this.Queue.Write( new KeyValuePair<DateTime, string>( time, value ) );
+			this.Queue.Add( new KeyValuePair<DateTime, string>( time, value ) );
 		}
 
 		int _VerboseIndent = 0;

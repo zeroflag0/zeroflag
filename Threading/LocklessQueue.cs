@@ -162,12 +162,16 @@ namespace zeroflag.Threading
 			this._ReadLast = null;
 		}
 
+		public void Write( T value )
+		{
+			this.Add( value );
+		}
 		/// <summary>
 		/// Write one value to the queue. This method may be used simultaneously by multiple threads.
 		/// NOTE: This method is safe to be used from multiple threads simultaniously, no guarantees though.
 		/// </summary>
 		/// <param name="value"></param>
-		public virtual void Write( T value )
+		public virtual void Add( T value )
 		{
 			Node node = new Node();
 			node.Value = value;
