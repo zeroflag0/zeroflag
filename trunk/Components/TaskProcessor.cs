@@ -316,7 +316,7 @@ namespace zeroflag.Components
 		#region Tasks
 		public void Add( Task task )
 		{
-			this.Tasks.Write( task );
+			this.Tasks.Add( task );
 			this.Thread.GetType();
 			//            if ( !this.backgroundWorker.IsBusy || _Working < 1 )
 			//            {
