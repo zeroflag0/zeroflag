@@ -196,6 +196,10 @@ namespace zeroflag.Components
 			/// </summary>
 			Running,
 			/// <summary>
+			/// The module is paused but ready to run.
+			/// </summary>
+			Paused,
+			/// <summary>
 			/// The module is shutting down.
 			/// </summary>
 			Shutdown,
@@ -358,6 +362,8 @@ namespace zeroflag.Components
 
 		public virtual void Update()
 		{
+			if ( this.State == ModuleStates.Paused )
+				return;
 			this.Update( DateTime.Now - this.LastUpdate );
 		}
 

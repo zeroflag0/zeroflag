@@ -161,7 +161,9 @@ namespace zeroflag.Components
 		protected override void OnStateChanged( Component.ModuleStates oldvalue, Component.ModuleStates newvalue )
 		{
 			this.Log.Message( newvalue + " ( previously " + oldvalue + " )" );
-			if ( (int)newvalue - (int)oldvalue > 1 || (int)newvalue < (int)oldvalue )
+			if ( ( (int)newvalue - (int)oldvalue > 1 || (int)newvalue < (int)oldvalue ) &&
+				!( newvalue == ModuleStates.Running && oldvalue == ModuleStates.Paused ||
+				newvalue == ModuleStates.Shutdown && oldvalue == ModuleStates.Running ) )
 				this.Log.Warning( newvalue + " ( previously " + oldvalue + " ) out of order." );
 
 			base.OnStateChanged( oldvalue, newvalue );
@@ -242,7 +244,7 @@ namespace zeroflag.Components
 
 		protected override void OnInitializeInner()
 		{
-			Console.WriteLine( this + ".OnInitializeInner()" ); 
+			Console.WriteLine( this + ".OnInitializeInner()" );
 			bool all;
 			List<Component> done = new List<Component>();
 			int retry = 0;
