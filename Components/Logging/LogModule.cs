@@ -103,7 +103,7 @@ namespace zeroflag.Components.Logging
 			get
 			{
 				var tp = _TaskProcessor = new zeroflag.Components.TaskProcessor() { Outer = this };
-				tp.CancelTimeout = TimeSpan.FromSeconds( 10 );
+				tp.CancelTimeout = TimeSpan.FromSeconds( 1 );
 				tp.Name = this.Name;
 				return tp;
 			}
