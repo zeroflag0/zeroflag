@@ -51,6 +51,16 @@ namespace zeroflag.Components
 		public Core()
 		{
 			this.LogModule = new zeroflag.Components.Logging.LogModule();
+
+			//for ( int i = 0; i < 10; i++ )
+			//{
+			//    using ( this.PerformanceLog["Timing10ms"].Record )
+			//    {
+			//        DateTime start = DateTime.Now;
+			//        DateTime end = start.AddMilliseconds( 10 );
+			//        while ( DateTime.Now < end ) ;
+			//    }
+			//}
 		}
 
 		#region Properties
@@ -140,7 +150,7 @@ namespace zeroflag.Components
 			get
 			{
 				//if ( _LogModule != null )
-					return _LogModule;
+				return _LogModule;
 				//else
 				//    return _LogModule = this.LogModuleCreate;
 				//return _LogModule ?? ( _LogModule = this.LogModuleCreate );
@@ -248,7 +258,8 @@ namespace zeroflag.Components
 			while ( this.State == ModuleStates.Running || this.State == ModuleStates.Ready )
 			{
 				now = DateTime.Now;
-				this.Update( last - now );
+				using ( this.PerformanceLog["Core"].Record )
+					this.Update( last - now );
 				last = now;
 				wait.WaitOne( 1 );
 			}
@@ -256,6 +267,40 @@ namespace zeroflag.Components
 
 		#endregion Run
 
+		#region PerformanceLog
+		private zeroflag.Components.Logging.PerformanceLog _PerformanceLog;
+
+		/// <summary>
+		/// Loghelper for performance data.
+		/// </summary>
+		public zeroflag.Components.Logging.PerformanceLog PerformanceLog
+		{
+			get { return _PerformanceLog ?? ( _PerformanceLog = this.PerformanceLogCreate ); }
+			//protected set
+			//{
+			//	if (_PerformanceLog != value)
+			//	{
+			//		//if (_PerformanceLog != null) { }
+			//		_PerformanceLog = value;
+			//		//if (_PerformanceLog != null) { }
+			//	}
+			//}
+		}
+
+		/// <summary>
+		/// Creates the default/initial value for PerformanceLog.
+		/// Loghelper for performance data.
+		/// </summary>
+		protected virtual zeroflag.Components.Logging.PerformanceLog PerformanceLogCreate
+		{
+			get
+			{
+				zeroflag.Components.Logging.PerformanceLog value = _PerformanceLog = new zeroflag.Components.Logging.PerformanceLog() { Log = this.Log, Outer = this };
+				return value;
+			}
+		}
+
+		#endregion PerformanceLog
 
 
 	}
