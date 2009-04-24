@@ -51,6 +51,26 @@
     <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release SingleThread|AnyCPU' ">
+    <OutputPath>bin\Release SingleThread\</OutputPath>
+    <DefineConstants>TRACE;CATCHALL</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release SingleThread|x86' ">
+    <OutputPath>bin\x86\Release SingleThread\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core">
@@ -78,6 +98,8 @@
     <Compile Include="Components\Component~1.cs" />
     <Compile Include="Components\ComponentCollection~2.cs" />
     <Compile Include="Components\ITaskProcessor.cs" />
+    <Compile Include="Components\Logging\PerformanceLogItem.cs" />
+    <Compile Include="Components\Logging\PerformanceLog.cs" />
     <Compile Include="Components\TaskProcessor.cs">
     </Compile>
     <Compile Include="Components\TaskProcessor.designer.cs">
@@ -238,6 +260,7 @@
     <Compile Include="Serialization\XmlSerializer.cs" />
     <Compile Include="Serialization\ZmlSerializer.cs" />
     <Compile Include="Threading\LocklessQueue.cs" />
+    <Compile Include="Time.cs" />
     <Compile Include="Translated.cs" />
   </ItemGroup>
   <ItemGroup>
