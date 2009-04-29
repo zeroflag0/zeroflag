@@ -32,7 +32,9 @@ using System.Text;
 
 namespace zeroflag.Collections
 {
-	public abstract class TreeNode<Self> : zeroflag.Collections.ITreeNode<Self>
+	public abstract class TreeNode<Self>
+		: zeroflag.Components.Component
+		, zeroflag.Collections.ITreeNode<Self>
 		where Self : TreeNode<Self>
 	{
 		#region Constructors
