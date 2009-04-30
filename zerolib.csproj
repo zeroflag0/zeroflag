@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -92,33 +92,57 @@
     <Compile Include="Collections\ITreeNode.cs" />
     <Compile Include="Collections\List.cs" />
     <Compile Include="Collections\Parent.cs" />
-    <Compile Include="Collections\TreeNode.cs" />
-    <Compile Include="Components\Component.cs" />
-    <Compile Include="Components\ComponentCollection.cs" />
-    <Compile Include="Components\Component~1.cs" />
-    <Compile Include="Components\ComponentCollection~2.cs" />
+    <Compile Include="Collections\TreeNode.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Component.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\ComponentCollection.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Component~1.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\ComponentCollection~2.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\ITaskProcessor.cs" />
     <Compile Include="Components\Logging\PerformanceLogItem.cs" />
-    <Compile Include="Components\Logging\PerformanceLog.cs" />
+    <Compile Include="Components\Logging\PerformanceLog.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\TaskProcessor.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Components\TaskProcessor.designer.cs">
       <DependentUpon>TaskProcessor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Components\Core.cs" />
+    <Compile Include="Components\Core.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\IComponent.cs" />
     <Compile Include="Components\ICore.cs" />
-    <Compile Include="Components\Module~1.cs" />
-    <Compile Include="Components\Core~1.cs" />
+    <Compile Include="Components\Module~1.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Components\Core~1.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Logging\ConsoleWriter.cs" />
     <Compile Include="Components\Logging\FileWriter.cs" />
     <Compile Include="Components\Logging\Log.cs" />
     <Compile Include="Components\Logging\LogMessage.cs" />
-    <Compile Include="Components\Logging\LogModule.cs" />
+    <Compile Include="Components\Logging\LogModule.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Logging\LogWriter.cs" />
-    <Compile Include="Components\Module.cs" />
+    <Compile Include="Components\Module.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Components\Task.cs" />
     <Compile Include="Components\TaskProcessorGroup.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Components\TaskProcessorGroup.Designer.cs">
       <DependentUpon>TaskProcessorGroup.cs</DependentUpon>

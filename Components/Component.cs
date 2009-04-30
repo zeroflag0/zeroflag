@@ -47,7 +47,8 @@ using System.Text;
 namespace zeroflag.Components
 {
 	public abstract class Component
-		: IDisposable
+		: System.ComponentModel.Component
+		, IDisposable
 		, IComponent<Core>
 		, IEquatable<Component>
 #if !SILVERLIGHT
@@ -437,12 +438,12 @@ namespace zeroflag.Components
 		/// </summary>
 		protected virtual void OnDispose() { }
 
-		public virtual void Dispose()
+		protected override void Dispose( bool disposing )
 		{
 			if ( this.State == ModuleStates.Disposed )
 				return;
 			this.OnDispose();
-			this.Dispose( true );
+			base.Dispose( disposing );
 			this.OnDisposeInner();
 			this.OnDisposePost();
 			this.State = ModuleStates.Disposed;
@@ -461,9 +462,9 @@ namespace zeroflag.Components
 		/// Dummy dispose to make components compatible to System.ComponentModel.
 		/// </summary>
 		/// <param name="disposing"></param>
-		protected virtual void Dispose( bool disposing )
-		{
-		}
+		//protected virtual void Dispose( bool disposing )
+		//{
+		//}
 
 
 		#region IsDisposed

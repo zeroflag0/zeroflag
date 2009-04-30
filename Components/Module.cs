@@ -309,7 +309,7 @@ namespace zeroflag.Components
 				this.Log.Warning( "Running in invalid state " + this.State + "." );
 		}
 
-		public override void Dispose()
+		protected override void Dispose( bool disposing )
 		{
 			if ( this.State == ModuleStates.Disposed )
 			{
@@ -318,7 +318,7 @@ namespace zeroflag.Components
 			}
 			this.Log.Message( "Disposing..." );
 			this.Resort();
-			base.Dispose();
+			base.Dispose( disposing );
 			this.Log.Message( "Disposed." );
 		}
 
