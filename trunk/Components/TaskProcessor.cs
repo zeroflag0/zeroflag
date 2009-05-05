@@ -221,7 +221,7 @@ namespace zeroflag.Components
 #endif
 					_Cancel = value;
 					if ( _Cancel )
-						this.CancelRequestTime = DateTime.Now;
+						this.CancelRequestTime = Time.Now;
 					else
 						this.CancelRequestTime = null;
 				}
@@ -492,12 +492,12 @@ namespace zeroflag.Components
 		#region CancelTimeout
 		#region CancelRequestTime
 
-		private DateTime? _CancelRequestTime;
+		private Time? _CancelRequestTime;
 
 		/// <summary>
 		/// When was the Cancel issued?
 		/// </summary>
-		public DateTime? CancelRequestTime
+		public Time? CancelRequestTime
 		{
 			get { return _CancelRequestTime; }
 			set
@@ -511,12 +511,12 @@ namespace zeroflag.Components
 
 		#endregion CancelRequestTime
 
-		private TimeSpan _CancelTimeout = TimeSpan.FromSeconds( 10 );
+		private Time _CancelTimeout = 2000;
 
 		/// <summary>
 		/// Time for how long the thread will be allowed to contineue after Cancel has been set.
 		/// </summary>
-		public TimeSpan CancelTimeout
+		public Time CancelTimeout
 		{
 			get { return _CancelTimeout; }
 			set
@@ -622,7 +622,7 @@ namespace zeroflag.Components
 		#endregion Wait
 
 
-		DateTime _LastWork = DateTime.Now;
+		Time _LastWork = Time.Now;
 		int _MissingParent = 0;
 		int _Working = 0;
 		int _Restart = 0;
@@ -686,8 +686,8 @@ namespace zeroflag.Components
 							return;
 						}
 						if ( ( this.Cancel || this.Disposing ) &&
-							 ( ( DateTime.Now - this.CancelRequestTime ) ?? TimeSpan.MaxValue ).TotalMilliseconds >
-							 this.CancelTimeout.TotalMilliseconds * 0.85 )
+							 ( Time.Now - this.CancelRequestTime ) >
+							 this.CancelTimeout * 0.85 )
 						{
 							Console.WriteLine( "TaskProcessor(" + this.Name + ") canceled..." );
 							break;
@@ -700,7 +700,7 @@ namespace zeroflag.Components
 							{
 								current = this.ScheduledTasks[0];
 								//verbose( "Testing " + current.Value );
-								if ( current.Value.Time < DateTime.Now )
+								if ( current.Value.Time < Time.Now )
 								{
 									verbose( "Using " + current );
 									this.ScheduledTasks.RemoveAt( 0 );
@@ -713,7 +713,7 @@ namespace zeroflag.Components
 							if ( current != null )
 							{
 								verbose( "Current = " + current );
-								if ( current.Value.Time == DateTime.MinValue || current.Value.Time < DateTime.Now )
+								if ( current.Value.Time == DateTime.MinValue || current.Value.Time < Time.Now )
 								{
 									try
 									{
@@ -733,12 +733,12 @@ namespace zeroflag.Components
 									this.ScheduledTasks.Sort( ( a, b ) => a.Value.Time.CompareTo( b.Value.Time ) );
 								}
 							}
-							_LastWork = DateTime.Now;
+							_LastWork = Time.Now;
 							//this.Tasks.RemoveAt( 0 );
 						}
 						else
 						{
-							if ( DateTime.Now - _LastWork > this.IdleThreadTimeout &&
+							if ( Time.Now - _LastWork > this.IdleThreadTimeout &&
 								 !this.Cancel )
 							{
 #if DEBUG
@@ -749,7 +749,7 @@ namespace zeroflag.Components
 #if DEBUG
 								//Console.WriteLine( "TaskProcessor(" + this.Name + ") resuming..." );
 #endif
-								_LastWork = DateTime.Now;
+								_LastWork = Time.Now;
 								//return;
 							}
 							else
@@ -759,7 +759,7 @@ namespace zeroflag.Components
 #if DEBUG_TRACE
 						if ( DebugTrace )
 						{
-							Console.WriteLine( this + ( this.Cancel ? " Cancel" : "" ) + ( this.Disposing ? " Disposing" : "" ) + " \n\touter=" + ( this.Outer == null ? "<null>" : this.Outer + " " + this.Outer.State ) + " \n\tcore=" + ( this.CoreBase == null ? "<null>" : this.CoreBase + " " + this.CoreBase.State ) + " \n\t" + new Func<DateTime, string>( time => time.ToString( "HH:mm:ss." ) + time.Millisecond )( DateTime.Now ) + " - " + this.Tasks.Count + ": \n\t" + this.Current );
+							Console.WriteLine( this + ( this.Cancel ? " Cancel" : "" ) + ( this.Disposing ? " Disposing" : "" ) + " \n\touter=" + ( this.Outer == null ? "<null>" : this.Outer + " " + this.Outer.State ) + " \n\tcore=" + ( this.CoreBase == null ? "<null>" : this.CoreBase + " " + this.CoreBase.State ) + " \n\t" + Time.Now + " - " + this.Tasks.Count + ": \n\t" + this.Current );
 							//Console.WriteLine( new System.Diagnostics.StackTrace() );
 						}
 #endif
@@ -847,7 +847,7 @@ namespace zeroflag.Components
 			{
 				Wait.Set();
 				System.Threading.Thread.Sleep( 10 );
-				if ( DateTime.Now - this.CancelRequestTime > this.CancelTimeout )
+				if ( Time.Now - this.CancelRequestTime > this.CancelTimeout )
 				{
 					Console.WriteLine( ( this.Name ?? this.ToString() ) + "CancelTimeout" );
 					try
@@ -865,7 +865,7 @@ namespace zeroflag.Components
 			//{
 			//    Wait.Set();
 			//    System.System.Threading.Thread.Sleep( 50 );
-			//    if ( DateTime.Now - this.CancelRequestTime > this.CancelTimeout )
+			//    if ( Time.Now - this.CancelRequestTime > this.CancelTimeout )
 			//    {
 			//        Console.WriteLine( ( this.Name ?? this.ToString() ) + "CancelTimeout" );
 			//        try
@@ -891,7 +891,7 @@ namespace zeroflag.Components
 		[Conditional( "VERBOSE_TASKPROCESSOR" )]
 		public static void verbose( object msg )
 		{
-			msg = DateTime.Now.ToString( "HH:mm:ss" ) + " " + msg;
+			msg = Time.Now + " " + msg;
 			Console.WriteLine( msg );
 			System.Diagnostics.Debug.WriteLine( msg );
 		}
