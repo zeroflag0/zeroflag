@@ -8,6 +8,7 @@ using System.Windows.Forms;
 
 namespace zeroflag.Forms.Reflected
 {
+	[Serializable]
 	public partial class ListPropertyEditor<T> : UserControl, zeroflag.Forms.Reflected.IListEditor
 	{
 		public ListPropertyEditor()

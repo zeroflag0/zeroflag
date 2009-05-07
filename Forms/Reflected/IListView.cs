@@ -18,7 +18,7 @@ namespace zeroflag.Forms.Reflected
 		void Synchronize();
 		//TypeDescription TypeDescription { get; set; }
 	}
-
+	[Serializable]
 	public class ListViewControlBase : System.Windows.Forms.UserControl//, IListView
 	{
 		#region IListView Members
