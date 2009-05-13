@@ -74,7 +74,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="GetHandler.cs" />
     <Compile Include="Reflection\InstanceProvider.cs" />
-    <None Include="Reflection\TypeHelper.cs" />
+    <Compile Include="Reflection\TypeHelper.cs" />
     <Compile Include="Reflection\TypeProvider.cs" />
     <Compile Include="Silverlight\ICloneable.cs" />
     <Compile Include="Silverlight\XmlTextWriter.cs" />
@@ -83,6 +83,12 @@
   <ItemGroup>
     <None Include="Collections\_ClassDiagram.cd" />
     <None Include="Components\Logging\_ClassDiagram.cd" />
+    <Compile Include="Components\IBasicComponent.cs" />
+    <Compile Include="Components\ITaskProcessor.cs" />
+    <Compile Include="Components\Logging\MemoryWriter.cs" />
+    <Compile Include="Components\Logging\PerformanceLog.cs" />
+    <Compile Include="Components\Logging\PerformanceLogItem.cs" />
+    <Compile Include="Components\Task.cs" />
     <Compile Include="Serialization\Attributes\Attribute.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -98,78 +104,78 @@
     <Compile Include="Serialization\Attributes\SerializerRelevantPropertiesAttribute.cs">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="Serialization\Converters\Converter.cs">
+    <Compile Include="Serialization\Converters\Converter.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\ConverterCollection.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\ConverterCollection.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\Converter~2.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\Converter~2.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\IConverter.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\IConverter.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\InvalidConversionException.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\InvalidConversionException.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\Boolean.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\Boolean.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\Byte.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\Byte.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\ByteArray.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\ByteArray.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\Char.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\Char.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\Converter.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\Converter.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\Converter~1.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\Converter~1.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\Decimal.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\Decimal.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\Double.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\Double.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\Enum.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\Enum.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\Int16.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\Int16.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\Int32.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\Int32.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\Int64.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\Int64.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\Sbyte.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\Sbyte.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\Single.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\Single.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\String.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\String.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\Type.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\Type.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\UInt16.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\UInt16.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\UInt32.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\UInt32.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Converters\String\UInt64.cs">
+    </Compile>
+    <Compile Include="Serialization\Converters\String\UInt64.cs">
       <SubType>Code</SubType>
-    </None>
+    </Compile>
     <None Include="Serialization\Descriptors\ArrayDescriptor.cs">
       <SubType>Code</SubType>
     </None>
@@ -232,16 +238,13 @@
       <SubType>Code</SubType>
     </None>
     <Compile Include="Silverlight\Attributes.cs" />
+    <Compile Include="Silverlight\Component.cs" />
+    <Compile Include="Silverlight\Stopwatch.cs" />
+    <Compile Include="Time.cs" />
     <None Include="Serialization\Converters\_ClassDiagram.cd" />
     <None Include="Serialization\Descriptors\_ClassDiagram.cd" />
     <None Include="Serialization\_ClassDiagram.cd" />
     <None Include="Threading\_ClassDiagram.cd" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="mscorlib" />
-    <Reference Include="system" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Components\TaskProcessor.resx">
@@ -250,6 +253,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Serialization\BinarySerialization.concept.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="mscorlib" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Reflection\Descriptors\" />

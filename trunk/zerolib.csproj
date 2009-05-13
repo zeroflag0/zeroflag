@@ -1,351 +1,351 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>zeroflag</RootNamespace>
-    <AssemblyName>zerolib</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkSubset>Client</TargetFrameworkSubset>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NOCATCH</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE;CATCHALL</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;VERBOSE LOG_DIRECT_ERROR _LOG_DIRECT</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release SingleThread|AnyCPU' ">
-    <OutputPath>bin\Release SingleThread\</OutputPath>
-    <DefineConstants>TRACE;CATCHALL</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release SingleThread|x86' ">
-    <OutputPath>bin\x86\Release SingleThread\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
-    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
-    <ErrorReport>prompt</ErrorReport>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Bindable.cs" />
-    <Compile Include="Collections\Child.cs" />
-    <Compile Include="Collections\Collection.cs" />
-    <Compile Include="Collections\Collection2.cs" />
-    <Compile Include="Collections\CollectionSynchronizer.cs" />
-    <Compile Include="Collections\Delegates.cs" />
-    <Compile Include="Collections\Dictionary.cs" />
-    <Compile Include="Collections\ITreeNode.cs" />
-    <Compile Include="Collections\List.cs" />
-    <Compile Include="Collections\Parent.cs" />
-    <Compile Include="Collections\TreeNode.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\Component.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\ComponentCollection.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\Component~1.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\ComponentCollection~2.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\ITaskProcessor.cs" />
-    <Compile Include="Components\Logging\PerformanceLogItem.cs" />
-    <Compile Include="Components\Logging\PerformanceLog.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\TaskProcessor.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\TaskProcessor.designer.cs">
-      <DependentUpon>TaskProcessor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Components\Core.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\IComponent.cs" />
-    <Compile Include="Components\ICore.cs" />
-    <Compile Include="Components\Module~1.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\Core~1.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\Logging\ConsoleWriter.cs" />
-    <Compile Include="Components\Logging\FileWriter.cs" />
-    <Compile Include="Components\Logging\Log.cs" />
-    <Compile Include="Components\Logging\LogMessage.cs" />
-    <Compile Include="Components\Logging\LogModule.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\Logging\LogWriter.cs" />
-    <Compile Include="Components\Module.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\Task.cs" />
-    <Compile Include="Components\TaskProcessorGroup.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Components\TaskProcessorGroup.Designer.cs">
-      <DependentUpon>TaskProcessorGroup.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Extensions.cs" />
-    <Compile Include="Forms\DebugForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\DebugForm.Designer.cs">
-      <DependentUpon>DebugForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\Filtering.cs" />
-    <Compile Include="Forms\Reflected\IListEditor.cs" />
-    <Compile Include="Forms\Reflected\IListView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListEditor.Designer.cs">
-      <DependentUpon>ListEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListPropertyEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListPropertyEditor.Designer.cs">
-      <DependentUpon>ListPropertyEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListView.Designer.cs">
-      <DependentUpon>ListView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListViewItem.cs" />
-    <Compile Include="Forms\Reflected\ListViewMagic.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListViewMagic.designer.cs">
-      <DependentUpon>ListViewMagic.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\PropertyDescription.cs" />
-    <Compile Include="Forms\Reflected\PropertyTreeView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\PropertyTreeView.Designer.cs">
-      <DependentUpon>PropertyTreeView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\PropertyTreeViewItem.cs" />
-    <Compile Include="Forms\Reflected\TreeEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\TreeEditor.Designer.cs">
-      <DependentUpon>TreeEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\TreeView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\TreeView.Designer.cs">
-      <DependentUpon>TreeView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\TreeViewItem.cs" />
-    <Compile Include="Forms\Reflected\TypeDescription.cs" />
-    <Compile Include="Forms\Reflected\TypeDescriptionEditor.cs" />
-    <Compile Include="Forms\Reflected\TypeDescriptionEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\TypeDescriptionEditorControl.Designer.cs">
-      <DependentUpon>TypeDescriptionEditorControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\TypeList.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\TypeList.Designer.cs">
-      <DependentUpon>TypeList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\SplitContainer.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Forms\SplitContainer.Designer.cs">
-      <DependentUpon>SplitContainer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="GetHandler.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Reflection\InstanceProvider.cs" />
-    <Compile Include="Reflection\TypeHelper.cs" />
-    <Compile Include="Reflection\TypeProvider.cs" />
-    <Compile Include="Serialization\Attributes\Attribute.cs" />
-    <Compile Include="Serialization\Attributes\SerializerIgnorePropertiesAttribute.cs" />
-    <Compile Include="Serialization\Attributes\SerializerRedirectAttribute.cs" />
-    <Compile Include="Serialization\Attributes\SerializerIgnoreAttribute.cs" />
-    <Compile Include="Serialization\Attributes\SerializerRelevantPropertiesAttribute.cs" />
-    <Compile Include="Serialization\Benchmark.cs" />
-    <Compile Include="Serialization\Converters\Converter.cs" />
-    <Compile Include="Serialization\Converters\ConverterCollection.cs" />
-    <Compile Include="Serialization\Converters\Converter~2.cs" />
-    <Compile Include="Serialization\Converters\IConverter.cs" />
-    <Compile Include="Serialization\Converters\InvalidConversionException.cs" />
-    <Compile Include="Serialization\Converters\String\Boolean.cs" />
-    <Compile Include="Serialization\Converters\String\Byte.cs" />
-    <Compile Include="Serialization\Converters\String\Char.cs" />
-    <Compile Include="Serialization\Converters\String\Color.cs" />
-    <Compile Include="Serialization\Converters\String\Converter.cs" />
-    <Compile Include="Serialization\Converters\String\Converter~1.cs" />
-    <Compile Include="Serialization\Converters\String\ByteArray.cs" />
-    <Compile Include="Serialization\Converters\String\Decimal.cs" />
-    <Compile Include="Serialization\Converters\String\Double.cs" />
-    <Compile Include="Serialization\Converters\String\Enum.cs" />
-    <Compile Include="Serialization\Converters\String\Int16.cs" />
-    <Compile Include="Serialization\Converters\String\Int32.cs" />
-    <Compile Include="Serialization\Converters\String\Int64.cs" />
-    <Compile Include="Serialization\Converters\String\Sbyte.cs" />
-    <Compile Include="Serialization\Converters\String\Single.cs" />
-    <Compile Include="Serialization\Converters\String\String.cs" />
-    <Compile Include="Serialization\Converters\String\Type.cs" />
-    <Compile Include="Serialization\Converters\String\UInt16.cs" />
-    <Compile Include="Serialization\Converters\String\UInt32.cs" />
-    <Compile Include="Serialization\Converters\String\UInt64.cs" />
-    <Compile Include="Serialization\Descriptors\Context.cs" />
-    <Compile Include="Serialization\Descriptors\ArrayDescriptor.cs" />
-    <Compile Include="Serialization\Descriptors\DateTimeDescriptor.cs" />
-    <Compile Include="Serialization\Descriptors\DelegateDescriptor.cs" />
-    <Compile Include="Serialization\Descriptors\Descriptor.cs" />
-    <Compile Include="Serialization\Descriptors\Descriptor~1.cs" />
-    <Compile Include="Serialization\Descriptors\ListDescriptor~1.cs" />
-    <Compile Include="Serialization\Descriptors\NamedObjectProvider.cs" />
-    <Compile Include="Serialization\Descriptors\NamedObjectDescriptor~1.cs" />
-    <Compile Include="Serialization\Descriptors\ObjectDescriptor.cs" />
-    <Compile Include="Serialization\Descriptors\StringDescriptor.cs" />
-    <Compile Include="Serialization\Descriptors\TypeDescriptor.cs" />
-    <Compile Include="Serialization\ExceptionCollection.cs" />
-    <Compile Include="Serialization\ExceptionTrace.cs" />
-    <Compile Include="Serialization\Descriptors\NamedObjectProvider~1.cs" />
-    <Compile Include="Serialization\PropertyFinder.cs" />
-    <Compile Include="Serialization\SerializationAttribute.cs" />
-    <Compile Include="Serialization\Serializer.cs" />
-    <Compile Include="Serialization\TypeFinder.cs" />
-    <Compile Include="Serialization\UpgradeAttribute.cs" />
-    <Compile Include="Serialization\XmlSerializer.cs" />
-    <Compile Include="Serialization\ZmlSerializer.cs" />
-    <Compile Include="Threading\LocklessQueue.cs" />
-    <Compile Include="Time.cs" />
-    <Compile Include="Translated.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Serialization\BinarySerialization.concept.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Components\_ClassDiagram.cd" />
-    <None Include="_ClassDiagram.cd" />
-    <None Include="Collections\_ClassDiagram.cd" />
-    <None Include="Components\Logging\_ClassDiagram.cd" />
-    <None Include="Serialization\Converters\_ClassDiagram.cd" />
-    <None Include="Serialization\Descriptors\_ClassDiagram.cd" />
-    <None Include="Serialization\_ClassDiagram.cd" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Forms\DebugForm.resx">
-      <DependentUpon>DebugForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\ListEditor.resx">
-      <DependentUpon>ListEditor.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\ListPropertyEditor.resx">
-      <DependentUpon>ListPropertyEditor.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\ListView.resx">
-      <DependentUpon>ListView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\ListViewMagic.resx">
-      <DependentUpon>ListViewMagic.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\PropertyTreeView.resx">
-      <DependentUpon>PropertyTreeView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\TreeEditor.resx">
-      <DependentUpon>TreeEditor.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\TreeView.resx">
-      <DependentUpon>TreeView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\TypeDescriptionEditorControl.resx">
-      <DependentUpon>TypeDescriptionEditorControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SplitContainer.resx">
-      <DependentUpon>SplitContainer.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Reflection\Descriptors\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+		<ProductVersion>9.0.30729</ProductVersion>
+		<SchemaVersion>2.0</SchemaVersion>
+		<ProjectGuid>{1BDE93A3-B95E-4BFE-8EBB-4A6FF73385FB}</ProjectGuid>
+		<OutputType>Library</OutputType>
+		<AppDesignerFolder>Properties</AppDesignerFolder>
+		<RootNamespace>zeroflag</RootNamespace>
+		<AssemblyName>zerolib</AssemblyName>
+		<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+		<FileAlignment>512</FileAlignment>
+		<TargetFrameworkSubset>Client</TargetFrameworkSubset>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+		<DebugSymbols>true</DebugSymbols>
+		<DebugType>full</DebugType>
+		<Optimize>false</Optimize>
+		<OutputPath>bin\</OutputPath>
+		<DefineConstants>TRACE;DEBUG;NOCATCH</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+		<DebugType>pdbonly</DebugType>
+		<Optimize>true</Optimize>
+		<OutputPath>bin\</OutputPath>
+		<DefineConstants>TRACE;CATCHALL</DefineConstants>
+		<ErrorReport>prompt</ErrorReport>
+		<WarningLevel>4</WarningLevel>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+		<DebugSymbols>true</DebugSymbols>
+		<OutputPath>bin\</OutputPath>
+		<DefineConstants>TRACE;DEBUG;VERBOSE LOG_DIRECT_ERROR _LOG_DIRECT</DefineConstants>
+		<DebugType>full</DebugType>
+		<PlatformTarget>x86</PlatformTarget>
+		<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+		<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+		<ErrorReport>prompt</ErrorReport>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+		<OutputPath>bin\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<Optimize>true</Optimize>
+		<DebugType>pdbonly</DebugType>
+		<PlatformTarget>x86</PlatformTarget>
+		<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+		<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+		<ErrorReport>prompt</ErrorReport>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release SingleThread|AnyCPU' ">
+		<OutputPath>bin\Release SingleThread\</OutputPath>
+		<DefineConstants>TRACE;CATCHALL</DefineConstants>
+		<Optimize>true</Optimize>
+		<DebugType>pdbonly</DebugType>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+		<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+		<ErrorReport>prompt</ErrorReport>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release SingleThread|x86' ">
+		<OutputPath>bin\x86\Release SingleThread\</OutputPath>
+		<DefineConstants>TRACE</DefineConstants>
+		<Optimize>true</Optimize>
+		<DebugType>pdbonly</DebugType>
+		<PlatformTarget>x86</PlatformTarget>
+		<CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+		<CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+		<ErrorReport>prompt</ErrorReport>
+	</PropertyGroup>
+	<ItemGroup>
+		<Reference Include="System" />
+		<Reference Include="System.Core">
+			<RequiredTargetFramework>3.5</RequiredTargetFramework>
+		</Reference>
+		<Reference Include="System.Drawing" />
+		<Reference Include="System.Windows.Forms" />
+		<Reference Include="System.Data" />
+		<Reference Include="System.Xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<Compile Include="Bindable.cs" />
+		<Compile Include="Collections\Child.cs" />
+		<Compile Include="Collections\Collection.cs" />
+		<Compile Include="Collections\Collection2.cs" />
+		<Compile Include="Collections\CollectionSynchronizer.cs" />
+		<Compile Include="Collections\Delegates.cs" />
+		<Compile Include="Collections\Dictionary.cs" />
+		<Compile Include="Collections\ITreeNode.cs" />
+		<Compile Include="Collections\List.cs" />
+		<Compile Include="Collections\Parent.cs" />
+		<Compile Include="Collections\TreeNode.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\Component.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\ComponentCollection.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\Component~1.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\ComponentCollection~2.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\ITaskProcessor.cs" />
+		<Compile Include="Components\Logging\PerformanceLogItem.cs" />
+		<Compile Include="Components\Logging\PerformanceLog.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\TaskProcessor.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\TaskProcessor.designer.cs">
+			<DependentUpon>TaskProcessor.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Components\Core.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\IComponent.cs" />
+		<Compile Include="Components\ICore.cs" />
+		<Compile Include="Components\Module~1.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\Core~1.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\Logging\ConsoleWriter.cs" />
+		<Compile Include="Components\Logging\FileWriter.cs" />
+		<Compile Include="Components\Logging\Log.cs" />
+		<Compile Include="Components\Logging\LogMessage.cs" />
+		<Compile Include="Components\Logging\LogModule.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\Logging\LogWriter.cs" />
+		<Compile Include="Components\Module.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\Task.cs" />
+		<Compile Include="Components\TaskProcessorGroup.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Components\TaskProcessorGroup.Designer.cs">
+			<DependentUpon>TaskProcessorGroup.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Extensions.cs" />
+		<Compile Include="Forms\DebugForm.cs">
+			<SubType>Form</SubType>
+		</Compile>
+		<Compile Include="Forms\DebugForm.Designer.cs">
+			<DependentUpon>DebugForm.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Forms\Reflected\Filtering.cs" />
+		<Compile Include="Forms\Reflected\IListEditor.cs" />
+		<Compile Include="Forms\Reflected\IListView.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Forms\Reflected\ListEditor.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Forms\Reflected\ListEditor.Designer.cs">
+			<DependentUpon>ListEditor.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Forms\Reflected\ListPropertyEditor.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Forms\Reflected\ListPropertyEditor.Designer.cs">
+			<DependentUpon>ListPropertyEditor.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Forms\Reflected\ListView.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Forms\Reflected\ListView.Designer.cs">
+			<DependentUpon>ListView.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Forms\Reflected\ListViewItem.cs" />
+		<Compile Include="Forms\Reflected\ListViewMagic.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Forms\Reflected\ListViewMagic.designer.cs">
+			<DependentUpon>ListViewMagic.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Forms\Reflected\PropertyDescription.cs" />
+		<Compile Include="Forms\Reflected\PropertyTreeView.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Forms\Reflected\PropertyTreeView.Designer.cs">
+			<DependentUpon>PropertyTreeView.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Forms\Reflected\PropertyTreeViewItem.cs" />
+		<Compile Include="Forms\Reflected\TreeEditor.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Forms\Reflected\TreeEditor.Designer.cs">
+			<DependentUpon>TreeEditor.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Forms\Reflected\TreeView.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Forms\Reflected\TreeView.Designer.cs">
+			<DependentUpon>TreeView.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Forms\Reflected\TreeViewItem.cs" />
+		<Compile Include="Forms\Reflected\TypeDescription.cs" />
+		<Compile Include="Forms\Reflected\TypeDescriptionEditor.cs" />
+		<Compile Include="Forms\Reflected\TypeDescriptionEditorControl.cs">
+			<SubType>UserControl</SubType>
+		</Compile>
+		<Compile Include="Forms\Reflected\TypeDescriptionEditorControl.Designer.cs">
+			<DependentUpon>TypeDescriptionEditorControl.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Forms\Reflected\TypeList.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Forms\Reflected\TypeList.Designer.cs">
+			<DependentUpon>TypeList.cs</DependentUpon>
+		</Compile>
+		<Compile Include="Forms\SplitContainer.cs">
+			<SubType>Component</SubType>
+		</Compile>
+		<Compile Include="Forms\SplitContainer.Designer.cs">
+			<DependentUpon>SplitContainer.cs</DependentUpon>
+		</Compile>
+		<Compile Include="GetHandler.cs" />
+		<Compile Include="Properties\AssemblyInfo.cs" />
+		<Compile Include="Reflection\InstanceProvider.cs" />
+		<Compile Include="Reflection\TypeHelper.cs" />
+		<Compile Include="Reflection\TypeProvider.cs" />
+		<Compile Include="Serialization\Attributes\Attribute.cs" />
+		<Compile Include="Serialization\Attributes\SerializerIgnorePropertiesAttribute.cs" />
+		<Compile Include="Serialization\Attributes\SerializerRedirectAttribute.cs" />
+		<Compile Include="Serialization\Attributes\SerializerIgnoreAttribute.cs" />
+		<Compile Include="Serialization\Attributes\SerializerRelevantPropertiesAttribute.cs" />
+		<Compile Include="Serialization\Benchmark.cs" />
+		<Compile Include="Serialization\Converters\Converter.cs" />
+		<Compile Include="Serialization\Converters\ConverterCollection.cs" />
+		<Compile Include="Serialization\Converters\Converter~2.cs" />
+		<Compile Include="Serialization\Converters\IConverter.cs" />
+		<Compile Include="Serialization\Converters\InvalidConversionException.cs" />
+		<Compile Include="Serialization\Converters\String\Boolean.cs" />
+		<Compile Include="Serialization\Converters\String\Byte.cs" />
+		<Compile Include="Serialization\Converters\String\Char.cs" />
+		<Compile Include="Serialization\Converters\String\Color.cs" />
+		<Compile Include="Serialization\Converters\String\Converter.cs" />
+		<Compile Include="Serialization\Converters\String\Converter~1.cs" />
+		<Compile Include="Serialization\Converters\String\ByteArray.cs" />
+		<Compile Include="Serialization\Converters\String\Decimal.cs" />
+		<Compile Include="Serialization\Converters\String\Double.cs" />
+		<Compile Include="Serialization\Converters\String\Enum.cs" />
+		<Compile Include="Serialization\Converters\String\Int16.cs" />
+		<Compile Include="Serialization\Converters\String\Int32.cs" />
+		<Compile Include="Serialization\Converters\String\Int64.cs" />
+		<Compile Include="Serialization\Converters\String\Sbyte.cs" />
+		<Compile Include="Serialization\Converters\String\Single.cs" />
+		<Compile Include="Serialization\Converters\String\String.cs" />
+		<Compile Include="Serialization\Converters\String\Type.cs" />
+		<Compile Include="Serialization\Converters\String\UInt16.cs" />
+		<Compile Include="Serialization\Converters\String\UInt32.cs" />
+		<Compile Include="Serialization\Converters\String\UInt64.cs" />
+		<Compile Include="Serialization\Descriptors\Context.cs" />
+		<Compile Include="Serialization\Descriptors\ArrayDescriptor.cs" />
+		<Compile Include="Serialization\Descriptors\DateTimeDescriptor.cs" />
+		<Compile Include="Serialization\Descriptors\DelegateDescriptor.cs" />
+		<Compile Include="Serialization\Descriptors\Descriptor.cs" />
+		<Compile Include="Serialization\Descriptors\Descriptor~1.cs" />
+		<Compile Include="Serialization\Descriptors\ListDescriptor~1.cs" />
+		<Compile Include="Serialization\Descriptors\NamedObjectProvider.cs" />
+		<Compile Include="Serialization\Descriptors\NamedObjectDescriptor~1.cs" />
+		<Compile Include="Serialization\Descriptors\ObjectDescriptor.cs" />
+		<Compile Include="Serialization\Descriptors\StringDescriptor.cs" />
+		<Compile Include="Serialization\Descriptors\TypeDescriptor.cs" />
+		<Compile Include="Serialization\ExceptionCollection.cs" />
+		<Compile Include="Serialization\ExceptionTrace.cs" />
+		<Compile Include="Serialization\Descriptors\NamedObjectProvider~1.cs" />
+		<Compile Include="Serialization\PropertyFinder.cs" />
+		<Compile Include="Serialization\SerializationAttribute.cs" />
+		<Compile Include="Serialization\Serializer.cs" />
+		<Compile Include="Serialization\TypeFinder.cs" />
+		<Compile Include="Serialization\UpgradeAttribute.cs" />
+		<Compile Include="Serialization\XmlSerializer.cs" />
+		<Compile Include="Serialization\ZmlSerializer.cs" />
+		<Compile Include="Threading\LocklessQueue.cs" />
+		<Compile Include="Time.cs" />
+		<Compile Include="Translated.cs" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="Serialization\BinarySerialization.concept.txt" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="Components\_ClassDiagram.cd" />
+		<None Include="_ClassDiagram.cd" />
+		<None Include="Collections\_ClassDiagram.cd" />
+		<None Include="Components\Logging\_ClassDiagram.cd" />
+		<None Include="Serialization\Converters\_ClassDiagram.cd" />
+		<None Include="Serialization\Descriptors\_ClassDiagram.cd" />
+		<None Include="Serialization\_ClassDiagram.cd" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Forms\DebugForm.resx">
+			<DependentUpon>DebugForm.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Forms\Reflected\ListEditor.resx">
+			<DependentUpon>ListEditor.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Forms\Reflected\ListPropertyEditor.resx">
+			<DependentUpon>ListPropertyEditor.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Forms\Reflected\ListView.resx">
+			<DependentUpon>ListView.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Forms\Reflected\ListViewMagic.resx">
+			<DependentUpon>ListViewMagic.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Forms\Reflected\PropertyTreeView.resx">
+			<DependentUpon>PropertyTreeView.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Forms\Reflected\TreeEditor.resx">
+			<DependentUpon>TreeEditor.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Forms\Reflected\TreeView.resx">
+			<DependentUpon>TreeView.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Forms\Reflected\TypeDescriptionEditorControl.resx">
+			<DependentUpon>TypeDescriptionEditorControl.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+		<EmbeddedResource Include="Forms\SplitContainer.resx">
+			<DependentUpon>SplitContainer.cs</DependentUpon>
+			<SubType>Designer</SubType>
+		</EmbeddedResource>
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Reflection\Descriptors\" />
+	</ItemGroup>
+	<Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+	<!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>

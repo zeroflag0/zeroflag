@@ -25,6 +25,8 @@ namespace zeroflag.Components
 		void Finish();
 		bool IsRunning { get; }
 		string Name { get; set; }
+#if !SILVERLIGHT
 		System.Threading.ThreadPriority ThreadPriority { get; set; }
+#endif
 	}
 }

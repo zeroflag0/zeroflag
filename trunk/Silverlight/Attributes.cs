@@ -25,6 +25,25 @@ namespace System
 		}
 		public class ExpandableObjectConverter
 		{
+			public virtual bool CanConvertTo( ITypeDescriptorContext context, Type destinationType )
+			{
+				return false;
+			}
+
+			public virtual object ConvertTo( ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value, Type destinationType )
+			{
+				return null;
+			}
+
+			public virtual bool CanConvertFrom( ITypeDescriptorContext context, Type sourceType )
+			{
+				return false;
+			}
+
+			public virtual object ConvertFrom( ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value )
+			{
+				return null;
+			}
 		}
 	}
 }
