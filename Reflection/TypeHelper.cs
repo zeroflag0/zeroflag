@@ -57,6 +57,7 @@
 using System;
 using System.Text;
 using zeroflag.Collections;
+using Assembly = System.Reflection.Assembly;
 
 public static class TypeExtensions
 {
@@ -137,6 +138,7 @@ namespace zeroflag
 				return type;
 			}
 
+#if !SILVERLIGHT
 			public static List<Type> ScanAssemblies()
 			{
 				return ScanAssemblies( (System.Reflection.Assembly[])null );
@@ -209,6 +211,68 @@ namespace zeroflag
 					return _Types;
 				}
 			}
+#else
+			public static List<Type> ScanAssemblies()
+			{
+				try
+				{
+					lock ( Assemblies )
+					{
+						lock ( _Types )
+						{
+							ScanAssembly( Assembly.GetCallingAssembly() );
+							ScanAssembly( Assembly.GetExecutingAssembly() );
+
+							return _Types;
+						}
+					}
+				}
+				catch ( Exception exc )
+				{
+					System.Diagnostics.Debugger.Log( 0, "zeroflag.Reflection.TypeHelper", exc.ToString() );
+					Console.WriteLine( exc );
+					return _Types;
+				}
+			}
+
+
+			static void ScanAssembly( Assembly assembly )
+			{
+				if ( !Assemblies.Contains( assembly ) )
+				{
+					Assemblies.Add( assembly );
+
+					//foreach ( var name in assembly.GetReferencedAssemblies() )
+					//    ScanAssemblies( AppDomain.CurrentDomain.Load( name ) );
+
+					// assembly hasn't been parsed yet...
+					Type[] types = null;
+					try
+					{
+						types = assembly.GetExportedTypes();
+					}
+					catch ( System.Reflection.ReflectionTypeLoadException exc )
+					{
+						types = exc.Types;
+					}
+					// add all types...
+					foreach ( System.Type type in types )
+					{
+						// avoid duplicates...
+						if ( !_Types.Contains( type ) )
+						{
+							_Types.Add( type );
+							if ( type.FullName != null && !TypeNames.ContainsKey( type.FullName ) )
+								TypeNames.Add( type.FullName, type );
+							if ( type.BaseType != null )
+								ScanAssembly( type.BaseType.Assembly );
+						}
+					}
+
+				}
+
+			}
+#endif
 
 			static List<Type> _Types = new List<Type>();
 
@@ -216,8 +280,11 @@ namespace zeroflag
 			{
 				get
 				{
+#if !SILVERLIGHT
 					if ( Assemblies.Count != AppDomain.CurrentDomain.GetAssemblies().Length )
-						ScanAssemblies();
+#else
+#endif
+					ScanAssemblies();
 					return TypeHelper._Types;
 				}
 			}
@@ -326,7 +393,7 @@ namespace zeroflag
 				{
 					type = Type.GetType( name );
 					if ( type == null )
-						foreach ( System.Reflection.Assembly ass in AppDomain.CurrentDomain.GetAssemblies() )
+						foreach ( System.Reflection.Assembly ass in Assemblies )
 						{
 							if ( ( type = ass.GetType( name ) ) != null )
 								break;
