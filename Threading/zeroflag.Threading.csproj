@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -17,7 +17,8 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>zeroflag.Threading.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -190,7 +191,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="_ClassDiagram.cd" />
-    <None Include="zeroflag.Threading.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Collections\zeroflag.Collections.csproj">
+      <Project>{C4B9F045-0005-4B33-B426-4134C161C9EE}</Project>
+      <Name>zeroflag.Collections</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

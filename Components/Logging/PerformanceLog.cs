@@ -48,6 +48,63 @@ namespace zeroflag.Components.Logging
 {
 	public class PerformanceLog : zeroflag.Components.Component
 	{
+		public PerformanceLog()
+		{
+		}
+
+		protected override void Dispose( bool disposing )
+		{
+			if ( _CsvFile != null )
+				this.CsvFile.Dispose();
+			base.Dispose( disposing );
+		}
+
+		#region CsvFile
+		private System.IO.StreamWriter _CsvFile;
+
+		/// <summary>
+		/// Writer for a Csv File.
+		/// </summary>
+		public System.IO.StreamWriter CsvFile
+		{
+			get { return _CsvFile ?? ( _CsvFile = this.CsvFileInitialize( this.CsvFileCreate ) ); }
+			//protected 
+			//set
+			//{
+			//	if (_CsvFile != value)
+			//	{
+			//		//if (_CsvFile != null) { }
+			//		_CsvFile = value;
+			//		//if (_CsvFile != null) { }
+			//	}
+			//}
+		}
+
+		/// <summary>
+		/// Creates the default/initial value for CsvFile.
+		/// Writer for a Csv File.
+		/// </summary>
+		protected virtual System.IO.StreamWriter CsvFileCreate
+		{
+			get
+			{
+				string filename = "performance" + Time.Now.ToString().Replace( ":", "" ) + ".csv";
+				return new System.IO.StreamWriter( filename );
+			}
+		}
+
+		/// <summary>
+		/// Initializes the default value for CsvFile.
+		/// Writer for a Csv File.
+		/// </summary>
+		protected virtual System.IO.StreamWriter CsvFileInitialize( System.IO.StreamWriter v )
+		{
+
+			return v;
+		}
+
+		#endregion CsvFile
+
 
 		#region Log
 
@@ -215,6 +272,8 @@ namespace zeroflag.Components.Logging
 			{
 				this.LastWrite = now;
 				this.WriteLog();
+				if ( this.CoreBase.State == ModuleStates.Running )
+					this.WriteCsv();
 			}
 
 			base.OnUpdate( timeSinceLastUpdate );
@@ -233,6 +292,31 @@ namespace zeroflag.Components.Logging
 			}
 
 			this.Log.Message( b );
+		}
+		string _CsvSeperator = ",";
+		int _WriteCsvFirst = 0;
+		long _CsvStart;
+		private void WriteCsv()
+		{
+			if ( _WriteCsvFirst < 4 )
+				_WriteCsvFirst++;
+			if ( _WriteCsvFirst == 1 )
+				return;
+			else if ( _WriteCsvFirst == 2 )
+			{
+				_CsvStart = Time.Now;
+				// first line := column headers
+				StringBuilder h = new StringBuilder();
+				h.Append( "time" ).Append( _CsvSeperator );
+				foreach ( var item in this.Items.Values )
+					h.Append( item.Name ).Append( _CsvSeperator );
+				this.CsvFile.WriteLine( h.ToString() );
+			}
+			StringBuilder b = new StringBuilder();
+			b.Append( ( Time.NowMs - _CsvStart ).ToString() ).Append( _CsvSeperator );
+			foreach ( var item in this.Items.Values )
+				b.Append( item.PerSecond ).Append( _CsvSeperator );
+			this.CsvFile.WriteLine( b.ToString() );
 		}
 	}
 }

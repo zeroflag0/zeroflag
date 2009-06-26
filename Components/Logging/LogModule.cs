@@ -74,7 +74,9 @@ namespace zeroflag.Components.Logging
 			{
 				var Writers = _Writers = new List<LogWriter>();
 				Writers.Add( new ConsoleWriter() );
+#if !SILVERLIGHT
 				Writers.Add( new FileWriter() );
+#endif
 				return Writers;
 			}
 		}

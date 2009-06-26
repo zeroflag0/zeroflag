@@ -305,6 +305,8 @@ namespace zeroflag.Components
 				this.State = ModuleStates.Running;
 			else if ( this.State == ModuleStates.Shutdown )
 				this.Dispose();
+			else if ( this.State == ModuleStates.Paused )
+				return;
 			else
 				this.Log.Warning( "Running in invalid state " + this.State + "." );
 		}

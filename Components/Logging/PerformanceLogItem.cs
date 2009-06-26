@@ -39,6 +39,9 @@
 ///	</file>
 #endregion SVN Version Information
 
+//#if NO_HIGH_PRECISION_TIMING
+//#define LOCALTIME
+//#endif
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -90,13 +93,15 @@ namespace zeroflag.Components.Logging
 		{
 			var now = global::Time.Now;
 			//time /= 2;
-			this.Time = time;// ( ( _Time ?? time ) * 1.0 + time ) / 2.0;
+			this.Time =
+				//time;
+				( ( _Time ?? time ) * 1.0 + time ) / 4.0;
 
 			if ( _LastPerSecond2 == now )
 				this.PerSecond = 1000;
 			else if ( _LastPerSecond2 > 0 )
 			{
-				double ps = 2000.0 / ( now - _LastPerSecond2 );
+				double ps = 4000.0 / ( now - _LastPerSecond2 );
 				this.PerSecond = ps;//( ( _PerSecond ?? ps ) * 1.0 + ps ) / 2.0;
 				//_PerSecondCount++;
 				//if ( global::Time.Now - _LastPerSecond.Value > 100 )
@@ -172,43 +177,44 @@ namespace zeroflag.Components.Logging
 			get { return ( _Record ?? ( _Record = new TimeScope( this ) ) ).Start(); }
 		}
 
+		#region Stopwatch
+#if LOCALTIME
+		private System.Diagnostics.Stopwatch _Stopwatch;
+
+		/// <summary>
+		/// The stopwatch used for timing.
+		/// </summary>
+		public System.Diagnostics.Stopwatch Stopwatch
+		{
+			get { return _Stopwatch ?? ( _Stopwatch = this.StopwatchCreate ); }
+			//protected set
+			//{
+			//	if (_Stopwatch != value)
+			//	{
+			//		//if (_Stopwatch != null) { }
+			//		_Stopwatch = value;
+			//		//if (_Stopwatch != null) { }
+			//	}
+			//}
+		}
+
+		/// <summary>
+		/// Creates the default/initial value for Stopwatch.
+		/// The stopwatch used for timing.
+		/// </summary>
+		protected virtual System.Diagnostics.Stopwatch StopwatchCreate
+		{
+			get
+			{
+				System.Diagnostics.Stopwatch value = _Stopwatch = new System.Diagnostics.Stopwatch();
+				return value;
+			}
+		}
+#endif
+		#endregion Stopwatch
+
 		public class TimeScope : IDisposable
 		{
-			#region Stopwatch
-#if LOCALTIME
-			private System.Diagnostics.Stopwatch _Stopwatch;
-
-			/// <summary>
-			/// The stopwatch used for timing.
-			/// </summary>
-			public System.Diagnostics.Stopwatch Stopwatch
-			{
-				get { return _Stopwatch ?? ( _Stopwatch = this.StopwatchCreate ); }
-				//protected set
-				//{
-				//	if (_Stopwatch != value)
-				//	{
-				//		//if (_Stopwatch != null) { }
-				//		_Stopwatch = value;
-				//		//if (_Stopwatch != null) { }
-				//	}
-				//}
-			}
-
-			/// <summary>
-			/// Creates the default/initial value for Stopwatch.
-			/// The stopwatch used for timing.
-			/// </summary>
-			protected virtual System.Diagnostics.Stopwatch StopwatchCreate
-			{
-				get
-				{
-					System.Diagnostics.Stopwatch value = _Stopwatch = new System.Diagnostics.Stopwatch();
-					return value;
-				}
-			}
-#endif
-			#endregion Stopwatch
 
 			PerformanceLogItem _LogItem;
 			public TimeScope( PerformanceLogItem item )
@@ -219,6 +225,11 @@ namespace zeroflag.Components.Logging
 			bool active;
 #if !LOCALTIME
 			Time start;
+#else
+			public System.Diagnostics.Stopwatch Stopwatch
+			{
+				get { return this._LogItem.Stopwatch; }
+			}
 #endif
 			public TimeScope Start()
 			{

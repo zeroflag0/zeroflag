@@ -49,9 +49,9 @@ namespace zeroflag.Components
 	public abstract class Component
 		: System.ComponentModel.Component
 #if !SILVERLIGHT
-		, System.ComponentModel.IComponent
+, System.ComponentModel.IComponent
 #endif
-		, IDisposable
+, IDisposable
 		, IComponent<Core>
 		, IEquatable<Component>
 	{
