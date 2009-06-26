@@ -1,4 +1,8 @@
-﻿using System;
+﻿#if WIN32
+#define WIN32_TIMING
+#endif
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -233,20 +237,54 @@ public struct Time : IComparable<Time>, IComparable<double>, IComparable<long>, 
 	#endregion Implicit Conversion
 
 	#region Now
+#if WIN32_TIMING
+	[System.Runtime.InteropServices.DllImport( "winmm.dll", EntryPoint = "timeBeginPeriod" )]
+	static extern uint MM_BeginPeriod( uint uMilliseconds );
+
+
+	[System.Runtime.InteropServices.DllImport( "winmm.dll", EntryPoint = "timeEndPeriod" )]
+	static extern uint MM_EndPeriod( uint uMilliseconds );
+
+
+	[System.Runtime.InteropServices.DllImport( "winmm.dll", EntryPoint = "timeGetTime" )]
+	static extern uint MM_GetTime();
+#endif
+
 	static Time()
 	{
-		_TimeOffset = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-		_TimeStopwatch.Start();
-
+		Time.Now.GetType();
+#if !SILVERLIGHT && !NO_HIGH_PRECISION_TIMING && !WIN32_TIMING
+		//_TimeOffset = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+		//TimeStopwatch.Start();
+#elif WIN32_TIMING
+		MM_BeginPeriod( 1 );
+		_DateTimeOffset = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+		_TimeOffset = MM_GetTime();
+#endif
 		//TestTime();
 	}
 
 	public static void TestTime()
 	{
+		Console.WriteLine( ( IntPtr.Size * 8 ) + "bit" );
 		DateTime dtstart = DateTime.Now;
 		var ticks = dtstart.Ticks;
 		Time start = Time.Now;
+		long duration = 1000;
+		Time end = start + duration;
+		long ms = 0, msstart = start;
+		while ( DateTime.Now < end )
+		{
+			ms += Time.Now - msstart;
+			msstart = Time.Now;
+			System.Threading.Thread.Sleep( 1 );
+		}
+		if ( Math.Abs( ms - duration ) > (double)duration * 0.05 )
+			throw new PlatformNotSupportedException( System.Threading.Thread.CurrentThread.ManagedThreadId + " DateTime's timing differs from Stopwatch. (" + ms + " != " + duration + ", " + Time.Now + ")" );
+		else
+			Console.WriteLine( start + " .. " + end + "; " + ms + " ~= " + duration + " => Precision OK!" );
 
+		return;
 		if ( DateTime.Now - Time.Now > 10 )
 			throw new PlatformNotSupportedException( "DateTime's timing differs from Stopwatch." );
 		System.Threading.Thread.Sleep( 500 );
@@ -265,19 +303,69 @@ public struct Time : IComparable<Time>, IComparable<double>, IComparable<long>, 
 			throw new PlatformNotSupportedException( "DateTime's timing differs from Stopwatch." );
 
 		var dtend = DateTime.Now;
-		var d = dtend- dtstart;
-		if (dtstart.Ticks + d.Ticks != dtend.Ticks)
+		var d = dtend - dtstart;
+		if ( dtstart.Ticks + d.Ticks != dtend.Ticks )
 			throw new PlatformNotSupportedException( "TimeSpan.TicksPerMillisecond does not apply." );
 
 		Console.WriteLine( "Timing OK" );
 	}
 
-	static System.Diagnostics.Stopwatch _TimeStopwatch = new System.Diagnostics.Stopwatch();
+#if !SILVERLIGHT && !NO_HIGH_PRECISION_TIMING && !WIN32_TIMING
+	#region TimeStopwatch
+	[System.ThreadStatic]
+	private static System.Diagnostics.Stopwatch _TimeStopwatch;
+
+	/// <summary>
+	/// Stopwatch for high-resolution timing
+	/// </summary>
+	public static System.Diagnostics.Stopwatch TimeStopwatch
+	{
+		get { return _TimeStopwatch ?? ( _TimeStopwatch = TimeStopwatchInitialize( TimeStopwatchCreate ) ); }
+		//protected 
+		//set
+		//{
+		//	if (_TimeStopwatch != value)
+		//	{
+		//		//if (_TimeStopwatch != null) { }
+		//		_TimeStopwatch = value;
+		//		//if (_TimeStopwatch != null) { }
+		//	}
+		//}
+	}
+
+	/// <summary>
+	/// Creates the default/initial value for TimeStopwatch.
+	/// Stopwatch for high-resolution timing
+	/// </summary>
+	static System.Diagnostics.Stopwatch TimeStopwatchCreate
+	{
+		get
+		{
+			return new System.Diagnostics.Stopwatch();
+		}
+	}
+
+	/// <summary>
+	/// Initializes the default value for TimeStopwatch.
+	/// Stopwatch for high-resolution timing
+	/// </summary>
+	static System.Diagnostics.Stopwatch TimeStopwatchInitialize( System.Diagnostics.Stopwatch v )
+	{
+		_TimeOffset = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+		//Console.WriteLine( "Time initializing on thread " + System.Threading.Thread.CurrentThread.ManagedThreadId + " => " + _TimeOffset );
+		v.Start();
+
+		return v;
+	}
+
+	#endregion TimeStopwatch
+
+	[System.ThreadStatic]
 	static long _TimeOffset;
 
 	public static long NowMs
 	{
-		get { return _TimeOffset + _TimeStopwatch.ElapsedMilliseconds; }
+		get { return _TimeOffset + TimeStopwatch.ElapsedMilliseconds; }
 	}
 
 	public static Time Now
@@ -290,6 +378,41 @@ public struct Time : IComparable<Time>, IComparable<double>, IComparable<long>, 
 	{
 		get { return (DateTime)Now; }
 	}
+#elif WIN32_TIMING
+	static long _DateTimeOffset;
+	static long _TimeOffset;
+	public static long NowMs
+	{
+		get { return _DateTimeOffset + ( MM_GetTime() - _TimeOffset ); }
+	}
+
+	public static Time Now
+	{
+		get { return NowMs; }
+	}
+
+	public static DateTime NowDateTime
+	{
+		get { return (DateTime)Now; }
+	}
+#else
+	public static long NowMs
+	{
+		get { return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond; }
+	}
+
+	public static Time Now
+	{
+		//get { return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond; }
+		get { return NowMs; }
+	}
+
+	public static DateTime NowDateTime
+	{
+		get { return DateTime.Now; }
+	}
+#endif
+
 	#endregion Now
 
 	public override string ToString()
@@ -298,10 +421,10 @@ public struct Time : IComparable<Time>, IComparable<double>, IComparable<long>, 
 			return _Value.ToString( "##0" ) + "ms";
 
 		DateTime t = (DateTime)this;
-		if ( t.Date != DateTime.Today )
-			return t.ToString( "yyyy-MM-dd HH:mm:ss." ) + t.Millisecond.ToString( "000" ) + "h";
+		if ( t.Date != DateTime.Today && t.Date != DateTime.MinValue.Date )
+			return t.ToString( "yyyy-MM-dd HH:mm:ss." ) + t.Millisecond.ToString( "000" ) + "";
 		else if ( t.Hour > 0 )
-			return t.ToString( "HH:mm:ss." ) + t.Millisecond.ToString( "000" ) + "h";
+			return t.ToString( "HH:mm:ss." ) + t.Millisecond.ToString( "000" ) + "";
 		else if ( t.Minute > 0 )
 			return t.ToString( "mm:ss." ) + t.Millisecond.ToString( "000" ) + "min";
 		else

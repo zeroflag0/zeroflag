@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Threading", "zerof
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{0AC268E6-29D8-4C51-9A62-68FD08B44263}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "zeroflag.Collections", "..\Collections\zeroflag.Collections.csproj", "{C4B9F045-0005-4B33-B426-4134C161C9EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,6 +19,8 @@ Global
 		Large32|x86 = Large32|x86
 		Large8|Any CPU = Large8|Any CPU
 		Large8|x86 = Large8|x86
+		Release SingleThread|Any CPU = Release SingleThread|Any CPU
+		Release SingleThread|x86 = Release SingleThread|x86
 		Release|Any CPU = Release|Any CPU
 		Release|x86 = Release|x86
 		Small|Any CPU = Small|Any CPU
@@ -43,6 +47,9 @@ Global
 		{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}.Large8|Any CPU.Build.0 = Release|Any CPU
 		{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}.Large8|x86.ActiveCfg = Large8|x86
 		{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}.Large8|x86.Build.0 = Large8|x86
+		{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}.Release SingleThread|Any CPU.ActiveCfg = Release|x86
+		{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}.Release SingleThread|x86.ActiveCfg = Release|x86
+		{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}.Release SingleThread|x86.Build.0 = Release|x86
 		{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EAE7AA1B-39FE-40A3-88F6-BE923D1D0809}.Release|x86.ActiveCfg = Release|x86
@@ -71,6 +78,9 @@ Global
 		{0AC268E6-29D8-4C51-9A62-68FD08B44263}.Large8|Any CPU.Build.0 = Large8|Any CPU
 		{0AC268E6-29D8-4C51-9A62-68FD08B44263}.Large8|x86.ActiveCfg = Large8|x86
 		{0AC268E6-29D8-4C51-9A62-68FD08B44263}.Large8|x86.Build.0 = Large8|x86
+		{0AC268E6-29D8-4C51-9A62-68FD08B44263}.Release SingleThread|Any CPU.ActiveCfg = Release|x86
+		{0AC268E6-29D8-4C51-9A62-68FD08B44263}.Release SingleThread|x86.ActiveCfg = Release|x86
+		{0AC268E6-29D8-4C51-9A62-68FD08B44263}.Release SingleThread|x86.Build.0 = Release|x86
 		{0AC268E6-29D8-4C51-9A62-68FD08B44263}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0AC268E6-29D8-4C51-9A62-68FD08B44263}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0AC268E6-29D8-4C51-9A62-68FD08B44263}.Release|x86.ActiveCfg = Release|x86
@@ -79,6 +89,30 @@ Global
 		{0AC268E6-29D8-4C51-9A62-68FD08B44263}.Small|Any CPU.Build.0 = Small|Any CPU
 		{0AC268E6-29D8-4C51-9A62-68FD08B44263}.Small|x86.ActiveCfg = Small|x86
 		{0AC268E6-29D8-4C51-9A62-68FD08B44263}.Small|x86.Build.0 = Small|x86
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Large16|Any CPU.ActiveCfg = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Large16|Any CPU.Build.0 = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Large16|x86.ActiveCfg = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Large24|Any CPU.ActiveCfg = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Large24|Any CPU.Build.0 = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Large24|x86.ActiveCfg = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Large32|Any CPU.ActiveCfg = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Large32|Any CPU.Build.0 = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Large32|x86.ActiveCfg = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Large8|Any CPU.ActiveCfg = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Large8|Any CPU.Build.0 = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Large8|x86.ActiveCfg = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Release SingleThread|Any CPU.ActiveCfg = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Release SingleThread|Any CPU.Build.0 = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Release SingleThread|x86.ActiveCfg = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Release|x86.ActiveCfg = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Small|Any CPU.ActiveCfg = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Small|Any CPU.Build.0 = Release|Any CPU
+		{C4B9F045-0005-4B33-B426-4134C161C9EE}.Small|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

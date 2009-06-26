@@ -64,7 +64,7 @@ namespace zeroflag.Threading
 	/// A single-reader multi-writer message-queue without locking.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public class LocklessQueue<T> : IEnumerable<T>
+	public class LocklessQueue<T> : IEnumerable<T>, zeroflag.Collections.IReadWrite<T>
 	{
 		#region First
 
@@ -162,31 +162,33 @@ namespace zeroflag.Threading
 			this._ReadLast = null;
 		}
 
-		public void Write( T value )
+		public void Add( T value )
 		{
-			this.Add( value );
+			this.Write( value );
 		}
 		/// <summary>
 		/// Write one value to the queue. This method may be used simultaneously by multiple threads.
 		/// NOTE: This method is safe to be used from multiple threads simultaniously, no guarantees though.
 		/// </summary>
 		/// <param name="value"></param>
-		public virtual void Add( T value )
+		public void Write( T value )
 		{
 			Node node = new Node();
 			node.Value = value;
-			Node last;
+			Node first;
 			// remember the new node as last node...
-			if ( ( last = Interlocked.Exchange<Node>( ref _Last, node ) ) != null )
+			if ( ( first = Interlocked.Exchange<Node>( ref _Last, node ) ) != null )
 			// if there was a last node before...
 			{
+				Node last = first;
 				// link the new last node behind the previous last node...
-				Interlocked.Exchange<Node>( ref last.Next, node );
+				while ( ( last = Interlocked.Exchange<Node>( ref last.Next, node ) ) != null ) ;
 			}
 			else
 			{
 				// if there wasn't a last node before, the new node is also the first node...
-				Interlocked.Exchange<Node>( ref _First, node );
+				Interlocked.CompareExchange<Node>( ref _First, node, null );
+				//_First = node;
 			}
 			Interlocked.Increment( ref _Count );
 		}
