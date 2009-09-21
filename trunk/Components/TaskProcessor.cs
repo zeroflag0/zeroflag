@@ -1,5 +1,7 @@
 ﻿#define DEBUG_TRACE
+
 #region LGPL License
+
 //********************************************************************
 //	author:         Thomas "zeroflag" Kraemer
 //	author email:   zeroflag >>at<< zeroflag >>dot<< de
@@ -25,9 +27,11 @@
 //		http://www.gnu.org/licenses/lgpl.html#TOC1
 //
 //*********************************************************************
+
 #endregion LGPL License
 
 #region BSD License
+
 /*
  * Copyright (c) 2006-2008, Thomas "zeroflag" Kraemer
  * All rights reserved.
@@ -53,10 +57,11 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #endregion BSD License
 
 using System;
-//using System.Collections.Generic;
+	//using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Text;
@@ -70,16 +75,24 @@ namespace zeroflag.Components
 		{
 			InitializeComponent();
 		}
-#if !SILVERLIGHT
-		public TaskProcessor( System.ComponentModel.IContainer container )
+
+		public TaskProcessor(Component outer)
 		{
-			container.Add( this );
+			this.Outer = outer;
+			InitializeComponent();
+		}
+
+#if !SILVERLIGHT
+		public TaskProcessor(System.ComponentModel.IContainer container)
+		{
+			container.Add(this);
 
 			InitializeComponent();
 		}
 #endif
 
 		#region Thread
+
 		private System.Threading.Thread _Thread;
 
 		/// <summary>
@@ -87,10 +100,10 @@ namespace zeroflag.Components
 		/// </summary>
 		public System.Threading.Thread Thread
 		{
-			get { return _Thread ?? ( _Thread = this.ThreadCreate ); }
+			get { return _Thread ?? (_Thread = this.ThreadCreate); }
 			protected set
 			{
-				if ( _Thread != value )
+				if (_Thread != value)
 				{
 					//if (_Thread != null) { }
 					_Thread = value;
@@ -107,15 +120,17 @@ namespace zeroflag.Components
 		{
 			get
 			{
-				var value = new System.Threading.Thread( new System.Threading.ThreadStart( this.Run ) );
+				var value = new System.Threading.Thread(new System.Threading.ThreadStart(this.Run));
 #if !SILVERLIGHT
-				value.SetApartmentState( System.Threading.ApartmentState.STA );
+				value.SetApartmentState(System.Threading.ApartmentState.STA);
 #endif
 				value.Start();
 				return value;
 			}
 		}
+
 		#region ThreadPriority
+
 #if !SILVERLIGHT
 		private System.Threading.ThreadPriority _ThreadPriority = System.Threading.ThreadPriority.Normal;
 
@@ -127,7 +142,7 @@ namespace zeroflag.Components
 			get
 			{
 				var thread = this._Thread;
-				if ( thread != null )
+				if (thread != null)
 				{
 					_ThreadPriority = thread.Priority;
 				}
@@ -135,11 +150,11 @@ namespace zeroflag.Components
 			}
 			set
 			{
-				if ( _ThreadPriority != value )
+				if (_ThreadPriority != value)
 				{
 					_ThreadPriority = value;
 					var thread = this._Thread;
-					if ( thread != null )
+					if (thread != null)
 					{
 						thread.Priority = value;
 					}
@@ -147,10 +162,10 @@ namespace zeroflag.Components
 			}
 		}
 #endif
+
 		#endregion ThreadPriority
 
 		#endregion Thread
-
 
 		#region Disposing
 
@@ -164,24 +179,26 @@ namespace zeroflag.Components
 			get { return _Disposing; }
 			set
 			{
-				if ( _Disposing != value )
+				if (_Disposing != value)
 				{
 #if DEBUG
-					if ( _Disposing && !value )
+					if (_Disposing && !value)
 					{
-						Console.WriteLine( ( this.Name ?? this.ToString() ) + ".Disposing = " + value );
-						Console.WriteLine( new System.Diagnostics.StackTrace( 1 ) );
+						Console.WriteLine((this.Name ?? this.ToString()) + ".Disposing = " + value);
+						Console.WriteLine(new System.Diagnostics.StackTrace(1));
 					}
 #endif
-					this.OnDisposingChanged( _Disposing, _Disposing = value );
+					this.OnDisposingChanged(_Disposing, _Disposing = value);
 				}
 			}
 		}
 
 		#region DisposingChanged event
-		public delegate void DisposingChangedHandler( object sender, bool oldvalue, bool newvalue );
+
+		public delegate void DisposingChangedHandler(object sender, bool oldvalue, bool newvalue);
 
 		private event DisposingChangedHandler _DisposingChanged;
+
 		/// <summary>
 		/// Occurs when Disposing changes.
 		/// </summary>
@@ -194,36 +211,42 @@ namespace zeroflag.Components
 		/// <summary>
 		/// Raises the DisposingChanged event.
 		/// </summary>
-		protected virtual void OnDisposingChanged( bool oldvalue, bool newvalue )
+		protected virtual void OnDisposingChanged(bool oldvalue, bool newvalue)
 		{
 			// if there are event subscribers...
-			if ( this._DisposingChanged != null )
+			if (this._DisposingChanged != null)
 			{
 				// call them...
-				this._DisposingChanged( this, oldvalue, newvalue );
+				this._DisposingChanged(this, oldvalue, newvalue);
 			}
 		}
+
 		#endregion DisposingChanged event
+
 		#endregion Disposing
 
+		private bool _Cancel = false;
 
-		bool _Cancel = false;
 		public bool Cancel
 		{
 			get { return _Cancel; }
 			set
 			{
-				if ( value != _Cancel )
+				if (value != _Cancel)
 				{
 #if DEBUG && false
 					Console.WriteLine( ( this.Name ?? this.ToString() ) + ".Cancel = " + value );
 					Console.WriteLine( new System.Diagnostics.StackTrace( 1 ) );
 #endif
 					_Cancel = value;
-					if ( _Cancel )
+					if (_Cancel)
+					{
 						this.CancelRequestTime = Time.Now;
+					}
 					else
+					{
 						this.CancelRequestTime = null;
+					}
 				}
 				//Console.WriteLine( this + ".Cancel = " + value );
 				//if ( value )
@@ -242,6 +265,7 @@ namespace zeroflag.Components
 		}
 
 		#region Parentless
+
 		private bool _Parentless;
 
 		/// <summary>
@@ -252,7 +276,7 @@ namespace zeroflag.Components
 			get { return _Parentless; }
 			set
 			{
-				if ( _Parentless != value )
+				if (_Parentless != value)
 				{
 					_Parentless = value;
 				}
@@ -260,7 +284,6 @@ namespace zeroflag.Components
 		}
 
 		#endregion Parentless
-
 
 		#region Name
 
@@ -274,7 +297,7 @@ namespace zeroflag.Components
 			get { return _Name; }
 			set
 			{
-				if ( _Name != value )
+				if (_Name != value)
 				{
 					_Name = value;
 					_Restart = 1;
@@ -287,9 +310,11 @@ namespace zeroflag.Components
 		#endregion Name
 
 		#region event ErrorHandling
-		public delegate void ErrorHandlingHandler( Task task, Exception exc );
+
+		public delegate void ErrorHandlingHandler(Task task, Exception exc);
 
 		private event ErrorHandlingHandler _ErrorHandling;
+
 		/// <summary>
 		/// When an error occurs during task execution.
 		/// </summary>
@@ -298,25 +323,28 @@ namespace zeroflag.Components
 			add { this._ErrorHandling += value; }
 			remove { this._ErrorHandling -= value; }
 		}
+
 		/// <summary>
 		/// Call to raise the ErrorHandling event:
 		/// When an error occurs during task execution.
 		/// </summary>
-		protected virtual void OnErrorHandling( Task task, Exception exc )
+		protected virtual void OnErrorHandling(Task task, Exception exc)
 		{
 			// if there are event subscribers...
-			if ( this._ErrorHandling != null )
+			if (this._ErrorHandling != null)
 			{
 				// call them...
-				this._ErrorHandling( task, exc );
+				this._ErrorHandling(task, exc);
 			}
 		}
+
 		#endregion event ErrorHandling
 
 		#region Tasks
-		public void Add( Task task )
+
+		public void Add(Task task)
 		{
-			this.Tasks.Add( task );
+			this.Tasks.Add(task);
 			this.Thread.GetType();
 			//            if ( !this.backgroundWorker.IsBusy || _Working < 1 )
 			//            {
@@ -337,56 +365,60 @@ namespace zeroflag.Components
 			Wait.Set();
 		}
 
-		public void Add( params Action[] tasks )
+		public void Add(params Action[] tasks)
 		{
-			foreach ( var task in tasks )
-				this.Add( Task.Create( task ) );
+			foreach (var task in tasks)
+			{
+				this.Add(Task.Create(task));
+			}
 		}
 
-		public void Add<T1>( Action<T1> task, T1 p1 )
+		public void Add<T1>(Action<T1> task, T1 p1)
 		{
-			this.Add( Task.Create<T1>( task, p1 ) );
+			this.Add(Task.Create<T1>(task, p1));
 		}
 
-		public void Add<T1, T2>( Action<T1, T2> task, T1 p1, T2 p2 )
+		public void Add<T1, T2>(Action<T1, T2> task, T1 p1, T2 p2)
 		{
-			this.Add( Task.Create<T1, T2>( task, p1, p2 ) );
+			this.Add(Task.Create<T1, T2>(task, p1, p2));
 		}
 
-		public void Add<T1, T2, T3>( Action<T1, T2, T3> task, T1 p1, T2 p2, T3 p3 )
+		public void Add<T1, T2, T3>(Action<T1, T2, T3> task, T1 p1, T2 p2, T3 p3)
 		{
-			this.Add( Task.Create<T1, T2, T3>( task, p1, p2, p3 ) );
+			this.Add(Task.Create<T1, T2, T3>(task, p1, p2, p3));
 		}
 
-		public void Add<T1, T2, T3, T4>( Action<T1, T2, T3, T4> task, T1 p1, T2 p2, T3 p3, T4 p4 )
+		public void Add<T1, T2, T3, T4>(Action<T1, T2, T3, T4> task, T1 p1, T2 p2, T3 p3, T4 p4)
 		{
-			this.Add( Task.Create<T1, T2, T3, T4>( task, p1, p2, p3, p4 ) );
+			this.Add(Task.Create<T1, T2, T3, T4>(task, p1, p2, p3, p4));
 		}
 
-		public void Add( DateTime time, params Action[] tasks )
+		public void Add(DateTime time, params Action[] tasks)
 		{
-			foreach ( var task in tasks )
-				this.Add( Task.Create( time, task ) );
+			foreach (var task in tasks)
+			{
+				this.Add(Task.Create(time, task));
+			}
 		}
 
-		public void Add<T1>( DateTime time, Action<T1> task, T1 p1 )
+		public void Add<T1>(DateTime time, Action<T1> task, T1 p1)
 		{
-			this.Add( Task.Create<T1>( time, task, p1 ) );
+			this.Add(Task.Create<T1>(time, task, p1));
 		}
 
-		public void Add<T1, T2>( DateTime time, Action<T1, T2> task, T1 p1, T2 p2 )
+		public void Add<T1, T2>(DateTime time, Action<T1, T2> task, T1 p1, T2 p2)
 		{
-			this.Add( Task.Create<T1, T2>( time, task, p1, p2 ) );
+			this.Add(Task.Create<T1, T2>(time, task, p1, p2));
 		}
 
-		public void Add<T1, T2, T3>( DateTime time, Action<T1, T2, T3> task, T1 p1, T2 p2, T3 p3 )
+		public void Add<T1, T2, T3>(DateTime time, Action<T1, T2, T3> task, T1 p1, T2 p2, T3 p3)
 		{
-			this.Add( Task.Create<T1, T2, T3>( time, task, p1, p2, p3 ) );
+			this.Add(Task.Create<T1, T2, T3>(time, task, p1, p2, p3));
 		}
 
-		public void Add<T1, T2, T3, T4>( DateTime time, Action<T1, T2, T3, T4> task, T1 p1, T2 p2, T3 p3, T4 p4 )
+		public void Add<T1, T2, T3, T4>(DateTime time, Action<T1, T2, T3, T4> task, T1 p1, T2 p2, T3 p3, T4 p4)
 		{
-			this.Add( Task.Create<T1, T2, T3, T4>( time, task, p1, p2, p3, p4 ) );
+			this.Add(Task.Create<T1, T2, T3, T4>(time, task, p1, p2, p3, p4));
 		}
 
 		public int Count
@@ -406,7 +438,7 @@ namespace zeroflag.Components
 		/// </summary>
 		protected zeroflag.Threading.LocklessQueue<Task?> Tasks
 		{
-			get { return _Tasks ?? ( _Tasks = this.TasksCreate ); }
+			get { return _Tasks ?? (_Tasks = this.TasksCreate); }
 		}
 
 		/// <summary>
@@ -417,7 +449,7 @@ namespace zeroflag.Components
 		{
 			get
 			{
-				var list = _Tasks = new zeroflag.Threading.LocklessQueue<Task?>() { };
+				var list = _Tasks = new zeroflag.Threading.LocklessQueue<Task?>() {};
 #if OBSOLETE
 				list.ItemAdded += item =>
 				{
@@ -447,6 +479,7 @@ namespace zeroflag.Components
 		}
 
 		#region ScheduledTasks
+
 		private List<Task?> _ScheduledTasks;
 
 		/// <summary>
@@ -454,7 +487,7 @@ namespace zeroflag.Components
 		/// </summary>
 		public List<Task?> ScheduledTasks
 		{
-			get { return _ScheduledTasks ?? ( _ScheduledTasks = this.ScheduledTasksCreate ); }
+			get { return _ScheduledTasks ?? (_ScheduledTasks = this.ScheduledTasksCreate); }
 			//protected set
 			//{
 			//	if (_ScheduledTasks != value)
@@ -475,14 +508,14 @@ namespace zeroflag.Components
 			get
 			{
 				List<Task?> value = _ScheduledTasks = new List<Task?>();
-				value.ItemAdded += new List<Task?>.ItemAddedHandler( ScheduledTasksAdded );
+				value.ItemAdded += new List<Task?>.ItemAddedHandler(ScheduledTasksAdded);
 				return value;
 			}
 		}
 
-		void ScheduledTasksAdded( Task? item )
+		private void ScheduledTasksAdded(Task? item)
 		{
-			this._ScheduledTasks.Sort( ( a, b ) => a.Value.Time.CompareTo( b.Value.Time ) );
+			this._ScheduledTasks.Sort((a, b) => a.Value.Time.CompareTo(b.Value.Time));
 		}
 
 		#endregion ScheduledTasks
@@ -490,6 +523,7 @@ namespace zeroflag.Components
 		#endregion Tasks
 
 		#region CancelTimeout
+
 		#region CancelRequestTime
 
 		private Time? _CancelRequestTime;
@@ -502,7 +536,7 @@ namespace zeroflag.Components
 			get { return _CancelRequestTime; }
 			set
 			{
-				if ( _CancelRequestTime != value )
+				if (_CancelRequestTime != value)
 				{
 					_CancelRequestTime = value;
 				}
@@ -521,7 +555,7 @@ namespace zeroflag.Components
 			get { return _CancelTimeout; }
 			set
 			{
-				if ( _CancelTimeout != value )
+				if (_CancelTimeout != value)
 				{
 					_CancelTimeout = value;
 				}
@@ -530,10 +564,9 @@ namespace zeroflag.Components
 
 		#endregion CancelTimeout
 
-
 		#region IdleThreadTimeout
 
-		private TimeSpan _IdleThreadTimeout = TimeSpan.FromSeconds( 2.0 );
+		private TimeSpan _IdleThreadTimeout = TimeSpan.FromSeconds(2.0);
 
 		/// <summary>
 		/// Time after which the worker thread gets suspended (leaves active waiting).
@@ -543,7 +576,7 @@ namespace zeroflag.Components
 			get { return _IdleThreadTimeout; }
 			set
 			{
-				if ( _IdleThreadTimeout != value )
+				if (_IdleThreadTimeout != value)
 				{
 					_IdleThreadTimeout = value;
 				}
@@ -553,6 +586,7 @@ namespace zeroflag.Components
 		#endregion IdleThreadTimeout
 
 #if DEBUG_TRACE
+
 		#region DebugTrace
 
 		private static bool _DebugTrace;
@@ -565,14 +599,14 @@ namespace zeroflag.Components
 			get { return _DebugTrace; }
 			set
 			{
-				if ( _DebugTrace != value )
+				if (_DebugTrace != value)
 				{
 					_DebugTrace = value;
-					if ( value )
+					if (value)
 					{
-						lock ( _WaitHandles )
+						lock (_WaitHandles)
 						{
-							foreach ( var handle in _WaitHandles )
+							foreach (var handle in _WaitHandles)
 							{
 								handle.Set();
 							}
@@ -583,12 +617,14 @@ namespace zeroflag.Components
 		}
 
 		#endregion DebugTrace
+
 		private static List<System.Threading.AutoResetEvent> _WaitHandles = new List<System.Threading.AutoResetEvent>();
 #endif
 
 		//System.Threading.AutoResetEvent Wait = new System.Threading.AutoResetEvent( false );
 
 		#region Wait
+
 		private System.Threading.AutoResetEvent _Wait;
 
 		/// <summary>
@@ -596,7 +632,7 @@ namespace zeroflag.Components
 		/// </summary>
 		protected System.Threading.AutoResetEvent Wait
 		{
-			get { return _Wait ?? ( _Wait = this.WaitCreate ); }
+			get { return _Wait ?? (_Wait = this.WaitCreate); }
 			//set { _Wait = value; }
 		}
 
@@ -608,11 +644,11 @@ namespace zeroflag.Components
 		{
 			get
 			{
-				var Wait = _Wait = new System.Threading.AutoResetEvent( false );
+				var Wait = _Wait = new System.Threading.AutoResetEvent(false);
 #if DEBUG
-				lock ( _WaitHandles )
+				lock (_WaitHandles)
 				{
-					_WaitHandles.Add( _Wait );
+					_WaitHandles.Add(_Wait);
 				}
 #endif
 				return Wait;
@@ -621,36 +657,39 @@ namespace zeroflag.Components
 
 		#endregion Wait
 
-
-		Time _LastWork = Time.Now;
-		int _MissingParent = 0;
-		int _Working = 0;
-		int _Restart = 0;
+		private Time _LastWork = Time.Now;
+		private int _MissingParent = 0;
+		private int _Working = 0;
+		private int _Restart = 0;
 		//void backgroundWorker_DoWork( object sender, DoWorkEventArgs e )
 		protected virtual void Run()
 		{
-			if ( System.Threading.Interlocked.CompareExchange( ref _Working, 1, 0 ) == 0 )
+			if (System.Threading.Interlocked.CompareExchange(ref _Working, 1, 0) == 0)
 			{
-				if ( this._Name != null )
+				if (this._Name != null)
+				{
 					try
 					{
 						System.Threading.Thread.CurrentThread.Name = this.Name;
 					}
-					catch ( Exception exc )
+					catch (Exception exc)
 					{
-						Console.WriteLine( exc );
+						Console.WriteLine(exc);
 					}
+				}
 #if !SILVERLIGHT
-				if ( this.ThreadPriority !=
-					 System.Threading.Thread.CurrentThread.Priority )
+				if (this.ThreadPriority !=
+				    System.Threading.Thread.CurrentThread.Priority)
+				{
 					try
 					{
 						System.Threading.Thread.CurrentThread.Priority = this.ThreadPriority;
 					}
-					catch ( Exception exc )
+					catch (Exception exc)
 					{
-						Console.WriteLine( exc );
+						Console.WriteLine(exc);
 					}
+				}
 #endif
 				try
 				{
@@ -658,79 +697,83 @@ namespace zeroflag.Components
 					//System.Threading.Interlocked.Increment( ref _Working );
 					//if ( _Working > 1 )
 					//    return;
-					Console.WriteLine( "TaskProcessor(" + this.Name + ") started..." );
-					while ( !this.Cancel ||
-							!this.Tasks.IsEmpty )
+					Console.WriteLine("TaskProcessor(" + this.Name + ") started...");
+					while (!this.Cancel ||
+					       !this.Tasks.IsEmpty)
 					{
-						if ( !Parentless && this.Outer == null && this.CoreBase == null
+						if (!Parentless && this.Outer == null && this.CoreBase == null
 #if !SILVERLIGHT
- && this.Site == null
+						    && this.Site == null
 #endif
- )
+							)
 						{
-							if ( _MissingParent++ > 10 )
+							if (_MissingParent++ > 10)
 							{
-								Console.WriteLine( "TaskProcessor(" + this.Name + ") exiting, missing parent..." );
+								Console.WriteLine("TaskProcessor(" + this.Name + ") exiting, missing parent...");
 								break;
 							}
 						}
 						else
-							_MissingParent = 0;
-						if ( System.Threading.Interlocked.CompareExchange( ref _Restart, 0, 1 ) != 0 )
 						{
-							Console.WriteLine( "TaskProcessor(" + this.Name + ") restarting..." );
+							_MissingParent = 0;
+						}
+						if (System.Threading.Interlocked.CompareExchange(ref _Restart, 0, 1) != 0)
+						{
+							Console.WriteLine("TaskProcessor(" + this.Name + ") restarting...");
 							this.Thread = null;
 							_Working = 0;
 							this.Thread = this.ThreadCreate;
 							this.Wait.Set();
 							return;
 						}
-						if ( ( this.Cancel || this.Disposing ) &&
-							 ( Time.Now - this.CancelRequestTime ) >
-							 this.CancelTimeout * 0.85 )
+						if ((this.Cancel || this.Disposing) &&
+						    (Time.Now - this.CancelRequestTime) >
+						    this.CancelTimeout * 0.85)
 						{
-							Console.WriteLine( "TaskProcessor(" + this.Name + ") canceled..." );
+							Console.WriteLine("TaskProcessor(" + this.Name + ") canceled...");
 							break;
 						}
-						if ( this.Tasks.Count > 0 || this._ScheduledTasks.Count > 0 )
+						if (this.Tasks.Count > 0 || this._ScheduledTasks.Count > 0)
 						{
 							//current = this.Tasks[0];
 							current = null;
-							if ( this.ScheduledTasks.Count > 0 )
+							if (this.ScheduledTasks.Count > 0)
 							{
 								current = this.ScheduledTasks[0];
 								//verbose( "Testing " + current.Value );
-								if ( current.Value.Time < Time.Now )
+								if (current.Value.Time < Time.Now)
 								{
-									verbose( "Using " + current );
-									this.ScheduledTasks.RemoveAt( 0 );
+									verbose("Using " + current);
+									this.ScheduledTasks.RemoveAt(0);
 								}
 								else
+								{
 									current = null;
+								}
 							}
 							current = current ?? this.Tasks.Read();
 							_Current = current;
-							if ( current != null )
+							if (current != null)
 							{
-								verbose( "Current = " + current );
-								if ( current.Value.Time == DateTime.MinValue || current.Value.Time < Time.Now )
+								verbose("Current = " + current);
+								if (current.Value.Time == DateTime.MinValue || current.Value.Time < Time.Now)
 								{
 									try
 									{
-										verbose( "Executing " + current );
+										verbose("Executing " + current);
 										current.Value.Action();
 									}
-									catch ( Exception exc )
+									catch (Exception exc)
 									{
-										Console.WriteLine( exc );
-										this.OnErrorHandling( current.Value, exc );
+										Console.WriteLine(exc);
+										this.OnErrorHandling(current.Value, exc);
 									}
 								}
 								else
 								{
-									verbose( "Scheduling " + current );
-									this.ScheduledTasks.Add( current );
-									this.ScheduledTasks.Sort( ( a, b ) => a.Value.Time.CompareTo( b.Value.Time ) );
+									verbose("Scheduling " + current);
+									this.ScheduledTasks.Add(current);
+									this.ScheduledTasks.Sort((a, b) => a.Value.Time.CompareTo(b.Value.Time));
 								}
 							}
 							_LastWork = Time.Now;
@@ -738,14 +781,14 @@ namespace zeroflag.Components
 						}
 						else
 						{
-							if ( Time.Now - _LastWork > this.IdleThreadTimeout &&
-								 !this.Cancel )
+							if (Time.Now - _LastWork > this.IdleThreadTimeout &&
+							    !this.Cancel)
 							{
 #if DEBUG
 								//Console.WriteLine( "TaskProcessor(" + this.Name + ") idle timeout." );
 #endif
 								//this.Wait.WaitOne( this.IdleThreadTimeout, true );
-								this.Wait.WaitOne( this.IdleThreadTimeout );
+								this.Wait.WaitOne(this.IdleThreadTimeout);
 #if DEBUG
 								//Console.WriteLine( "TaskProcessor(" + this.Name + ") resuming..." );
 #endif
@@ -753,22 +796,24 @@ namespace zeroflag.Components
 								//return;
 							}
 							else
+							{
 								//this.Wait.WaitOne( 200, true );
-								this.Wait.WaitOne( 200 );
+								this.Wait.WaitOne(200);
+							}
 						}
 #if DEBUG_TRACE
-						if ( DebugTrace )
+						if (DebugTrace)
 						{
-							Console.WriteLine( this + ( this.Cancel ? " Cancel" : "" ) + ( this.Disposing ? " Disposing" : "" ) + " \n\touter=" + ( this.Outer == null ? "<null>" : this.Outer + " " + this.Outer.State ) + " \n\tcore=" + ( this.CoreBase == null ? "<null>" : this.CoreBase + " " + this.CoreBase.State ) + " \n\t" + Time.Now + " - " + this.Tasks.Count + ": \n\t" + this.Current );
+							Console.WriteLine(this + (this.Cancel ? " Cancel" : "") + (this.Disposing ? " Disposing" : "") + " \n\touter=" + (this.Outer == null ? "<null>" : this.Outer + " " + this.Outer.State) + " \n\tcore=" + (this.CoreBase == null ? "<null>" : this.CoreBase + " " + this.CoreBase.State) + " \n\t" + Time.Now + " - " + this.Tasks.Count + ": \n\t" + this.Current);
 							//Console.WriteLine( new System.Diagnostics.StackTrace() );
 						}
 #endif
 					}
-					Console.WriteLine( "TaskProcessor(" + this.Name + ") halted." );
+					Console.WriteLine("TaskProcessor(" + this.Name + ") halted.");
 				}
-				catch ( System.Threading.ThreadAbortException )
+				catch (System.Threading.ThreadAbortException)
 				{
-					Console.WriteLine( "TaskProcessor(" + this.Name + ") aborted!" );
+					Console.WriteLine("TaskProcessor(" + this.Name + ") aborted!");
 				}
 				finally
 				{
@@ -779,6 +824,7 @@ namespace zeroflag.Components
 		}
 
 		#region Current
+
 		private Task? _Current;
 
 		/// <summary>
@@ -801,62 +847,66 @@ namespace zeroflag.Components
 			get
 			{
 				Task? current = _Current;
-				if ( current == null )
+				if (current == null)
+				{
 					return "<null>";
+				}
 				return current.ToString();
 			}
 		}
 
 		#endregion Current
 
-
 		public override string ToString()
 		{
-			return ( (object)this.Name ?? base.ToString() ).ToString();
+			return ((object) this.Name ?? base.ToString()).ToString();
 		}
 
 		public virtual void Finish()
 		{
-			Console.WriteLine( this + ".Finish() " + Current );
+			Console.WriteLine(this + ".Finish() " + Current);
 			this.Cancel = true;
 			this.Wait.Set();
 		}
 
-		protected override void OnOuterChanged( Component oldvalue, Component newvalue )
+		protected override void OnOuterChanged(Component oldvalue, Component newvalue)
 		{
-			base.OnOuterChanged( oldvalue, newvalue );
-			if ( newvalue == null )
+			base.OnOuterChanged(oldvalue, newvalue);
+			if (newvalue == null)
 			{
-				Console.WriteLine( this + " Outer is null" );
+				Console.WriteLine(this + " Outer is null");
 				this.Dispose();
 			}
 			else
 			{
-				Console.WriteLine( this + " Outer is " + newvalue );
+				Console.WriteLine(this + " Outer is " + newvalue);
 			}
 		}
+
 		protected override void OnDispose()
 		{
-			Console.WriteLine( this + ".OnDispose()" );
+			Console.WriteLine(this + ".OnDispose()");
 			this.Wait.Set();
 			this.Disposing = true;
 			this.Cancel = true;
-			if ( System.Threading.Thread.CurrentThread == this.Thread )
+			if (System.Threading.Thread.CurrentThread == this.Thread)
+			{
 				return;
-			while ( this.IsRunning )
+			}
+			while (this.IsRunning)
 			{
 				Wait.Set();
-				System.Threading.Thread.Sleep( 10 );
-				if ( Time.Now - this.CancelRequestTime > this.CancelTimeout )
+				System.Threading.Thread.Sleep(10);
+				if (Time.Now - this.CancelRequestTime > this.CancelTimeout)
 				{
-					Console.WriteLine( ( this.Name ?? this.ToString() ) + "CancelTimeout" );
+					Console.WriteLine((this.Name ?? this.ToString()) + "CancelTimeout");
 					try
 					{
 						this.Thread.Abort();
 					}
-					catch ( Exception exc )
+					catch (Exception exc)
 					{
-						Console.WriteLine( exc );
+						Console.WriteLine(exc);
 					}
 					break;
 				}
@@ -882,19 +932,18 @@ namespace zeroflag.Components
 		}
 
 
-		[Conditional( "DEBUG" )]
-		public static void dbg( object msg )
+		[Conditional("DEBUG")]
+		public static void dbg(object msg)
 		{
-			Console.WriteLine( msg );
+			Console.WriteLine(msg);
 		}
 
-		[Conditional( "VERBOSE_TASKPROCESSOR" )]
-		public static void verbose( object msg )
+		[Conditional("VERBOSE_TASKPROCESSOR")]
+		public static void verbose(object msg)
 		{
 			msg = Time.Now + " " + msg;
-			Console.WriteLine( msg );
-			System.Diagnostics.Debug.WriteLine( msg );
+			Console.WriteLine(msg);
+			System.Diagnostics.Debug.WriteLine(msg);
 		}
-
 	}
 }

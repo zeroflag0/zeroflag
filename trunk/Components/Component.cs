@@ -1,4 +1,5 @@
 ﻿#region BSD license
+
 /*
  * Copyright (c) 2008, Thomas "zeroflag" Kraemer. All rights reserved.
  * Copyright (c) 2008, Anders "anonimasu" Helin. All rights reserved.
@@ -28,15 +29,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #endregion BSD license
 
 #region SVN Version Information
+
 ///	<file>
 ///		<!-- Last modification of this file: -->
 ///		<revision>$Rev$</revision>
 ///		<author>$Author$</author>
 ///		<id>$Id$</id>
 ///	</file>
+
 #endregion SVN Version Information
 
 using System;
@@ -49,13 +53,12 @@ namespace zeroflag.Components
 	public abstract class Component
 		: System.ComponentModel.Component
 #if !SILVERLIGHT
-, System.ComponentModel.IComponent
+		  , System.ComponentModel.IComponent
 #endif
-, IDisposable
-		, IComponent<Core>
-		, IEquatable<Component>
+		  , IDisposable
+		  , IComponent<Core>
+		  , IEquatable<Component>
 	{
-
 		#region Outer
 
 		private Component _Outer;
@@ -69,17 +72,19 @@ namespace zeroflag.Components
 			get { return _Outer; }
 			set
 			{
-				if ( _Outer != value )
+				if (_Outer != value)
 				{
-					this.OnOuterChanged( _Outer, _Outer = value );
+					this.OnOuterChanged(_Outer, _Outer = value);
 				}
 			}
 		}
 
 		#region OuterChanged event
-		public delegate void OuterChangedHandler( object sender, Component oldvalue, Component newvalue );
+
+		public delegate void OuterChangedHandler(object sender, Component oldvalue, Component newvalue);
 
 		private event OuterChangedHandler _OuterChanged;
+
 		/// <summary>
 		/// Occurs when Outer changes.
 		/// </summary>
@@ -89,42 +94,47 @@ namespace zeroflag.Components
 			remove { this._OuterChanged -= value; }
 		}
 
-		protected virtual void RegisterOuter( Component oldvalue, Component newvalue )
+		protected virtual void RegisterOuter(Component oldvalue, Component newvalue)
 		{
-			if ( oldvalue != null )
+			if (oldvalue != null)
 			{
-				oldvalue.Inner.Remove( this );
+				oldvalue.Inner.Remove(this);
 			}
-			if ( newvalue != null )
+			if (newvalue != null)
 			{
-				if ( !newvalue.Inner.Contains( this ) )
-					newvalue.Inner.Add( this );
+				if (!newvalue.Inner.Contains(this))
+				{
+					newvalue.Inner.Add(this);
+				}
 			}
 		}
 
 		/// <summary>
 		/// Raises the OuterChanged event.
 		/// </summary>
-		protected virtual void OnOuterChanged( Component oldvalue, Component newvalue )
+		protected virtual void OnOuterChanged(Component oldvalue, Component newvalue)
 		{
-			this.RegisterOuter( oldvalue, newvalue );
+			this.RegisterOuter(oldvalue, newvalue);
 			// if there are event subscribers...
-			if ( this._OuterChanged != null )
+			if (this._OuterChanged != null)
 			{
 				// call them...
-				this._OuterChanged( this, oldvalue, newvalue );
+				this._OuterChanged(this, oldvalue, newvalue);
 			}
 		}
+
 		#endregion OuterChanged event
 
 		protected O OuterSearch<O>()
 			where O : Component
 		{
-			return this.Outer as O ?? ( this.Outer != null ? this.Outer.OuterSearch<O>() : null );
+			return this.Outer as O ?? (this.Outer != null ? this.Outer.OuterSearch<O>() : null);
 		}
+
 		#endregion Outer
 
 		#region Inner
+
 		private zeroflag.Collections.Collection<Component> _Inner;
 
 		/// <summary>
@@ -132,7 +142,7 @@ namespace zeroflag.Components
 		/// </summary>
 		public zeroflag.Collections.Collection<Component> Inner
 		{
-			get { return _Inner ?? ( _Inner = this.InnerCreate ); }
+			get { return _Inner ?? (_Inner = this.InnerCreate); }
 			//set { _Inner = value; }
 		}
 
@@ -151,17 +161,17 @@ namespace zeroflag.Components
 			}
 		}
 
-		protected virtual void InnerItemAdded( Component item )
+		protected virtual void InnerItemAdded(Component item)
 		{
-			if ( item != null && item.Outer == null )
+			if (item != null && item.Outer == null)
 			{
 				item.Outer = this;
 			}
 		}
 
-		protected virtual void InnerItemRemoved( Component item )
+		protected virtual void InnerItemRemoved(Component item)
 		{
-			if ( item != null && item.Outer == this )
+			if (item != null && item.Outer == this)
 			{
 				item.Outer = null;
 			}
@@ -172,10 +182,7 @@ namespace zeroflag.Components
 		/// </summary>
 		protected bool HasInner
 		{
-			get
-			{
-				return _Inner != null && this.Inner.Count > 0;
-			}
+			get { return _Inner != null && this.Inner.Count > 0; }
 		}
 
 		#endregion Inner
@@ -220,15 +227,15 @@ namespace zeroflag.Components
 			get { return _State; }
 			set
 			{
-				if ( _State != value )
+				if (_State != value)
 				{
-					this.OnStateChanged( _State, _State = value );
-					this.StateChangeInner( value );
+					this.OnStateChanged(_State, _State = value);
+					this.StateChangeInner(value);
 				}
 			}
 		}
 
-		protected virtual void StateChangeInner( ModuleStates value )
+		protected virtual void StateChangeInner(ModuleStates value)
 		{
 			//foreach ( Component comp in this.Inner )
 			//{
@@ -237,9 +244,11 @@ namespace zeroflag.Components
 		}
 
 		#region StateChanged event
-		public delegate void StateChangedHandler( object sender, ModuleStates oldvalue, ModuleStates newvalue );
+
+		public delegate void StateChangedHandler(object sender, ModuleStates oldvalue, ModuleStates newvalue);
 
 		private event StateChangedHandler _StateChanged;
+
 		/// <summary>
 		/// Occurs when State changes.
 		/// </summary>
@@ -252,37 +261,42 @@ namespace zeroflag.Components
 		/// <summary>
 		/// Raises the StateChanged event.
 		/// </summary>
-		protected virtual void OnStateChanged( ModuleStates oldvalue, ModuleStates newvalue )
+		protected virtual void OnStateChanged(ModuleStates oldvalue, ModuleStates newvalue)
 		{
 			// if there are event subscribers...
-			if ( this._StateChanged != null )
+			if (this._StateChanged != null)
 			{
 				// call them...
-				this._StateChanged( this, oldvalue, newvalue );
+				this._StateChanged(this, oldvalue, newvalue);
 			}
 		}
+
 		#endregion StateChanged event
+
 		#endregion State
 
 		#region Initialize
+
 		public virtual void Initialize()
 		{
-			if ( this.State == ModuleStates.Ready || this.State == ModuleStates.Running )
+			if (this.State == ModuleStates.Ready || this.State == ModuleStates.Running)
+			{
 				return;
+			}
 			this.OnInitialize();
 
 			this.OnInitializeInner();
 
 			this.OnInitializePost();
 
-			this.OnInitialized( this );
+			this.OnInitialized(this);
 
 			this.State = ModuleStates.Ready;
 		}
 
 		protected virtual void OnInitializeInner()
 		{
-			Console.WriteLine( this + ".OnInitializeInner()" );
+			Console.WriteLine(this + ".OnInitializeInner()");
 			bool all;
 			List<Component> done = new List<Component>();
 			do
@@ -290,31 +304,40 @@ namespace zeroflag.Components
 				all = true;
 
 				var components = this.Inner.ToArray();
-				foreach ( var comp in components )
+				foreach (var comp in components)
 				{
 					comp.Initialize();
-					done.Add( comp );
+					done.Add(comp);
 				}
-				foreach ( var comp in this.Inner )
-					if ( !done.Contains( comp ) )
+				foreach (var comp in this.Inner)
+				{
+					if (!done.Contains(comp))
 					{
 						all = false;
 						break;
 					}
-			}
-			while ( !all );
+				}
+			} while (!all);
 		}
+
 		/// <summary>
 		/// Initializing. (before any inner components are initalized. (before any inner components are initialized; use <see cref="PostInitialize"/> if you need to wait for inner components to initialize)
 		/// </summary>
-		protected virtual void OnInitialize() { }
+		protected virtual void OnInitialize()
+		{
+		}
+
 		/// <summary>
 		/// After this and any inner componets are initialized. (after any inner components were initialized; use <see cref="OnInitialize"/> if you need to act earlier)
 		/// </summary>
-		protected virtual void OnInitializePost() { }
+		protected virtual void OnInitializePost()
+		{
+		}
 
 		#region event Initialized
+
 		private event Action<Component> _Initialized;
+
 		/// <summary>
 		/// After the component finished initialization.
 		/// </summary>
@@ -323,23 +346,27 @@ namespace zeroflag.Components
 			add { this._Initialized += value; }
 			remove { this._Initialized -= value; }
 		}
+
 		/// <summary>
 		/// Call to raise the Initialized event:
 		/// After the component finished initialization.
 		/// </summary>
-		protected virtual void OnInitialized( Component component )
+		protected virtual void OnInitialized(Component component)
 		{
 			// if there are event subscribers...
-			if ( this._Initialized != null )
+			if (this._Initialized != null)
 			{
 				// call them...
-				this._Initialized( component );
+				this._Initialized(component);
 			}
 		}
+
 		#endregion event Initialized
+
 		#endregion Initialize
 
 		#region Update
+
 		#region LastRun
 
 		private DateTime _LastUpdate = DateTime.Now;
@@ -352,7 +379,7 @@ namespace zeroflag.Components
 			get { return _LastUpdate; }
 			set
 			{
-				if ( _LastUpdate != value )
+				if (_LastUpdate != value)
 				{
 					_LastUpdate = value;
 				}
@@ -363,46 +390,56 @@ namespace zeroflag.Components
 
 		public virtual void Update()
 		{
-			if ( this.State == ModuleStates.Paused )
+			if (this.State == ModuleStates.Paused)
+			{
 				return;
-			this.Update( DateTime.Now - this.LastUpdate );
+			}
+			this.Update(DateTime.Now - this.LastUpdate);
 		}
 
-		public virtual void Update( TimeSpan timeSinceLastUpdate )
+		public virtual void Update(TimeSpan timeSinceLastUpdate)
 		{
 			DateTime now = DateTime.Now;
 			try
 			{
-				this.OnUpdate( timeSinceLastUpdate );
-				this.OnUpdateInner( timeSinceLastUpdate );
+				this.OnUpdate(timeSinceLastUpdate);
+				this.OnUpdateInner(timeSinceLastUpdate);
 			}
 			finally
 			{
 				this.LastUpdate = now;
 			}
-			this.OnUpdatePost( timeSinceLastUpdate );
-			this.OnUpdated( this, timeSinceLastUpdate );
+			this.OnUpdatePost(timeSinceLastUpdate);
+			this.OnUpdated(this, timeSinceLastUpdate);
 		}
 
-		protected virtual void OnUpdateInner( TimeSpan timeSinceLastUpdate )
+		protected virtual void OnUpdateInner(TimeSpan timeSinceLastUpdate)
 		{
-			foreach ( var comp in this.Inner.ToArray() )
+			foreach (var comp in this.Inner.ToArray())
 			{
 				//if ( comp.State != ModuleStates.Disposed )
-				comp.Update( timeSinceLastUpdate );
+				comp.Update(timeSinceLastUpdate);
 			}
 		}
+
 		/// <summary>
 		/// Updating. (before any inner components are initalized. (before any inner components are updated; use <see cref="PostUpdate"/> if you need to wait for inner components to update)
 		/// </summary>
-		protected virtual void OnUpdate( TimeSpan timeSinceLastUpdate ) { }
+		protected virtual void OnUpdate(TimeSpan timeSinceLastUpdate)
+		{
+		}
+
 		/// <summary>
 		/// After this and any inner componets are updated. (after any inner components were updated; use <see cref="OnUpdate"/> if you need to act earlier)
 		/// </summary>
-		protected virtual void OnUpdatePost( TimeSpan timeSinceLastUpdate ) { }
+		protected virtual void OnUpdatePost(TimeSpan timeSinceLastUpdate)
+		{
+		}
 
 		#region event Updated
+
 		private event Action<Component, TimeSpan> _Updated;
+
 		/// <summary>
 		/// After the component completes an update.
 		/// </summary>
@@ -411,20 +448,23 @@ namespace zeroflag.Components
 			add { this._Updated += value; }
 			remove { this._Updated -= value; }
 		}
+
 		/// <summary>
 		/// Call to raise the Updated event:
 		/// After the component completes an update.
 		/// </summary>
-		protected virtual void OnUpdated( Component component, TimeSpan timeSinceLastUpdate )
+		protected virtual void OnUpdated(Component component, TimeSpan timeSinceLastUpdate)
 		{
 			// if there are event subscribers...
-			if ( this._Updated != null )
+			if (this._Updated != null)
 			{
 				// call them...
-				this._Updated( component, timeSinceLastUpdate );
+				this._Updated(component, timeSinceLastUpdate);
 			}
 		}
+
 		#endregion event Updated
+
 		#endregion Update
 
 		#region Dispose
@@ -432,18 +472,25 @@ namespace zeroflag.Components
 		/// <summary>
 		/// Disposing! (after any inner components were disposed; use <see cref="PreDispose"/> if you need to act earlier)
 		/// </summary>
-		protected virtual void OnDisposePost() { }
+		protected virtual void OnDisposePost()
+		{
+		}
+
 		/// <summary>
 		/// Before this or any inner components get disposed.
 		/// </summary>
-		protected virtual void OnDispose() { }
-
-		protected override void Dispose( bool disposing )
+		protected virtual void OnDispose()
 		{
-			if ( this.State == ModuleStates.Disposed )
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (this.State == ModuleStates.Disposed)
+			{
 				return;
+			}
 			this.OnDispose();
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 			this.OnDisposeInner();
 			this.OnDisposePost();
 			this.State = ModuleStates.Disposed;
@@ -452,7 +499,7 @@ namespace zeroflag.Components
 
 		protected virtual void OnDisposeInner()
 		{
-			foreach ( var comp in this.Inner )
+			foreach (var comp in this.Inner)
 			{
 				comp.Dispose();
 			}
@@ -466,7 +513,6 @@ namespace zeroflag.Components
 		//{
 		//}
 
-
 		#region IsDisposed
 
 		private bool _IsDisposed = false;
@@ -479,17 +525,19 @@ namespace zeroflag.Components
 			get { return _IsDisposed; }
 			set
 			{
-				if ( _IsDisposed != value )
+				if (_IsDisposed != value)
 				{
-					this.OnHasDisposed( _IsDisposed, _IsDisposed = value );
+					this.OnHasDisposed(_IsDisposed, _IsDisposed = value);
 				}
 			}
 		}
 
 		#region Disposed event
-		public delegate void DisposedHandler( object sender, bool oldvalue, bool newvalue );
+
+		public delegate void DisposedHandler(object sender, bool oldvalue, bool newvalue);
 
 		private event DisposedHandler _HasDisposed;
+
 		/// <summary>
 		/// Occurs when IsDisposed changes.
 		/// </summary>
@@ -502,18 +550,18 @@ namespace zeroflag.Components
 		/// <summary>
 		/// Raises the Disposed event.
 		/// </summary>
-		protected virtual void OnHasDisposed( bool oldvalue, bool newvalue )
+		protected virtual void OnHasDisposed(bool oldvalue, bool newvalue)
 		{
 			// if there are event subscribers...
-			if ( this._HasDisposed != null )
+			if (this._HasDisposed != null)
 			{
 				// call them...
-				this._HasDisposed( this, oldvalue, newvalue );
+				this._HasDisposed(this, oldvalue, newvalue);
 			}
 		}
 
-
 		#endregion Disposed event
+
 		#endregion IsDisposed
 
 		#endregion Dispose
@@ -524,14 +572,8 @@ namespace zeroflag.Components
 
 		public virtual Core CoreBase
 		{
-			get
-			{
-				return ( (IComponent<Core>)this ).Core;
-			}
-			set
-			{
-				( (IComponent<Core>)this ).Core = value;
-			}
+			get { return ((IComponent<Core>) this).Core; }
+			set { ((IComponent<Core>) this).Core = value; }
 		}
 
 		private Core _Core;
@@ -542,16 +584,15 @@ namespace zeroflag.Components
 		[SerializerIgnore]
 		Core IComponent<Core>.Core
 		{
-			get { return _Core ?? this as Core ?? ( this.Outer != null ? this.Outer.CoreBase : null ); }
+			get { return _Core ?? this as Core ?? (this.Outer != null ? this.Outer.CoreBase : null); }
 			set
 			{
-				if ( _Core != value )
+				if (_Core != value)
 				{
-					this.OnCoreChanged( _Core, _Core = value );
+					this.OnCoreChanged(_Core, _Core = value);
 				}
 			}
 		}
-
 
 		#region CoreChanged event
 
@@ -569,44 +610,50 @@ namespace zeroflag.Components
 		/// <summary>
 		/// Raises the CoreChanged event.
 		/// </summary>
-		protected virtual void OnCoreChanged( Core oldvalue, Core newvalue )
+		protected virtual void OnCoreChanged(Core oldvalue, Core newvalue)
 		{
-			if ( newvalue != null )
+			if (newvalue != null)
 			{
-				if ( this.HasInner )
+				if (this.HasInner)
 				{
-					foreach ( var comp in this.Inner )
+					foreach (var comp in this.Inner)
 					{
-						if ( comp is IComponent<Core> )
-							( comp as IComponent<Core> ).Core = newvalue;
+						if (comp is IComponent<Core>)
+						{
+							(comp as IComponent<Core>).Core = newvalue;
+						}
 					}
 				}
-				if ( this.Outer != null && ( this.Outer is IComponent<Core> ) && ( this.Outer as IComponent<Core> ).Core == null )
-					( this.Outer as IComponent<Core> ).Core = newvalue;
+				if (this.Outer != null && (this.Outer is IComponent<Core>) && (this.Outer as IComponent<Core>).Core == null)
+				{
+					(this.Outer as IComponent<Core>).Core = newvalue;
+				}
 			}
 			// if there are event subscribers...
-			if ( this._CoreChanged != null )
+			if (this._CoreChanged != null)
 			{
 				// call them...
-				this._CoreChanged( this, oldvalue, newvalue );
+				this._CoreChanged(this, oldvalue, newvalue);
 			}
 		}
-		#endregion CoreChanged event
-		#endregion Core
 
+		#endregion CoreChanged event
+
+		#endregion Core
 
 		#endregion
 
 		#region IEquatable<Component> Members
 
-		public bool Equals( Component other )
+		public bool Equals(Component other)
 		{
-			return object.ReferenceEquals( this, other );
+			return object.ReferenceEquals(this, other);
 		}
 
 		#endregion
 
 		#region IComponent Members
+
 #if !SILVERLIGHT
 		public event EventHandler Disposed
 		{
@@ -615,6 +662,7 @@ namespace zeroflag.Components
 		}
 
 		#region Site
+
 		private System.ComponentModel.ISite _Site;
 
 		/// <summary>
@@ -625,7 +673,7 @@ namespace zeroflag.Components
 			get { return _Site; }
 			set
 			{
-				if ( _Site != value )
+				if (_Site != value)
 				{
 					_Site = value;
 				}
@@ -635,7 +683,7 @@ namespace zeroflag.Components
 		#endregion Site
 
 #endif
-		#endregion
 
+		#endregion
 	}
 }
