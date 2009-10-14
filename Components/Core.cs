@@ -1,4 +1,5 @@
 ﻿#region BSD license
+
 /*
  * Copyright (c) 2008, Thomas "zeroflag" Kraemer. All rights reserved.
  * Copyright (c) 2008, Anders "anonimasu" Helin. All rights reserved.
@@ -28,15 +29,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #endregion BSD license
 
 #region SVN Version Information
+
 ///	<file>
 ///		<!-- Last modification of this file: -->
 ///		<revision>$Rev: 60 $</revision>
 ///		<author>$Author: zeroflag $</author>
 ///		<id>$Id: Core.cs 60 2008-12-05 20:21:08Z zeroflag $</id>
 ///	</file>
+
 #endregion SVN Version Information
 
 using System;
@@ -66,6 +70,7 @@ namespace zeroflag.Components
 		#region Properties
 
 		#region Modules
+
 		private ComponentCollection<Module> _Modules;
 
 		/// <summary>
@@ -76,10 +81,14 @@ namespace zeroflag.Components
 			//get { return _Modules ?? ( ModulesInitialize( _Modules = this.ModulesCreate ) ); }
 			get
 			{
-				if ( _Modules != null )
+				if (_Modules != null)
+				{
 					return _Modules;
+				}
 				else
-					return ( ModulesInitialize( _Modules = this.ModulesCreate ) );
+				{
+					return (ModulesInitialize(_Modules = this.ModulesCreate));
+				}
 			}
 			protected set { _Modules = value; }
 		}
@@ -92,54 +101,65 @@ namespace zeroflag.Components
 		{
 			get
 			{
-				var modules = _Modules = new ComponentCollection<Module>( this ) { CoreBase = this };
+				var modules = _Modules = new ComponentCollection<Module>(this) {CoreBase = this};
 				//this.LogModule = new zeroflag.Components.Logging.LogModule();
 				return modules;
 			}
 		}
 
-		protected virtual ComponentCollection<Module> ModulesInitialize( ComponentCollection<Module> modules )
+		protected virtual ComponentCollection<Module> ModulesInitialize(ComponentCollection<Module> modules)
 		{
 			modules.ItemAdded += item =>
-			{
-				this.Log.Message( "Modules.Add(" + item + ")" );
-				if ( !this.Inner.Contains( item ) )
-					this.Inner.Add( item );
-			};
+			                     {
+			                     	this.Log.Message("Modules.Add(" + item + ")");
+			                     	if (!this.Inner.Contains(item))
+			                     	{
+			                     		this.Inner.Add(item);
+			                     	}
+			                     };
 			modules.ItemRemoved += item =>
-			{
-				this.Log.Verbose( "Modules.Remove(" + item + ")" );
-				while ( this.Inner.Contains( item ) )
-					this.Inner.Remove( item );
-			};
-			modules.ItemChanged += ( sender, oldModule, newModule ) => modules.Sort( ( mod1, mod2 ) => object.ReferenceEquals( mod1, mod2 ) ? 0 : mod2.CompareTo( mod1 ) );
+			                       {
+			                       	this.Log.Verbose("Modules.Remove(" + item + ")");
+			                       	while (this.Inner.Contains(item))
+			                       	{
+			                       		this.Inner.Remove(item);
+			                       	}
+			                       };
+			modules.ItemChanged += (sender, oldModule, newModule) => modules.Sort((mod1, mod2) => object.ReferenceEquals(mod1, mod2) ? 0 : mod2.CompareTo(mod1));
 			return modules;
 		}
 
-		protected override void InnerItemAdded( Component item )
+		protected override void InnerItemAdded(Component item)
 		{
-			base.InnerItemAdded( item );
+			base.InnerItemAdded(item);
 			Module mod = item as Module;
-			if ( mod != null )
+			if (mod != null)
 			{
-				if ( !this.Modules.Contains( mod ) )
-					this.Modules.Add( mod );
+				if (!this.Modules.Contains(mod))
+				{
+					this.Modules.Add(mod);
+				}
 			}
 		}
-		protected override void InnerItemRemoved( Component item )
+
+		protected override void InnerItemRemoved(Component item)
 		{
-			base.InnerItemRemoved( item );
+			base.InnerItemRemoved(item);
 
 			Module mod = item as Module;
-			if ( mod != null )
+			if (mod != null)
 			{
-				while ( this.Modules.Contains( mod ) )
-					this.Modules.Remove( mod );
+				while (this.Modules.Contains(mod))
+				{
+					this.Modules.Remove(mod);
+				}
 			}
 		}
+
 		#endregion Modules
 
 		#region LogModule
+
 		private Logging.LogModule _LogModule;
 
 		/// <summary>
@@ -157,17 +177,19 @@ namespace zeroflag.Components
 			}
 			set
 			{
-				var current = _LogModule;// ?? this.LogModuleFind;
-				if ( value != current )
+				var current = _LogModule; // ?? this.LogModuleFind;
+				if (value != current)
 				{
 					_LogModule = value;
 					//Console.WriteLine( "New log module. (" + current + " => " + value + ")\n" + new System.Diagnostics.StackTrace() );
 					//this.Log.Verbose( "New log module. (" + current + " => " + value + ")" );
-					if ( current != null )
-						this.Modules.Remove( current );
-					if ( value != null )
+					if (current != null)
 					{
-						this.Modules.Add( value );
+						this.Modules.Remove(current);
+					}
+					if (value != null)
+					{
+						this.Modules.Add(value);
 					}
 				}
 			}
@@ -179,10 +201,7 @@ namespace zeroflag.Components
 		/// </summary>
 		protected virtual Logging.LogModule LogModuleFind
 		{
-			get
-			{
-				return this.Modules.Find( m => m != null && typeof( zeroflag.Components.Logging.LogModule ).IsAssignableFrom( m.GetType() ) ) as zeroflag.Components.Logging.LogModule;
-			}
+			get { return this.Modules.Find(m => m != null && typeof (zeroflag.Components.Logging.LogModule).IsAssignableFrom(m.GetType())) as zeroflag.Components.Logging.LogModule; }
 		}
 
 		/// <summary>
@@ -205,17 +224,17 @@ namespace zeroflag.Components
 
 		#endregion LogModule
 
-
 		#endregion
 
 		#region Run
+
 		public void Run()
 		{
 			try
 			{
 				try
 				{
-					if ( this.State == ModuleStates.Initializing )
+					if (this.State == ModuleStates.Initializing)
 					{
 						this.Initialize();
 
@@ -223,26 +242,31 @@ namespace zeroflag.Components
 					}
 					try
 					{
-						if ( this.State == ModuleStates.Ready || this.State == ModuleStates.Running )
+						if (this.State == ModuleStates.Ready || this.State == ModuleStates.Running)
+						{
 							this.OnRun();
+						}
 					}
-					catch ( Exception exc )
+					catch (Exception exc)
 					{
-						this.Log.Error( exc );
+						this.Log.Error(exc);
 					}
-					this.State = ModuleStates.Shutdown;
 
+					if (!this.RecoverFromExceptions)
+					{
+						this.State = ModuleStates.Shutdown;
+					}
 				}
-				catch ( Exception exc )
+				catch (Exception exc)
 				{
-					this.Log.Error( exc );
+					this.Log.Error(exc);
 				}
 
 				this.Dispose();
 			}
-			catch ( Exception exc )
+			catch (Exception exc)
 			{
-				this.Log.Error( exc );
+				this.Log.Error(exc);
 			}
 			this.State = ModuleStates.Disposed;
 		}
@@ -254,20 +278,23 @@ namespace zeroflag.Components
 		{
 			DateTime last = DateTime.Now;
 			DateTime now;
-			System.Threading.AutoResetEvent wait = new System.Threading.AutoResetEvent( false );
-			while ( this.State == ModuleStates.Running || this.State == ModuleStates.Ready )
+			System.Threading.AutoResetEvent wait = new System.Threading.AutoResetEvent(false);
+			while (this.State == ModuleStates.Running || this.State == ModuleStates.Ready)
 			{
 				now = DateTime.Now;
-				using ( this.PerformanceLog["Core"].Record )
-					this.Update( last - now );
+				using (this.PerformanceLog["Core"].Record)
+				{
+					this.Update(last - now);
+				}
 				last = now;
-				wait.WaitOne( 1 );
+				wait.WaitOne(1);
 			}
 		}
 
 		#endregion Run
 
 		#region PerformanceLog
+
 		private zeroflag.Components.Logging.PerformanceLog _PerformanceLog;
 
 		/// <summary>
@@ -275,7 +302,7 @@ namespace zeroflag.Components
 		/// </summary>
 		public zeroflag.Components.Logging.PerformanceLog PerformanceLog
 		{
-			get { return _PerformanceLog ?? ( _PerformanceLog = this.PerformanceLogCreate ); }
+			get { return _PerformanceLog ?? (_PerformanceLog = this.PerformanceLogCreate); }
 			//protected set
 			//{
 			//	if (_PerformanceLog != value)
@@ -295,13 +322,11 @@ namespace zeroflag.Components
 		{
 			get
 			{
-				zeroflag.Components.Logging.PerformanceLog value = _PerformanceLog = new zeroflag.Components.Logging.PerformanceLog() { Log = this.Log, Outer = this };
+				zeroflag.Components.Logging.PerformanceLog value = _PerformanceLog = new zeroflag.Components.Logging.PerformanceLog() {Log = this.Log, Outer = this};
 				return value;
 			}
 		}
 
 		#endregion PerformanceLog
-
-
 	}
 }

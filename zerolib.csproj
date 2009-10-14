@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;WIN32 WIN32_TIMING</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;WIN32 WIN32_TIMING VERBOSE_TASKPROCESSOR_</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>

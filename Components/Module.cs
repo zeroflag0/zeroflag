@@ -1,4 +1,5 @@
 ﻿#region BSD license
+
 /*
  * Copyright (c) 2008, Thomas "zeroflag" Kraemer. All rights reserved.
  * Copyright (c) 2008, Anders "anonimasu" Helin. All rights reserved.
@@ -28,15 +29,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #endregion BSD license
 
 #region SVN Version Information
+
 ///	<file>
 ///		<!-- Last modification of this file: -->
 ///		<revision>$Rev: 60 $</revision>
 ///		<author>$Author: zeroflag $</author>
 ///		<id>$Id: Module.cs 60 2008-12-05 20:21:08Z zeroflag $</id>
 ///	</file>
+
 #endregion SVN Version Information
 
 using System;
@@ -51,6 +55,7 @@ namespace zeroflag.Components
 		#region Properties
 
 		#region Name
+
 		private string _Name;
 
 		/// <summary>
@@ -58,7 +63,7 @@ namespace zeroflag.Components
 		/// </summary>
 		public string Name
 		{
-			get { return _Name ?? ( _Name = this.NameCreate ); }
+			get { return _Name ?? (_Name = this.NameCreate); }
 			set { _Name = value; }
 		}
 
@@ -73,8 +78,8 @@ namespace zeroflag.Components
 
 		#endregion Name
 
-
 		#region Log
+
 		private Logging.Log _Log;
 
 		/// <summary>
@@ -83,7 +88,7 @@ namespace zeroflag.Components
 		[SerializerIgnore]
 		public Logging.Log Log
 		{
-			get { return _Log ?? ( _Log = this.LogCreate ); }
+			get { return _Log ?? (_Log = this.LogCreate); }
 			//set { _Log = value; }
 		}
 
@@ -98,12 +103,12 @@ namespace zeroflag.Components
 				Logging.Log log = null;
 				try
 				{
-					Logging.LogModule logmod = this.CoreBase.Modules.Find( m => m is Logging.LogModule ) as Logging.LogModule;
-					log = new zeroflag.Components.Logging.Log( logmod, this.Name );
+					Logging.LogModule logmod = this.CoreBase.Modules.Find(m => m is Logging.LogModule) as Logging.LogModule;
+					log = new zeroflag.Components.Logging.Log(logmod, this.Name);
 				}
-				catch ( NullReferenceException exc )
+				catch (NullReferenceException exc)
 				{
-					log = new zeroflag.Components.Logging.Log( this.Name );
+					log = new zeroflag.Components.Logging.Log(this.Name);
 				}
 				return log;
 			}
@@ -118,10 +123,11 @@ namespace zeroflag.Components
 			get
 			{
 				var inner = base.InnerCreate;
-				inner.ItemChanged += ( s, o, n ) => this.Modules = null;
+				inner.ItemChanged += (s, o, n) => this.Modules = null;
 				return inner;
 			}
 		}
+
 		private List<Module> _Modules;
 
 		/// <summary>
@@ -129,10 +135,10 @@ namespace zeroflag.Components
 		/// </summary>
 		public List<Module> Modules
 		{
-			get { return _Modules ?? ( _Modules = this.ModulesCreate ); }
+			get { return _Modules ?? (_Modules = this.ModulesCreate); }
 			protected set
 			{
-				if ( _Modules != value )
+				if (_Modules != value)
 				{
 					//if (_Modules != null) { }
 					_Modules = value;
@@ -147,32 +153,67 @@ namespace zeroflag.Components
 		/// </summary>
 		protected virtual List<Module> ModulesCreate
 		{
-			get
-			{
-				return base.Inner.FindAll<Module>();
-			}
+			get { return base.Inner.FindAll<Module>(); }
 		}
 
 		#endregion Modules
 
+		#region RecoverFromExceptions
+
+		private bool? _RecoverFromExceptions;
+
+		/// <summary>
+		/// Recover from exceptions.
+		/// </summary>
+		public bool RecoverFromExceptions
+		{
+			get { return _RecoverFromExceptions ?? (_RecoverFromExceptions = this.RecoverFromExceptionsCreate) ?? false; }
+			set
+			{
+				if (_RecoverFromExceptions != value)
+				{
+					//		//if (_RecoverFromExceptions != null) { }
+					_RecoverFromExceptions = value;
+					//		//if (_RecoverFromExceptions != null) { }
+				}
+			}
+		}
+
+		/// <summary>
+		/// Creates the default/initial value for RecoverFromExceptions.
+		/// Recover from exceptions.
+		/// </summary>
+		protected virtual bool? RecoverFromExceptionsCreate
+		{
+			get
+			{
+				bool? value = null;
+				return value;
+			}
+		}
+
+		#endregion RecoverFromExceptions
 
 		#endregion
 
-		protected override void OnStateChanged( Component.ModuleStates oldvalue, Component.ModuleStates newvalue )
+		protected override void OnStateChanged(Component.ModuleStates oldvalue, Component.ModuleStates newvalue)
 		{
-			this.Log.Message( newvalue + " ( previously " + oldvalue + " )" );
-			if ( ( (int)newvalue - (int)oldvalue > 1 || (int)newvalue < (int)oldvalue ) &&
-				!( newvalue == ModuleStates.Running && oldvalue == ModuleStates.Paused ||
-				newvalue == ModuleStates.Shutdown && oldvalue == ModuleStates.Running ) )
-				this.Log.Warning( newvalue + " ( previously " + oldvalue + " ) out of order." );
+			this.Log.Message(newvalue + " ( previously " + oldvalue + " )");
+			if (((int) newvalue - (int) oldvalue > 1 || (int) newvalue < (int) oldvalue) &&
+			    !(newvalue == ModuleStates.Running && oldvalue == ModuleStates.Paused ||
+			      newvalue == ModuleStates.Shutdown && oldvalue == ModuleStates.Running))
+			{
+				this.Log.Warning(newvalue + " ( previously " + oldvalue + " ) out of order.");
+			}
 
-			base.OnStateChanged( oldvalue, newvalue );
+			base.OnStateChanged(oldvalue, newvalue);
 		}
+
 		public void Shutdown()
 		{
-			if ( this.State != ModuleStates.Disposed )
+			if (this.State != ModuleStates.Disposed)
 			{
-				this.Log.Message( "Requesting shutdown..." );
+				this.Log.Message("Requesting shutdown...");
 				this.State = ModuleStates.Shutdown;
 			}
 		}
@@ -181,14 +222,15 @@ namespace zeroflag.Components
 		System.Diagnostics.StackTrace _InitializeTrace;
 		int _InitializeThread;
 #endif
+
 		public override void Initialize()
 		{
-			if ( this.State == ModuleStates.Ready || this.State == ModuleStates.Running )
+			if (this.State == ModuleStates.Ready || this.State == ModuleStates.Running)
 			{
 #if VERBOSE
 				this.Log.Warning( "Already initialized. " + System.Threading.Thread.CurrentThread.ManagedThreadId + "\n" + new System.Diagnostics.StackTrace() + " [" + this.State + "] from " + _InitializeThread + "\n" + _InitializeTrace );
 #else
-				this.Log.Warning( "Already initialized. [" + this.State + "]" );
+				this.Log.Warning("Already initialized. [" + this.State + "]");
 #endif
 				return;
 			}
@@ -199,8 +241,8 @@ namespace zeroflag.Components
 				_InitializeThread = System.Threading.Thread.CurrentThread.ManagedThreadId;
 			}
 #endif
-			this.Log.Message( "Initializing..." );
-			for ( int retry = 0; ; retry++ )
+			this.Log.Message("Initializing...");
+			for (int retry = 0;; retry++)
 			{
 				try
 				{
@@ -209,42 +251,47 @@ namespace zeroflag.Components
 					this.Resort();
 					break;
 				}
-				catch ( Exception exc )
+				catch (Exception exc)
 				{
-					if ( retry < 4 )
-						this.Log.Warning( exc );
+					if (retry < 4)
+					{
+						this.Log.Warning(exc);
+					}
 					else
 					{
-						this.Log.Error( exc );
+						this.Log.Error(exc);
 						throw;
 					}
 				}
 			}
-			this.Log.Message( "Initialized." );
+			this.Log.Message("Initialized.");
 		}
 
 		protected virtual bool Resort()
 		{
-			if ( this.Modules.Count > 0 )
+			if (this.Modules.Count > 0)
 			{
 				this.Modules.Sort();
 				this.ResortOut();
 			}
 			return true;
 		}
-		[System.Diagnostics.Conditional( "VERBOSE" )]
+
+		[System.Diagnostics.Conditional("VERBOSE")]
 		protected void ResortOut()
 		{
 			string dbg = "Resort()\n";
 
-			foreach ( Module module in this.Modules )
+			foreach (Module module in this.Modules)
+			{
 				dbg += "\t" + module.Name + "\n";
-			this.Log.Verbose( dbg );
+			}
+			this.Log.Verbose(dbg);
 		}
 
 		protected override void OnInitializeInner()
 		{
-			Console.WriteLine( this + ".OnInitializeInner()" );
+			Console.WriteLine(this + ".OnInitializeInner()");
 			bool all;
 			List<Component> done = new List<Component>();
 			int retry = 0;
@@ -253,33 +300,36 @@ namespace zeroflag.Components
 				all = true;
 
 				var components = this.Inner.ToArray();
-				foreach ( var comp in components )
+				foreach (var comp in components)
 				{
 					try
 					{
-						this.Log.Verbose( "Initializing " + comp + "..." );
+						this.Log.Verbose("Initializing " + comp + "...");
 						comp.Initialize();
-						done.Add( comp );
+						done.Add(comp);
 					}
-					catch ( Exception exc )
+					catch (Exception exc)
 					{
-						if ( retry < 4 )
-							this.Log.Warning( exc );
+						if (retry < 4)
+						{
+							this.Log.Warning(exc);
+						}
 						else
 						{
-							this.Log.Error( exc );
+							this.Log.Error(exc);
 							throw;
 						}
 					}
 				}
-				foreach ( var comp in this.Inner )
-					if ( !done.Contains( comp ) )
+				foreach (var comp in this.Inner)
+				{
+					if (!done.Contains(comp))
 					{
 						all = false;
 						break;
 					}
-			}
-			while ( !all );
+				}
+			} while (!all);
 		}
 
 		protected override void OnInitializePost()
@@ -289,42 +339,56 @@ namespace zeroflag.Components
 			this.State = ModuleStates.Ready;
 		}
 
-		public override void Update( TimeSpan timeSinceLastUpdate )
+		public override void Update(TimeSpan timeSinceLastUpdate)
 		{
-			if ( this.State == ModuleStates.Running )
+			if (this.State == ModuleStates.Running)
+			{
 				try
 				{
-					base.Update( timeSinceLastUpdate );
+					base.Update(timeSinceLastUpdate);
 				}
-				catch ( Exception exc )
+				catch (Exception exc)
 				{
-					this.Log.Error( exc );
-					this.State = ModuleStates.Shutdown;
+					this.Log.Error(exc);
+					if (!this.RecoverFromExceptions)
+					{
+						this.State = ModuleStates.Shutdown;
+					}
 				}
-			else if ( this.State == ModuleStates.Ready )
-				this.State = ModuleStates.Running;
-			else if ( this.State == ModuleStates.Shutdown )
-				this.Dispose();
-			else if ( this.State == ModuleStates.Paused )
-				return;
-			else
-				this.Log.Warning( "Running in invalid state " + this.State + "." );
-		}
-
-		protected override void Dispose( bool disposing )
-		{
-			if ( this.State == ModuleStates.Disposed )
+			}
+			else if (this.State == ModuleStates.Ready)
 			{
-				this.Log.Warning( "Already disposed." );
+				this.State = ModuleStates.Running;
+			}
+			else if (this.State == ModuleStates.Shutdown)
+			{
+				this.Dispose();
+			}
+			else if (this.State == ModuleStates.Paused)
+			{
 				return;
 			}
-			this.Log.Message( "Disposing..." );
+			else
+			{
+				this.Log.Warning("Running in invalid state " + this.State + ".");
+			}
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (this.State == ModuleStates.Disposed)
+			{
+				this.Log.Warning("Already disposed.");
+				return;
+			}
+			this.Log.Message("Disposing...");
 			this.Resort();
-			base.Dispose( disposing );
-			this.Log.Message( "Disposed." );
+			base.Dispose(disposing);
+			this.Log.Message("Disposed.");
 		}
 
 		#region IComparable<Module> Members
+
 		/// <summary>
 		/// Compare two modules for order.
 		/// This represents the execution order and can be used for dependency handling.
@@ -339,7 +403,7 @@ namespace zeroflag.Components
 		/// Greater than zero 
 		///  This Module is greater than Module. Higher priority, executed first.
 		/// </returns>
-		public virtual int CompareTo( Module other )
+		public virtual int CompareTo(Module other)
 		{
 			return 0;
 		}
