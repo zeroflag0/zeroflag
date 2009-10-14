@@ -1,4 +1,5 @@
 ﻿#region BSD license
+
 /*
  * Copyright (c) 2008, Thomas "zeroflag" Kraemer. All rights reserved.
  * Copyright (c) 2008, Anders "anonimasu" Helin. All rights reserved.
@@ -28,15 +29,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #endregion BSD license
 
 #region SVN Version Information
+
 ///	<file>
 ///		<!-- Last modification of this file: -->
 ///		<revision>$Rev: 60 $</revision>
 ///		<author>$Author: zeroflag $</author>
 ///		<id>$Id: Module.cs 60 2008-12-05 20:21:08Z zeroflag $</id>
 ///	</file>
+
 #endregion SVN Version Information
 
 using System;
@@ -61,21 +65,20 @@ namespace zeroflag.Components
 		[SerializerIgnore]
 		public CoreT Core
 		{
-			get { return _Core ?? this as CoreT ?? ( this.Outer != null ? this.Outer.CoreBase as CoreT : null ); }
+			get { return _Core ?? this as CoreT ?? (this.Outer != null ? this.Outer.CoreBase as CoreT : null); }
 			set
 			{
-				if ( _Core != value )
+				if (_Core != value)
 				{
-					this.OnCoreChanged( _Core, _Core = value );
+					this.OnCoreChanged(_Core, _Core = value);
 				}
 			}
 		}
 
-
-
 		#region CoreChanged event
 
 		private event Component<CoreT>.CoreChangedHandler _CoreChanged;
+
 		/// <summary>
 		/// Occurs when Core changes.
 		/// </summary>
@@ -88,33 +91,38 @@ namespace zeroflag.Components
 		/// <summary>
 		/// Raises the CoreChanged event.
 		/// </summary>
-		protected virtual void OnCoreChanged( CoreT oldvalue, CoreT newvalue )
+		protected virtual void OnCoreChanged(CoreT oldvalue, CoreT newvalue)
 		{
-			if ( newvalue != null )
+			if (newvalue != null)
 			{
-				if ( this.HasInner )
+				if (this.HasInner)
 				{
-					foreach ( var comp in this.Inner )
+					foreach (var comp in this.Inner)
 					{
 						comp.CoreBase = newvalue;
 					}
 				}
-				if ( this.Outer != null && this.Outer.CoreBase == null )
+				if (this.Outer != null && this.Outer.CoreBase == null)
+				{
 					this.Outer.CoreBase = newvalue;
+				}
 			}
 			// if there are event subscribers...
-			if ( this._CoreChanged != null )
+			if (this._CoreChanged != null)
 			{
 				// call them...
-				this._CoreChanged( this, oldvalue, newvalue );
+				this._CoreChanged(this, oldvalue, newvalue);
 			}
 		}
+
 		#endregion CoreChanged event
+
 		#endregion Core
 
 		#endregion
 
 		#region IComparable<Module> Members
+
 		/// <summary>
 		/// Compare two modules for order.
 		/// This represents the execution order and can be used for dependency handling.
@@ -129,11 +137,23 @@ namespace zeroflag.Components
 		/// Greater than zero 
 		///  This Module is greater than Module. Higher priority, executed first.
 		/// </returns>
-		public virtual int CompareTo( Module other )
+		public virtual int CompareTo(Module other)
 		{
 			return 0;
 		}
 
 		#endregion
+
+		public override void Update()
+		{
+			try
+			{
+				base.Update();
+			}
+			catch (Exception exc)
+			{
+				this.Log.Error(exc);
+			}
+		}
 	}
 }

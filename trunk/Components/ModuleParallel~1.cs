@@ -143,12 +143,6 @@ namespace zeroflag.Components
 			//base.OnUpdate( timeSinceLastUpdate );
 		}
 
-		protected override void OnUpdatePost(TimeSpan timeSinceLastUpdate)
-		{
-			this.Processor.Add(this.LastUpdate.AddMilliseconds(this.Interval), this.Update);
-			base.OnUpdatePost(timeSinceLastUpdate);
-		}
-
 		public override void Initialize()
 		{
 			this.Processor.Add(base.Initialize);
