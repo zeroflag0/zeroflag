@@ -141,9 +141,30 @@ namespace zeroflag.Components.Logging
 
 		#endregion Logs
 
+		#region IsUpdateExternal
+		private bool _IsUpdateExternal;
+
+		/// <summary>
+		/// Should the log update itself (false) or should it wait for an external call (true) to UpdateExternal()?
+		/// </summary>
+		public bool IsUpdateExternal
+		{
+			get { return _IsUpdateExternal; }
+			set
+			{
+				if ( _IsUpdateExternal != value )
+				{
+					_IsUpdateExternal = value;
+				}
+			}
+		}
+
+		#endregion IsUpdateExternal
+
+
 		protected override string NameCreate
 		{
-			get { return ( CoreBase ?? (object)"<corelesss>" ) + ".Log"; }
+			get { return ( CoreBase ?? (object)"<coreless>" ) + ".Log"; }
 		}
 		protected override void OnInitialize()
 		{
@@ -161,7 +182,10 @@ namespace zeroflag.Components.Logging
 		private int _MessagesProcessed = 0;
 		protected override void OnUpdate( TimeSpan timeSinceLastUpdate )
 		{
-			base.OnUpdate( timeSinceLastUpdate );
+			if ( !this.IsUpdateExternal )
+			{
+				base.OnUpdate(timeSinceLastUpdate);
+			}
 		}
 		protected void _OnUpdate()
 		{
@@ -189,6 +213,11 @@ namespace zeroflag.Components.Logging
 			if ( this.State != ModuleStates.Disposed )
 				this.TaskProcessor.Add( DateTime.Now.AddMilliseconds( 250 ), this._OnUpdate );
 			//} );
+		}
+
+		public void UpdateExternal()
+		{
+			this._OnUpdate();
 		}
 
 		protected void Write( DateTime time, string owner, string value )

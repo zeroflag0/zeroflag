@@ -1,4 +1,5 @@
 #region BSD license
+
 /*
  * Copyright (c) 2008, Thomas "zeroflag" Kraemer. All rights reserved.
  * Copyright (c) 2008, Anders "anonimasu" Helin. All rights reserved.
@@ -28,15 +29,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #endregion BSD license
 
 #region SVN Version Information
+
 ///	<file>
 ///		<!-- Last modification of this file: -->
 ///		<revision>$Rev: 45 $</revision>
 ///		<author>$Author: zeroflag $</author>
 ///		<id>$Id: Log.cs 45 2008-10-30 12:10:08Z zeroflag $</id>
 ///	</file>
+
 #endregion SVN Version Information
 
 using System;
@@ -51,7 +55,6 @@ namespace zeroflag.Components.Logging
 		public Log()
 			: this( "" )
 		{
-
 		}
 
 		public Log( string name )
@@ -65,8 +68,8 @@ namespace zeroflag.Components.Logging
 			this.Owner = name;
 		}
 
-
 		#region Queue
+
 		private zeroflag.Threading.LocklessQueue<KeyValuePair<DateTime, string>> _Queue;
 
 		/// <summary>
@@ -74,7 +77,10 @@ namespace zeroflag.Components.Logging
 		/// </summary>
 		public zeroflag.Threading.LocklessQueue<KeyValuePair<DateTime, string>> Queue
 		{
-			get { return _Queue ?? ( _Queue = this.QueueCreate ); }
+			get
+			{
+				return _Queue ?? ( _Queue = this.QueueCreate );
+			}
 			//set { _Queue = value; }
 		}
 
@@ -94,54 +100,79 @@ namespace zeroflag.Components.Logging
 
 		#endregion Queue
 
-		LogModule _Module;
+		private LogModule _Module;
 
 		public LogModule Module
 		{
-			get { return _Module; }
+			get
+			{
+				return _Module;
+			}
 			set
 			{
 				if ( _Module != value )
 				{
 					_Module = value;
 					if ( value != null )
+					{
 						value.Logs.Add( this );
+					}
 				}
 			}
 		}
 
-		string _Owner;
+		private string _Owner;
 
 		public virtual string Owner
 		{
-			get { return _Owner; }
-			set { _Owner = value; }
+			get
+			{
+				return _Owner;
+			}
+			set
+			{
+				_Owner = value;
+			}
 		}
 
-		bool _Quiet = false;
+		private bool _Quiet = false;
+
 		/// <summary>
 		/// If quiet is true, messages won't be logged. Has no effect on errors and warnings.
 		/// </summary>
 		public bool Quiet
 		{
-			get { return _Quiet; }
-			set { _Quiet = value; }
+			get
+			{
+				return _Quiet;
+			}
+			set
+			{
+				_Quiet = value;
+			}
 		}
 
 		#region Indent
-		string _Indent = "\t";
+
+		private string _Indent = "\t";
 
 		public virtual string Indent
 		{
-			get { return _Indent; }
-			set { _Indent = value; }
+			get
+			{
+				return _Indent;
+			}
+			set
+			{
+				_Indent = value;
+			}
 		}
 
 		protected virtual string CreateIndent( int count )
 		{
-			StringBuilder builder = new StringBuilder(/*this.Indent.Length * count*/);
+			StringBuilder builder = new StringBuilder( /*this.Indent.Length * count*/ );
 
-			for ( int i = 0; i < count; i++ )
+			for (int i = 0; i < count; i++)
 			{
 				builder.Append( this.Indent );
 				//for(int j = 0; j < this.Indent.Length; j++)
@@ -152,6 +183,7 @@ namespace zeroflag.Components.Logging
 
 			return builder.ToString();
 		}
+
 		#endregion Indent
 
 		//protected virtual void DoWrite( DateTime time, string value )
@@ -161,9 +193,10 @@ namespace zeroflag.Components.Logging
 		//    else
 		//        return;
 		//}
-		static Func<string> empty = () => "";
+		private static Func<string> empty = () => "";
 
 		#region Message
+
 		public virtual void Message( object value )
 		{
 			if ( !this.Quiet )
@@ -179,14 +212,15 @@ namespace zeroflag.Components.Logging
 			}
 		}
 
-		string _MessageIndentBuffer = null;
-		int _MessageIndentBufferCount = -1;
+		private string _MessageIndentBuffer = null;
+		private int _MessageIndentBufferCount = -1;
 
 		protected virtual string MessageIndentBuffer
 		{
 			get
 			{
-				if ( this._MessageIndentBuffer == null || this._MessageIndentBufferCount != this.MessageIndent )
+				if ( this._MessageIndentBuffer == null
+				     || this._MessageIndentBufferCount != this.MessageIndent )
 				{
 					this._MessageIndentBuffer = this.CreateIndent( this.MessageIndent );
 				}
@@ -210,28 +244,46 @@ namespace zeroflag.Components.Logging
 			this.Queue.Add( new KeyValuePair<DateTime, string>( time, value ) );
 		}
 
-		int _MessageIndent = 0;
+		private int _MessageIndent = 0;
 
 		public virtual int MessageIndent
 		{
-			get { return _MessageIndent; }
-			set { _MessageIndent = value; }
+			get
+			{
+				return _MessageIndent;
+			}
+			set
+			{
+				_MessageIndent = value;
+			}
 		}
 
-		Func<string> _MessagePrefix;
+		private Func<string> _MessagePrefix;
 
 		public virtual Func<string> MessagePrefix
 		{
-			get { return _MessagePrefix; }
-			set { _MessagePrefix = value; }
+			get
+			{
+				return _MessagePrefix;
+			}
+			set
+			{
+				_MessagePrefix = value;
+			}
 		}
 
-		Func<string> _MessagePostfix;
+		private Func<string> _MessagePostfix;
 
 		public virtual Func<string> MessagePostfix
 		{
-			get { return _MessagePostfix; }
-			set { _MessagePostfix = value; }
+			get
+			{
+				return _MessagePostfix;
+			}
+			set
+			{
+				_MessagePostfix = value;
+			}
 		}
 
 		#endregion Message
@@ -250,14 +302,15 @@ namespace zeroflag.Components.Logging
 			}
 		}
 
-		string _WarningIndentBuffer = null;
-		int _WarningIndentBufferCount = -1;
+		private string _WarningIndentBuffer = null;
+		private int _WarningIndentBufferCount = -1;
 
 		protected virtual string WarningIndentBuffer
 		{
 			get
 			{
-				if ( this._WarningIndentBuffer == null || this._WarningIndentBufferCount != this.WarningIndent )
+				if ( this._WarningIndentBuffer == null
+				     || this._WarningIndentBufferCount != this.WarningIndent )
 				{
 					this._WarningIndentBuffer = this.CreateIndent( this.WarningIndent );
 				}
@@ -279,28 +332,46 @@ namespace zeroflag.Components.Logging
 		}
 
 
-		int _WarningIndent = 0;
+		private int _WarningIndent = 0;
 
 		public virtual int WarningIndent
 		{
-			get { return _WarningIndent; }
-			set { _WarningIndent = value; }
+			get
+			{
+				return _WarningIndent;
+			}
+			set
+			{
+				_WarningIndent = value;
+			}
 		}
 
-		Func<string> _WarningPrefix = () => "[Warning] ";
+		private Func<string> _WarningPrefix = () => "[Warning] ";
 
 		public virtual Func<string> WarningPrefix
 		{
-			get { return _WarningPrefix; }
-			set { _WarningPrefix = value; }
+			get
+			{
+				return _WarningPrefix;
+			}
+			set
+			{
+				_WarningPrefix = value;
+			}
 		}
 
-		Func<string> _WarningPostfix;
+		private Func<string> _WarningPostfix;
 
 		public Func<string> WarningPostfix
 		{
-			get { return _WarningPostfix; }
-			set { _WarningPostfix = value; }
+			get
+			{
+				return _WarningPostfix;
+			}
+			set
+			{
+				_WarningPostfix = value;
+			}
 		}
 
 		#endregion Warning
@@ -319,14 +390,16 @@ namespace zeroflag.Components.Logging
 			}
 		}
 
-		string _ErrorIndentBuffer = null;
-		int _ErrorIndentBufferCount = -1;
+
+		private string _ErrorIndentBuffer = null;
+		private int _ErrorIndentBufferCount = -1;
 
 		protected virtual string ErrorIndentBuffer
 		{
 			get
 			{
-				if ( this._ErrorIndentBuffer == null || this._ErrorIndentBufferCount != this.ErrorIndent )
+				if ( this._ErrorIndentBuffer == null
+				     || this._ErrorIndentBufferCount != this.ErrorIndent )
 				{
 					this._ErrorIndentBuffer = this.CreateIndent( this.ErrorIndent );
 				}
@@ -344,37 +417,94 @@ namespace zeroflag.Components.Logging
 #if LOG_DIRECT || LOG_DIRECT_ERROR
 			System.Console.WriteLine( new StringBuilder( time.ToString( "HH:mm:ss.fff" ) ).Append( " [" ).Append( this.Owner.PadRight( 15 ) ).Append( "]** " ).Append( value ) );
 #endif
+			this.OnErrorOccured( time, value );
 			this.Queue.Add( new KeyValuePair<DateTime, string>( time, value ) );
 		}
 
-		int _ErrorIndent = 0;
+		#region event ErrorOccured
+
+		public delegate void ErrorOccuredHandler( DateTime time, string message );
+
+		private event ErrorOccuredHandler _ErrorOccured;
+
+		/// <summary>
+		/// When an error is being logged.
+		/// </summary>
+		public event ErrorOccuredHandler ErrorOccured
+		{
+			add
+			{
+				this._ErrorOccured += value;
+			}
+			remove
+			{
+				this._ErrorOccured -= value;
+			}
+		}
+
+		/// <summary>
+		/// Call to raise the ErrorOccured event:
+		/// When an error is being logged.
+		/// </summary>
+		protected virtual void OnErrorOccured( DateTime time, string message )
+		{
+			// if there are event subscribers...
+			if ( this._ErrorOccured != null )
+			{
+				// call them...
+				this._ErrorOccured( time, message );
+			}
+		}
+
+		#endregion event ErrorOccured
+
+		private int _ErrorIndent = 0;
 
 		public int ErrorIndent
 		{
-			get { return _ErrorIndent; }
-			set { _ErrorIndent = value; }
+			get
+			{
+				return _ErrorIndent;
+			}
+			set
+			{
+				_ErrorIndent = value;
+			}
 		}
 
-		Func<string> _ErrorPrefix = () => "[ERROR] ";
+		private Func<string> _ErrorPrefix = () => "[ERROR] ";
 
 		public Func<string> ErrorPrefix
 		{
-			get { return _ErrorPrefix; }
-			set { _ErrorPrefix = value; }
+			get
+			{
+				return _ErrorPrefix;
+			}
+			set
+			{
+				_ErrorPrefix = value;
+			}
 		}
 
 
-		Func<string> _ErrorPostfix;
+		private Func<string> _ErrorPostfix;
 
 		public Func<string> ErrorPostfix
 		{
-			get { return _ErrorPostfix; }
-			set { _ErrorPostfix = value; }
+			get
+			{
+				return _ErrorPostfix;
+			}
+			set
+			{
+				_ErrorPostfix = value;
+			}
 		}
 
 		#endregion Error
 
 		#region Verbose
+
 		[System.Diagnostics.Conditional( "VERBOSE" )]
 		public virtual void Verbose( object value )
 		{
@@ -391,20 +521,22 @@ namespace zeroflag.Components.Logging
 			}
 		}
 
-		string _VerboseIndentBuffer = null;
-		int _VerboseIndentBufferCount = -1;
+		private string _VerboseIndentBuffer = null;
+		private int _VerboseIndentBufferCount = -1;
 
 		protected virtual string VerboseIndentBuffer
 		{
 			get
 			{
-				if ( this._VerboseIndentBuffer == null || this._VerboseIndentBufferCount != this.VerboseIndent )
+				if ( this._VerboseIndentBuffer == null
+				     || this._VerboseIndentBufferCount != this.VerboseIndent )
 				{
 					this._VerboseIndentBuffer = this.CreateIndent( this.VerboseIndent );
 				}
 				return _VerboseIndentBuffer;
 			}
 		}
+
 		[System.Diagnostics.Conditional( "VERBOSE" )]
 		public virtual void Verbose( string value )
 		{
@@ -413,6 +545,7 @@ namespace zeroflag.Components.Logging
 				this.WriteVerbose( Now, new StringBuilder( this.VerboseIndentBuffer ).Append( ( this.VerbosePrefix ?? empty )() ).Append( value ).Append( ( this.VerbosePostfix ?? empty )() ).ToString() );
 			}
 		}
+
 		[System.Diagnostics.Conditional( "VERBOSE" )]
 		protected virtual void WriteVerbose( DateTime time, string value )
 		{
@@ -422,28 +555,46 @@ namespace zeroflag.Components.Logging
 			this.Queue.Add( new KeyValuePair<DateTime, string>( time, value ) );
 		}
 
-		int _VerboseIndent = 0;
+		private int _VerboseIndent = 0;
 
 		public virtual int VerboseIndent
 		{
-			get { return _VerboseIndent; }
-			set { _VerboseIndent = value; }
+			get
+			{
+				return _VerboseIndent;
+			}
+			set
+			{
+				_VerboseIndent = value;
+			}
 		}
 
-		Func<string> _VerbosePrefix;
+		private Func<string> _VerbosePrefix;
 
 		public virtual Func<string> VerbosePrefix
 		{
-			get { return _VerbosePrefix; }
-			set { _VerbosePrefix = value; }
+			get
+			{
+				return _VerbosePrefix;
+			}
+			set
+			{
+				_VerbosePrefix = value;
+			}
 		}
 
-		Func<string> _VerbosePostfix;
+		private Func<string> _VerbosePostfix;
 
 		public virtual Func<string> VerbosePostfix
 		{
-			get { return _VerbosePostfix; }
-			set { _VerbosePostfix = value; }
+			get
+			{
+				return _VerbosePostfix;
+			}
+			set
+			{
+				_VerbosePostfix = value;
+			}
 		}
 
 		#endregion Verbose
@@ -451,13 +602,18 @@ namespace zeroflag.Components.Logging
 		public static implicit operator Action<object>( Log log )
 		{
 			if ( log != null )
+			{
 				return log.Message;
+			}
 			else
+			{
 				return null;
+			}
 		}
 
-		DateTime _Now;
-		int _NowCount;
+		private DateTime _Now;
+		private int _NowCount;
+
 		public DateTime Now
 		{
 			get

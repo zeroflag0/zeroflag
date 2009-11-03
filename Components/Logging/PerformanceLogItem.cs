@@ -234,7 +234,10 @@ namespace zeroflag.Components.Logging
 			public TimeScope Start()
 			{
 				if ( active )
-					throw new InvalidOperationException( "Scope is already active." );
+				{
+					//throw new InvalidOperationException( "Scope is already active." );
+					return this;
+				}
 				active = true;
 #if LOCALTIME
 				this.Stopwatch.Reset();

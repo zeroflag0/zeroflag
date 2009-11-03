@@ -1,4 +1,5 @@
 ﻿#region BSD license
+
 /*
  * Copyright (c) 2008, Thomas "zeroflag" Kraemer. All rights reserved.
  * Copyright (c) 2008, Anders "anonimasu" Helin. All rights reserved.
@@ -28,15 +29,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #endregion BSD license
 
 #region SVN Version Information
+
 ///	<file>
 ///		<!-- Last modification of this file: -->
 ///		<revision>$Rev: 45 $</revision>
 ///		<author>$Author: zeroflag $</author>
 ///		<id>$Id: Log.cs 45 2008-10-30 12:10:08Z zeroflag $</id>
 ///	</file>
+
 #endregion SVN Version Information
 
 using System;
@@ -55,11 +59,14 @@ namespace zeroflag.Components.Logging
 		protected override void Dispose( bool disposing )
 		{
 			if ( _CsvFile != null )
+			{
 				this.CsvFile.Dispose();
+			}
 			base.Dispose( disposing );
 		}
 
 		#region CsvFile
+
 		private System.IO.StreamWriter _CsvFile;
 
 		/// <summary>
@@ -67,7 +74,10 @@ namespace zeroflag.Components.Logging
 		/// </summary>
 		public System.IO.StreamWriter CsvFile
 		{
-			get { return _CsvFile ?? ( _CsvFile = this.CsvFileInitialize( this.CsvFileCreate ) ); }
+			get
+			{
+				return _CsvFile ?? ( _CsvFile = this.CsvFileInitialize( this.CsvFileCreate ) );
+			}
 			//protected 
 			//set
 			//{
@@ -99,12 +109,10 @@ namespace zeroflag.Components.Logging
 		/// </summary>
 		protected virtual System.IO.StreamWriter CsvFileInitialize( System.IO.StreamWriter v )
 		{
-
 			return v;
 		}
 
 		#endregion CsvFile
-
 
 		#region Log
 
@@ -115,7 +123,10 @@ namespace zeroflag.Components.Logging
 		/// </summary>
 		public zeroflag.Components.Logging.Log Log
 		{
-			get { return _Log; }
+			get
+			{
+				return _Log;
+			}
 			set
 			{
 				if ( _Log != value )
@@ -126,16 +137,24 @@ namespace zeroflag.Components.Logging
 		}
 
 		#region LogChanged event
+
 		public delegate void LogChangedHandler( object sender, zeroflag.Components.Logging.Log oldvalue, zeroflag.Components.Logging.Log newvalue );
 
 		private event LogChangedHandler _LogChanged;
+
 		/// <summary>
 		/// Occurs when Log changes.
 		/// </summary>
 		public event LogChangedHandler LogChanged
 		{
-			add { this._LogChanged += value; }
-			remove { this._LogChanged -= value; }
+			add
+			{
+				this._LogChanged += value;
+			}
+			remove
+			{
+				this._LogChanged -= value;
+			}
 		}
 
 		/// <summary>
@@ -144,9 +163,13 @@ namespace zeroflag.Components.Logging
 		protected virtual void OnLogChanged( zeroflag.Components.Logging.Log oldvalue, zeroflag.Components.Logging.Log newvalue )
 		{
 			if ( oldvalue != null )
+			{
 				this.OnLogUnregister( oldvalue );
+			}
 			if ( newvalue != null )
+			{
 				this.OnLogRegister( newvalue );
+			}
 
 			// if there are event subscribers...
 			if ( this._LogChanged != null )
@@ -165,9 +188,11 @@ namespace zeroflag.Components.Logging
 		}
 
 		#endregion LogChanged event
+
 		#endregion Log
 
 		#region LastWrite
+
 		private Time _LastWrite;
 
 		/// <summary>
@@ -175,7 +200,10 @@ namespace zeroflag.Components.Logging
 		/// </summary>
 		public Time LastWrite
 		{
-			get { return _LastWrite; }
+			get
+			{
+				return _LastWrite;
+			}
 			set
 			{
 				if ( _LastWrite != value )
@@ -188,6 +216,7 @@ namespace zeroflag.Components.Logging
 		#endregion LastWrite
 
 		#region Interval
+
 		private TimeSpan? _Interval;
 
 		/// <summary>
@@ -195,7 +224,10 @@ namespace zeroflag.Components.Logging
 		/// </summary>
 		public TimeSpan Interval
 		{
-			get { return _Interval ?? ( _Interval = this.IntervalCreate ) ?? TimeSpan.FromSeconds( 1 ); }
+			get
+			{
+				return _Interval ?? ( _Interval = this.IntervalCreate ) ?? TimeSpan.FromSeconds( 1 );
+			}
 			set
 			{
 				if ( _Interval != value )
@@ -223,6 +255,7 @@ namespace zeroflag.Components.Logging
 		#endregion Interval
 
 		#region Items
+
 		private zeroflag.Collections.Dictionary<string, PerformanceLogItem> _Items;
 
 		/// <summary>
@@ -230,7 +263,10 @@ namespace zeroflag.Components.Logging
 		/// </summary>
 		public zeroflag.Collections.Dictionary<string, PerformanceLogItem> Items
 		{
-			get { return _Items ?? ( _Items = this.ItemsCreate ); }
+			get
+			{
+				return _Items ?? ( _Items = this.ItemsCreate );
+			}
 			//protected set
 			//{
 			//	if (_Items != value)
@@ -251,15 +287,21 @@ namespace zeroflag.Components.Logging
 			get
 			{
 				zeroflag.Collections.Dictionary<string, PerformanceLogItem> value = _Items = new zeroflag.Collections.Dictionary<string, PerformanceLogItem>();
-				value.DefaultValue = name => new PerformanceLogItem() { Name = name };
+				value.DefaultValue = name => new PerformanceLogItem()
+				{
+					Name = name
+				};
 				return value;
 			}
 		}
 
 
-		public PerformanceLogItem this[string name]
+		public PerformanceLogItem this[ string name ]
 		{
-			get { return this.Items[name]; }
+			get
+			{
+				return this.Items[name];
+			}
 		}
 
 		#endregion Items
@@ -268,12 +310,15 @@ namespace zeroflag.Components.Logging
 		{
 			var now = Time.Now;
 
-			if ( now - this.LastWrite > this.Interval )
+			if ( now - this.LastWrite
+			     > this.Interval )
 			{
 				this.LastWrite = now;
 				this.WriteLog();
+#if !SILVERLIGHT
 				if ( this.CoreBase.State == ModuleStates.Running )
 					this.WriteCsv();
+#endif
 			}
 
 			base.OnUpdate( timeSinceLastUpdate );
@@ -284,7 +329,7 @@ namespace zeroflag.Components.Logging
 			StringBuilder b = new StringBuilder();
 			b.Append( "Performance:" ).AppendLine();
 
-			foreach ( var item in this.Items.Values )
+			foreach (var item in this.Items.Values)
 			{
 				b.Append( "\t" );
 				item.ToString( b );
@@ -293,6 +338,9 @@ namespace zeroflag.Components.Logging
 
 			this.Log.Message( b );
 		}
+
+#if !SILVERLIGHT
+
 		string _CsvSeperator = ",";
 		int _WriteCsvFirst = 0;
 		long _CsvStart;
@@ -318,5 +366,6 @@ namespace zeroflag.Components.Logging
 				b.Append( item.PerSecond ).Append( _CsvSeperator );
 			this.CsvFile.WriteLine( b.ToString() );
 		}
+#endif
 	}
 }

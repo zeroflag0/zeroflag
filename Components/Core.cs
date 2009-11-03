@@ -271,24 +271,26 @@ namespace zeroflag.Components
 			this.State = ModuleStates.Disposed;
 		}
 
+		DateTime last = DateTime.Now;
 		/// <summary>
 		/// Run this core's main loop.
 		/// </summary>
 		protected virtual void OnRun()
 		{
-			DateTime last = DateTime.Now;
-			DateTime now;
 			System.Threading.AutoResetEvent wait = new System.Threading.AutoResetEvent(false);
 			while (this.State == ModuleStates.Running || this.State == ModuleStates.Ready)
 			{
-				now = DateTime.Now;
-				using (this.PerformanceLog["Core"].Record)
-				{
-					this.Update(last - now);
-				}
-				last = now;
+				this.OnRunStep();
 				wait.WaitOne(1);
 			}
+		}
+
+		protected virtual void OnRunStep()
+		{
+				DateTime now = DateTime.Now;
+				//using ( this.PerformanceLog["Core"].Record )
+				this.Update( last - now );
+				last = now;
 		}
 
 		#endregion Run
