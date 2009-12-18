@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<Title>lockCounter</Title>
+			<Author>zeroflag</Author>
+			<Description>Code snippet for try-lock via interlocked counter</Description>
+			<HelpUrl />
+			<SnippetTypes>
+				<SnippetType>Expansion</SnippetType>
+				<SnippetType>SurroundsWith</SnippetType>
+			</SnippetTypes>
+			<Keywords />
+			<Shortcut>lock</Shortcut>
+		</Header>
+		<Snippet>
+			<References />
+			<Imports />
+			<Declarations>
+				<Literal Editable="true">
+					<ID>Method</ID>
+					<Type />
+					<ToolTip>Preprocessor expression to evaluate</ToolTip>
+					<Default>countRunning</Default>
+					<Function />
+				</Literal>
+			</Declarations>
+			<Code Language="csharp" Kind="method body" Delimiter="$">
+				<![CDATA[try
+{
+if (System.Threading.Interlocked.Increment(ref _$Method$Running) <= 1)
+{
+$selected$ $end$ 
+}
+}
+finally
+{
+System.Threading.Interlocked.Decrement(ref _$Method$Running);
+}]]>
+			</Code>
+		</Snippet>
+	</CodeSnippet>
+</CodeSnippets>

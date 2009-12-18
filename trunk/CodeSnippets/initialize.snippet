@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<Title>initialize</Title>
+			<Author>zeroflag</Author>
+			<Description></Description>
+			<HelpUrl></HelpUrl>
+			<SnippetType>SurroundsWith/Expansion</SnippetType>
+			<Shortcut>#ini</Shortcut>
+			<Keywords>
+				<Keyword>initialize</Keyword>
+				<Keyword>init</Keyword>
+				<Keyword>implicit</Keyword>
+			</Keywords>
+		</Header>
+		<Snippet>
+			<References />
+			<Imports />
+			<Declarations>
+				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Name</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>Value</Default>
+					<Function></Function>
+				</Literal>
+				<Object Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Type</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>object</Default>
+					<Function></Function>
+				</Object>
+				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Documentation</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>//TODO: Add documentation</Default>
+					<Function></Function>
+				</Literal>
+				<!--
+				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Initialization</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>//TODO: Initialize...</Default>
+					<Function></Function>
+				</Literal>
+				-->
+			</Declarations>
+			<Code Language="CSharp" Delimiter="$">
+				<![CDATA[
+private $Type$ _$Name$;
+
+/// <summary>
+/// $Documentation$
+/// </summary>
+public $Type$ $Name$
+{
+get
+{
+if (_$Name$ == null)
+{
+_$Name$ = $selected$new $Type$()$end$;
+}
+return _$Name$;
+}
+}
+]]>
+			</Code>
+		</Snippet>
+	</CodeSnippet>
+</CodeSnippets>
