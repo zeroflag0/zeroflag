@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<SnippetTypes>
+				<SnippetType>Expansion</SnippetType>
+			</SnippetTypes>
+			<Title>event</Title>
+			<Shortcut>#event</Shortcut>
+			<Description>Creates an event complete with private event, public add/remove and protected virtual OnEvent.</Description>
+			<Author>zeroflag</Author>
+		</Header>
+		<Snippet>
+			<Declarations>
+				<Literal Editable="true">
+					<ID>Name</ID>
+					<ToolTip>The event's name.</ToolTip>
+					<Default>Event</Default>
+					<Function>
+					</Function>
+				</Literal>
+				<Literal Editable="true">
+					<ID>Documentation</ID>
+					<ToolTip>The documentation for the event.</ToolTip>
+					<Default>//TODO: add documentation</Default>
+					<Function>
+					</Function>
+				</Literal>
+				<Literal Editable="true">
+					<ID>Param</ID>
+					<ToolTip>The event's parameter.</ToolTip>
+					<Default>value</Default>
+					<Function>
+					</Function>
+				</Literal>
+				<Literal Editable="true">
+					<ID>ParamType</ID>
+					<ToolTip>The event's parameter's type.</ToolTip>
+					<Default>T</Default>
+					<Function>
+					</Function>
+				</Literal>
+			</Declarations>
+			<Code Language="csharp">
+				<![CDATA[	#region event $Name$
+	public delegate void $Name$Handler($ParamType$ $Param$);
+
+	private event $Name$Handler	 _$Name$;
+	/// <summary>
+	/// $Documentation$
+	/// </summary>
+	public event $Name$Handler	$Name$
+	{
+		add { this._$Name$ += value; }
+		remove { this._$Name$ -= value; }
+	}
+	/// <summary>
+	/// Call to raise the $Name$ event:
+	/// $Documentation$
+	/// </summary>
+	protected virtual void On$Name$($ParamType$ $Param$)
+	{
+		// if there are event subscribers...
+		if (this._$Name$ != null)
+		{
+			// call them...
+			this._$Name$($Param$);
+		}
+	}
+	#endregion event $Name$]]>
+			</Code>
+		</Snippet>
+	</CodeSnippet>
+</CodeSnippets>

@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<SnippetTypes>
+				<SnippetType>Expansion</SnippetType>
+			</SnippetTypes>
+			<Title>Encapsulate Field (set-lock)</Title>
+			<Shortcut>#var</Shortcut>
+			<Description>
+			</Description>
+			<Author>zeroflag</Author>
+		</Header>
+		<Snippet>
+			<Declarations>
+				<Literal Editable="true">
+					<ID>modifier</ID>
+					<ToolTip>
+					</ToolTip>
+					<Default>public</Default>
+					<Function>
+					</Function>
+				</Literal>
+				<Literal Editable="true">
+					<ID>Name</ID>
+					<ToolTip>
+					</ToolTip>
+					<Default>Name</Default>
+					<Function>
+					</Function>
+				</Literal>
+				<Literal Editable="true">
+					<ID>Type</ID>
+					<ToolTip>
+					</ToolTip>
+					<Default>string</Default>
+					<Function>
+					</Function>
+				</Literal>
+				<Literal Editable="true">
+					<ID>comment</ID>
+					<ToolTip>
+					</ToolTip>
+					<Default>//TODO: add documentation.
+					</Default>
+					<Function>
+					</Function>
+				</Literal>
+			</Declarations>
+			<Code Language="csharp">
+				<![CDATA[
+private $Type$ _$Name$;
+
+/// <summary>
+/// $comment$
+/// </summary>
+$modifier$ $Type$ $Name$
+{
+  get { return _$Name$; }
+  set
+  {
+    if (_$Name$ != value)
+    {
+      //if (_$Name$ != null) { }
+	  _$Name$ = value;
+	  //if (_$Name$ != null) { }
+    }
+  }
+}
+$selected$$end$]]>
+			</Code>
+		</Snippet>
+	</CodeSnippet>
+</CodeSnippets>

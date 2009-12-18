@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+      <Title>event2</Title>
+      <Shortcut>#event2</Shortcut>
+      <Description>Creates an event complete with private event, public add/remove and protected virtual OnEvent.</Description>
+      <Author>zeroflag</Author>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal Editable="true">
+          <ID>NAME</ID>
+          <ToolTip>The event's name.</ToolTip>
+          <Default>Event</Default>
+          <Function>
+          </Function>
+        </Literal>
+        <Literal Editable="true">
+          <ID>DOCUMENTATION</ID>
+          <ToolTip>The documentation for the event.</ToolTip>
+          <Default>The $NAME$ event.</Default>
+          <Function>
+          </Function>
+        </Literal>
+        <Literal Editable="true">
+          <ID>PARAM</ID>
+          <ToolTip>The event's 1st parameter.</ToolTip>
+          <Default>value1</Default>
+          <Function>
+          </Function>
+        </Literal>
+        <Literal Editable="true">
+          <ID>PARAMTYPE</ID>
+          <ToolTip>The event's parameter's 1st type.</ToolTip>
+          <Default>T1</Default>
+          <Function>
+          </Function>
+        </Literal>
+        <Literal Editable="true">
+          <ID>PARAM2</ID>
+          <ToolTip>The event's 2nd parameter.</ToolTip>
+          <Default>value2</Default>
+          <Function>
+          </Function>
+        </Literal>
+        <Literal Editable="true">
+          <ID>PARAMTYPE2</ID>
+          <ToolTip>The event's parameter's 2nd type.</ToolTip>
+          <Default>T2</Default>
+          <Function>
+          </Function>
+        </Literal>
+      </Declarations>
+      <Code Language="csharp"><![CDATA[	#region event $NAME$
+	public delegate void $NAME$Handler($PARAMTYPE$ $PARAM$, $PARAMTYPE2$ $PARAM2$);
+
+	private event $NAME$Handler	 _$NAME$;
+	/// <summary>
+	/// $DOCUMENTATION$
+	/// </summary>
+	public event $NAME$Handler	$NAME$
+	{
+		add { this._$NAME$ += value; }
+		remove { this._$NAME$ -= value; }
+	}
+	/// <summary>
+	/// Call to raise the $NAME$ event:
+	/// $DOCUMENTATION$
+	/// </summary>
+	protected virtual void On$NAME$($PARAMTYPE$ $PARAM$, $PARAMTYPE2$ $PARAM2$)
+	{
+		// if there are event subscribers...
+		if (this._$NAME$ != null)
+		{
+			// call them...
+			this._$NAME$($PARAM$, $PARAM2$);
+		}
+	}
+	#endregion event $NAME$]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

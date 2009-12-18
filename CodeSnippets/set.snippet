@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>set</Title>
+      <Author>zeroflag</Author>
+      <Description>Code snippet for setting</Description>
+      <HelpUrl></HelpUrl>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+        <SnippetType>SurroundsWith</SnippetType>
+      </SnippetTypes>
+      <Keywords />
+      <Shortcut>set</Shortcut>
+    </Header>
+    <Snippet>
+      <References />
+      <Imports />
+      <Declarations>
+        <Object Editable="true">
+          <ID>Type</ID>
+          <Type></Type>
+          <ToolTip></ToolTip>
+          <Default>Decimal</Default>
+          <Function></Function>
+        </Object>
+      </Declarations>
+      <Code Language="csharp" Kind="" Delimiter="$"><![CDATA[if (value is $Type$)
+{
+	return DBFunctions.Get$Type$$end$AsStringForSQL(($Type$) value);
+}]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

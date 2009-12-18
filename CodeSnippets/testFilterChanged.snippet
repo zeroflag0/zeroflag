@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>Test FilterChanged</Title>
+      <Author>zeroflag</Author>
+      <Description>Test FilterChanged</Description>
+      <HelpUrl></HelpUrl>
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+        <SnippetType>SurroundsWith</SnippetType>
+      </SnippetTypes>
+      <Keywords />
+      <Shortcut>tfc</Shortcut>
+    </Header>
+    <Snippet>
+      <References />
+      <Imports />
+      <Declarations>
+        <Object Editable="true">
+          <ID>Property</ID>
+          <Type></Type>
+          <ToolTip></ToolTip>
+          <Default>Filter</Default>
+          <Function></Function>
+        </Object>
+		  <Object Editable="true">
+			  <ID>Value1</ID>
+			  <Type></Type>
+			  <ToolTip></ToolTip>
+			  <Default>null</Default>
+			  <Function></Function>
+		  </Object>
+		  <Object Editable="true">
+			  <ID>Value2</ID>
+			  <Type></Type>
+			  <ToolTip></ToolTip>
+			  <Default>...</Default>
+			  <Function></Function>
+		  </Object>
+      </Declarations>
+      <Code Language="csharp" Kind="" Delimiter="$"><![CDATA[this.TestFilterChanged((c, v) => c.$Property$ = v, "$Property$", $Value1$, $Value2$);$end$]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

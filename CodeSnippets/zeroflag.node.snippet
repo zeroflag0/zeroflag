@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<Title>TreeNode</Title>
+			<Author>zeroflag</Author>
+			<Description></Description>
+			<HelpUrl></HelpUrl>
+			<Shortcut>#node</Shortcut>
+		</Header>
+		<Snippet>
+			<References>
+				<Reference>
+					<Assembly>zerolib.dll</Assembly>
+					<Url>http://code.google.com/p/zeroflag/source/checkout</Url>
+				</Reference>
+			</References>
+			<Imports>
+				<Import>
+					<Namespace>zeroflag.Collections</Namespace>
+				</Import>
+			</Imports>
+			<Declarations>
+				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Parent</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>Parent</Default>
+					<Function></Function>
+				</Literal>
+				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Children</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>Children</Default>
+					<Function></Function>
+				</Literal>
+				<Object Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Type</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>Type</Default>
+					<Function>ClassName()</Function>
+				</Object>
+				<Object Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>List</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>List</Default>
+					<Function>SimpleTypeName( zeroflag.Collections.List )</Function>
+				</Object>
+				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>ParentDoc</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>This node's Parent.</Default>
+					<Function></Function>
+				</Literal>
+				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>ChildrenDoc</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>This node's Children.</Default>
+					<Function></Function>
+				</Literal>
+				<!--
+				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Initialization</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>//TODO: Initialize...</Default>
+					<Function></Function>
+				</Literal>
+				-->
+			</Declarations>
+			<Code Language="CSharp" Kind="" Delimiter="$">
+				<![CDATA[#region Node<$Type$>
+#region $Parent$
+
+private $Type$ _$Parent$;
+
+/// <summary>
+/// $ParentDoc$
+/// </summary>
+public $Type$ $Parent$
+{
+get { return _$Parent$; }
+set
+{
+if (_$Parent$ != value)
+{
+this.On$Parent$Changed(_$Parent$, _$Parent$ = value);
+}
+}
+}
+
+#region $Parent$Changed event
+public delegate void $Parent$ChangedHandler(object sender, $Type$ oldvalue, $Type$ newvalue);
+
+private event $Parent$ChangedHandler _$Parent$Changed;
+/// <summary>
+/// Occurs when the $Parent$ changes.
+/// </summary>
+public event $Parent$ChangedHandler $Parent$Changed
+{
+add { this._$Parent$Changed += value; }
+remove { this._$Parent$Changed-= value; }
+}
+
+#endregion $Parent$Changed event
+#endregion $Parent$
+				
+#region $Children$
+private $List$<$Type$> _$Children$;
+
+/// <summary>
+/// $ChildrenDoc$
+/// </summary>
+public $List$<$Type$> $Children$
+{
+	get { return _$Children$ ?? (_$Children$ = this.$Children$Create); }
+}
+
+/// <summary>
+/// Creates the default/initial value for $Children$.
+/// $ChildrenDoc$
+/// </summary>
+protected virtual $List$<$Type$> $Children$Create
+{
+	get
+	{
+		var value = _$Children$ = new $List$<$Type$>();
+		value.ItemAdded += this.$Children$Register;
+		value.ItemRemoved += this.$Children$Unregister;
+		return value;
+	}
+}
+
+#endregion $Children$
+
+/// <summary>
+/// Raises the $Parent$Changed event.
+/// </summary>
+protected virtual void On$Parent$Changed($Type$ oldvalue, $Type$ newvalue)
+{
+if (oldvalue != null)
+{
+	// unregister old parent...
+	while ( oldvalue.$Children$.Contains(this) )
+		oldvalue.$Children$.Remove(this);
+}
+if (newvalue != null)
+{
+	// register new value...
+	if ( !newvalue.$Children$.Contains(this) )
+		newvalue.$Children$.Add(this);
+}
+
+// if there are event subscribers...
+if (this._$Parent$Changed != null)
+{
+// call them...
+this._$Parent$Changed(this, oldvalue, newvalue);
+}
+}
+
+protected virtual void $Children$Register($Type$ child)
+{
+	child.$Parent$ = ($Type$)this;
+	//TODO: register $Children$
+}
+
+protected virtual void $Children$Unregister($Type$ child)
+{
+	child.$Parent$ = null;
+	$end$//TODO: unregister $Children$
+}
+#endregion Node<$Type$>
+]]>
+			</Code>
+		</Snippet>
+	</CodeSnippet>
+</CodeSnippets>

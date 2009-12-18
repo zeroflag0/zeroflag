@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<Title>implicit initialize</Title>
+			<Author>zeroflag</Author>
+			<Description></Description>
+			<HelpUrl></HelpUrl>
+			<SnippetType>SurroundsWith/Expansion</SnippetType>
+			<Shortcut>#init</Shortcut>
+			<Keywords>
+				<Keyword>initialize</Keyword>
+				<Keyword>init</Keyword>
+				<Keyword>implicit</Keyword>
+			</Keywords>
+		</Header>
+		<Snippet>
+			<References />
+			<Imports />
+			<Declarations>
+				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Name</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>Value</Default>
+					<Function></Function>
+				</Literal>
+				<Object Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Type</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>object</Default>
+					<Function></Function>
+				</Object>
+				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Documentation</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>//TODO: Add documentation for $Name$</Default>
+					<Function></Function>
+				</Literal>
+				<!--
+				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Initialization</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>//TODO: Initialize...</Default>
+					<Function></Function>
+				</Literal>
+				-->
+			</Declarations>
+			<Code Language="CSharp" Delimiter="$">
+				<![CDATA[
+private $Type$ _$Name$;
+
+#region $Name$
+
+/// <summary>
+/// $Documentation$
+/// </summary>
+public $Type$ $Name$
+{
+get
+{
+if (_$Name$ == null)
+{
+_$Name$ = this.$Name$Init(this.$Name$Create());
+}
+return _$Name$;
+}
+//protected set
+//{
+//	if (_$Name$ != value)
+//	{
+//		//if (_$Name$ != null) { }
+//		_$Name$ = value;
+//		//if (_$Name$ != null) { }
+//	}
+//}
+}
+
+/// <summary>
+/// Creates the default/initial value for $Name$.
+/// $Documentation$
+/// </summary>
+protected virtual $Type$ $Name$Create()
+{
+	return new $Type$();
+}
+/// <summary>
+/// Initializes/modifies the initial value for $Name$.
+/// $Documentation$
+/// </summary>
+protected virtual $Type$ $Name$Init($Type$ value)
+{
+	$selected$$end$
+	return value;
+}
+
+#endregion $Name$
+]]>
+			</Code>
+		</Snippet>
+	</CodeSnippet>
+</CodeSnippets>
