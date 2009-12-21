@@ -54,12 +54,13 @@ this.On$Name$Changed(_$Name$, _$Name$ = value);
 }
 
 #region $Name$Changed event
+public delegate void $Name$ChangedHandler(object sender, $Type$ oldvalue, $Type$ newvalue);
 
-private event Action<object,$Type$,$Type> _$Name$Changed;
+private event $Name$ChangedHandler _$Name$Changed;
 /// <summary>
 /// Occurs when $Name$ changes.
 /// </summary>
-public event Action<object,$Type$,$Type> $Name$Changed
+public event $Name$ChangedHandler $Name$Changed
 {
 add { this._$Name$Changed += value; }
 remove { this._$Name$Changed-= value; }

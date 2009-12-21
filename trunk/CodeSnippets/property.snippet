@@ -38,8 +38,6 @@
 			</Declarations>
 			<Code Language="csharp">
 				<![CDATA[
-private $Type$ _$Name$;
-
 public static readonly DependencyProperty $Name$Property =
 DependencyProperty.Register("$Name$", typeof($Type$), typeof($Class$), new FrameworkPropertyMetadata());
 
@@ -53,14 +51,11 @@ EventManager.RegisterRoutedEvent("$Name$Changed", RoutingStrategy.Bubble, typeof
 /// </summary>
 public $Type$ $Name$
 {
-get { return _$Name$; }
+get { return ($Type$) GetValue($Name$Property); }
 set
 {
-if (_$Name$ != value)
-{
-_$Name$ = value;
+SetValue($Name$Property, value);
 this.On$Name$Changed();
-}
 }
 }
 
@@ -80,8 +75,7 @@ remove { RemoveHandler($Name$ChangedEvent, value); }
 /// </summary>
 protected virtual void On$Name$Changed()
 {
-RoutedEventArgs e = new RoutedEventArgs($Name$ChangedEvent);
-RaiseEvent(e);
+RaiseEvent(new RoutedEventArgs($Name$ChangedEvent));
 }
 
 #endregion $Name$Changed event
