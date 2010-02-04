@@ -45,12 +45,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 
 namespace zeroflag.Components.Logging
 {
-	public class Log
+	public class Log : INotifyPropertyChanged
 	{
 		public Log()
 			: this( "" )
@@ -633,5 +634,56 @@ namespace zeroflag.Components.Logging
 				}
 			}
 		}
+
+		#region INotifyPropertyChanged Members
+
+		private event PropertyChangedEventHandler _PropertyChanged;
+		/// <summary>
+		/// Occurs when a property value changes.
+		/// </summary>
+		public event PropertyChangedEventHandler PropertyChanged
+		{
+			add
+			{
+				this._PropertyChanged += value;
+			}
+			remove
+			{
+				this._PropertyChanged -= value;
+			}
+		}
+		/// <summary>
+		/// Call to raise the PropertyChanged event:
+		/// Occurs when a property value changes.
+		/// </summary>
+		protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+		{
+			// if there are event subscribers...
+			if (this._PropertyChanged != null)
+			{
+				// call them...
+				this._PropertyChanged(this, e);
+			}
+		}
+		/// <summary>
+		/// Call to raise the PropertyChanged event:
+		/// Occurs when a property value changes.
+		/// </summary>
+		protected virtual void OnPropertyChanged(string property)
+		{
+			this.OnPropertyChanged(new PropertyChangedEventArgs(property));
+		}
+		/// <summary>
+		/// Call to raise the PropertyChanged event:
+		/// Occurs when a property value changes.
+		/// </summary>
+		protected virtual void OnPropertyChanged()
+		{
+			this.OnPropertyChanged(
+			new PropertyChangedEventArgs(
+			new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().Name.Replace("set_", "")));
+		}
+		#endregion INotifyPropertyChanged Members
+	
 	}
 }
