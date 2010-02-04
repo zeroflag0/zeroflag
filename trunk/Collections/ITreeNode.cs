@@ -1,4 +1,5 @@
 #region LGPL License
+
 //********************************************************************
 //	author:         Thomas "zeroflag" Kraemer
 //	author email:   zeroflag >>at<< zeroflag >>dot<< de
@@ -24,21 +25,24 @@
 //		http://www.gnu.org/licenses/lgpl.html#TOC1
 //
 //*********************************************************************
+
 #endregion LGPL License
 
 using System;
+
 namespace zeroflag.Collections
 {
-	public interface ITreeNode<T> : System.Collections.Generic.IEnumerable<T>
-		where T : TreeNode<T>
+	public interface ITreeNode<TNode> : System.Collections.Generic.IEnumerable<TNode>
+		where TNode : class, ITreeNode<TNode>
 	{
-		void Add(T child);
-		List<T> Children { get; }
+		void Add(TNode child);
+		List<TNode> Children { get; }
 		void Clear();
-		bool Contains(T child);
+		bool Contains(TNode child);
 		int Count { get; }
-		T Parent { get; set; }
-		event TreeNode<T>.ParentChangedHandler ParentChanged;
-		bool Remove(T child);
+		TNode Parent { get; set; }
+		event Action<object, TNode, TNode> ParentChanged;
+		bool Remove(TNode child);
+		System.Collections.Generic.IEnumerable<TNode> Enumerate();
 	}
 }

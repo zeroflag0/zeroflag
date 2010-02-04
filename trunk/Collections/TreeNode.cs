@@ -1,4 +1,5 @@
 #region LGPL License
+
 //********************************************************************
 //	author:         Thomas "zeroflag" Kraemer
 //	author email:   zeroflag >>at<< zeroflag >>dot<< de
@@ -24,6 +25,7 @@
 //		http://www.gnu.org/licenses/lgpl.html#TOC1
 //
 //*********************************************************************
+
 #endregion LGPL License
 
 using System;
@@ -32,26 +34,28 @@ using System.Text;
 
 namespace zeroflag.Collections
 {
-	public abstract class TreeNode<Self>
+	public abstract class TreeNode<TSelf>
 		: zeroflag.Components.Component
-		, zeroflag.Collections.ITreeNode<Self>
-		where Self : TreeNode<Self>
+		  , ITreeNode<TSelf>
+		where TSelf : class, ITreeNode<TSelf>
 	{
 		#region Constructors
+
 		public TreeNode()
 		{
 			this.InitializeChildren();
 		}
 
-		public TreeNode( Self parent )
+		public TreeNode(TSelf parent)
 			: this()
 		{
 			this.Parent = parent;
 		}
+
 		#endregion Constructors
 
-
 		#region Value
+
 #if TREENODE_USEVALUE
 		public static implicit operator T(TreeNode<T> node)
 		{
@@ -107,35 +111,36 @@ namespace zeroflag.Collections
 		}
 		#endregion ValueChanged event
 #endif
+
 		#endregion Value
 
 		#region Parent
 
-		private Self _Parent;
+		private TSelf _Parent;
 
 		/// <summary>
 		/// This node's parent node.
 		/// </summary>
-		public Self Parent
+		public TSelf Parent
 		{
 			get { return _Parent; }
 			set
 			{
-				if ( _Parent != value )
+				if (_Parent != value)
 				{
-					this.OnParentChanged( _Parent, _Parent = value );
+					this.OnParentChanged(_Parent, _Parent = value);
 				}
 			}
 		}
 
 		#region ParentChanged event
-		public delegate void ParentChangedHandler( object sender, Self oldvalue, Self newvalue );
 
-		private event ParentChangedHandler _ParentChanged;
+		private event Action<object, TSelf, TSelf> _ParentChanged;
+
 		/// <summary>
 		/// Occurs when Parent changes.
 		/// </summary>
-		public event ParentChangedHandler ParentChanged
+		public event Action<object, TSelf, TSelf> ParentChanged
 		{
 			add { this._ParentChanged += value; }
 			remove { this._ParentChanged -= value; }
@@ -144,29 +149,37 @@ namespace zeroflag.Collections
 		/// <summary>
 		/// Raises the ParentChanged event.
 		/// </summary>
-		protected virtual void OnParentChanged( Self oldvalue, Self newvalue )
+		protected virtual void OnParentChanged(TSelf oldvalue, TSelf newvalue)
 		{
-			if ( oldvalue != null )
-				while ( oldvalue.Contains( (Self)this ) )
-					oldvalue.Remove( (Self)this );
-			if ( newvalue != null && !newvalue.Contains( (Self)this ) )
-				newvalue.Add( (Self)this );
+			if (oldvalue != null)
+			{
+				while (oldvalue.Contains((TSelf)(ITreeNode<TSelf>) this))
+				{
+					oldvalue.Remove((TSelf)(ITreeNode<TSelf>)this);
+				}
+			}
+			if (newvalue != null && !newvalue.Contains((TSelf)(ITreeNode<TSelf>)this))
+			{
+				newvalue.Add((TSelf)(ITreeNode<TSelf>)this);
+			}
 
 			// if there are event subscribers...
-			if ( this._ParentChanged != null )
+			if (this._ParentChanged != null)
 			{
 				// call them...
-				this._ParentChanged( this, oldvalue, newvalue );
+				this._ParentChanged(this, oldvalue, newvalue);
 			}
 		}
+
 		#endregion ParentChanged event
+
 		#endregion Parent
 
 		#region System.Collections.Generic.ICollection`1
 
-		public virtual void Add( Self child )
+		public virtual void Add(TSelf child)
 		{
-			this.Children.Add( child );
+			this.Children.Add(child);
 		}
 
 		public virtual void Clear()
@@ -174,14 +187,14 @@ namespace zeroflag.Collections
 			this.Children.Clear();
 		}
 
-		public virtual bool Contains( Self child )
+		public virtual bool Contains(TSelf child)
 		{
-			return this.Children.Contains( child );
+			return this.Children.Contains(child);
 		}
 
-		public virtual bool Remove( Self child )
+		public virtual bool Remove(TSelf child)
 		{
-			return this.Children.Remove( child );
+			return this.Children.Remove(child);
 		}
 
 		public virtual int Count
@@ -194,15 +207,16 @@ namespace zeroflag.Collections
 		#region Children
 
 		#region Children
-		private List<Self> _Children;
+
+		private List<TSelf> _Children;
 
 		/// <summary>
 		/// Child nodes.
 		/// </summary>
-		[System.ComponentModel.Browsable( false )]
-		public List<Self> Children
+		[System.ComponentModel.Browsable(false)]
+		public List<TSelf> Children
 		{
-			get { return _Children ?? ( _Children = this.ChildrenCreate ); }
+			get { return _Children ?? (_Children = this.ChildrenCreate); }
 			//set { _Children = value; }
 		}
 
@@ -210,11 +224,11 @@ namespace zeroflag.Collections
 		/// Creates the default/initial value for Children.
 		/// Child nodes.
 		/// </summary>
-		protected virtual List<Self> ChildrenCreate
+		protected virtual List<TSelf> ChildrenCreate
 		{
 			get
 			{
-				var children = _Children = new List<Self>();
+				var children = _Children = new List<TSelf>();
 				this.InitializeChildren();
 				return children;
 			}
@@ -246,15 +260,15 @@ namespace zeroflag.Collections
 			this.Children.ItemChanged += this.Children_ItemChanged;
 		}
 
-		void Children_ItemChanged( object sender, TreeNode<Self> oldvalue, TreeNode<Self> newvalue )
+		private void Children_ItemChanged(object sender, ITreeNode<TSelf> oldvalue, ITreeNode<TSelf> newvalue)
 		{
-			if ( oldvalue != null )
+			if (oldvalue != null)
 			{
 				oldvalue.Parent = null;
 			}
-			if ( newvalue != null )
+			if (newvalue != null)
 			{
-				newvalue.Parent = (Self)this;
+				newvalue.Parent = (TSelf)(ITreeNode<TSelf>)this;
 			}
 		}
 
@@ -267,22 +281,23 @@ namespace zeroflag.Collections
 			return Enumerate().GetEnumerator();
 		}
 
-		public virtual System.Collections.Generic.IEnumerator<Self> GetEnumerator()
+		public virtual System.Collections.Generic.IEnumerator<TSelf> GetEnumerator()
 		{
 			return Enumerate().GetEnumerator();
 		}
 
-		System.Collections.Generic.IEnumerable<Self> Enumerate()
+		public System.Collections.Generic.IEnumerable<TSelf> Enumerate()
 		{
-			foreach ( Self child in this.Children )
+			foreach (TSelf child in this.Children)
 			{
 				yield return child;
-				foreach ( Self inner in child.Enumerate() )
+				foreach (TSelf inner in child.Enumerate())
 				{
 					yield return inner;
 				}
 			}
 		}
+
 		//System.Collections.Generic.IEnumerable<TreeNode<Self>> EnumerateT()
 		//{
 		//    foreach ( TreeNode<Self> child in this.Children )
@@ -296,6 +311,5 @@ namespace zeroflag.Collections
 		//}
 
 		#endregion IEnumerable
-
 	}
 }
