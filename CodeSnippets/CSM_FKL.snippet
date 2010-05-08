@@ -7,11 +7,10 @@
 			<Description></Description>
 			<HelpUrl></HelpUrl>
 			<SnippetType>SurroundsWith/Expansion</SnippetType>
-			<Shortcut>#ini</Shortcut>
+			<Shortcut>#fkl</Shortcut>
 			<Keywords>
-				<Keyword>initialize</Keyword>
-				<Keyword>init</Keyword>
-				<Keyword>implicit</Keyword>
+				<Keyword>foreign key from list</Keyword>
+				<Keyword>fkl</Keyword>
 			</Keywords>
 		</Header>
 		<Snippet>
@@ -23,6 +22,27 @@
 					<Type></Type>
 					<ToolTip></ToolTip>
 					<Default>Value</Default>
+					<Function></Function>
+				</Literal>	
+				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Source</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>foo</Default>
+					<Function></Function>
+				</Literal>	
+				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Data</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>dt</Default>
+					<Function></Function>
+				</Literal>
+				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Property</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>Prop</Default>
 					<Function></Function>
 				</Literal>
 				<Object Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
@@ -39,6 +59,10 @@
 					<Default>//TODO: Add documentation</Default>
 					<Function></Function>
 				</Literal>
+				<Object Editable="false">
+					<ID>Class</ID>
+					<Function>ClassName()</Function>
+				</Object>
 				<!--
 				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
 					<ID>Initialization</ID>
@@ -54,23 +78,39 @@
 private $Type$ _$Name$;
 
 /// <summary>
-/// $Documentation$
+/// The $Name$ for this $Class$.
 /// </summary>
 public $Type$ $Name$
 {
 get
 {
-if (_$Name$ == null)
+if (_$Name$ == null && !ReferenceEquals(this.Data.$Data$, null))
 {
 lock(this)
 {
 if (_$Name$ == null)
 {
-_$Name$ = $selected$new $Type$()$end$;
+this._$Name$ = $Source$.FirstOrDefault(i => i.$Property$ == this.Data.$Data$);
 }
 }
 }
 return _$Name$;
+}
+set
+{
+if (_$Name$ != value)
+{
+if (value == null)
+{
+	this.Data.$Data$ = null;
+}
+else
+{
+	this.Data.$Data$ = value.$Property$;
+}
+_$Name$ = value;
+this.OnPropertyChanged("$Name$");
+}
 }
 }
 ]]>

@@ -7,16 +7,17 @@
 			<Description></Description>
 			<HelpUrl></HelpUrl>
 			<SnippetType>SurroundsWith/Expansion</SnippetType>
-			<Shortcut>#ini</Shortcut>
+			<Shortcut>#inil</Shortcut>
 			<Keywords>
-				<Keyword>initialize</Keyword>
-				<Keyword>init</Keyword>
-				<Keyword>implicit</Keyword>
+				<Keyword>initializeList</Keyword>
+				<Keyword>initList</Keyword>
 			</Keywords>
 		</Header>
 		<Snippet>
 			<References />
-			<Imports />
+			<Imports>
+				<Import>System.Collections.ObjectModel</Import>
+			</Imports>
 			<Declarations>
 				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
 					<ID>Name</ID>
@@ -25,6 +26,13 @@
 					<Default>Value</Default>
 					<Function></Function>
 				</Literal>
+				<Object Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>ListType</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>ObservableCollection</Default>
+					<Function></Function>
+				</Object>
 				<Object Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
 					<ID>Type</ID>
 					<Type></Type>
@@ -51,12 +59,12 @@
 			</Declarations>
 			<Code Language="CSharp" Delimiter="$">
 				<![CDATA[
-private $Type$ _$Name$;
+private $ListType$<$Type$> _$Name$;
 
 /// <summary>
 /// $Documentation$
 /// </summary>
-public $Type$ $Name$
+public $ListType$<$Type$> $Name$
 {
 get
 {
@@ -66,7 +74,7 @@ lock(this)
 {
 if (_$Name$ == null)
 {
-_$Name$ = $selected$new $Type$()$end$;
+_$Name$ = $selected$new $ListType$<$Type$>()$end$;
 }
 }
 }

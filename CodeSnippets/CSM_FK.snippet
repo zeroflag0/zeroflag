@@ -7,11 +7,10 @@
 			<Description></Description>
 			<HelpUrl></HelpUrl>
 			<SnippetType>SurroundsWith/Expansion</SnippetType>
-			<Shortcut>#ini</Shortcut>
+			<Shortcut>#fk</Shortcut>
 			<Keywords>
-				<Keyword>initialize</Keyword>
-				<Keyword>init</Keyword>
-				<Keyword>implicit</Keyword>
+				<Keyword>foreign key</Keyword>
+				<Keyword>fk</Keyword>
 			</Keywords>
 		</Header>
 		<Snippet>
@@ -23,6 +22,13 @@
 					<Type></Type>
 					<ToolTip></ToolTip>
 					<Default>Value</Default>
+					<Function></Function>
+				</Literal>	
+				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Data</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>fi</Default>
 					<Function></Function>
 				</Literal>
 				<Object Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
@@ -39,6 +45,10 @@
 					<Default>//TODO: Add documentation</Default>
 					<Function></Function>
 				</Literal>
+				<Object Editable="false">
+					<ID>Class</ID>
+					<Function>ClassName()</Function>
+				</Object>
 				<!--
 				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
 					<ID>Initialization</ID>
@@ -54,23 +64,37 @@
 private $Type$ _$Name$;
 
 /// <summary>
-/// $Documentation$
+/// The $Type$ this $Class$ belongs to.
 /// </summary>
 public $Type$ $Name$
 {
 get
 {
-if (_$Name$ == null)
-{
-lock(this)
-{
-if (_$Name$ == null)
-{
-_$Name$ = $selected$new $Type$()$end$;
+	if (_$Name$ == null)
+	{
+		int? id = this.Data.$Data$;
+		if (id != null)
+		{
+			this._$Name$ = $Type$.Get(id.Value);
+		}
+	}
+	return _$Name$;
 }
-}
-}
-return _$Name$;
+set
+{
+	if (_$Name$ != value)
+	{
+		if (value == null)
+		{
+			this.Data.$Data$ = null;
+		}
+		else
+		{
+			this.Data.$Data$ = value.Id;
+		}
+		_$Name$ = value;
+		this.OnPropertyChanged("$Name$");
+	}
 }
 }
 ]]>
