@@ -66,16 +66,6 @@ protected virtual void On$Name$(string property)
 {
 this.On$Name$(new PropertyChangedEventArgs(property));
 }
-/// <summary>
-/// Call to raise the $Name$ event:
-/// $Documentation$
-/// </summary>
-protected virtual void On$Name$()
-{
-this.On$Name$(
-new PropertyChangedEventArgs(
-new System.Diagnostics.StackTrace().GetFrame(1).GetMethod().Name.Replace("set_", "")));
-}
 #endregion INotifyPropertyChanged Members
 	]]>
 			</Code>

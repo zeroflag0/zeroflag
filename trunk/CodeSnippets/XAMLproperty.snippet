@@ -3,7 +3,7 @@
 	<CodeSnippet Format="1.0.0">
 		<Header>
 			<Title>XAML Property</Title>
-			<Shortcut>#prop</Shortcut>
+			<Shortcut>propx</Shortcut>
 			<Description>
 			</Description>
 			<Author>zeroflag</Author>
@@ -39,12 +39,7 @@
 			<Code Language="csharp">
 				<![CDATA[
 public static readonly DependencyProperty $Name$Property =
-DependencyProperty.Register("$Name$", typeof($Type$), typeof($Class$), new FrameworkPropertyMetadata());
-
-public static readonly RoutedEvent $Name$ChangedEvent = 
-EventManager.RegisterRoutedEvent("$Name$Changed", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof($Class$));
-
-#region $Name$
+DependencyProperty.Register("$Name$", typeof($Type$), typeof($Class$), new FrameworkPropertyMetadata(default($Type$)));
 
 /// <summary>
 /// $Documentation$
@@ -55,31 +50,8 @@ get { return ($Type$) GetValue($Name$Property); }
 set
 {
 SetValue($Name$Property, value);
-this.On$Name$Changed();
 }
 }
-
-#region $Name$Changed event
-
-/// <summary>
-/// Occurs when $Name$ changes.
-/// </summary>
-public event RoutedEventHandler $Name$Changed
-{
-add { AddHandler($Name$ChangedEvent, value); } 
-remove { RemoveHandler($Name$ChangedEvent, value); }
-}
-
-/// <summary>
-/// Raises the $Name$Changed event.
-/// </summary>
-protected virtual void On$Name$Changed()
-{
-RaiseEvent(new RoutedEventArgs($Name$ChangedEvent));
-}
-
-#endregion $Name$Changed event
-#endregion $Name$
 ]]>
 			</Code>
 		</Snippet>
