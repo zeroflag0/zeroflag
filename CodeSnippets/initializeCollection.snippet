@@ -16,7 +16,9 @@
 		<Snippet>
 			<References />
 			<Imports>
-				<Import>System.Collections.ObjectModel</Import>
+				<Import>
+					<Namespace>System.Collections.ObjectModel</Namespace>
+				</Import>
 			</Imports>
 			<Declarations>
 				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
@@ -74,7 +76,8 @@ lock(this)
 {
 if (_$Name$ == null)
 {
-_$Name$ = $selected$new $ListType$<$Type$>()$end$;
+var list = new $ListType$<$Type$>{$selected$$end$};
+_$Name$ = list;
 }
 }
 }
