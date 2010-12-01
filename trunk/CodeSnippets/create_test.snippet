@@ -1,0 +1,101 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<Title>create test event</Title>
+			<Author>zeroflag</Author>
+			<Description></Description>
+			<HelpUrl></HelpUrl>
+			<SnippetType>SurroundsWith/Expansion</SnippetType>
+			<Shortcut>#test</Shortcut>
+			<Keywords>
+				<Keyword>test</Keyword>
+			</Keywords>
+		</Header>
+		<Snippet>
+			<References />
+			<Imports />
+			<Declarations>
+				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Name</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>Value</Default>
+					<Function></Function>
+				</Literal>
+				<Object Editable="false" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Type</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>EventCommand</Default>
+					<Function></Function>
+				</Object>
+				<!--
+				<Literal Editable="true" xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+					<ID>Initialization</ID>
+					<Type></Type>
+					<ToolTip></ToolTip>
+					<Default>//TODO: Initialize...</Default>
+					<Function></Function>
+				</Literal>
+				-->
+			</Declarations>
+			<Code Language="CSharp" Delimiter="$">
+				<![CDATA[
+private $Type$ _$Name$TestCommand;
+
+public $Type$ $Name$TestCommand
+{
+get
+{
+if (_$Name$TestCommand == null)
+{
+lock(this)
+{
+if (_$Name$TestCommand == null)
+{
+_$Name$TestCommand = $selected$new $Type$(this.$Name$Test);
+}
+}
+}
+return _$Name$TestCommand;
+}
+}
+
+private void $Name$Test(object obj)
+{
+z.Run(this.Test$Name$);
+}
+
+private void Test$Name$()
+{
+List<object> data = new List<object>();
+string error;
+try
+{
+z.dbg("Testing $Name$...");
+DVPMandant m = GetClient();
+z.dbg("Testing $Name$... Got client...");
+
+$selected$$end$
+
+this.Data = data;
+if (!string.IsNullOrEmpty(error))
+{
+z.dbg("Testing $Name$... FAILED!" + Environment.NewLine + error);
+}
+else
+{
+z.dbg("Testing $Name$... success.");
+}
+}
+catch(Exception exc)
+{
+z.dbg("Testing $Name$... ERROR!" + Environment.NewLine + exc);
+}
+}
+]]>
+			</Code>
+		</Snippet>
+	</CodeSnippet>
+</CodeSnippets>

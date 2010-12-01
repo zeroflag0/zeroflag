@@ -39,7 +39,12 @@
 			<Code Language="csharp">
 				<![CDATA[
 public static readonly DependencyProperty $Name$Property =
-DependencyProperty.Register("$Name$", typeof($Type$), typeof($Class$), new FrameworkPropertyMetadata(default($Type$)));
+DependencyProperty.Register("$Name$", typeof($Type$), typeof($Class$), new FrameworkPropertyMetadata(default($Type$),$Name$ChangedCallback));
+
+private static void $Name$ChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
+{
+	((UIElement)d).RaiseEvent(new RoutedEventArgs($Name$ChangedEvent));
+}
 
 public static readonly RoutedEvent $Name$ChangedEvent = 
 EventManager.RegisterRoutedEvent("$Name$Changed", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof($Class$));
@@ -54,11 +59,8 @@ get { return ($Type$) GetValue($Name$Property); }
 set
 {
 SetValue($Name$Property, value);
-this.On$Name$Changed();
 }
 }
-
-#region $Name$Changed event
 
 /// <summary>
 /// Occurs when $Name$ changes.
@@ -69,15 +71,6 @@ add { AddHandler($Name$ChangedEvent, value); }
 remove { RemoveHandler($Name$ChangedEvent, value); }
 }
 
-/// <summary>
-/// Raises the $Name$Changed event.
-/// </summary>
-protected virtual void On$Name$Changed()
-{
-RaiseEvent(new RoutedEventArgs($Name$ChangedEvent));
-}
-
-#endregion $Name$Changed event
 ]]>
 			</Code>
 		</Snippet>
