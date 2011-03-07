@@ -1,4 +1,5 @@
 #region BSD license
+
 /*
  * Copyright (c) 2008, Thomas "zeroflag" Kraemer. All rights reserved.
  * Copyright (c) 2008, Anders "anonimasu" Helin. All rights reserved.
@@ -28,15 +29,18 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #endregion BSD license
 
 #region SVN Version Information
+
 ///	<file>
 ///		<!-- Last modification of this file: -->
 ///		<revision>$Rev: 29 $</revision>
 ///		<author>$Author: zeroflag $</author>
 ///		<id>$Id: FileWriter.cs 29 2008-09-24 06:56:58Z zeroflag $</id>
 ///	</file>
+
 #endregion SVN Version Information
 
 using System;
@@ -46,108 +50,174 @@ using System.Text;
 
 namespace zeroflag.Components.Logging
 {
-	public class FileWriter : LogWriter
-	{
-		Dictionary<string, StreamWriter> _Writers = new Dictionary<string, StreamWriter>();
+    public class FileWriter : LogWriter
+    {
+        private readonly Dictionary<string, StreamWriter> _Writers = new Dictionary<string, StreamWriter>();
+        private StreamWriter _Master;
+        private string _MasterName;
+        private string _NameTemplate;
+        private bool _SplitByOwner;
 
-		protected Dictionary<string, StreamWriter> Writers
-		{
-			get { return _Writers; }
-		}
-
-		public StreamWriter this[ string name ]
-		{
-			get
-			{
-				if ( !this.Writers.ContainsKey( name ) || this.Writers[ name ] == null )
-				{
-					this.Writers[ name ] = this.CreateWriter( name );
-				}
-				return this.Writers[ name ];
-			}
-		}
-
-		StreamWriter _Master;
-
-		public StreamWriter Master
-		{
-			get { return _Master ?? ( _Master = this.CreateWriter( "master" ) ); }
-			set { _Master = value; }
-		}
-
-		protected StreamWriter CreateWriter( string name )
-		{
-			StreamWriter writer = null;
-			string sufix = "";
-			int count = -1;
-			while ( writer == null )
-			{
-				try
-				{
-					writer = new StreamWriter( "log_" + name + sufix + ".txt" );
-					break;
-				}
-				catch ( IOException )
-				{
-					count++;
-					sufix = "_" + count;
-
-					if ( count > 10 )
-					{
-						return writer;
-						//throw;
-					}
-				}
-			}
-			return writer;
-		}
+        /// <summary>
+        /// Whether to create one log-file for each owner.
+        /// </summary>
+        public bool SplitByOwner
+        {
+            get { return this._SplitByOwner; }
+            set
+            {
+                if (this._SplitByOwner != value)
+                {
+                    this._SplitByOwner = value;
+                }
+            }
+        }
 
 
+        /// <summary>
+        /// The name for the master-log.
+        /// </summary>
+        public string MasterName
+        {
+            get { return this._MasterName; }
+            set
+            {
+                if (this._MasterName != value)
+                {
+                    this._MasterName = value;
+                }
+            }
+        }
 
-		public override void Write( DateTime time, string owner, string text )
-		{
-			try
-			{
-				this.Master.WriteLine( new StringBuilder( time.ToString( "HH:mm:ss.fff" ) ).Append( " [" ).Append( owner.PadLeft( 15 ) ).Append( "]: " ).Append( text ) );
-				this[ owner ].WriteLine( new StringBuilder( time.ToString( "HH:mm:ss.fff" ) ).Append( " [" ).Append( owner.PadLeft( 15 ) ).Append( "]: " ).Append( text ) );
-			}
-			catch ( ObjectDisposedException ) { }
-		}
 
-		public override void Flush()
-		{
-			foreach ( StreamWriter writer in this.Writers.Values )
-				try
-				{
-					writer.Flush();
-				}
-				catch ( ObjectDisposedException ) { }
-			try
-			{
-				this.Master.Flush();
-			}
-			catch ( ObjectDisposedException ) { }
-		}
+        /// <summary>
+        /// The template for the log-file-name. %n is replaced by the owner.
+        /// </summary>
+        public string NameTemplate
+        {
+            get { return this._NameTemplate; }
+            set
+            {
+                if (this._NameTemplate != value)
+                {
+                    this._NameTemplate = value;
+                }
+            }
+        }
 
-		public override void Dispose()
-		{
-			foreach ( StreamWriter writer in this.Writers.Values )
-			{
-				try
-				{
-					writer.WriteLine( new StringBuilder( DateTime.Now.ToString( "HH:mm:ss.fff" ) ).Append( " closed." ) );
-				}
-				catch ( ObjectDisposedException ) { }
 
-				writer.Dispose();
-			}
-			try
-			{
-				this.Master.WriteLine( new StringBuilder( DateTime.Now.ToString( "HH:mm:ss.fff" ) ).Append( " closed." ) );
-			}
-			catch ( ObjectDisposedException ) { }
+        protected Dictionary<string, StreamWriter> Writers
+        {
+            get { return this._Writers; }
+        }
 
-			this.Master.Dispose();
-		}
-	}
+        public StreamWriter this[string name]
+        {
+            get
+            {
+                if (!this.Writers.ContainsKey(name) || this.Writers[name] == null)
+                {
+                    this.Writers[name] = this.CreateWriter(name);
+                }
+                return this.Writers[name];
+            }
+        }
+
+        public StreamWriter Master
+        {
+            get { return this._Master ?? (this._Master = this.CreateWriter(this.MasterName ?? "master")); }
+            set { this._Master = value; }
+        }
+
+        protected StreamWriter CreateWriter(string name)
+        {
+            StreamWriter writer = null;
+            string sufix = "";
+            int count = -1;
+            while (writer == null)
+            {
+                try
+                {
+                    string temp = name + sufix;
+                    writer = new StreamWriter((this.NameTemplate ?? "log_%n.txt").Replace("%n", temp));
+                    break;
+                }
+                catch (IOException)
+                {
+                    count++;
+                    sufix = "_" + count;
+
+                    if (count > 10)
+                    {
+                        return writer;
+                        //throw;
+                    }
+                }
+            }
+            return writer;
+        }
+
+
+        public override void Write(DateTime time, string owner, string text)
+        {
+            try
+            {
+                this.Master.WriteLine(
+                    new StringBuilder(time.ToString("HH:mm:ss.fff")).Append(" [").Append(owner.PadLeft(15)).Append("]: ")
+                        .Append(text));
+                if (this.SplitByOwner)
+                    this[owner].WriteLine(
+                        new StringBuilder(time.ToString("HH:mm:ss.fff")).Append(" [").Append(owner.PadLeft(15)).Append(
+                            "]: ")
+                            .Append(text));
+            }
+            catch (ObjectDisposedException)
+            {
+            }
+        }
+
+        public override void Flush()
+        {
+            foreach (StreamWriter writer in this.Writers.Values)
+                try
+                {
+                    writer.Flush();
+                }
+                catch (ObjectDisposedException)
+                {
+                }
+            try
+            {
+                this.Master.Flush();
+            }
+            catch (ObjectDisposedException)
+            {
+            }
+        }
+
+        public override void Dispose()
+        {
+            foreach (StreamWriter writer in this.Writers.Values)
+            {
+                try
+                {
+                    writer.WriteLine(new StringBuilder(DateTime.Now.ToString("HH:mm:ss.fff")).Append(" closed."));
+                }
+                catch (ObjectDisposedException)
+                {
+                }
+
+                writer.Dispose();
+            }
+            try
+            {
+                this.Master.WriteLine(new StringBuilder(DateTime.Now.ToString("HH:mm:ss.fff")).Append(" closed."));
+            }
+            catch (ObjectDisposedException)
+            {
+            }
+
+            this.Master.Dispose();
+        }
+    }
 }

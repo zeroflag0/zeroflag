@@ -75,11 +75,36 @@ namespace zeroflag.Components.Logging
 				var Writers = _Writers = new List<LogWriter>();
 				Writers.Add( new ConsoleWriter() );
 #if !SILVERLIGHT
-				Writers.Add( new FileWriter() );
+				Writers.Add( this.FileWriter );
 #endif
 				return Writers;
 			}
 		}
+
+
+        private FileWriter _FileWriter;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public FileWriter FileWriter
+        {
+            get
+            {
+                if (_FileWriter == null)
+                {
+                    lock (this)
+                    {
+                        if (_FileWriter == null)
+                        {
+                            _FileWriter = new FileWriter();
+                        }
+                    }
+                }
+                return _FileWriter;
+            }
+        }
+
 
 		#endregion Writers
 
