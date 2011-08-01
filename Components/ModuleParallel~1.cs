@@ -50,112 +50,110 @@ using System.Text;
 
 namespace zeroflag.Components
 {
-	public abstract class ModuleParallel<CoreT> : Module<CoreT>, IComponent<CoreT>
+	public abstract class Module<CoreT> : Module, IComponent<CoreT>
 		where CoreT : Core<CoreT>
 	{
-		#region Processor
+		#region Properties
 
-		private zeroflag.Components.ITaskProcessor _Processor;
+		#region Core
+
+		private CoreT _Core;
 
 		/// <summary>
-		/// The task processor used by this module.
+		/// The core this module belongs to.
 		/// </summary>
-		public zeroflag.Components.ITaskProcessor Processor
+		[SerializerIgnore]
+		public CoreT Core
 		{
-			get { return _Processor ?? (_Processor = this.ProcessorCreate); }
+			get { return _Core ?? this as CoreT ?? (this.Outer != null ? this.Outer.CoreBase as CoreT : null); }
 			set
 			{
-				if (_Processor != value)
+				if (_Core != value)
 				{
-					//if (_Processor != null) { }
-					_Processor = value;
-					//if (_Processor != null) { }
+					this.OnCoreChanged(_Core, _Core = value);
 				}
 			}
 		}
 
-		/// <summary>
-		/// Creates the default/initial value for Processor.
-		/// The task processor used by this module.
-		/// </summary>
-		protected virtual zeroflag.Components.ITaskProcessor ProcessorCreate
-		{
-			get
-			{
-				zeroflag.Components.ITaskProcessor value = _Processor = new zeroflag.Components.TaskProcessor(this);
-				return value;
-			}
-		}
+		#region CoreChanged event
 
-		#endregion Processor
-
-		#region Interval
-
-		private double? _Interval;
+		private event Component<CoreT>.CoreChangedHandler _CoreChanged;
 
 		/// <summary>
-		/// The interval between updates in milliseconds.
+		/// Occurs when Core changes.
 		/// </summary>
-		public double Interval
+		public event Component<CoreT>.CoreChangedHandler CoreChanged
 		{
-			get { return _Interval ?? (_Interval = this.IntervalCreate) ?? 20; }
-			//protected set
-			//{
-			//	if (_Interval != value)
-			//	{
-			//		//if (_Interval != null) { }
-			//		_Interval = value;
-			//		//if (_Interval != null) { }
-			//	}
-			//}
+			add { this._CoreChanged += value; }
+			remove { this._CoreChanged -= value; }
 		}
 
 		/// <summary>
-		/// Creates the default/initial value for Interval.
-		/// The interval between updates in milliseconds.
+		/// Raises the CoreChanged event.
 		/// </summary>
-		protected virtual double? IntervalCreate
+		protected virtual void OnCoreChanged(CoreT oldvalue, CoreT newvalue)
 		{
-			get
+			if (newvalue != null)
 			{
-				double? value = _Interval = 20;
-				return value;
+				if (this.HasInner)
+				{
+					foreach (var comp in this.Inner)
+					{
+						comp.CoreBase = newvalue;
+					}
+				}
+				if (this.Outer != null && this.Outer.CoreBase == null)
+				{
+					this.Outer.CoreBase = newvalue;
+				}
+			}
+			// if there are event subscribers...
+			if (this._CoreChanged != null)
+			{
+				// call them...
+				this._CoreChanged(this, oldvalue, newvalue);
 			}
 		}
 
-		#endregion Interval
+		#endregion CoreChanged event
 
-		protected override void OnStateChanged(ModuleStates oldvalue, ModuleStates newvalue)
+		#endregion Core
+
+		#endregion
+
+		#region IComparable<Module> Members
+
+		/// <summary>
+		/// Compare two modules for order.
+		/// This represents the execution order and can be used for dependency handling.
+		/// e.g. the rendering module (should run last) will return 1 (greater than) for any other module.
+		/// </summary>
+		/// <param name="other"></param>
+		/// <returns>
+		/// Less than zero 
+		///  This Module is less than the other Module. This module has a lower priority.
+		/// Zero 
+		///  This Module is equal to other. Equal priority.
+		/// Greater than zero 
+		///  This Module is greater than Module. Higher priority, executed first.
+		/// </returns>
+		public virtual int CompareTo(Module other)
 		{
-			base.OnStateChanged(oldvalue, newvalue);
-			if (newvalue == ModuleStates.Running)
-			{
-				this.OnUpdatePost(TimeSpan.Zero);
-			}
-			else if (newvalue == ModuleStates.Shutdown || newvalue == ModuleStates.Disposed)
-			{
-				this.Core.Shutdown();
-			}
+			return 0;
 		}
 
-		protected override void OnUpdate(TimeSpan timeSinceLastUpdate)
-		{
-			//base.OnUpdate( timeSinceLastUpdate );
-		}
+		#endregion
 
-		public override void Initialize()
+		public override void Update()
 		{
-			this.Processor.Add(base.Initialize);
-			while (this.State != ModuleStates.Ready || this.State == ModuleStates.Running)
+			try
 			{
-				System.Threading.Thread.Sleep(1);
+				base.Update();
 			}
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			this.Processor.Add(() => base.Dispose(disposing));
-			//base.Dispose( disposing );
+			catch (Exception exc)
+			{
+				this.Log.Error(exc);
+			}
 		}
 	}
 }
