@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -10,9 +10,28 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>zeroflag</RootNamespace>
     <AssemblyName>zerolib</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkSubset>Client</TargetFrameworkSubset>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -76,8 +95,6 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -152,83 +169,6 @@
       <DependentUpon>TaskProcessorGroup.cs</DependentUpon>
     </Compile>
     <Compile Include="Extensions.cs" />
-    <Compile Include="Forms\DebugForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\DebugForm.Designer.cs">
-      <DependentUpon>DebugForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\Filtering.cs" />
-    <Compile Include="Forms\Reflected\IListEditor.cs" />
-    <Compile Include="Forms\Reflected\IListView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListEditor.Designer.cs">
-      <DependentUpon>ListEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListPropertyEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListPropertyEditor.Designer.cs">
-      <DependentUpon>ListPropertyEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListView.Designer.cs">
-      <DependentUpon>ListView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListViewItem.cs" />
-    <Compile Include="Forms\Reflected\ListViewMagic.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\ListViewMagic.designer.cs">
-      <DependentUpon>ListViewMagic.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\PropertyDescription.cs" />
-    <Compile Include="Forms\Reflected\PropertyTreeView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\PropertyTreeView.Designer.cs">
-      <DependentUpon>PropertyTreeView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\PropertyTreeViewItem.cs" />
-    <Compile Include="Forms\Reflected\TreeEditor.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\TreeEditor.Designer.cs">
-      <DependentUpon>TreeEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\TreeView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\TreeView.Designer.cs">
-      <DependentUpon>TreeView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\TreeViewItem.cs" />
-    <Compile Include="Forms\Reflected\TypeDescription.cs" />
-    <Compile Include="Forms\Reflected\TypeDescriptionEditor.cs" />
-    <Compile Include="Forms\Reflected\TypeDescriptionEditorControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\TypeDescriptionEditorControl.Designer.cs">
-      <DependentUpon>TypeDescriptionEditorControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\Reflected\TypeList.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Forms\Reflected\TypeList.Designer.cs">
-      <DependentUpon>TypeList.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Forms\SplitContainer.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Forms\SplitContainer.Designer.cs">
-      <DependentUpon>SplitContainer.cs</DependentUpon>
-    </Compile>
     <Compile Include="GetHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Reflection\InstanceProvider.cs" />
@@ -304,49 +244,29 @@
     <None Include="Serialization\_ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Forms\DebugForm.resx">
-      <DependentUpon>DebugForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\ListEditor.resx">
-      <DependentUpon>ListEditor.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\ListPropertyEditor.resx">
-      <DependentUpon>ListPropertyEditor.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\ListView.resx">
-      <DependentUpon>ListView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\ListViewMagic.resx">
-      <DependentUpon>ListViewMagic.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\PropertyTreeView.resx">
-      <DependentUpon>PropertyTreeView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\TreeEditor.resx">
-      <DependentUpon>TreeEditor.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\TreeView.resx">
-      <DependentUpon>TreeView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\Reflected\TypeDescriptionEditorControl.resx">
-      <DependentUpon>TypeDescriptionEditorControl.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SplitContainer.resx">
-      <DependentUpon>SplitContainer.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <Folder Include="Reflection\Descriptors\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Reflection\Descriptors\" />
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
