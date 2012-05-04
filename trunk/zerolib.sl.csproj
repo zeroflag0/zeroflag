@@ -13,8 +13,8 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>zeroflag</RootNamespace>
-    <AssemblyName>zerolib.sl</AssemblyName>
-    <TargetFrameworkVersion>v3.0</TargetFrameworkVersion>
+    <AssemblyName>zerolib</AssemblyName>
+    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
     <SilverlightApplication>false</SilverlightApplication>
     <ValidateXaml>true</ValidateXaml>
     <ThrowErrorsInValidation>false</ThrowErrorsInValidation>
@@ -22,7 +22,7 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <OldToolsVersion>3.5</OldToolsVersion>
+    <OldToolsVersion>4.0</OldToolsVersion>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
     <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
@@ -104,6 +104,10 @@
     <Compile Include="Reflection\InstanceProvider.cs" />
     <Compile Include="Reflection\TypeHelper.cs" />
     <Compile Include="Reflection\TypeProvider.cs" />
+    <Compile Include="Silverlight\Converters\HideConverter.cs" />
+    <Compile Include="Silverlight\Converters\HideDefaultConverter.cs" />
+    <Compile Include="Silverlight\Converters\ShowConverter.cs" />
+    <Compile Include="Silverlight\Converters\ShowDefaultConverter.cs" />
     <Compile Include="Silverlight\ICloneable.cs" />
     <Compile Include="Silverlight\XmlTextWriter.cs" />
     <Compile Include="Threading\LocklessQueue.cs" />
@@ -287,6 +291,7 @@
     <Reference Include="mscorlib" />
     <Reference Include="system" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Reflection\Descriptors\" />
@@ -322,6 +327,12 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Silverlight\Converters\Converters.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

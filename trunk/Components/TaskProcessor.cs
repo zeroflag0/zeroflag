@@ -61,26 +61,28 @@
 #endregion BSD License
 
 using System;
-	//using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Text;
+using System.Threading;
 using zeroflag.Collections;
+using zeroflag.Threading;
+//using System.Collections.Generic;
 
 namespace zeroflag.Components
 {
-	public partial class TaskProcessor : Component, zeroflag.Components.ITaskProcessor
-	{
-		public TaskProcessor()
-		{
-			InitializeComponent();
-		}
+    public partial class TaskProcessor
+        : Component,
+            ITaskProcessor
+    {
+        public TaskProcessor()
+        {
+            this.InitializeComponent();
+        }
 
-		public TaskProcessor(Component outer)
-		{
-			this.Outer = outer;
-			InitializeComponent();
-		}
+        public TaskProcessor(Component outer)
+        {
+            this.Outer = outer;
+            this.InitializeComponent();
+        }
 
 #if !SILVERLIGHT
 		public TaskProcessor(System.ComponentModel.IContainer container)
@@ -91,45 +93,45 @@ namespace zeroflag.Components
 		}
 #endif
 
-		#region Thread
+        #region Thread
 
-		private System.Threading.Thread _Thread;
+        private Thread _Thread;
 
-		/// <summary>
-		/// The thread used by this TaskProcessor.
-		/// </summary>
-		public System.Threading.Thread Thread
-		{
-			get { return _Thread ?? (_Thread = this.ThreadCreate); }
-			protected set
-			{
-				if (_Thread != value)
-				{
-					//if (_Thread != null) { }
-					_Thread = value;
-					//if (_Thread != null) { }
-				}
-			}
-		}
+        /// <summary>
+        /// The thread used by this TaskProcessor.
+        /// </summary>
+        public Thread Thread
+        {
+            get { return this._Thread ?? (this._Thread = this.ThreadCreate); }
+            protected set
+            {
+                if (this._Thread != value)
+                {
+                    //if (_Thread != null) { }
+                    this._Thread = value;
+                    //if (_Thread != null) { }
+                }
+            }
+        }
 
-		/// <summary>
-		/// Creates the default/initial value for Thread.
-		/// The thread used by this TaskProcessor.
-		/// </summary>
-		protected virtual System.Threading.Thread ThreadCreate
-		{
-			get
-			{
-				var value = new System.Threading.Thread(new System.Threading.ThreadStart(this.Run));
+        /// <summary>
+        /// Creates the default/initial value for Thread.
+        /// The thread used by this TaskProcessor.
+        /// </summary>
+        protected virtual Thread ThreadCreate
+        {
+            get
+            {
+                var value = new Thread(this.Run);
 #if !SILVERLIGHT
 				value.SetApartmentState(System.Threading.ApartmentState.STA);
 #endif
-				value.Start();
-				return value;
-			}
-		}
+                value.Start();
+                return value;
+            }
+        }
 
-		#region ThreadPriority
+        #region ThreadPriority
 
 #if !SILVERLIGHT
 		private System.Threading.ThreadPriority _ThreadPriority = System.Threading.ThreadPriority.Normal;
@@ -163,293 +165,293 @@ namespace zeroflag.Components
 		}
 #endif
 
-		#endregion ThreadPriority
+        #endregion ThreadPriority
 
-		#endregion Thread
+        #endregion Thread
 
-		#region Disposing
+        #region Disposing
 
-		private bool _Disposing;
+        private bool _Disposing;
 
-		/// <summary>
-		/// When this processor is disposing.
-		/// </summary>
-		public bool Disposing
-		{
-			get { return _Disposing; }
-			set
-			{
-				if (_Disposing != value)
-				{
+        /// <summary>
+        /// When this processor is disposing.
+        /// </summary>
+        public bool Disposing
+        {
+            get { return this._Disposing; }
+            set
+            {
+                if (this._Disposing != value)
+                {
 #if DEBUG
-					if (_Disposing && !value)
-					{
-						Console.WriteLine((this.Name ?? this.ToString()) + ".Disposing = " + value);
-						Console.WriteLine(new System.Diagnostics.StackTrace(1));
-					}
+                    if (this._Disposing && !value)
+                    {
+                        Console.WriteLine((this.Name ?? this.ToString()) + ".Disposing = " + value);
+                        Console.WriteLine(new StackTrace(new StackFrame(1)));
+                    }
 #endif
-					this.OnDisposingChanged(_Disposing, _Disposing = value);
-				}
-			}
-		}
+                    this.OnDisposingChanged(this._Disposing, this._Disposing = value);
+                }
+            }
+        }
 
-		#region DisposingChanged event
+        #region DisposingChanged event
 
-		public delegate void DisposingChangedHandler(object sender, bool oldvalue, bool newvalue);
+        public delegate void DisposingChangedHandler(object sender, bool oldvalue, bool newvalue);
 
-		private event DisposingChangedHandler _DisposingChanged;
+        private event DisposingChangedHandler _DisposingChanged;
 
-		/// <summary>
-		/// Occurs when Disposing changes.
-		/// </summary>
-		public event DisposingChangedHandler DisposingChanged
-		{
-			add { this._DisposingChanged += value; }
-			remove { this._DisposingChanged -= value; }
-		}
+        /// <summary>
+        /// Occurs when Disposing changes.
+        /// </summary>
+        public event DisposingChangedHandler DisposingChanged
+        {
+            add { this._DisposingChanged += value; }
+            remove { this._DisposingChanged -= value; }
+        }
 
-		/// <summary>
-		/// Raises the DisposingChanged event.
-		/// </summary>
-		protected virtual void OnDisposingChanged(bool oldvalue, bool newvalue)
-		{
-			// if there are event subscribers...
-			if (this._DisposingChanged != null)
-			{
-				// call them...
-				this._DisposingChanged(this, oldvalue, newvalue);
-			}
-		}
+        /// <summary>
+        /// Raises the DisposingChanged event.
+        /// </summary>
+        protected virtual void OnDisposingChanged(bool oldvalue, bool newvalue)
+        {
+            // if there are event subscribers...
+            if (this._DisposingChanged != null)
+            {
+                // call them...
+                this._DisposingChanged(this, oldvalue, newvalue);
+            }
+        }
 
-		#endregion DisposingChanged event
+        #endregion DisposingChanged event
 
-		#endregion Disposing
+        #endregion Disposing
 
-		private bool _Cancel = false;
+        private bool _Cancel;
 
-		public bool Cancel
-		{
-			get { return _Cancel; }
-			set
-			{
-				if (value != _Cancel)
-				{
+        public bool Cancel
+        {
+            get { return this._Cancel; }
+            set
+            {
+                if (value != this._Cancel)
+                {
 #if DEBUG && false
 					Console.WriteLine( ( this.Name ?? this.ToString() ) + ".Cancel = " + value );
 					Console.WriteLine( new System.Diagnostics.StackTrace( 1 ) );
 #endif
-					_Cancel = value;
-					if (_Cancel)
-					{
-						this.CancelRequestTime = Time.Now;
-					}
-					else
-					{
-						this.CancelRequestTime = null;
-					}
-				}
-				//Console.WriteLine( this + ".Cancel = " + value );
-				//if ( value )
-				//{
-				//    this.Tasks.Clear();
-				//    this.backgroundWorker.CancelAsync();
-				//}
-				//else
-				//this.backgroundWorker.RunWorkerAsync();
-			}
-		}
+                    this._Cancel = value;
+                    if (this._Cancel)
+                    {
+                        this.CancelRequestTime = Time.Now;
+                    }
+                    else
+                    {
+                        this.CancelRequestTime = null;
+                    }
+                }
+                //Console.WriteLine( this + ".Cancel = " + value );
+                //if ( value )
+                //{
+                //    this.Tasks.Clear();
+                //    this.backgroundWorker.CancelAsync();
+                //}
+                //else
+                //this.backgroundWorker.RunWorkerAsync();
+            }
+        }
 
-		public bool IsRunning
-		{
-			get { return this._Thread != null && this.Thread.IsAlive && this._Working > 0; }
-		}
+        public bool IsRunning
+        {
+            get { return this._Thread != null && this.Thread.IsAlive && this._Working > 0; }
+        }
 
-		#region Parentless
+        #region Parentless
 
-		private bool _Parentless;
+        private bool _Parentless;
 
-		/// <summary>
-		/// Whether the TaskProcessor can run without a parent(outer/core) object. If false(default) it will exit when missing a parent.
-		/// </summary>
-		public bool Parentless
-		{
-			get { return _Parentless; }
-			set
-			{
-				if (_Parentless != value)
-				{
-					_Parentless = value;
-				}
-			}
-		}
+        /// <summary>
+        /// Whether the TaskProcessor can run without a parent(outer/core) object. If false(default) it will exit when missing a parent.
+        /// </summary>
+        public bool Parentless
+        {
+            get { return this._Parentless; }
+            set
+            {
+                if (this._Parentless != value)
+                {
+                    this._Parentless = value;
+                }
+            }
+        }
 
-		#endregion Parentless
+        #endregion Parentless
 
-		#region Name
+        #region Name
 
-		private string _Name;
+        private string _Name;
 
-		/// <summary>
-		/// This taskprocessor's name (optional).
-		/// </summary>
-		public string Name
-		{
-			get { return _Name; }
-			set
-			{
-				if (_Name != value)
-				{
-					_Name = value;
-					_Restart = 1;
-					//if ( _Tasks != null )
-					//    this.Add( () => System.System.Threading.Thread.CurrentThread.Name = value );
-				}
-			}
-		}
+        /// <summary>
+        /// This taskprocessor's name (optional).
+        /// </summary>
+        public string Name
+        {
+            get { return this._Name; }
+            set
+            {
+                if (this._Name != value)
+                {
+                    this._Name = value;
+                    this._Restart = 1;
+                    //if ( _Tasks != null )
+                    //    this.Add( () => System.System.Threading.Thread.CurrentThread.Name = value );
+                }
+            }
+        }
 
-		#endregion Name
+        #endregion Name
 
-		#region event ErrorHandling
+        #region event ErrorHandling
 
-		public delegate void ErrorHandlingHandler(Task task, Exception exc);
+        public delegate void ErrorHandlingHandler(Task task, Exception exc);
 
-		private event ErrorHandlingHandler _ErrorHandling;
+        private event ErrorHandlingHandler _ErrorHandling;
 
-		/// <summary>
-		/// When an error occurs during task execution.
-		/// </summary>
-		public event ErrorHandlingHandler ErrorHandling
-		{
-			add { this._ErrorHandling += value; }
-			remove { this._ErrorHandling -= value; }
-		}
+        /// <summary>
+        /// When an error occurs during task execution.
+        /// </summary>
+        public event ErrorHandlingHandler ErrorHandling
+        {
+            add { this._ErrorHandling += value; }
+            remove { this._ErrorHandling -= value; }
+        }
 
-		/// <summary>
-		/// Call to raise the ErrorHandling event:
-		/// When an error occurs during task execution.
-		/// </summary>
-		protected virtual void OnErrorHandling(Task task, Exception exc)
-		{
-			// if there are event subscribers...
-			if (this._ErrorHandling != null)
-			{
-				// call them...
-				this._ErrorHandling(task, exc);
-			}
-		}
+        /// <summary>
+        /// Call to raise the ErrorHandling event:
+        /// When an error occurs during task execution.
+        /// </summary>
+        protected virtual void OnErrorHandling(Task task, Exception exc)
+        {
+            // if there are event subscribers...
+            if (this._ErrorHandling != null)
+            {
+                // call them...
+                this._ErrorHandling(task, exc);
+            }
+        }
 
-		#endregion event ErrorHandling
+        #endregion event ErrorHandling
 
-		#region Tasks
+        #region Tasks
 
-		public void Add(Task task)
-		{
-			this.Tasks.Add(task);
-			this.Thread.GetType();
-			//            if ( !this.backgroundWorker.IsBusy || _Working < 1 )
-			//            {
-			//                try
-			//                {
-			//                    this.backgroundWorker.RunWorkerAsync();
-			//                }
-			//#if DEBUG
-			//                            //|| TRACE || VERBOSE
-			//                        catch ( Exception exc )
-			//                        {
-			//                            Console.WriteLine( exc );
-			//                        }
-			//#else
-			//                catch { }
-			//#endif
-			//            }
-			Wait.Set();
-		}
+        public void Add(Task task)
+        {
+            this.Tasks.Add(task);
+            this.Thread.GetType();
+            //            if ( !this.backgroundWorker.IsBusy || _Working < 1 )
+            //            {
+            //                try
+            //                {
+            //                    this.backgroundWorker.RunWorkerAsync();
+            //                }
+            //#if DEBUG
+            //                            //|| TRACE || VERBOSE
+            //                        catch ( Exception exc )
+            //                        {
+            //                            Console.WriteLine( exc );
+            //                        }
+            //#else
+            //                catch { }
+            //#endif
+            //            }
+            this.Wait.Set();
+        }
 
-		public void Add(params Action[] tasks)
-		{
-			foreach (var task in tasks)
-			{
-				this.Add(Task.Create(task));
-			}
-		}
+        public void Add(params Action[] tasks)
+        {
+            foreach (Action task in tasks)
+            {
+                this.Add(Task.Create(task));
+            }
+        }
 
-		public void Add<T1>(Action<T1> task, T1 p1)
-		{
-			this.Add(Task.Create<T1>(task, p1));
-		}
+        public void Add<T1>(Action<T1> task, T1 p1)
+        {
+            this.Add(Task.Create(task, p1));
+        }
 
-		public void Add<T1, T2>(Action<T1, T2> task, T1 p1, T2 p2)
-		{
-			this.Add(Task.Create<T1, T2>(task, p1, p2));
-		}
+        public void Add<T1, T2>(Action<T1, T2> task, T1 p1, T2 p2)
+        {
+            this.Add(Task.Create(task, p1, p2));
+        }
 
-		public void Add<T1, T2, T3>(Action<T1, T2, T3> task, T1 p1, T2 p2, T3 p3)
-		{
-			this.Add(Task.Create<T1, T2, T3>(task, p1, p2, p3));
-		}
+        public void Add<T1, T2, T3>(Action<T1, T2, T3> task, T1 p1, T2 p2, T3 p3)
+        {
+            this.Add(Task.Create(task, p1, p2, p3));
+        }
 
-		public void Add<T1, T2, T3, T4>(Action<T1, T2, T3, T4> task, T1 p1, T2 p2, T3 p3, T4 p4)
-		{
-			this.Add(Task.Create<T1, T2, T3, T4>(task, p1, p2, p3, p4));
-		}
+        public void Add<T1, T2, T3, T4>(Action<T1, T2, T3, T4> task, T1 p1, T2 p2, T3 p3, T4 p4)
+        {
+            this.Add(Task.Create(task, p1, p2, p3, p4));
+        }
 
-		public void Add(DateTime time, params Action[] tasks)
-		{
-			foreach (var task in tasks)
-			{
-				this.Add(Task.Create(time, task));
-			}
-		}
+        public void Add(DateTime time, params Action[] tasks)
+        {
+            foreach (Action task in tasks)
+            {
+                this.Add(Task.Create(time, task));
+            }
+        }
 
-		public void Add<T1>(DateTime time, Action<T1> task, T1 p1)
-		{
-			this.Add(Task.Create<T1>(time, task, p1));
-		}
+        public void Add<T1>(DateTime time, Action<T1> task, T1 p1)
+        {
+            this.Add(Task.Create(time, task, p1));
+        }
 
-		public void Add<T1, T2>(DateTime time, Action<T1, T2> task, T1 p1, T2 p2)
-		{
-			this.Add(Task.Create<T1, T2>(time, task, p1, p2));
-		}
+        public void Add<T1, T2>(DateTime time, Action<T1, T2> task, T1 p1, T2 p2)
+        {
+            this.Add(Task.Create(time, task, p1, p2));
+        }
 
-		public void Add<T1, T2, T3>(DateTime time, Action<T1, T2, T3> task, T1 p1, T2 p2, T3 p3)
-		{
-			this.Add(Task.Create<T1, T2, T3>(time, task, p1, p2, p3));
-		}
+        public void Add<T1, T2, T3>(DateTime time, Action<T1, T2, T3> task, T1 p1, T2 p2, T3 p3)
+        {
+            this.Add(Task.Create(time, task, p1, p2, p3));
+        }
 
-		public void Add<T1, T2, T3, T4>(DateTime time, Action<T1, T2, T3, T4> task, T1 p1, T2 p2, T3 p3, T4 p4)
-		{
-			this.Add(Task.Create<T1, T2, T3, T4>(time, task, p1, p2, p3, p4));
-		}
+        public void Add<T1, T2, T3, T4>(DateTime time, Action<T1, T2, T3, T4> task, T1 p1, T2 p2, T3 p3, T4 p4)
+        {
+            this.Add(Task.Create(time, task, p1, p2, p3, p4));
+        }
 
-		public int Count
-		{
-			get { return this.Tasks.Count; }
-		}
+        public int Count
+        {
+            get { return this.Tasks.Count; }
+        }
 
-		public void Clear()
-		{
-			this.Tasks.Clear();
-		}
+        public void Clear()
+        {
+            this.Tasks.Clear();
+        }
 
-		private zeroflag.Threading.LocklessQueue<Task?> _Tasks;
+        private LocklessQueue<Task?> _Tasks;
 
-		/// <summary>
-		/// Tasks to be processed in the background.
-		/// </summary>
-		protected zeroflag.Threading.LocklessQueue<Task?> Tasks
-		{
-			get { return _Tasks ?? (_Tasks = this.TasksCreate); }
-		}
+        /// <summary>
+        /// Tasks to be processed in the background.
+        /// </summary>
+        protected LocklessQueue<Task?> Tasks
+        {
+            get { return this._Tasks ?? (this._Tasks = this.TasksCreate); }
+        }
 
-		/// <summary>
-		/// Creates the default/initial value for Tasks.
-		/// Tasks to be processed in the background.
-		/// </summary>
-		protected virtual zeroflag.Threading.LocklessQueue<Task?> TasksCreate
-		{
-			get
-			{
-				var list = _Tasks = new zeroflag.Threading.LocklessQueue<Task?>() {};
+        /// <summary>
+        /// Creates the default/initial value for Tasks.
+        /// Tasks to be processed in the background.
+        /// </summary>
+        protected virtual LocklessQueue<Task?> TasksCreate
+        {
+            get
+            {
+                LocklessQueue<Task?> list = this._Tasks = new LocklessQueue<Task?> { };
 #if OBSOLETE
 				list.ItemAdded += item =>
 				{
@@ -472,211 +474,211 @@ namespace zeroflag.Components
 					Wait.Set();
 				};
 #endif
-				//if ( _Name != null )
-				//    this.Add( () => System.Threading.Thread.CurrentThread.Name = this.Name );
-				return list;
-			}
-		}
+                //if ( _Name != null )
+                //    this.Add( () => System.Threading.Thread.CurrentThread.Name = this.Name );
+                return list;
+            }
+        }
 
-		#region ScheduledTasks
+        #region ScheduledTasks
 
-		private List<Task?> _ScheduledTasks;
+        private List<Task?> _ScheduledTasks;
 
-		/// <summary>
-		/// The tasks scheduled for a specific time, in order of scheduled time.
-		/// </summary>
-		public List<Task?> ScheduledTasks
-		{
-			get { return _ScheduledTasks ?? (_ScheduledTasks = this.ScheduledTasksCreate); }
-			//protected set
-			//{
-			//	if (_ScheduledTasks != value)
-			//	{
-			//		//if (_ScheduledTasks != null) { }
-			//		_ScheduledTasks = value;
-			//		//if (_ScheduledTasks != null) { }
-			//	}
-			//}
-		}
+        /// <summary>
+        /// The tasks scheduled for a specific time, in order of scheduled time.
+        /// </summary>
+        public List<Task?> ScheduledTasks
+        {
+            get { return this._ScheduledTasks ?? (this._ScheduledTasks = this.ScheduledTasksCreate); }
+            //protected set
+            //{
+            //	if (_ScheduledTasks != value)
+            //	{
+            //		//if (_ScheduledTasks != null) { }
+            //		_ScheduledTasks = value;
+            //		//if (_ScheduledTasks != null) { }
+            //	}
+            //}
+        }
 
-		/// <summary>
-		/// Creates the default/initial value for ScheduledTasks.
-		/// The tasks scheduled for a specific time, in order of scheduled time.
-		/// </summary>
-		protected virtual List<Task?> ScheduledTasksCreate
-		{
-			get
-			{
-				List<Task?> value = _ScheduledTasks = new List<Task?>();
-				value.ItemAdded += new List<Task?>.ItemAddedHandler(ScheduledTasksAdded);
-				return value;
-			}
-		}
+        /// <summary>
+        /// Creates the default/initial value for ScheduledTasks.
+        /// The tasks scheduled for a specific time, in order of scheduled time.
+        /// </summary>
+        protected virtual List<Task?> ScheduledTasksCreate
+        {
+            get
+            {
+                List<Task?> value = this._ScheduledTasks = new List<Task?>();
+                value.ItemAdded += this.ScheduledTasksAdded;
+                return value;
+            }
+        }
 
-		private void ScheduledTasksAdded(Task? item)
-		{
-			this._ScheduledTasks.Sort((a, b) => a.Value.Time.CompareTo(b.Value.Time));
-		}
+        private void ScheduledTasksAdded(Task? item)
+        {
+            this._ScheduledTasks.Sort((a, b) => a.Value.Time.CompareTo(b.Value.Time));
+        }
 
-		#endregion ScheduledTasks
+        #endregion ScheduledTasks
 
-		#endregion Tasks
+        #endregion Tasks
 
-		#region CancelTimeout
+        #region CancelTimeout
 
-		#region CancelRequestTime
+        #region CancelRequestTime
 
-		private Time? _CancelRequestTime;
+        private Time? _CancelRequestTime;
 
-		/// <summary>
-		/// When was the Cancel issued?
-		/// </summary>
-		public Time? CancelRequestTime
-		{
-			get { return _CancelRequestTime; }
-			set
-			{
-				if (_CancelRequestTime != value)
-				{
-					_CancelRequestTime = value;
-				}
-			}
-		}
+        /// <summary>
+        /// When was the Cancel issued?
+        /// </summary>
+        public Time? CancelRequestTime
+        {
+            get { return this._CancelRequestTime; }
+            set
+            {
+                if (this._CancelRequestTime != value)
+                {
+                    this._CancelRequestTime = value;
+                }
+            }
+        }
 
-		#endregion CancelRequestTime
+        #endregion CancelRequestTime
 
-		private Time _CancelTimeout = 2000;
+        private Time _CancelTimeout = 2000;
 
-		/// <summary>
-		/// Time for how long the thread will be allowed to contineue after Cancel has been set.
-		/// </summary>
-		public Time CancelTimeout
-		{
-			get { return _CancelTimeout; }
-			set
-			{
-				if (_CancelTimeout != value)
-				{
-					_CancelTimeout = value;
-				}
-			}
-		}
+        /// <summary>
+        /// Time for how long the thread will be allowed to contineue after Cancel has been set.
+        /// </summary>
+        public Time CancelTimeout
+        {
+            get { return this._CancelTimeout; }
+            set
+            {
+                if (this._CancelTimeout != value)
+                {
+                    this._CancelTimeout = value;
+                }
+            }
+        }
 
-		#endregion CancelTimeout
+        #endregion CancelTimeout
 
-		#region IdleThreadTimeout
+        #region IdleThreadTimeout
 
-		private TimeSpan _IdleThreadTimeout = TimeSpan.FromSeconds(2.0);
+        private TimeSpan _IdleThreadTimeout = TimeSpan.FromSeconds(2.0);
 
-		/// <summary>
-		/// Time after which the worker thread gets suspended (leaves active waiting).
-		/// </summary>
-		public TimeSpan IdleThreadTimeout
-		{
-			get { return _IdleThreadTimeout; }
-			set
-			{
-				if (_IdleThreadTimeout != value)
-				{
-					_IdleThreadTimeout = value;
-				}
-			}
-		}
+        /// <summary>
+        /// Time after which the worker thread gets suspended (leaves active waiting).
+        /// </summary>
+        public TimeSpan IdleThreadTimeout
+        {
+            get { return this._IdleThreadTimeout; }
+            set
+            {
+                if (this._IdleThreadTimeout != value)
+                {
+                    this._IdleThreadTimeout = value;
+                }
+            }
+        }
 
-		#endregion IdleThreadTimeout
+        #endregion IdleThreadTimeout
 
 #if DEBUG_TRACE
 
-		#region DebugTrace
+        #region DebugTrace
 
-		private static bool _DebugTrace;
+        private static bool _DebugTrace;
 
-		/// <summary>
-		/// Trace the current state of the worker.
-		/// </summary>
-		public static bool DebugTrace
-		{
-			get { return _DebugTrace; }
-			set
-			{
-				if (_DebugTrace != value)
-				{
-					_DebugTrace = value;
-					if (value)
-					{
-						lock (_WaitHandles)
-						{
-							foreach (var handle in _WaitHandles)
-							{
-								handle.Set();
-							}
-						}
-					}
-				}
-			}
-		}
+        /// <summary>
+        /// Trace the current state of the worker.
+        /// </summary>
+        public static bool DebugTrace
+        {
+            get { return _DebugTrace; }
+            set
+            {
+                if (_DebugTrace != value)
+                {
+                    _DebugTrace = value;
+                    if (value)
+                    {
+                        lock (_WaitHandles)
+                        {
+                            foreach (AutoResetEvent handle in _WaitHandles)
+                            {
+                                handle.Set();
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
-		#endregion DebugTrace
+        #endregion DebugTrace
 
-		private static List<System.Threading.AutoResetEvent> _WaitHandles = new List<System.Threading.AutoResetEvent>();
+        private static readonly List<AutoResetEvent> _WaitHandles = new List<AutoResetEvent>();
 #endif
 
-		//System.Threading.AutoResetEvent Wait = new System.Threading.AutoResetEvent( false );
+        //System.Threading.AutoResetEvent Wait = new System.Threading.AutoResetEvent( false );
 
-		#region Wait
+        #region Wait
 
-		private System.Threading.AutoResetEvent _Wait;
+        private AutoResetEvent _Wait;
 
-		/// <summary>
-		/// Wait handle.
-		/// </summary>
-		protected System.Threading.AutoResetEvent Wait
-		{
-			get { return _Wait ?? (_Wait = this.WaitCreate); }
-			//set { _Wait = value; }
-		}
+        /// <summary>
+        /// Wait handle.
+        /// </summary>
+        protected AutoResetEvent Wait
+        {
+            get { return this._Wait ?? (this._Wait = this.WaitCreate); }
+            //set { _Wait = value; }
+        }
 
-		/// <summary>
-		/// Creates the default/initial value for Wait.
-		/// Wait handle.
-		/// </summary>
-		protected virtual System.Threading.AutoResetEvent WaitCreate
-		{
-			get
-			{
-				var Wait = _Wait = new System.Threading.AutoResetEvent(false);
+        /// <summary>
+        /// Creates the default/initial value for Wait.
+        /// Wait handle.
+        /// </summary>
+        protected virtual AutoResetEvent WaitCreate
+        {
+            get
+            {
+                AutoResetEvent Wait = this._Wait = new AutoResetEvent(false);
 #if DEBUG
-				lock (_WaitHandles)
-				{
-					_WaitHandles.Add(_Wait);
-				}
+                lock (_WaitHandles)
+                {
+                    _WaitHandles.Add(this._Wait);
+                }
 #endif
-				return Wait;
-			}
-		}
+                return Wait;
+            }
+        }
 
-		#endregion Wait
+        #endregion Wait
 
-		private Time _LastWork = Time.Now;
-		private int _MissingParent = 0;
-		private int _Working = 0;
-		private int _Restart = 0;
-		//void backgroundWorker_DoWork( object sender, DoWorkEventArgs e )
-		protected virtual void Run()
-		{
-			if (System.Threading.Interlocked.CompareExchange(ref _Working, 1, 0) == 0)
-			{
-				if (this._Name != null)
-				{
-					try
-					{
-						System.Threading.Thread.CurrentThread.Name = this.Name;
-					}
-					catch (Exception exc)
-					{
-						Console.WriteLine(exc);
-					}
-				}
+        private Time _LastWork = Time.Now;
+        private int _MissingParent;
+        private int _Working;
+        private int _Restart;
+        //void backgroundWorker_DoWork( object sender, DoWorkEventArgs e )
+        protected virtual void Run()
+        {
+            if (Interlocked.CompareExchange(ref this._Working, 1, 0) == 0)
+            {
+                if (this._Name != null)
+                {
+                    try
+                    {
+                        Thread.CurrentThread.Name = this.Name;
+                    }
+                    catch (Exception exc)
+                    {
+                        Console.WriteLine(exc);
+                    }
+                }
 #if !SILVERLIGHT
 				if (this.ThreadPriority !=
 				    System.Threading.Thread.CurrentThread.Priority)
@@ -691,259 +693,262 @@ namespace zeroflag.Components
 					}
 				}
 #endif
-				try
-				{
-					Task? current;
-					//System.Threading.Interlocked.Increment( ref _Working );
-					//if ( _Working > 1 )
-					//    return;
-					Console.WriteLine("TaskProcessor(" + this.Name + ") started...");
-					while (!this.Cancel ||
-					       !this.Tasks.IsEmpty)
-					{
-						if (!Parentless && this.Outer == null && this.CoreBase == null
+                try
+                {
+                    Task? current;
+                    //System.Threading.Interlocked.Increment( ref _Working );
+                    //if ( _Working > 1 )
+                    //    return;
+                    Console.WriteLine("TaskProcessor(" + this.Name + ") started...");
+                    while (!this.Cancel ||
+                        !this.Tasks.IsEmpty)
+                    {
+                        if (!this.Parentless && this.Outer == null && this.CoreBase == null
 #if !SILVERLIGHT
 						    && this.Site == null
 #endif
-							)
-						{
-							if (_MissingParent++ > 10)
-							{
-								Console.WriteLine("TaskProcessor(" + this.Name + ") exiting, missing parent...");
-								break;
-							}
-						}
-						else
-						{
-							_MissingParent = 0;
-						}
-						if (System.Threading.Interlocked.CompareExchange(ref _Restart, 0, 1) != 0)
-						{
-							Console.WriteLine("TaskProcessor(" + this.Name + ") restarting...");
-							this.Thread = null;
-							_Working = 0;
-							this.Thread = this.ThreadCreate;
-							this.Wait.Set();
-							return;
-						}
-						if ((this.Cancel || this.Disposing) &&
-						    (Time.Now - this.CancelRequestTime) >
-						    this.CancelTimeout * 0.85)
-						{
-							Console.WriteLine("TaskProcessor(" + this.Name + ") canceled...");
-							break;
-						}
-						if (this.Tasks.Count > 0 || this._ScheduledTasks.Count > 0)
-						{
-							//current = this.Tasks[0];
-							current = null;
-							if (this.ScheduledTasks.Count > 0)
-							{
-								current = this.ScheduledTasks[0];
-								//verbose( "Testing " + current.Value );
-								if (current.Value.Time < Time.Now)
-								{
-									verbose("Using " + current);
-									this.ScheduledTasks.RemoveAt(0);
-								}
-								else
-								{
-									current = null;
-								}
-							}
-							current = current ?? this.Tasks.Read();
-							_Current = current;
-							if (current != null)
-							{
-								verbose("Current = " + current);
-								if (current.Value.Time == DateTime.MinValue || current.Value.Time < Time.Now)
-								{
-									try
-									{
-										verbose("Executing " + current);
-										current.Value.Action();
-									}
-									catch (Exception exc)
-									{
-										Console.WriteLine(exc);
-										this.OnErrorHandling(current.Value, exc);
-									}
-								}
-								else
-								{
-									verbose("Scheduling " + current);
-									this.ScheduledTasks.Add(current);
-									this.ScheduledTasks.Sort((a, b) => a.Value.Time.CompareTo(b.Value.Time));
-								}
-							}
-							_LastWork = Time.Now;
-							//this.Tasks.RemoveAt( 0 );
-						}
-						else
-						{
-							if (Time.Now - _LastWork > this.IdleThreadTimeout &&
-							    !this.Cancel)
-							{
+                            )
+                        {
+                            if (this._MissingParent++ > 10)
+                            {
+                                Console.WriteLine("TaskProcessor(" + this.Name + ") exiting, missing parent...");
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            this._MissingParent = 0;
+                        }
+                        if (Interlocked.CompareExchange(ref this._Restart, 0, 1) != 0)
+                        {
+                            Console.WriteLine("TaskProcessor(" + this.Name + ") restarting...");
+                            this.Thread = null;
+                            this._Working = 0;
+                            this.Thread = this.ThreadCreate;
+                            this.Wait.Set();
+                            return;
+                        }
+                        if ((this.Cancel || this.Disposing) &&
+                            (Time.Now - this.CancelRequestTime) >
+                                this.CancelTimeout * 0.85)
+                        {
+                            Console.WriteLine("TaskProcessor(" + this.Name + ") canceled...");
+                            break;
+                        }
+                        if (this.Tasks.Count > 0 || this._ScheduledTasks.Count > 0)
+                        {
+                            //current = this.Tasks[0];
+                            current = null;
+                            if (this.ScheduledTasks.Count > 0)
+                            {
+                                current = this.ScheduledTasks[0];
+                                //verbose( "Testing " + current.Value );
+                                if (current.Value.Time < Time.Now)
+                                {
+                                    verbose("Using " + current);
+                                    this.ScheduledTasks.RemoveAt(0);
+                                }
+                                else
+                                {
+                                    current = null;
+                                }
+                            }
+                            current = current ?? this.Tasks.Read();
+                            this._Current = current;
+                            if (current != null)
+                            {
+                                verbose("Current = " + current);
+                                if (current.Value.Time == DateTime.MinValue || current.Value.Time < Time.Now)
+                                {
+                                    try
+                                    {
+                                        verbose("Executing " + current);
+                                        current.Value.Action();
+                                    }
+                                    catch (Exception exc)
+                                    {
+                                        Console.WriteLine(exc);
+                                        this.OnErrorHandling(current.Value, exc);
+                                    }
+                                }
+                                else
+                                {
+                                    verbose("Scheduling " + current);
+                                    this.ScheduledTasks.Add(current);
+                                    this.ScheduledTasks.Sort((a, b) => a.Value.Time.CompareTo(b.Value.Time));
+                                }
+                            }
+                            this._LastWork = Time.Now;
+                            //this.Tasks.RemoveAt( 0 );
+                        }
+                        else
+                        {
+                            if (Time.Now - this._LastWork > this.IdleThreadTimeout &&
+                                !this.Cancel)
+                            {
 #if DEBUG
-								//Console.WriteLine( "TaskProcessor(" + this.Name + ") idle timeout." );
+                                //Console.WriteLine( "TaskProcessor(" + this.Name + ") idle timeout." );
 #endif
-								//this.Wait.WaitOne( this.IdleThreadTimeout, true );
-								this.Wait.WaitOne(this.IdleThreadTimeout);
+                                //this.Wait.WaitOne( this.IdleThreadTimeout, true );
+                                this.Wait.WaitOne(this.IdleThreadTimeout);
 #if DEBUG
-								//Console.WriteLine( "TaskProcessor(" + this.Name + ") resuming..." );
+                                //Console.WriteLine( "TaskProcessor(" + this.Name + ") resuming..." );
 #endif
-								_LastWork = Time.Now;
-								//return;
-							}
-							else
-							{
-								//this.Wait.WaitOne( 200, true );
-								this.Wait.WaitOne(200);
-							}
-						}
+                                this._LastWork = Time.Now;
+                                //return;
+                            }
+                            else
+                            {
+                                //this.Wait.WaitOne( 200, true );
+                                this.Wait.WaitOne(200);
+                            }
+                        }
 #if DEBUG_TRACE
-						if (DebugTrace)
-						{
-							Console.WriteLine(this + (this.Cancel ? " Cancel" : "") + (this.Disposing ? " Disposing" : "") + " \n\touter=" + (this.Outer == null ? "<null>" : this.Outer + " " + this.Outer.State) + " \n\tcore=" + (this.CoreBase == null ? "<null>" : this.CoreBase + " " + this.CoreBase.State) + " \n\t" + Time.Now + " - " + this.Tasks.Count + ": \n\t" + this.Current);
-							//Console.WriteLine( new System.Diagnostics.StackTrace() );
-						}
+                        if (DebugTrace)
+                        {
+                            Console.WriteLine(this + (this.Cancel ? " Cancel" : "") + (this.Disposing ? " Disposing" : "") + " \n\touter="
+                                + (this.Outer == null ? "<null>" : this.Outer + " " + this.Outer.State) + " \n\tcore="
+                                    + (this.CoreBase == null ? "<null>" : this.CoreBase + " " + this.CoreBase.State) + " \n\t" + Time.Now + " - "
+                                        + this.Tasks.Count + ": \n\t" + this.Current);
+                            //Console.WriteLine( new System.Diagnostics.StackTrace() );
+                        }
 #endif
-					}
-					Console.WriteLine("TaskProcessor(" + this.Name + ") halted.");
-				}
-				catch (System.Threading.ThreadAbortException)
-				{
-					Console.WriteLine("TaskProcessor(" + this.Name + ") aborted!");
-				}
-				finally
-				{
-					//System.Threading.Interlocked.Decrement( ref _Working );
-					_Working = 0;
-				}
-			}
-		}
+                    }
+                    Console.WriteLine("TaskProcessor(" + this.Name + ") halted.");
+                }
+                catch (ThreadAbortException)
+                {
+                    Console.WriteLine("TaskProcessor(" + this.Name + ") aborted!");
+                }
+                finally
+                {
+                    //System.Threading.Interlocked.Decrement( ref _Working );
+                    this._Working = 0;
+                }
+            }
+        }
 
-		#region Current
+        #region Current
 
-		private Task? _Current;
+        private Task? _Current;
 
-		/// <summary>
-		/// The action currently executing.
-		/// </summary>
-		public Task? CurrentAction
-		{
-			get { return _Current; }
-			//set
-			//{
-			//    if ( _Current != value )
-			//    {
-			//        _Current = value;
-			//    }
-			//}
-		}
+        /// <summary>
+        /// The action currently executing.
+        /// </summary>
+        public Task? CurrentAction
+        {
+            get { return this._Current; }
+            //set
+            //{
+            //    if ( _Current != value )
+            //    {
+            //        _Current = value;
+            //    }
+            //}
+        }
 
-		public string Current
-		{
-			get
-			{
-				Task? current = _Current;
-				if (current == null)
-				{
-					return "<null>";
-				}
-				return current.ToString();
-			}
-		}
+        public string Current
+        {
+            get
+            {
+                Task? current = this._Current;
+                if (current == null)
+                {
+                    return "<null>";
+                }
+                return current.ToString();
+            }
+        }
 
-		#endregion Current
+        #endregion Current
 
-		public override string ToString()
-		{
-			return ((object) this.Name ?? base.ToString()).ToString();
-		}
+        public override string ToString()
+        {
+            return (this.Name ?? base.ToString());
+        }
 
-		public virtual void Finish()
-		{
-			Console.WriteLine(this + ".Finish() " + Current);
-			this.Cancel = true;
-			this.Wait.Set();
-		}
+        public virtual void Finish()
+        {
+            Console.WriteLine(this + ".Finish() " + this.Current);
+            this.Cancel = true;
+            this.Wait.Set();
+        }
 
-		protected override void OnOuterChanged(Component oldvalue, Component newvalue)
-		{
-			base.OnOuterChanged(oldvalue, newvalue);
-			if (newvalue == null)
-			{
-				Console.WriteLine(this + " Outer is null");
-				this.Dispose();
-			}
-			else
-			{
-				Console.WriteLine(this + " Outer is " + newvalue);
-			}
-		}
+        protected override void OnOuterChanged(Component oldvalue, Component newvalue)
+        {
+            base.OnOuterChanged(oldvalue, newvalue);
+            if (newvalue == null)
+            {
+                Console.WriteLine(this + " Outer is null");
+                this.Dispose();
+            }
+            else
+            {
+                Console.WriteLine(this + " Outer is " + newvalue);
+            }
+        }
 
-		protected override void OnDispose()
-		{
-			Console.WriteLine(this + ".OnDispose()");
-			this.Wait.Set();
-			this.Disposing = true;
-			this.Cancel = true;
-			if (System.Threading.Thread.CurrentThread == this.Thread)
-			{
-				return;
-			}
-			while (this.IsRunning)
-			{
-				Wait.Set();
-				System.Threading.Thread.Sleep(10);
-				if (Time.Now - this.CancelRequestTime > this.CancelTimeout)
-				{
-					Console.WriteLine((this.Name ?? this.ToString()) + "CancelTimeout");
-					try
-					{
-						this.Thread.Abort();
-					}
-					catch (Exception exc)
-					{
-						Console.WriteLine(exc);
-					}
-					break;
-				}
-			}
-			//while ( this.backgroundWorker.IsBusy && _Working > 0 )
-			//{
-			//    Wait.Set();
-			//    System.System.Threading.Thread.Sleep( 50 );
-			//    if ( Time.Now - this.CancelRequestTime > this.CancelTimeout )
-			//    {
-			//        Console.WriteLine( ( this.Name ?? this.ToString() ) + "CancelTimeout" );
-			//        try
-			//        {
-			//            this.backgroundWorker.CancelAsync();
-			//        }
-			//        catch ( Exception exc )
-			//        {
-			//            Console.WriteLine( exc );
-			//        }
-			//        break;
-			//    }
-			//}
-		}
+        protected override void OnDispose()
+        {
+            Console.WriteLine(this + ".OnDispose()");
+            this.Wait.Set();
+            this.Disposing = true;
+            this.Cancel = true;
+            if (Thread.CurrentThread == this.Thread)
+            {
+                return;
+            }
+            while (this.IsRunning)
+            {
+                this.Wait.Set();
+                Thread.Sleep(10);
+                if (Time.Now - this.CancelRequestTime > this.CancelTimeout)
+                {
+                    Console.WriteLine((this.Name ?? this.ToString()) + "CancelTimeout");
+                    try
+                    {
+                        this.Thread.Abort();
+                    }
+                    catch (Exception exc)
+                    {
+                        Console.WriteLine(exc);
+                    }
+                    break;
+                }
+            }
+            //while ( this.backgroundWorker.IsBusy && _Working > 0 )
+            //{
+            //    Wait.Set();
+            //    System.System.Threading.Thread.Sleep( 50 );
+            //    if ( Time.Now - this.CancelRequestTime > this.CancelTimeout )
+            //    {
+            //        Console.WriteLine( ( this.Name ?? this.ToString() ) + "CancelTimeout" );
+            //        try
+            //        {
+            //            this.backgroundWorker.CancelAsync();
+            //        }
+            //        catch ( Exception exc )
+            //        {
+            //            Console.WriteLine( exc );
+            //        }
+            //        break;
+            //    }
+            //}
+        }
 
 
-		[Conditional("DEBUG")]
-		public static void dbg(object msg)
-		{
-			Console.WriteLine(msg);
-		}
+        [Conditional("DEBUG")]
+        public static void dbg(object msg)
+        {
+            Console.WriteLine(msg);
+        }
 
-		[Conditional("VERBOSE_TASKPROCESSOR")]
-		public static void verbose(object msg)
-		{
-			msg = Time.Now + " " + msg;
-			Console.WriteLine(msg);
-			System.Diagnostics.Debug.WriteLine(msg);
-		}
-	}
+        [Conditional("VERBOSE_TASKPROCESSOR")]
+        public static void verbose(object msg)
+        {
+            msg = Time.Now + " " + msg;
+            Console.WriteLine(msg);
+            Debug.WriteLine(msg);
+        }
+    }
 }
