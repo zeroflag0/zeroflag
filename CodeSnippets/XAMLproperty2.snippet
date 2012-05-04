@@ -43,12 +43,14 @@ DependencyProperty.Register("$Name$", typeof($Type$), typeof($Class$), new Prope
 
 private static void $Name$ChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
 {
-	((UIElement)d).RaiseEvent(new RoutedEventArgs($Name$ChangedEvent));
+	(($Class$)d).On$Name$Changed(e);
 }
 
-public static readonly RoutedEvent $Name$ChangedEvent = 
-EventManager.RegisterRoutedEvent("$Name$Changed", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof($Class$));
-
+protected virtual void On$Name$Changed(DependencyPropertyChangedEventArgs e)
+{
+	if (this.$Name$Changed != null)
+		this.$Name$Changed(this, e);
+}
 
 /// <summary>
 /// $Documentation$
@@ -65,11 +67,7 @@ SetValue($Name$Property, value);
 /// <summary>
 /// Occurs when $Name$ changes.
 /// </summary>
-public event RoutedEventHandler $Name$Changed
-{
-add { AddHandler($Name$ChangedEvent, value); } 
-remove { RemoveHandler($Name$ChangedEvent, value); }
-}
+public event DependencyPropertyChangedEventHandler $Name$Changed;
 
 ]]>
 			</Code>
