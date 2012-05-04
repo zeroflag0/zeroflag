@@ -39,12 +39,7 @@
 			<Code Language="csharp">
 				<![CDATA[
 public static readonly DependencyProperty $Name$Property =
-DependencyProperty.Register("$Name$", typeof($Type$), typeof($Class$), new PropertyMetadata(default($Type$),$Name$ChangedCallback));
-
-private static void $Name$ChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e)
-{
-	(($Class$)d).On$Name$Changed(e);
-}
+DependencyProperty.Register("$Name$", typeof($Type$), typeof($Class$), new PropertyMetadata(default($Type$), (d,e) => ($Class$)d).On$Name$Changed(e)));
 
 protected virtual void On$Name$Changed(DependencyPropertyChangedEventArgs e)
 {
