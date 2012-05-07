@@ -1,26 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 
 namespace zeroflag.Serialization.Descriptors
 {
 	public class NamedObjectDescriptor<T> : Descriptor<T>
 		where T : class
 	{
+		private bool _IsLinked;
+		private bool ranCustomization;
+
 		public NamedObjectDescriptor()
 		{
 			try
 			{
-				this.Inner.Add( this.NameDescriptor );// { Context = this.Context, Name = this.Provider.NameProperty } );
+				this.Inner.Add(this.NameDescriptor); // { Context = this.Context, Name = this.Provider.NameProperty } );
 			}
-			catch ( Exception exc )
+			catch (Exception exc)
 			{
-				Console.WriteLine( exc );
+				Console.WriteLine(exc);
 			}
 		}
 
 		#region NameDescriptor
+
 		private StringDescriptor _NameDescriptor;
 
 		/// <summary>
@@ -28,7 +31,7 @@ namespace zeroflag.Serialization.Descriptors
 		/// </summary>
 		public StringDescriptor NameDescriptor
 		{
-			get { return _NameDescriptor ?? ( _NameDescriptor = this.NameDescriptorCreate ); }
+			get { return this._NameDescriptor ?? (this._NameDescriptor = this.NameDescriptorCreate); }
 			//protected set
 			//{
 			//	if (_NameDescriptor != value)
@@ -48,15 +51,15 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			get
 			{
-				var value = _NameDescriptor = new StringDescriptor() { Context = this.Context };
+				StringDescriptor value = this._NameDescriptor = new StringDescriptor { Context = this.Context };
 				return value;
 			}
 		}
 
 		#endregion NameDescriptor
 
-
 		#region Provider
+
 		private NamedObjectProvider<T> _Provider;
 
 		/// <summary>
@@ -64,8 +67,8 @@ namespace zeroflag.Serialization.Descriptors
 		/// </summary>
 		public NamedObjectProvider<T> Provider
 		{
-			get { return _Provider ?? ( _Provider = this.ProviderCreate ); }
-			protected set { _Provider = value; }
+			get { return this._Provider ?? (this._Provider = this.ProviderCreate); }
+			protected set { this._Provider = value; }
 		}
 
 		/// <summary>
@@ -76,7 +79,7 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			get
 			{
-				var provider = _Provider = this.Context.NamedObjects.Find<NamedObjectProvider<T>>();
+				NamedObjectProvider<T> provider = this._Provider = this.Context.NamedObjects.Find<NamedObjectProvider<T>>();
 
 				return provider;
 			}
@@ -84,8 +87,8 @@ namespace zeroflag.Serialization.Descriptors
 
 		#endregion Provider
 
-
 		#region FallbackDescriptor
+
 		private Descriptor _FallbackDescriptor;
 
 		/// <summary>
@@ -93,8 +96,8 @@ namespace zeroflag.Serialization.Descriptors
 		/// </summary>
 		public Descriptor FallbackDescriptor
 		{
-			get { return _FallbackDescriptor ?? ( _FallbackDescriptor = this.FallbackDescriptorCreate ); }
-			set { _FallbackDescriptor = value; }
+			get { return this._FallbackDescriptor ?? (this._FallbackDescriptor = this.FallbackDescriptorCreate); }
+			set { this._FallbackDescriptor = value; }
 		}
 
 		/// <summary>
@@ -105,7 +108,7 @@ namespace zeroflag.Serialization.Descriptors
 		{
 			get
 			{
-				var fallbackDescriptor = _FallbackDescriptor = new ObjectDescriptor();
+				Descriptor fallbackDescriptor = this._FallbackDescriptor = new ObjectDescriptor();
 
 				fallbackDescriptor.Name = this.Name;
 				fallbackDescriptor.Type = this.Type;
@@ -121,28 +124,27 @@ namespace zeroflag.Serialization.Descriptors
 
 		#endregion FallbackDescriptor
 
-		bool ranCustomization = false;
-		protected override void OnContextChanged( Context oldvalue, Context newvalue )
+		protected override void OnContextChanged(Context oldvalue, Context newvalue)
 		{
-			_IsLinked = false;
-			if ( oldvalue != null )
+			this._IsLinked = false;
+			if (oldvalue != null)
 			{
-				oldvalue.NamedObjects.ItemRemoved -= NamedObjects_ItemRemoved;
+				oldvalue.NamedObjects.ItemRemoved -= this.NamedObjects_ItemRemoved;
 			}
-			if ( newvalue != null )
+			if (newvalue != null)
 			{
-				newvalue.NamedObjects.ItemRemoved += NamedObjects_ItemRemoved;
+				newvalue.NamedObjects.ItemRemoved += this.NamedObjects_ItemRemoved;
 				this.Provider = null;
-				if ( !ranCustomization && this.Provider.DescriptorCustomizationHandle != null )
+				if (!this.ranCustomization && this.Provider.DescriptorCustomizationHandle != null)
 				{
-					this.Provider.DescriptorCustomizationHandle( this );
-					ranCustomization = true;
+					this.Provider.DescriptorCustomizationHandle(this);
+					this.ranCustomization = true;
 				}
 				string propname = this.Provider.NameProperty;
 				Descriptor propnameinfo = null;
-				foreach ( var desc in this.Inner )
+				foreach (Descriptor desc in this.Inner)
 				{
-					if ( desc.Name == propname )
+					if (desc.Name == propname)
 					{
 						propnameinfo = desc;
 						continue;
@@ -150,37 +152,45 @@ namespace zeroflag.Serialization.Descriptors
 					desc.Context = this.Context;
 					//desc.Name = this.Provider.NameProperty;
 				}
-				if ( propnameinfo != null )
-					this.Inner.Remove( propnameinfo );
+				if (propnameinfo != null)
+				{
+					this.Inner.Remove(propnameinfo);
+				}
 				this.NameDescriptor.Name = propname;
-				this.NameDescriptor.Property = this.Provider.GetType().GetProperty( "NameProperty" );
+				this.NameDescriptor.Property = this.Provider.GetType().GetProperty("NameProperty");
 			}
-			base.OnContextChanged( oldvalue, newvalue );
+			base.OnContextChanged(oldvalue, newvalue);
 		}
 
-		void NamedObjects_ItemRemoved( NamedObjectProvider item )
+		private void NamedObjects_ItemRemoved(NamedObjectProvider item)
 		{
-			if ( item.Type == typeof( T ) )
+			if (item.Type == typeof (T))
+			{
 				this._Provider = null;
+			}
 		}
 
-		public override System.Reflection.PropertyInfo FindProperty( string property, bool byType )
+		public override PropertyInfo FindProperty(string property, bool byType)
 		{
 			//return base.FindProperty( property, byType );
 
 			Descriptor desc;
-			if ( !byType )
+			if (!byType)
 			{
-				desc = this.Inner.Find( d => d.Name == property ) ?? this.Inner.Find( d => d.Name != null && d.Name.ToLower() == property.ToLower() );
+				desc = this.Inner.FirstOrDefault(d => d.Name == property) ?? this.Inner.FirstOrDefault(d => d.Name != null && d.Name.ToLower() == property.ToLower());
 			}
 			else
 			{
-				desc = this.Inner.Find( d => d.Type.Name == property ) ?? this.Inner.Find( d => d.Name != null && d.Type.Name.ToLower() == property.ToLower() );
+				desc = this.Inner.FirstOrDefault(d => d.Type.Name == property) ?? this.Inner.FirstOrDefault(d => d.Name != null && d.Type.Name.ToLower() == property.ToLower());
 			}
-			if ( desc != null )
+			if (desc != null)
+			{
 				return desc.Property;
+			}
 			else
-				return base.FindProperty( property, byType );
+			{
+				return base.FindProperty(property, byType);
+			}
 			//if ( !byType )
 			//{
 			//    if ( property == this.Provider.NameProperty )
@@ -191,52 +201,54 @@ namespace zeroflag.Serialization.Descriptors
 
 		public override void Parse()
 		{
-			_IsLinked = false;
+			this._IsLinked = false;
 			T value = this.GetValue();
 			try
 			{
-				if ( !ranCustomization && this.Provider.DescriptorCustomizationHandle != null )
+				if (!this.ranCustomization && this.Provider.DescriptorCustomizationHandle != null)
 				{
-					this.Provider.DescriptorCustomizationHandle( this );
-					ranCustomization = true;
+					this.Provider.DescriptorCustomizationHandle(this);
+					this.ranCustomization = true;
 				}
-				if ( this.Property == null || this.Name == null )
+				if (this.Property == null || this.Name == null)
 				{
-					this.Name = this.Provider.TypeNameProvider( value );
+					this.Name = this.Provider.TypeNameProvider(value);
 				}
 				//this.Inner.Add( new StringDescriptor() { Context = this.Context, Name = this.Provider.NameProperty, Value = this.Provider.NameProvider( value ) } );
 
-				foreach ( var desc in this.Inner )
+				foreach (Descriptor desc in this.Inner)
 				{
 					desc.Context = this.Context;
-					if ( desc.Name == this.Provider.NameProperty || desc == this.NameDescriptor )
-						desc.Value = this.Provider.NameProvider( value );
+					if (desc.Name == this.Provider.NameProperty || desc == this.NameDescriptor)
+					{
+						desc.Value = this.Provider.NameProvider(value);
+					}
 					else
 					{
-						if ( desc.Property == null && desc.Name != null )
+						if (desc.Property == null && desc.Name != null)
 						{
-							desc.Property = this.Type.GetProperty( desc.Name );
+							desc.Property = this.Type.GetProperty(desc.Name);
 						}
-						if ( desc.Property != null )
+						if (desc.Property != null)
 						{
-							if ( desc.Value == null )
+							if (desc.Value == null)
 							{
-								desc.Value = desc.Property.GetValue( value, null );
+								desc.Value = desc.Property.GetValue(value, null);
 							}
-							if ( desc.Name == null )
+							if (desc.Name == null)
 							{
 								desc.Name = desc.Property.Name;
 							}
 						}
-						this.Context.Parse( desc.Name, desc.Type, desc.Value, desc, this.Value, desc.Property );
+						this.Context.Parse(desc.Name, desc.Type, desc.Value, desc, this.Value, desc.Property);
 						//desc.Parse();
 					}
 				}
 			}
 			catch
-				( Exception exc )
+				(Exception exc)
 			{
-				Console.WriteLine( exc );
+				Console.WriteLine(exc);
 
 				this.FallbackDescriptor.Name = this.Name;
 				this.FallbackDescriptor.Type = this.Type;
@@ -244,7 +256,7 @@ namespace zeroflag.Serialization.Descriptors
 				this.FallbackDescriptor.Parsed = this.Parsed;
 				this.FallbackDescriptor.Context = this.Context;
 				this.FallbackDescriptor.Id = this.Id;
-				this.FallbackDescriptor.Inner.AddRange( this.Inner );
+				this.FallbackDescriptor.Inner.AddRange(this.Inner);
 				this.FallbackDescriptor.IsNull = this.IsNull;
 				this.FallbackDescriptor.IsReferenced = this.IsReferenced;
 				this.FallbackDescriptor.Parsed = false;
@@ -252,41 +264,44 @@ namespace zeroflag.Serialization.Descriptors
 			}
 		}
 
-		bool _IsLinked = false;
 		public override object GenerateLink()
 		{
 			object value = null;
-			if ( _IsLinked )
+			if (this._IsLinked)
 			{
 				value = this.Value;
 				return value;
 			}
 			try
 			{
-				if ( !ranCustomization && this.Provider.DescriptorCustomizationHandle != null )
+				if (!this.ranCustomization && this.Provider.DescriptorCustomizationHandle != null)
 				{
-					this.Provider.DescriptorCustomizationHandle( this );
-					ranCustomization = true;
+					this.Provider.DescriptorCustomizationHandle(this);
+					this.ranCustomization = true;
 				}
 
-				if ( value == null )
-					this.Value = value = this.Provider.ObjectCreationHandler( this.Inner.Find( inn => this.Provider.NameProperty == inn.Name ).Value + "" );
-
-				foreach ( var desc in this.Inner )
+				if (value == null)
 				{
-					if ( desc.Name == this.Provider.NameProperty || desc == this.NameDescriptor )
+					this.Value = value = this.Provider.ObjectCreationHandler(this.Inner.FirstOrDefault(inn => this.Provider.NameProperty == inn.Name).Value + "");
+				}
+
+				foreach (Descriptor desc in this.Inner)
+				{
+					if (desc.Name == this.Provider.NameProperty || desc == this.NameDescriptor)
+					{
 						continue;
-					if ( desc.Property == null && desc.Name != null )
-					{
-						desc.Property = typeof( T ).GetProperty( desc.Name );
 					}
-					if ( desc.Property != null )
+					if (desc.Property == null && desc.Name != null)
 					{
-						if ( desc.Value == null )
+						desc.Property = typeof (T).GetProperty(desc.Name);
+					}
+					if (desc.Property != null)
+					{
+						if (desc.Value == null)
 						{
-							desc.Value = desc.Property.GetValue( value, null );
+							desc.Value = desc.Property.GetValue(value, null);
 						}
-						if ( desc.Name == null )
+						if (desc.Name == null)
 						{
 							desc.Name = desc.Property.Name;
 						}
@@ -295,20 +310,20 @@ namespace zeroflag.Serialization.Descriptors
 					desc.GenerateParse();
 					desc.GenerateCreate();
 					//desc.Parse();
-					var result = desc.GenerateLink();
-					if ( desc.Property != null && desc.Property.CanWrite )
+					object result = desc.GenerateLink();
+					if (desc.Property != null && desc.Property.CanWrite)
 					{
-						desc.Property.SetValue( this.Value, result, null );
+						desc.Property.SetValue(this.Value, result, null);
 					}
 				}
-				_IsLinked = true;
+				this._IsLinked = true;
 			}
-			catch ( Exception exc )
+			catch (Exception exc)
 			{
-				Console.WriteLine( exc );
+				Console.WriteLine(exc);
 				value = null;
 			}
-			if ( value == null )
+			if (value == null)
 			{
 				this.FallbackDescriptor.Name = this.Name;
 				this.FallbackDescriptor.Type = this.Type;
@@ -316,7 +331,7 @@ namespace zeroflag.Serialization.Descriptors
 				this.FallbackDescriptor.Parsed = this.Parsed;
 				this.FallbackDescriptor.Context = this.Context;
 				this.FallbackDescriptor.Id = this.Id;
-				this.FallbackDescriptor.Inner.AddRange( this.Inner );
+				this.FallbackDescriptor.Inner.AddRange(this.Inner);
 				this.FallbackDescriptor.IsNull = this.IsNull;
 				this.FallbackDescriptor.IsReferenced = this.IsReferenced;
 				this.FallbackDescriptor.Parsed = this.Parsed;

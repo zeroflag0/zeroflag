@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace zeroflag.Serialization.Descriptors
@@ -529,12 +530,12 @@ namespace zeroflag.Serialization.Descriptors
 			//if ( props.Find( p => p.Name == property ) != null )
 			//    return props[property];
 			System.Reflection.PropertyInfo result = null;
-			result = props.Find( p => p.Name == property );
+			result = props.FirstOrDefault( p => p.Name == property );
 			if ( result != null )
 				return result;
 
 			// search by name, case insensitive...
-			result = props.Find( p => p.Name.ToLower() == property.ToLower() );
+			result = props.FirstOrDefault(p => p.Name.ToLower() == property.ToLower());
 			if ( result != null )
 				return result;
 
@@ -551,19 +552,19 @@ namespace zeroflag.Serialization.Descriptors
 
 			// search types, case insensitive...
 			List<Type> typeSearch = new List<Type>( types.Keys );
-			Type type = typeSearch.Find( t => t.Name != null && t.Name.ToLower() == property.ToLower() );
+			Type type = typeSearch.FirstOrDefault(t => t.Name != null && t.Name.ToLower() == property.ToLower());
 			if ( type != null && types.ContainsKey( type ) )
 			{
-				result = props.Find( p => p.Name == types[type] );
+				result = props.FirstOrDefault(p => p.Name == types[type]);
 
 				if ( result != null )
 					return result;
 			}
 
-			type = typeSearch.Find( t => t.Name != null && ( t.Name.ToLower().Contains( property.ToLower() ) || property.ToLower().Contains( t.Name.ToLower() ) ) );
+			type = typeSearch.FirstOrDefault(t => t.Name != null && (t.Name.ToLower().Contains(property.ToLower()) || property.ToLower().Contains(t.Name.ToLower())));
 			if ( type != null && types.ContainsKey( type ) )
 			{
-				result = props.Find( p => p.Name == types[type] );
+				result = props.FirstOrDefault(p => p.Name == types[type]);
 
 				if ( result != null )
 					return result;
