@@ -1,21 +1,27 @@
 ﻿//#define DEBUGTYPE
+
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml;
-using zeroflag.Serialization;
 using zeroflag.Serialization.Descriptors;
 using Converters = zeroflag.Serialization.Converters.String;
 
 namespace zeroflag.Serialization
 {
-	public class ZmlSerializer : zeroflag.Serialization.Serializer
+	public class ZmlSerializer : Serializer
 	{
-		const string AttributeName = "_name";
-		const string AttributeType = "_type";
-		const string AttributeNull = "_null";
-		const string AttributeId = "_id";
-		static readonly List<string> Attributes = new List<string>()
+		private const string AttributeName = "_name";
+		private const string AttributeType = "_type";
+		private const string AttributeNull = "_null";
+		private const string AttributeId = "_id";
+
+		private static readonly List<string> Attributes = new List<string>
 		{
 			AttributeName,
 			AttributeType,
@@ -34,31 +40,29 @@ namespace zeroflag.Serialization
 		/// </summary>
 		public string XslStyleSheet
 		{
-			get { return _XslStyleSheet; }
+			get { return this._XslStyleSheet; }
 			set
 			{
-				if ( _XslStyleSheet != value )
+				if (this._XslStyleSheet != value)
 				{
-					_XslStyleSheet = value;
+					this._XslStyleSheet = value;
 				}
 			}
 		}
 
 		#endregion XslStyleSheet
 
-
-		public override void Serialize( zeroflag.Serialization.Descriptors.Descriptor value )
+		public override void Serialize(Descriptor value)
 		{
-			using ( System.IO.StreamWriter writer =
-				new System.IO.StreamWriter(
-					this.Stream != null ?
-					this.Stream :
-					System.IO.File.Open( this.FileName, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.Read )
+			using (var writer =
+				new StreamWriter(
+					this.Stream ?? File.Open(this.FileName, FileMode.Create, FileAccess.Write, FileShare.Read)
 					)
 				)
 			{
-				using ( XmlWriter doc = new XmlTextWriter( writer ) { Formatting = Formatting.Indented } )
+				using (XmlWriter doc = XmlWriter.Create(writer))
 				{
+					doc.Settings.Indent = true;
 					//doc.Formatting = Formatting.Indented;
 					//if ( this.FileName != null )
 					//    doc = new XmlWriter( new System.IO.StreamWriter( this.FileName ) );
@@ -68,13 +72,15 @@ namespace zeroflag.Serialization
 					//XmlDocument doc = new XmlDocument();
 					doc.WriteStartDocument();
 					//doc.AppendChild( doc.CreateXmlDeclaration( "1.0", null, null ) );
-					if ( this.XslStyleSheet != null )
-						doc.WriteProcessingInstruction( "xml-stylesheet", "type=\"text/xsl\" href=\"" + this.XslStyleSheet + "\"" );
+					if (this.XslStyleSheet != null)
+					{
+						doc.WriteProcessingInstruction("xml-stylesheet", "type=\"text/xsl\" href=\"" + this.XslStyleSheet + "\"");
+					}
 					//doc.AppendChild( doc.CreateProcessingInstruction( "xml-stylesheet", "type=\"text/xsl\" href=\"" + this.XslStyleSheet + "\"" ) );
 					//doc.AppendChild(doc.CreateComment(value.ToStringTree().ToString()));
 					//doc.AppendChild(doc.CreateElement("root"));
 
-					this.Serialize( value, doc, null, new List<int>() );
+					this.Serialize(value, doc, null, new List<int>());
 					//if ( this.FileName != null )
 					//    doc.Save( this.FileName );
 					//else if ( this.Stream != null )
@@ -83,18 +89,22 @@ namespace zeroflag.Serialization
 			}
 		}
 
-		protected virtual void Serialize( zeroflag.Serialization.Descriptors.Descriptor desc, XmlWriter doc, zeroflag.Serialization.Descriptors.Descriptor valueParent, List<int> ids )
+		protected virtual void Serialize(Descriptor desc, XmlWriter doc, Descriptor valueParent, List<int> ids)
 		{
-			if ( desc == null || desc.IsNull )
+			if (desc == null || desc.IsNull)
+			{
 				return;
+			}
 
-			if ( desc.Value != null )
-				base.OnProgressItem( desc.Value );
+			if (desc.Value != null)
+			{
+				base.OnProgressItem(desc.Value);
+			}
 
 			//desc.Inner.Clear();
 			//desc.Parse(desc.Name, desc.Type, desc.Value);
 			bool explicitType = false;
-			if ( desc.Value != null && desc.Value.GetType() != desc.Type )
+			if (desc.Value != null && desc.Value.GetType() != desc.Type)
 			{
 				desc.Type = desc.Value.GetType();
 				//explicitType = true;
@@ -104,36 +114,39 @@ namespace zeroflag.Serialization
 			//    return;
 
 			string name = desc.Name;
-			if ( name == null && desc.Property == null )
-				name = desc.Type.Name.Split( '`' )[0];
-			CWL( "Serialize(" + desc + " *** in " + valueParent + ")" );
-			if ( this.Converters.CanConvert<string>( desc.Value ) )
+			if (name == null && desc.Property == null)
 			{
-				if ( desc.Name == null )
+				name = desc.Type.Name.Split('`')[0];
+			}
+			CWL("Serialize(" + desc + " *** in " + valueParent + ")");
+			if (this.Converters.CanConvert<string>(desc.Value))
+			{
+				if (desc.Name == null)
 				{
-					if ( !( desc.IsNull && this.HideUnused ) )
+					if (!(desc.IsNull && this.HideUnused))
 					{
-
-						doc.WriteStartElement( name );
+						doc.WriteStartElement(name);
 						try
 						{
 							//XmlElement node = doc.CreateElement( name );
 
-							if ( valueParent != null && valueParent.Value != null && desc.Name != null )
+							if (valueParent != null && valueParent.Value != null && desc.Name != null)
 							{
-								var info = valueParent.Type.GetProperty( desc.Name );
-								if ( info != null )
+								PropertyInfo info = valueParent.Type.GetProperty(desc.Name);
+								if (info != null)
 								{
 									explicitType = info.PropertyType != desc.Type;
 								}
 							}
 
-							if ( explicitType )
-								doc.WriteAttributeString( AttributeType, desc.Type.FullName ?? "" );
+							if (explicitType)
+							{
+								doc.WriteAttributeString(AttributeType, desc.Type.FullName ?? "");
+							}
 
 							//this.WriteAttribute( AttributeType, desc.Type.FullName, doc );
 
-							doc.WriteValue( this.Converters.Generate<string>( desc.Type, desc.Value ) );
+							doc.WriteValue(this.Converters.Generate<string>(desc.Type, desc.Value));
 						}
 						finally
 						{
@@ -156,9 +169,9 @@ namespace zeroflag.Serialization
 
 					//this.WriteAttribute("value", StringConverters.Base.Write(value.Value), doc, node);
 
-					if ( !( desc.IsNull && this.HideUnused ) )
+					if (!(desc.IsNull && this.HideUnused))
 					{
-						doc.WriteAttributeString( desc.Name, this.Converters.Generate<string>( desc.Type, desc.Value ) );
+						doc.WriteAttributeString(desc.Name, this.Converters.Generate<string>(desc.Type, desc.Value));
 						//if ( xmlParent != null )
 						//    xmlParent.Attributes.Append( node );
 						//else
@@ -166,14 +179,17 @@ namespace zeroflag.Serialization
 					}
 				}
 			}
-			else if ( this.SimplifyOutput && desc.Value != null && ( desc.Type.GetMethod( "Parse", System.Reflection.BindingFlags.FlattenHierarchy | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod, null, new Type[] { typeof( string ) }, null ) != null ) )
+			else if (this.SimplifyOutput && desc.Value != null
+				&&
+				(desc.Type.GetMethod("Parse", BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.Public | BindingFlags.InvokeMethod, null, new[] { typeof (string) }, null)
+					!= null))
 			{
 				//XmlAttribute node = doc.CreateAttribute( name );
 				//node.Value = desc.Value.ToString();
 
-				if ( !( desc.IsNull && this.HideUnused ) )
+				if (!(desc.IsNull && this.HideUnused))
 				{
-					doc.WriteAttributeString( name, desc.Value.ToString() );
+					doc.WriteAttributeString(name, desc.Value.ToString());
 					//if ( xmlParent != null )
 					//    xmlParent.Attributes.Append( node );
 					//else
@@ -183,15 +199,15 @@ namespace zeroflag.Serialization
 			else // || value.Name == null)
 			{
 				// complex type...
-				if ( !( desc.IsNull && this.HideUnused ) )
+				if (!(desc.IsNull && this.HideUnused))
 				{
 					//XmlElement node = doc.CreateElement( name );
 					try
 					{
-						if ( valueParent != null && valueParent.Value != null && desc.Name != null )
+						if (valueParent != null && valueParent.Value != null && desc.Name != null)
 						{
-							var info = valueParent.Type.GetProperty( desc.Name );
-							if ( info != null )
+							PropertyInfo info = valueParent.Type.GetProperty(desc.Name);
+							if (info != null)
 							{
 								explicitType = info.PropertyType != desc.Type;
 							}
@@ -214,54 +230,72 @@ namespace zeroflag.Serialization
 
 						bool hasId = desc.Id > -1 && desc.IsReferenced;
 						bool isReference = false;
-						if ( desc.Id > -1 && desc.IsReferenced )
+						if (desc.Id > -1 && desc.IsReferenced)
 						{
 							//this.WriteAttribute( AttributeId, desc.Id.ToString(), doc, node );
-							doc.WriteStartElement( name );
-							doc.WriteAttributeString( AttributeId, desc.Id.ToString() );
-							if ( ids.Contains( desc.Id ?? -1 ) )
+							doc.WriteStartElement(name);
+							doc.WriteAttributeString(AttributeId, desc.Id.ToString());
+							if (ids.Contains(desc.Id ?? -1))
+							{
 								isReference = true;
+							}
 							else
-								ids.Add( desc.Id ?? -1 );
+							{
+								ids.Add(desc.Id ?? -1);
+							}
 						}
 						else
-							doc.WriteStartElement( name );
+						{
+							doc.WriteStartElement(name);
+						}
 
-						if ( !isReference )
+						if (!isReference)
 						{
 							// serialize inner...
-							List<Descriptor> complex = new List<Descriptor>();
-							foreach ( Descriptor inner in desc.Inner )
+							var complex = new List<Descriptor>();
+							foreach (Descriptor inner in desc.Inner)
 							{
-								if ( this.HideUnused && inner.Name != null )
+								if (this.HideUnused && inner.Name != null)
 								{
-									if ( !( desc is IListDescriptor ) )
+									if (!(desc is IListDescriptor))
 									{
-										var n = desc.FindProperty( inner.Name );
-										if ( n != null && !n.CanWrite && inner.NeedsWriteAccess )
+										PropertyInfo n = desc.FindProperty(inner.Name);
+										if (n != null && !n.CanWrite && inner.NeedsWriteAccess)
+										{
 											continue;
+										}
 									}
-									if ( inner is IListDescriptor && inner.Value != null &&
-										( ( inner.Value is System.Collections.ICollection && ( (System.Collections.ICollection)inner.Value ).Count <= 0 )
-										) )
+									if (inner is IListDescriptor && inner.Value != null &&
+										((inner.Value is ICollection && ((ICollection)inner.Value).Count <= 0)
+											))
+									{
 										continue;
+									}
 								}
-								if ( this.IgnoreList.Find( i => i != null && i( inner ) ) != null )
+								if (this.IgnoreList.Find(i => i != null && i(inner)) != null)
+								{
 									continue;
-								if ( !( this.SimplifyOutput && inner.Value != null && ( inner.Type.GetMethod( "Parse", System.Reflection.BindingFlags.FlattenHierarchy | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod, null, System.Reflection.CallingConventions.Any, new Type[] { typeof( string ) }, new System.Reflection.ParameterModifier[0] ) != null ) ) &&
-									( inner.Name == null || !this.Converters.CanConvert<string>( inner.Value ) ) )
+								}
+								if (
+									!(this.SimplifyOutput && inner.Value != null
+										&&
+										(inner.Type.GetMethod("Parse", BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.Public | BindingFlags.InvokeMethod, null, CallingConventions.Any,
+											new[] { typeof (string) }, new ParameterModifier[0]) != null)) &&
+												(inner.Name == null || !this.Converters.CanConvert<string>(inner.Value)))
 								{
 									// complex type...
-									complex.Add( inner );
+									complex.Add(inner);
 								}
 								else
 								{
 									// simple type (attribute)...
-									this.Serialize( inner, doc, desc, ids );
+									this.Serialize(inner, doc, desc, ids);
 								}
 							}
-							if ( explicitType )
-								doc.WriteAttributeString( AttributeType, desc.Type.FullName );
+							if (explicitType)
+							{
+								doc.WriteAttributeString(AttributeType, desc.Type.FullName);
+							}
 							//this.WriteAttribute( AttributeType, desc.Type.FullName, doc, node );
 
 							//if (value.IsNull)
@@ -271,8 +305,10 @@ namespace zeroflag.Serialization
 							//            this.WriteAttribute("descriptor", value.ToString(), doc, node);
 							//#endif
 
-							foreach ( Descriptor inner in complex )
-								this.Serialize( inner, doc, desc, ids );
+							foreach (Descriptor inner in complex)
+							{
+								this.Serialize(inner, doc, desc, ids);
+							}
 						}
 					}
 					finally
@@ -296,25 +332,22 @@ namespace zeroflag.Serialization
 
 		#region Deserialize
 
-		public override object Deserialize( object value, zeroflag.Serialization.Descriptors.Descriptor desc )
+		public override object Deserialize(object value, Descriptor desc)
 		{
-			using ( System.IO.StreamReader reader =
-				new System.IO.StreamReader(
-					this.Stream != null ?
-					this.Stream :
-					System.IO.File.Open( this.FileName, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.ReadWrite )
+			using (var reader =
+				new StreamReader(
+					this.Stream ?? File.Open(this.FileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)
 					)
 				)
 			{
-				using ( XmlTextReader doc = new XmlTextReader( reader ) )
+				using (XmlReader doc = XmlReader.Create(reader))
 				{
-
 					//XmlDocument doc = new XmlDocument();
 					//doc.Load( this.FileName );
 					doc.MoveToContent();
 					//doc.Read();
 
-					value = this.Deserialize( value, desc, null, doc );
+					value = this.Deserialize(value, desc, null, doc);
 
 					//Console.WriteLine("<Deserialized>");
 					//Console.WriteLine(desc.ToStringTree().ToString());
@@ -327,21 +360,23 @@ namespace zeroflag.Serialization
 				}
 			}
 		}
+
 #if DEBUGTYPE
 		const string BreakOnType = "ITexture";
 #endif
-		int depth = 0;
-		protected virtual object Deserialize( object value, Descriptor desc, Descriptor outer, XmlReader node )
+		private int depth;
+
+		protected virtual object Deserialize(object value, Descriptor desc, Descriptor outer, XmlReader node)
 		{
-			depth++;
+			this.depth++;
 			//Benchmark.Instance.Trace("Deserialize", desc, node);
 #if DEBUGTYPE
 			if ( desc.Type.Name == BreakOnType )
 				Console.WriteLine( desc ); ;//<-- break here...
 #endif
 			//string explicitType = this.GetAttribute( AttributeType, node );
-			string explicitType = node.GetAttribute( AttributeType );
-			if ( desc.Name == null )
+			string explicitType = node.GetAttribute(AttributeType);
+			if (desc.Name == null)
 			{
 				//desc.Name = this.GetAttribute(AttributeName, node) ?? node.Name;
 
@@ -349,17 +384,19 @@ namespace zeroflag.Serialization
 				explicitType = explicitType ?? node.Name;
 			}
 
-			if ( explicitType != null )
+			if (explicitType != null)
 			{
 				//Benchmark.Instance.Trace("TypeFinder.Instance"); 
 				Type type = TypeFinder.Instance[explicitType, desc.Type];
 				//Benchmark.Instance.Trace("TypeFinder.Instance");
-				if ( type != null && type != desc.Type )
+				if (type != null && type != desc.Type)
 				{
-					desc = this.Context.Parse( desc.Name, type, outer );
+					desc = this.Context.Parse(desc.Name, type, outer);
 				}
 				else
+				{
 					desc.Type = type;
+				}
 				//var types = TypeFinder.Instance.SearchAll(explicitType, desc.Type);
 				//if (types.Count > 0)
 				//{
@@ -372,39 +409,43 @@ namespace zeroflag.Serialization
 			}
 			//Benchmark.Instance.Trace();
 			desc.Value = value;
-			if ( desc.Value == null && desc.Name != null && outer != null && outer.Value != null )
+			if (desc.Value == null && desc.Name != null && outer != null && outer.Value != null)
 			{
-				var info = outer.FindProperty( desc.Name );
-				if ( info != null && info.GetIndexParameters().Length == 0 )
+				PropertyInfo info = outer.FindProperty(desc.Name);
+				if (info != null && info.GetIndexParameters().Length == 0)
 				{
-					value = desc.Value = info.GetValue( outer.Value, null );
+					value = desc.Value = info.GetValue(outer.Value, null);
 				}
 			}
-			if ( value != null && value.GetType() != desc.Type && !desc.Type.IsAssignableFrom( value.GetType() ) )
+			if (value != null && value.GetType() != desc.Type && !desc.Type.IsAssignableFrom(value.GetType()))
+			{
 				value = null;
+			}
 
-			if ( desc.Type.IsValueType )
+			if (desc.Type.IsValueType)
 			{
 				desc.IsNull = false;
 			}
 			else
 			{
-				var attnull = this.GetAttribute( AttributeNull, node );
-				if ( attnull != null )
+				string attnull = this.GetAttribute(AttributeNull, node);
+				if (attnull != null)
+				{
 					desc.IsNull = false;
+				}
 				else
 				{
 					bool isnull = false;
-					bool.TryParse( attnull, out isnull );
+					bool.TryParse(attnull, out isnull);
 					desc.IsNull = isnull;
 				}
-				if ( !desc.IsNull )
+				if (!desc.IsNull)
 				{
-					var attid = this.GetAttribute( AttributeId, node );
-					if ( attid != null )
+					string attid = this.GetAttribute(AttributeId, node);
+					if (attid != null)
 					{
 						int id;
-						int.TryParse( attid, out id );
+						int.TryParse(attid, out id);
 						desc.Id = id;
 					}
 				}
@@ -417,7 +458,9 @@ namespace zeroflag.Serialization
 
 			//Benchmark.Instance.Trace("Descriptor.Generate");
 
-			CWL( new StringBuilder().Append( ' ', depth ).Append( "Deserialize(name='" + desc.Name + "', type='" + desc.Type + "', isnull='" + desc.IsNull + "', id='" + desc.Id + "', value='" + desc.Value + /*"', children='" + node.ChildNodes.Count + */"')" ).ToString() );
+			CWL(
+				new StringBuilder().Append(' ', this.depth).Append("Deserialize(name='" + desc.Name + "', type='" + desc.Type + "', isnull='" + desc.IsNull + "', id='" + desc.Id + "', value='"
+					+ desc.Value + /*"', children='" + node.ChildNodes.Count + */ "')").ToString());
 			//foreach (Descriptor cr in desc.Generated.Values) Console.WriteLine("\tid=" + cr.Id + ", name=" + cr.Name + ", type=" + cr.Type + ", value=" + cr.Value);
 
 
@@ -431,7 +474,7 @@ namespace zeroflag.Serialization
 
 			bool iselement = false;
 			XmlReader tree = node;
-			if ( node.NodeType == XmlNodeType.Element )// && !node.IsEmptyElement )
+			if (node.NodeType == XmlNodeType.Element) // && !node.IsEmptyElement )
 			{
 				iselement = true;
 				tree = node.ReadSubtree();
@@ -441,8 +484,8 @@ namespace zeroflag.Serialization
 			if ( desc.Type.Name == BreakOnType )
 				Console.WriteLine( desc ); ;//<-- break here...
 #endif
-			foreach ( XmlReader sub in this.ReadElements( tree ) )
-			//while ( sub.Read() )
+			foreach (XmlReader sub in this.ReadElements(tree))
+				//while ( sub.Read() )
 			{
 				//if ( typeof( XmlComment ).IsAssignableFrom( sub.NodeType ) )
 				//if ( sub.NodeType == XmlNodeType.Comment || sub.NodeType == XmlNodeType.Whitespace || )
@@ -450,37 +493,45 @@ namespace zeroflag.Serialization
 				//}
 				//else if ( typeof( XmlText ).IsAssignableFrom( sub.NodeType ) )
 				//else 
-				if ( sub.NodeType == XmlNodeType.Text || sub.NodeType == XmlNodeType.Attribute && !iselement )
+				if (sub.NodeType == XmlNodeType.Text || sub.NodeType == XmlNodeType.Attribute && !iselement)
 				{
 					try
 					{
 						string text = null;
-						if ( sub.NodeType == XmlNodeType.Attribute )
-							text = sub.Value;
-						else if ( sub.NodeType == XmlNodeType.Text )
-							text = sub.ReadString();//( (XmlText)sub ).Value;
-
-						if ( this.Converters.CanConvert<string>( desc.Type ) )
+						if (sub.NodeType == XmlNodeType.Attribute)
 						{
-							desc.Value = this.Converters.Parse<string>( desc.Type, text );
+							text = sub.Value;
+						}
+						else if (sub.NodeType == XmlNodeType.Text)
+						{
+							text = sub.ReadContentAsString(); // ReadString(); //( (XmlText)sub ).Value;
+						}
+
+						if (this.Converters.CanConvert<string>(desc.Type))
+						{
+							desc.Value = this.Converters.Parse(desc.Type, text);
 							desc.Inner.Clear();
 						}
 						else
 						{
-							Descriptor inner = desc.Inner.Find( i => i.Name != null && i.Name.ToLower() == "value" );
-							if ( inner != null )
-								inner.Value = this.Converters.Parse<string>( typeof( string ), text );
+							Descriptor inner = desc.Inner.FirstOrDefault(i => i.Name != null && i.Name.ToLower() == "value");
+							if (inner != null)
+							{
+								inner.Value = this.Converters.Parse(typeof (string), text);
+							}
 							else
 							{
-								var prop = desc.FindProperty( "Value" ) ?? desc.FindProperty( "Content" );
-								if ( prop != null )
-									prop.SetValue( desc.Value, this.Converters.Parse<string>( prop.PropertyType, text ), null );
+								PropertyInfo prop = desc.FindProperty("Value") ?? desc.FindProperty("Content");
+								if (prop != null)
+								{
+									prop.SetValue(desc.Value, this.Converters.Parse(prop.PropertyType, text), null);
+								}
 								else
 								{
-									var meth = desc.Type.GetMethod( "Parse", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.InvokeMethod );
-									if ( meth != null )
+									MethodInfo meth = desc.Type.GetMethod("Parse", BindingFlags.Static | BindingFlags.Public | BindingFlags.InvokeMethod);
+									if (meth != null)
 									{
-										desc.Value = meth.Invoke( null, new object[] { text } );
+										desc.Value = meth.Invoke(null, new object[] { text });
 									}
 									else
 									{
@@ -498,41 +549,47 @@ namespace zeroflag.Serialization
 						this.Exceptions.Add( new ExceptionTrace( exc, null, desc ) );
 					}
 #endif
-					finally { }
+					finally
+					{
+					}
 				}
-				else if ( sub.NodeType == XmlNodeType.Element || ( sub.NodeType == XmlNodeType.Text || sub.NodeType == XmlNodeType.Attribute ) && iselement )
-				//if (sub is XmlElement)
+				else if (sub.NodeType == XmlNodeType.Element || (sub.NodeType == XmlNodeType.Text || sub.NodeType == XmlNodeType.Attribute) && iselement)
+					//if (sub is XmlElement)
 				{
 					try
 					{
-						string subTypeName = this.GetAttribute( AttributeType, sub ) ?? sub.Name;
-						string subName = this.GetAttribute( AttributeName, sub );
+						string subTypeName = this.GetAttribute(AttributeType, sub) ?? sub.Name;
+						string subName = this.GetAttribute(AttributeName, sub);
 						Type subType = null;
 						Descriptor inner = null;
-						inner = desc.Inner.Find( i => i.Name != null && i.Name.ToLower() == sub.Name.ToLower() );
+						inner = desc.Inner.FirstOrDefault(i => i.Name != null && i.Name.ToLower() == sub.Name.ToLower());
 						// try to find the property in the parent descriptor...
-						if ( inner != null )
+						if (inner != null)
+						{
 							subType = inner.Type;
+						}
 						else
 						{
 							// try to find the property on the type...
 							//var info = new List<System.Reflection.PropertyInfo>(desc.Type.GetProperties()).Find(i => i.Name.ToLower() == sub.Name.ToLower());
-							var info = desc.FindProperty( subTypeName );
-							if ( info != null )
+							PropertyInfo info = desc.FindProperty(subTypeName);
+							if (info != null)
 							{
 								subType = info.PropertyType;
 								subName = info.Name;
 							}
-							else if ( desc is IListDescriptor )
+							else if (desc is IListDescriptor)
 							{
-								subType = ( (IListDescriptor)desc ).ItemType;
-								if ( subTypeName != null )
+								subType = ((IListDescriptor)desc).ItemType;
+								if (subTypeName != null)
+								{
 									subType = TypeFinder.Instance[subTypeName, subType] ?? subType;
+								}
 							}
 							else
 							{
-								info = desc.FindProperty( subTypeName, true );
-								if ( info != null )
+								info = desc.FindProperty(subTypeName, true);
+								if (info != null)
 								{
 									subType = info.PropertyType;
 									subType = TypeFinder.Instance[subTypeName, subType];
@@ -545,38 +602,46 @@ namespace zeroflag.Serialization
 							}
 						}
 
-						if ( subType == null )
-							continue;
-
-						if ( !desc.Parsed )
+						if (subType == null)
 						{
-							CWL( "Parse was previously suspended on " + desc + "..." );
+							continue;
+						}
+
+						if (!desc.Parsed)
+						{
+							CWL("Parse was previously suspended on " + desc + "...");
 							//this.Context.Parse( desc );
 						}
 
-						if ( inner == null )
-							inner = this.Context.Parse( subName, subType, desc );
-						if ( inner != null && !desc.Inner.Contains( inner ) )
-							desc.Inner.Add( inner );
-						if ( inner == null )
+						if (inner == null)
 						{
-							this.Exceptions.Add( new ExceptionTrace( new Exception( "Cannot find property: " + subName + ", " + subType + ", " + subTypeName ), null, desc, desc.Type, desc.Value ) );
-							CWL( "Cannot find property: " + subName + ", " + subType + ", " + subTypeName );
+							inner = this.Context.Parse(subName, subType, desc);
+						}
+						if (inner != null && !desc.Inner.Contains(inner))
+						{
+							desc.Inner.Add(inner);
+						}
+						if (inner == null)
+						{
+							this.Exceptions.Add(new ExceptionTrace(new Exception("Cannot find property: " + subName + ", " + subType + ", " + subTypeName), null, desc, desc.Type, desc.Value));
+							CWL("Cannot find property: " + subName + ", " + subType + ", " + subTypeName);
 							continue;
 						}
 
-						if ( subName != null )
-							inner.Name = subName;
-						inner.Value = this.Deserialize( inner.Value, inner, desc, sub );
-						if ( inner != null )
+						if (subName != null)
 						{
-							if ( !desc.Inner.Contains( inner ) )
+							inner.Name = subName;
+						}
+						inner.Value = this.Deserialize(inner.Value, inner, desc, sub);
+						if (inner != null)
+						{
+							if (!desc.Inner.Contains(inner))
 							{
-								if ( inner.Name != null )
+								if (inner.Name != null)
 								{
-									desc.Inner.RemoveAll( i => i.Name == inner.Name );
+									desc.Inner.RemoveAll(i => i.Name == inner.Name);
 
-									desc.Inner.Add( inner );
+									desc.Inner.Add(inner);
 								}
 							}
 						}
@@ -587,10 +652,12 @@ namespace zeroflag.Serialization
 						this.Exceptions.Add( new ExceptionTrace( exc, null, desc ) );
 					}
 #endif
-					finally { }
+					finally
+					{
+					}
 				}
 			}
-			depth--;
+			this.depth--;
 #if DEBUGTYPE
 			if ( desc.Type.Name == BreakOnType )
 				Console.WriteLine( desc );//<-- break here...
@@ -606,18 +673,22 @@ namespace zeroflag.Serialization
 				return null;
 			}
 #endif
-			finally { }
+			finally
+			{
+			}
 			//return desc.Generate();
 		}
 
-		IEnumerable<XmlReader> ReadElements( XmlReader node )
+		private IEnumerable<XmlReader> ReadElements(XmlReader node)
 		{
-			if ( node.NodeType == XmlNodeType.Element )
+			if (node.NodeType == XmlNodeType.Element)
 			{
-				while ( node.MoveToNextAttribute() )
+				while (node.MoveToNextAttribute())
 				{
-					if ( !Attributes.Contains( node.Name ) )
+					if (!Attributes.Contains(node.Name))
+					{
 						yield return node;
+					}
 				}
 				//for ( int i = 0; i < node.AttributeCount; i++ )
 				//{
@@ -626,8 +697,10 @@ namespace zeroflag.Serialization
 				//        yield return node;
 				//}
 				node.MoveToContent();
-				while ( node.Read() )
+				while (node.Read())
+				{
 					yield return node;
+				}
 			}
 			else
 			{
@@ -635,14 +708,14 @@ namespace zeroflag.Serialization
 			}
 		}
 
-		string GetAttribute( string name, XmlReader node )
+		private string GetAttribute(string name, XmlReader node)
 		{
 			try
 			{
 				//return node.Attributes[name].Value;
-				return node.GetAttribute( name );
+				return node.GetAttribute(name);
 			}
-			catch ( Exception exc1 )
+			catch (Exception exc1)
 			{
 				//try
 				//{
@@ -661,19 +734,19 @@ namespace zeroflag.Serialization
 				}
 			}
 		}
+
 		#endregion Deserialize
 
-
-
 		#region IgnoreList
-		private zeroflag.Collections.List<Predicate<Descriptor>> _IgnoreList;
+
+		private Collections.List<Predicate<Descriptor>> _IgnoreList;
 
 		/// <summary>
 		/// A list of rules to ignore certain items during serialization...
 		/// </summary>
-		public zeroflag.Collections.List<Predicate<Descriptor>> IgnoreList
+		public Collections.List<Predicate<Descriptor>> IgnoreList
 		{
-			get { return _IgnoreList ?? ( _IgnoreList = this.IgnoreListCreate ); }
+			get { return this._IgnoreList ?? (this._IgnoreList = this.IgnoreListCreate); }
 			//set { _IgnoreList = value; }
 		}
 
@@ -681,16 +754,15 @@ namespace zeroflag.Serialization
 		/// Creates the default/initial value for IgnoreList.
 		/// A list of rules to ignore certain items during serialization...
 		/// </summary>
-		protected virtual zeroflag.Collections.List<Predicate<Descriptor>> IgnoreListCreate
+		protected virtual Collections.List<Predicate<Descriptor>> IgnoreListCreate
 		{
-			get { return new zeroflag.Collections.List<Predicate<Descriptor>>(); }
+			get { return new Collections.List<Predicate<Descriptor>>(); }
 		}
 
 		#endregion IgnoreList
 
-
-
 		#region SimplifyOutput
+
 		private bool? _SimplifyOutput;
 
 		/// <summary>
@@ -698,8 +770,8 @@ namespace zeroflag.Serialization
 		/// </summary>
 		public bool SimplifyOutput
 		{
-			get { return (bool)( _SimplifyOutput ?? ( _SimplifyOutput = this.SimplifyOutputCreate ) ); }
-			set { _SimplifyOutput = value; }
+			get { return (bool)(this._SimplifyOutput ?? (this._SimplifyOutput = this.SimplifyOutputCreate)); }
+			set { this._SimplifyOutput = value; }
 		}
 
 		/// <summary>
@@ -713,8 +785,8 @@ namespace zeroflag.Serialization
 
 		#endregion SimplifyOutput
 
-
 		#region HideUnused
+
 		private bool? _HideUnused;
 
 		/// <summary>
@@ -722,8 +794,8 @@ namespace zeroflag.Serialization
 		/// </summary>
 		public bool HideUnused
 		{
-			get { return (bool)( _HideUnused ?? ( _HideUnused = this.HideUnusedCreate ) ); }
-			set { _HideUnused = value; }
+			get { return (bool)(this._HideUnused ?? (this._HideUnused = this.HideUnusedCreate)); }
+			set { this._HideUnused = value; }
 		}
 
 		/// <summary>
@@ -737,25 +809,24 @@ namespace zeroflag.Serialization
 
 		#endregion HideUnused
 
-
 		public ZmlSerializer()
 		{
 		}
 
-		public ZmlSerializer( string fileName )
-			: base( fileName )
+		public ZmlSerializer(string fileName)
+			: base(fileName)
 		{
 		}
 
-		public ZmlSerializer( ZmlSerializer parent )
-			: base( parent )
+		public ZmlSerializer(ZmlSerializer parent)
+			: base(parent)
 		{
 		}
 
-		[System.Diagnostics.Conditional( "VERBOSE_SERIALIZATION" )]
-		static internal void CWL( object value )
+		[Conditional("VERBOSE_SERIALIZATION")]
+		internal static void CWL(object value)
 		{
-			Console.WriteLine( value );
+			Console.WriteLine(value);
 		}
 	}
 }

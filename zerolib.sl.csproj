@@ -104,6 +104,8 @@
     <Compile Include="Reflection\InstanceProvider.cs" />
     <Compile Include="Reflection\TypeHelper.cs" />
     <Compile Include="Reflection\TypeProvider.cs" />
+    <Compile Include="Serialization\XmlSerializer.cs" />
+    <Compile Include="Serialization\ZmlSerializer.cs" />
     <Compile Include="Silverlight\Converters\HideConverter.cs" />
     <Compile Include="Silverlight\Converters\HideDefaultConverter.cs" />
     <Compile Include="Silverlight\Converters\ShowConverter.cs" />
@@ -209,64 +211,64 @@
     <Compile Include="Serialization\Converters\String\UInt64.cs">
       <SubType>Code</SubType>
     </Compile>
-    <None Include="Serialization\Descriptors\ArrayDescriptor.cs">
+    <Compile Include="Serialization\Descriptors\ArrayDescriptor.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Descriptors\Context.cs">
+    </Compile>
+    <Compile Include="Serialization\Descriptors\Context.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Descriptors\DateTimeDescriptor.cs">
+    </Compile>
+    <Compile Include="Serialization\Descriptors\DateTimeDescriptor.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Descriptors\DelegateDescriptor.cs">
+    </Compile>
+    <Compile Include="Serialization\Descriptors\DelegateDescriptor.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Descriptors\Descriptor.cs">
+    </Compile>
+    <Compile Include="Serialization\Descriptors\Descriptor.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Descriptors\Descriptor~1.cs">
+    </Compile>
+    <Compile Include="Serialization\Descriptors\Descriptor~1.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Descriptors\ListDescriptor.cs" />
-    <None Include="Serialization\Descriptors\ListDescriptor~1.cs">
+    </Compile>
+    <Compile Include="Serialization\Descriptors\ListDescriptor.cs" />
+    <Compile Include="Serialization\Descriptors\ListDescriptor~1.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Descriptors\NamedObjectDescriptor~1.cs">
+    </Compile>
+    <Compile Include="Serialization\Descriptors\NamedObjectDescriptor~1.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Descriptors\NamedObjectProvider.cs">
+    </Compile>
+    <Compile Include="Serialization\Descriptors\NamedObjectProvider.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Descriptors\NamedObjectProvider~1.cs">
+    </Compile>
+    <Compile Include="Serialization\Descriptors\NamedObjectProvider~1.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Descriptors\ObjectDescriptor.cs">
+    </Compile>
+    <Compile Include="Serialization\Descriptors\ObjectDescriptor.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Descriptors\StringDescriptor.cs">
+    </Compile>
+    <Compile Include="Serialization\Descriptors\StringDescriptor.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Descriptors\TypeDescriptor.cs">
+    </Compile>
+    <Compile Include="Serialization\Descriptors\TypeDescriptor.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\ExceptionCollection.cs">
+    </Compile>
+    <Compile Include="Serialization\ExceptionCollection.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\ExceptionTrace.cs">
+    </Compile>
+    <Compile Include="Serialization\ExceptionTrace.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\PropertyFinder.cs">
+    </Compile>
+    <Compile Include="Serialization\PropertyFinder.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\SerializationAttribute.cs">
+    </Compile>
+    <Compile Include="Serialization\SerializationAttribute.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\Serializer.cs">
+    </Compile>
+    <Compile Include="Serialization\Serializer.cs">
       <SubType>Code</SubType>
-    </None>
-    <None Include="Serialization\TypeFinder.cs">
+    </Compile>
+    <Compile Include="Serialization\TypeFinder.cs">
       <SubType>Code</SubType>
-    </None>
+    </Compile>
     <None Include="Serialization\UpgradeAttribute.cs">
       <SubType>Code</SubType>
     </None>
@@ -276,7 +278,9 @@
     <Compile Include="Time.cs" />
     <None Include="Serialization\Converters\_ClassDiagram.cd" />
     <None Include="Serialization\Descriptors\_ClassDiagram.cd" />
-    <None Include="Serialization\_ClassDiagram.cd" />
+    <None Include="Serialization\_ClassDiagram.cd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Threading\_ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
@@ -292,6 +296,7 @@
     <Reference Include="system" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Reflection\Descriptors\" />
