@@ -1881,6 +1881,8 @@
 					<Shortcut Command="View.ShowSmartTag" Scope="Global">Alt+Enter</Shortcut>
 					<RemoveShortcut Command="EditorContextMenus.CodeWindow.ExecuteInInteractive" Scope="Text Editor">Alt+Enter</RemoveShortcut>
 					<Shortcut Command="View.ShowSmartTag" Scope="Text Editor">Alt+Enter</Shortcut>
+					<Shortcut Command="Edit.GoToDefinition" Scope="Global">Ctrl+B</Shortcut>
+					<Shortcut Command="Edit.GoToDefinition" Scope="Text Editor">Ctrl+B</Shortcut>
 				</UserShortcuts>
 			</KeyboardShortcuts>
 		</Category>
