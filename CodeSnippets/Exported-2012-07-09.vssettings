@@ -1769,7 +1769,6 @@
 					<RemoveShortcut Command="Debug.Memory3" Scope="Global">Ctrl+Alt+M, 3</RemoveShortcut>
 					<RemoveShortcut Command="Debug.Memory4" Scope="Global">Ctrl+Alt+M, 4</RemoveShortcut>
 					<RemoveShortcut Command="Refactor.ExtractMethod" Scope="Text Editor">Ctrl+Alt+M</RemoveShortcut>
-					<RemoveShortcut Command="Refactor.ExtractMethod" Scope="Global">Ctrl+Alt+M</RemoveShortcut>
 					<RemoveShortcut Command="Tools.AttachtoProcess" Scope="Global">Ctrl+Alt+P</RemoveShortcut>
 					<RemoveShortcut Command="View.SolutionExplorer" Scope="Global">Ctrl+Alt+L</RemoveShortcut>
 					<RemoveShortcut Command="Window.NextToolWindowNav" Scope="Global">Alt+F7</RemoveShortcut>
@@ -1887,6 +1886,14 @@
 					<RemoveShortcut Command="EditorContextMenus.CodeWindow.Breakpoint.BreakpointEditlabels" Scope="Global">Alt+F9, L</RemoveShortcut>
 					<Shortcut Command="Edit.FindAllReferences" Scope="Global">Alt+F9</Shortcut>
 					<Shortcut Command="Edit.FindAllReferences" Scope="Text Editor">Alt+F7</Shortcut>
+					<RemoveShortcut Command="View.F#Interactive" Scope="Global">Ctrl+Alt+F</RemoveShortcut>
+					<Shortcut Command="Refactor.EncapsulateField" Scope="Global">Ctrl+Alt+F</Shortcut>
+					<RemoveShortcut Command="Debug.Immediate" Scope="Global">Ctrl+Alt+I</RemoveShortcut>
+					<Shortcut Command="Refactor.ExtractInterface" Scope="Global">Ctrl+Alt+I</Shortcut>
+					<Shortcut Command="Refactor.ExtractMethod" Scope="Global">Ctrl+Alt+M</Shortcut>
+					<Shortcut Command="Refactor.Rename" Scope="Global">Ctrl+Alt+R</Shortcut>
+					<RemoveShortcut Command="Debug.RefreshWindowsapp" Scope="Global">Ctrl+Shift+R</RemoveShortcut>
+					<Shortcut Command="Refactor.Rename" Scope="Global">Ctrl+Shift+R</Shortcut>
 				</UserShortcuts>
 			</KeyboardShortcuts>
 		</Category>
