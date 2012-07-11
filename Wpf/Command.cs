@@ -36,7 +36,7 @@ namespace zeroflag.wpf
 
 		public bool CanExecute(object parameter)
 		{
-			if (_CanExecute != null)
+			if (_CanExecute == null)
 			{
 				return true;
 			}
