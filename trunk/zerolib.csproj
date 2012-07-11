@@ -125,9 +125,6 @@
     <Compile Include="Components\ComponentCollection~2.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Components\ModuleParallel~1.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Components\ITaskProcessor.cs" />
     <Compile Include="Components\Logging\PerformanceLogItem.cs" />
     <Compile Include="Components\Logging\PerformanceLog.cs">
@@ -188,7 +185,6 @@
     <Compile Include="Serialization\Converters\String\Boolean.cs" />
     <Compile Include="Serialization\Converters\String\Byte.cs" />
     <Compile Include="Serialization\Converters\String\Char.cs" />
-    <Compile Include="Serialization\Converters\String\Color.cs" />
     <Compile Include="Serialization\Converters\String\Converter.cs" />
     <Compile Include="Serialization\Converters\String\Converter~1.cs" />
     <Compile Include="Serialization\Converters\String\ByteArray.cs" />
