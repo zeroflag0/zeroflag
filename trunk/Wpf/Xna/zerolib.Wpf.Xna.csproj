@@ -60,6 +60,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Example\Controller.cs" />
+    <Compile Include="Example\Page.xaml.cs">
+      <DependentUpon>Page.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RenderingControllerBase.cs" />
     <Compile Include="GraphicsDeviceService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -100,6 +104,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Example\Page.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="XnaControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
