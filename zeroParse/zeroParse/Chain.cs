@@ -8,44 +8,34 @@ namespace zeroflag.Parsing
 	{
 		protected override Token MatchAll(ParserContext context)
 		{
-			Token result = this.CreateToken(context, 0);
+			Token first = this.MatchInner(context.Push());
+			Token second = null;
 
-			Token inner = null;
-			//while ((inner = this.MatchWhiteSpace(context.Push(result.Start + result.BlockLength))) != null)
-			//    this.AppendToken(result, inner);
-
-			inner = this.MatchInner(context.Push());
-			if (inner != null)
+			context.Success = false;
+			if (first != null)
 			{
-				result.Append(inner);
-				context.Success = true;
-
-				//while ((inner = this.MatchWhiteSpace(context.Push(result.Start + result.BlockLength))) != null)
-				//    this.AppendToken(result, inner);
-
-				inner = this.MatchNext(context.Push(result.Index + result.BlockLength));
-				if (inner != null)
+				second = this.MatchNext(context.Push(first.Index + first.BlockLength));
+				if (second != null)
 				{
-					result.Append(inner);
+					// chain is only successfull if both parts match...
 					context.Success = true;
 				}
-				else
-				{
-					result = null;
-					context.Success = false;
-				}
-			}
-			else
-			{
-				result = null;
-				context.Success = false;
 			}
 
 
 			if (context.Success)
-				return result;
-			else
-				return null;
+			{
+				if (first != null && second != null)
+				{
+					Token result = this.CreateToken(context, 0);
+					result.Append(first);
+					result.Append(second);
+					return result;
+				}
+				else if (first != null)
+					return first;
+			}
+			return null;
 		}
 
 		public Chain()

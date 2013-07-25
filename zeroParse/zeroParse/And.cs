@@ -82,7 +82,7 @@ namespace zeroflag.Parsing
 
 			if (first != null && first.Context != null && first.Context.Success&&
 				second != null && second.Context != null && second.Context.Success)
-				return this.CreateToken(context, 0).Append(first);
+				return this.CreateToken(context, 0).Append(first).Append(second);
 			else
 				return null;
 		}
