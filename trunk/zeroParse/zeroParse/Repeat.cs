@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace zeroflag.Parsing
 {
@@ -24,7 +25,12 @@ namespace zeroflag.Parsing
 				}
 			}
 			if (context.Success)
-				return result;
+			{
+				if (result.Inner.Count == 1)
+					return result.Inner.First();
+				else
+					return result;
+			}
 			else
 				return null;
 		}

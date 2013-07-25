@@ -47,6 +47,21 @@ namespace zeroflag.Parsing
 		{
 			get { return _Inner; }
 		}
+
+		public Token FindInner(string name)
+		{
+			if (this.Name == name)
+			{
+				return this;
+			}
+			foreach (Token token in this.Inner)
+			{
+				Token result = token.FindInner(name);
+				if (result != null)
+					return result;
+			}
+			return null;
+		}
 		public Token Append(Token other)
 		{
 			if (other != null)
@@ -126,6 +141,14 @@ namespace zeroflag.Parsing
 			}
 #endif
 			return this;
+		}
+
+		public string Description
+		{
+			get
+			{
+				return "[" + this.Name + "]" + this.BlockValue + "{" + this.BlockLength + "}";
+			}
 		}
 
 		public override string ToString()
