@@ -39,7 +39,12 @@
 			<Code Language="csharp">
 				<![CDATA[
 public static readonly DependencyProperty $Name$Property =
-DependencyProperty.Register("$Name$", typeof($Type$), typeof($Class$), new PropertyMetadata(default($Type$), (d,e) => ($Class$)d).On$Name$Changed(e)));
+DependencyProperty.Register("$Name$", typeof($Type$), typeof($Class$), new PropertyMetadata(default($Type$), (d,e) => (($Class$)d).On$Name$Changed(e)));
+
+/// <summary>
+/// Occurs when $Name$ changes.
+/// </summary>
+public event DependencyPropertyChangedEventHandler $Name$Changed;
 
 protected virtual void On$Name$Changed(DependencyPropertyChangedEventArgs e)
 {
@@ -53,16 +58,8 @@ protected virtual void On$Name$Changed(DependencyPropertyChangedEventArgs e)
 public $Type$ $Name$
 {
 get { return ($Type$) GetValue($Name$Property); }
-set
-{
-SetValue($Name$Property, value);
+set { SetValue($Name$Property, value); }
 }
-}
-
-/// <summary>
-/// Occurs when $Name$ changes.
-/// </summary>
-public event DependencyPropertyChangedEventHandler $Name$Changed;
 
 ]]>
 			</Code>
