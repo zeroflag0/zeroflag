@@ -1,0 +1,587 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access" MembersFormat="FullSignature">
+  <Class Name="Basics.Components.CalculatingContent&lt;TResult, TSelf&gt;">
+    <Position X="25.25" Y="19.25" Width="3.5" />
+    <Members>
+      <Field Name="_CalculationTime" Hidden="true" />
+      <Field Name="_CurrentResult" Hidden="true" />
+      <Property Name="ICalculatingContent.CurrentResult" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAEAUQAAQEQAAAACIAAAAAAACAAAAAAAQA=</HashCode>
+      <FileName>CalculatingContent.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Basics.Components.JobBase">
+    <Position X="25.5" Y="13.25" Width="2.5" />
+    <Members>
+      <Field Name="_Context" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>EABAAAAAAiCgQUgACEAAAAQAACAAAAIAAIAAAAAAgAg=</HashCode>
+      <FileName>JobBase.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Context" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Parameters" />
+      <Property Name="Fields" />
+      <Property Name="Summaries" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Basics.Components.Calculator">
+    <Position X="7.5" Y="2.75" Width="2.5" />
+    <Members>
+      <Field Name="_Project" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAgAAAAAAAAAAAAAAACAI=</HashCode>
+      <FileName>Calculator.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Project" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Basics.Components.Component">
+    <Position X="11.75" Y="0.5" Width="4.5" />
+    <Members>
+      <Field Name="_IsBusy" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAAAAABAQAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Component.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.Content&lt;TSelf&gt;">
+    <Position X="32.75" Y="17" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Content.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.Content">
+    <Position X="31.75" Y="12.5" Width="4" />
+    <Members>
+      <Field Name="_Description" Hidden="true" />
+      <Field Name="_Errors" Hidden="true" />
+      <Field Name="_IsLocked" Hidden="true" />
+      <Field Name="_IsSelected" Hidden="true" />
+      <Field Name="_Name" Hidden="true" />
+      <Method Name="Errors_CollectionChanged" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAACAAAACAoEQAECAAAIAQAAgABAAAMAAAAAACABAA=</HashCode>
+      <FileName>Content.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Basics.Components.ContentList&lt;TItem&gt;">
+    <Position X="50.5" Y="31.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ContentList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.ContentList&lt;TItem, TSelf&gt;">
+    <Position X="49.5" Y="28.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAgAAIAAIAAAAAAAAAAA=</HashCode>
+      <FileName>ContentList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.ContentView">
+    <Position X="16.25" Y="12.5" Width="2.5" />
+    <Members>
+      <Field Name="_Project" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIACAgEAAAAAAACAQCAgAkoBCAEAAQAAAADAA=</HashCode>
+      <FileName>ContentView.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ActiveView" />
+      <Property Name="ModelBase" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Basics.Components.ContentView&lt;TModel&gt;">
+    <Position X="15" Y="17.5" Width="5" />
+    <Members>
+      <Field Name="_Model" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIACAgEAAACAACAAQAAgQBAAAAAAgAAAAABIA=</HashCode>
+      <FileName>ContentView.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Basics.Components.ContentView&lt;TModel, TSelf&gt;">
+    <Position X="16.5" Y="22.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAIAAAAAAAABAA=</HashCode>
+      <FileName>ContentView.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Basics.Components.Controller">
+    <Position X="11.75" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Controller.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.DisposableItemList&lt;T&gt;">
+    <Position X="52.5" Y="19.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DisposableItemList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.EditorList&lt;TModel, TWrapper&gt;">
+    <Position X="57" Y="28.5" Width="5" />
+    <Members>
+      <Field Name="_ContentType" Hidden="true" />
+      <Field Name="_ItemName" Hidden="true" />
+      <Field Name="_ItemNamePlural" Hidden="true" />
+      <Method Name="EditorList_CollectionChanged" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAQCAQBGAAAACAAAIAABBAAAAAAAQAIAABAA=</HashCode>
+      <FileName>EditorList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.Error">
+    <Position X="29.5" Y="19.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Error.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.IgnoreErrorsAttribute" Collapsed="true">
+    <Position X="63" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ErrorInfo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.ErrorInfo">
+    <Position X="26.5" Y="8" Width="4.5" />
+    <Compartments>
+      <Compartment Name="Private" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="Basics.Components.ErrorInfo.ErrorTracing" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>ErrorInfo.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAEAAACgAAQAAKAAAAAgCAAAAAAAIAAAEAAAACAA=</HashCode>
+      <FileName>ErrorInfo.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Basics.Components.Field">
+    <Position X="33.25" Y="23.75" Width="4.25" />
+    <Members>
+      <Field Name="_Context" Hidden="true" />
+      <Field Name="_History" Hidden="true" />
+      <Field Name="_InitialValue" Hidden="true" />
+      <Method Name="InitializeValue" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>IABBAAAAAiAAAAQEAAAgAAAAIIAAAAEAIAECQAAAEAA=</HashCode>
+      <FileName>Field.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Basics.Components.Fields">
+    <Position X="45.25" Y="36.5" Width="1.5" />
+    <Members>
+      <Field Name="IdCounter" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAEAAAAAAAAAAAAEAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Fields.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.ItemList&lt;T&gt;">
+    <Position X="50.25" Y="8" Width="4.5" />
+    <Members>
+      <Field Name="_FrozenUpdates" Hidden="true" />
+      <Field Name="_InternalCount" Hidden="true" />
+      <Field Name="_IsFrozenCounter" Hidden="true" />
+      <Field Name="_IsLocked" Hidden="true" />
+      <Field Name="_Items" Hidden="true" />
+      <Field Name="_LastThread" Hidden="true" />
+      <Field Name="_Name" Hidden="true" />
+      <Field Name="_SelectedItem" Hidden="true" />
+      <Field Name="_SyncRoot" Hidden="true" />
+      <Method Name="Items_CollectionChanged" Hidden="true" />
+      <Method Name="ProcessFrozenTasks" Hidden="true" />
+      <Method Name="RefreshCount" Hidden="true" />
+      <Method Name="System.Collections.IEnumerable.GetEnumerator" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Delegate Name="Basics.Components.ItemList&lt;T&gt;.SelectionChangedHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>ItemList.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+      <Class Name="Basics.Components.ItemList&lt;T&gt;.FreezeContext" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>ItemList.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AWICCMAACTCADZAUDAEQtIQgAgABQBEICBIAQABWICI=</HashCode>
+      <FileName>ItemList.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Basics.Components.JobContext">
+    <Position X="20.75" Y="12.5" Width="3.75" />
+    <Members>
+      <Field Name="_CurrentResult" Hidden="true" />
+      <Field Name="_Fields" Hidden="true" />
+      <Field Name="_IsLocked" Hidden="true" />
+      <Field Name="_Jobs" Hidden="true" />
+      <Field Name="_Manager" Hidden="true" />
+      <Field Name="_Parameters" Hidden="true" />
+      <Field Name="_ResultColumns" Hidden="true" />
+      <Field Name="_Results" Hidden="true" />
+      <Field Name="_Summaries" Hidden="true" />
+      <Method Name="FieldsCollectionChanged" Hidden="true" />
+      <Method Name="FreezeAll" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAgESQAAACCAAQRAAEAAEIAAAAABBAAIAACAAQAAEQA=</HashCode>
+      <FileName>JobContext.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="Jobs" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Basics.Components.JobContext&lt;TInput&gt;">
+    <Position X="21.75" Y="19.5" Width="2" />
+    <Members>
+      <Field Name="_Input" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>JobContext~1.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.JobManager&lt;TContext&gt;" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="64.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABQAAAAACAAAAEgAAAAAAAAAAAAAAAAAAAAAADIAAA=</HashCode>
+      <FileName>JobManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Basics.Components.Parameter">
+    <Position X="38.25" Y="23.75" Width="4" />
+    <Members>
+      <Field Name="_IgnoreValidationParameters" Hidden="true" />
+      <Field Name="_ProxyMaster" Hidden="true" />
+      <Field Name="_ProxySlaves" Hidden="true" />
+      <Field Name="_Unit" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAgBAAAAACBAAAAEqAABABAAAICBEIAAAAglAAAABAA=</HashCode>
+      <FileName>Parameter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Basics.Components.Parameters">
+    <Position X="47.5" Y="36.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Parameters.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.Project">
+    <Position X="10.75" Y="9.75" Width="3.5" />
+    <Members>
+      <Field Name="_Calculator" Hidden="true" />
+      <Field Name="_Errors" Hidden="true" />
+      <Field Name="_IsNavigating" Hidden="true" />
+      <Field Name="_Path" Hidden="true" />
+      <Field Name="_Results" Hidden="true" />
+      <Field Name="_SelectedView" Hidden="true" />
+      <Field Name="_Views" Hidden="true" />
+      <Method Name="CurrentDomain_UnhandledException" Hidden="true" />
+      <Method Name="DispatcherUnhandledException" Hidden="true" />
+      <Method Name="HandleException" Hidden="true" />
+      <Method Name="Views_CollectionChanged" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AkAAyIAAACAAAQZEICACAAACiAAFAIAAAAggAAoCBAA=</HashCode>
+      <FileName>Project.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Calculator" />
+      <Property Name="SelectedView" />
+      <Property Name="Results" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Views" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Basics.Components.ProjectManager&lt;TProject&gt;">
+    <Position X="3.25" Y="11.25" Width="3.25" />
+    <Members>
+      <Field Name="_Project" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAQBAAAAAACAA=</HashCode>
+      <FileName>ProjectManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.ProjectManager">
+    <Position X="3" Y="2.75" Width="3.75" />
+    <Members>
+      <Field Name="_DataContext" Hidden="true" />
+      <Field Name="_IsReady" Hidden="true" />
+      <Method Name="ConnectFrame" Hidden="true" />
+      <Method Name="CreateSaveDialog" Hidden="true" />
+      <Field Name="DefaultExtension" Hidden="true" />
+      <Field Name="DefaultFilename" Hidden="true" />
+      <Method Name="FindDataContext" Hidden="true" />
+      <Method Name="Frame_Navigated" Hidden="true" />
+      <Method Name="OverflowException" Hidden="true" />
+      <Method Name="Window_Closing" Hidden="true" />
+      <Method Name="Window_Loaded" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>gAAAgAGDQhAEQEAwABCCBAhAhBABwJAAKBIgiAAQCAE=</HashCode>
+      <FileName>ProjectManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.Result&lt;TSelf&gt;">
+    <Position X="25.75" Y="23.25" Width="2.5" />
+    <Members>
+      <Field Name="_Results" Hidden="true" />
+      <Field Name="_Summaries" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAEAEQAAAAAAAAACAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Result.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Basics.Components.Results">
+    <Position X="43" Y="19.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Results.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.Savable">
+    <Position X="16.25" Y="2.75" Width="3.5" />
+    <Members>
+      <Field Name="_StorageFields" Hidden="true" />
+      <Field Name="_StorageId" Hidden="true" />
+      <Field Name="StorageIdField" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AEAAgIAEAgCEAAQAAAQAAIAAAAABAAAIQCIAAAABBAA=</HashCode>
+      <FileName>Savable.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Basics.Components.SavableField">
+    <Position X="24.25" Y="0.75" Width="2.75" />
+    <Members>
+      <Field Name="_Name" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAgIAAAAAAAAAAAAAAIAQAAAAAAAAAAQAAAAAAAAA=</HashCode>
+      <FileName>SavableField.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.NullableBox&lt;T&gt;" Collapsed="true">
+    <Position X="66.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAgEAAAAAAAgBAEAAAAAAAABAAAAAAAAAAgAAAgAAA=</HashCode>
+      <FileName>SavableField.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.SavableField&lt;T&gt;">
+    <Position X="22.25" Y="3.25" Width="6.75" />
+    <Members>
+      <Field Name="_ParseFunctions" Hidden="true" />
+      <Method Name="FindParseFunction" Hidden="true" />
+      <Property Name="IsNullable" Hidden="true" />
+      <Property Name="ParseFunction" Hidden="true" />
+      <Property Name="ParseFunctions" Hidden="true" />
+      <Method Name="SavableField" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAggIAAAAgAAAAAAAAAgIAAAAACAAAAAQAEAACAIAA=</HashCode>
+      <FileName>SavableField.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.SavableFields" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="63" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACIAAAAAABAACBAQAAAABAQAAAAAAAAAAAAAAABQIAA=</HashCode>
+      <FileName>SavableFields.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Basics.Components.SavableList&lt;TItem&gt;">
+    <Position X="52" Y="25.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>SavableList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.SavableGenericList&lt;TItem&gt;">
+    <Position X="52" Y="21.75" Width="3.5" />
+    <NestedTypes>
+      <Delegate Name="Basics.Components.SavableGenericList&lt;TItem&gt;.LoadHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>SavableList.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAEAACAAAAAAAAAgAQAAAABAAAAQAAAAAAABAA=</HashCode>
+      <FileName>SavableList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.ValueBase&lt;TSelf&gt;">
+    <Position X="35.75" Y="19.25" Width="4.25" />
+    <Members>
+      <Field Name="_Creator" Hidden="true" />
+      <Field Name="_Format" Hidden="true" />
+      <Field Name="_NoEvents" Hidden="true" />
+      <Field Name="_Owner" Hidden="true" />
+      <Field Name="_Value" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Delegate Name="Basics.Components.ValueBase&lt;TSelf&gt;.ValueChangedHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>ValueBase.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAASAACBAABAAAAAAgAAAAEiBCAEAEAAgAAAAAAA=</HashCode>
+      <FileName>ValueBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Basics.Components.ValueList&lt;TItem&gt;">
+    <Position X="53.75" Y="31.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ValueList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.ValueList&lt;TItem, TSelf&gt;">
+    <Position X="45.25" Y="31.75" Width="4.5" />
+    <Members>
+      <Field Name="_ItemNames" Hidden="true" />
+      <Field Name="_NamedItems" Hidden="true" />
+      <Method Name="AddItem" Hidden="true" />
+      <Method Name="item_PropertyChanged" Hidden="true" />
+      <Method Name="RefreshItem" Hidden="true" />
+      <Method Name="RemoveItem" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>CQJEQAAACCAEAAAACAIABAAAiAAAABAEAAAgAAAQAAA=</HashCode>
+      <FileName>ValueList.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Basics.Components.ViewContent">
+    <Position X="15.5" Y="9.25" Width="2.75" />
+    <Members>
+      <Field Name="_ContentUri" Hidden="true" />
+      <Field Name="_DataContext" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAAAYAAEAIAACAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ViewContent.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UiExtensions" Collapsed="true">
+    <Position X="64.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>UiExtensions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Basics.Components.ICalculatingContent">
+    <Position X="0.5" Y="19.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAQQAAQAAAAAAAIAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CalculatingContent.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Basics.Components.IContentView">
+    <Position X="4.25" Y="19.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAACAACAAAkAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>ContentView.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Basics.Components.IEditorList" Collapsed="true">
+    <Position X="63" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAACAQAEAAAAAAAAIAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>EditorList.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Basics.Components.ICalculationResult">
+    <Position X="8.25" Y="20" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAEAAAAAAAAAACAAAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>ICalculationResult.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Basics.Components.IContent">
+    <Position X="2.5" Y="17" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgEAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>IContent.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Basics.Components.IValue" Collapsed="true">
+    <Position X="66.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAgAAAAAAAAAAQAAAgAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>IValue.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Basics.Components.IJobManager" Collapsed="true">
+    <Position X="64.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAACAAAA=</HashCode>
+      <FileName>JobManager.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Basics.Components.IResult">
+    <Position X="1.25" Y="22" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Result.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Basics.Components.ISavable">
+    <Position X="2.5" Y="14.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgIAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAABAA=</HashCode>
+      <FileName>Savable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
