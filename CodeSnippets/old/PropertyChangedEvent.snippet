@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+	<CodeSnippet Format="1.0.0">
+		<Header>
+			<SnippetTypes>
+				<SnippetType>Expansion</SnippetType>
+			</SnippetTypes>
+			<Title>propchanged</Title>
+			<Shortcut>#propch</Shortcut>
+			<Description>Creates an event complete with private event, public add/remove and protected virtual OnEvent.</Description>
+			<Author>zeroflag</Author>
+		</Header>
+		<Snippet>
+			<Imports>
+				<Import>
+					<Namespace>System.ComponentModel</Namespace>
+				</Import>
+			</Imports>
+			<Declarations>
+				<Literal Editable="false">
+					<ID>Name</ID>
+					<ToolTip>The event's name.</ToolTip>
+					<Default>PropertyChanged</Default>
+					<Function>
+					</Function>
+				</Literal>
+				<Literal Editable="false">
+					<ID>Documentation</ID>
+					<ToolTip>The documentation for the event.</ToolTip>
+					<Default>Occurs when a property value changes.</Default>
+					<Function>
+					</Function>
+				</Literal>
+			</Declarations>
+			<Code Language="csharp">
+				<![CDATA[	
+#region INotifyPropertyChanged Members
+
+private event PropertyChangedEventHandler _$Name$;
+/// <summary>
+/// $Documentation$
+/// </summary>
+public event PropertyChangedEventHandler $Name$
+{
+add { this._$Name$ += value; }
+remove { this._$Name$ -= value; }
+}
+/// <summary>
+/// Call to raise the $Name$ event:
+/// $Documentation$
+/// </summary>
+protected virtual void On$Name$(PropertyChangedEventArgs e)
+{
+// if there are event subscribers...
+if (this._$Name$ != null)
+{
+// call them...
+this._$Name$(this, e);
+}
+}
+/// <summary>
+/// Call to raise the $Name$ event:
+/// $Documentation$
+/// </summary>
+protected virtual void On$Name$(string property)
+{
+this.On$Name$(new PropertyChangedEventArgs(property));
+}
+#endregion INotifyPropertyChanged Members
+	]]>
+			</Code>
+		</Snippet>
+	</CodeSnippet>
+</CodeSnippets>

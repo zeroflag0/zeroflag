@@ -5,15 +5,15 @@
 			<SnippetTypes>
 				<SnippetType>Expansion</SnippetType>
 			</SnippetTypes>
-			<Title>Encapsulate Field (set-lock)</Title>
-			<Shortcut>var</Shortcut>
+			<Title>Encapsulate Setting (set-lock)</Title>
+			<Shortcut>sett</Shortcut>
 			<Description>
 			</Description>
 			<Author>zeroflag</Author>
 		</Header>
 		<Snippet>
 			<Declarations>
-				<Literal Editable="true">
+				<Literal Editable="false">
 					<ID>modifier</ID>
 					<ToolTip>
 					</ToolTip>
@@ -48,15 +48,18 @@
 				</Literal>
 			</Declarations>
 			<Code Language="csharp">
-				<![CDATA[private $Type$ _$Name$;
+				<![CDATA[/// <summary>
+/// Persistent application setting: (Settings.Default.Save() must be called!)
+/// $comment$
+/// </summary>
 $modifier$ $Type$ $Name$
 {
-  get { return _$Name$; }
+  get { return Properties.Settings.Default.$Name$; }
   set
   {
-    if (_$Name$ != value)
+    if (Properties.Settings.Default.$Name$ != value)
     {
-	  _$Name$ = value;
+	  Properties.Settings.Default.$Name$ = value;
 	  this.OnPropertyChanged("$Name$");
     }
   }

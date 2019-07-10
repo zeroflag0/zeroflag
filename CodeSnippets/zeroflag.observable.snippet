@@ -5,22 +5,14 @@
 			<SnippetTypes>
 				<SnippetType>Expansion</SnippetType>
 			</SnippetTypes>
-			<Title>Encapsulate Field (set-lock)</Title>
-			<Shortcut>var</Shortcut>
+			<Title>property observable collection</Title>
+			<Shortcut>obs</Shortcut>
 			<Description>
 			</Description>
 			<Author>zeroflag</Author>
 		</Header>
 		<Snippet>
 			<Declarations>
-				<Literal Editable="true">
-					<ID>modifier</ID>
-					<ToolTip>
-					</ToolTip>
-					<Default>public</Default>
-					<Function>
-					</Function>
-				</Literal>
 				<Literal Editable="true">
 					<ID>Name</ID>
 					<ToolTip>
@@ -48,18 +40,13 @@
 				</Literal>
 			</Declarations>
 			<Code Language="csharp">
-				<![CDATA[private $Type$ _$Name$;
-$modifier$ $Type$ $Name$
+				<![CDATA[private ObservableCollection<$Type$> _$Name$ = new ObservableCollection<$Type$>();
+/// <summary>
+/// $comment$
+/// </summary>
+public ObservableCollection<$Type$> $Name$
 {
   get { return _$Name$; }
-  set
-  {
-    if (_$Name$ != value)
-    {
-	  _$Name$ = value;
-	  this.OnPropertyChanged("$Name$");
-    }
-  }
 }
 $selected$$end$]]>
 			</Code>
